@@ -5,20 +5,7 @@ from Results.read_diego_files import get_mean_vals
 import datetime as dt
 import setup as s
 from FabryPerot.base import running_avg
-
-
-f1 = 'database/FabryPerot/2013/minime01_car_20130109.cedar.005.txt'
-f2 = 'G:\\My Drive\\Python\\data-analysis\\database\\KTC_RES\\KTC_2013_0109\\KTC_2013_0109_-5\\KTC_2013_0109_-5-00\\Keo_Tec_Geo_2013_0109.txt'
-
-
-date = dt.datetime(2013, 1, 9)
-
-epbs = get_mean_vals(f2, date)
-wind = FabryPerot(f1).wind
-avg = running_avg(wind, Dir = "zon")
-
-fig, ax = plt.subplots(figsize = (10, 4), 
-                       ncols = 2)
+from Liken.utils import get_fit
 
 
 def plot_time_series(ax, wind, avg, epbs):
@@ -42,6 +29,7 @@ def plot_time_series(ax, wind, avg, epbs):
                     yerr = zon["dvnu"], 
                     label = up)
     
+    ax.axhline(0, color = "r", linestyle = "--")
     ax.legend()                  
     
     title = wind.index[0].strftime("%d/%m/%Y")
@@ -51,9 +39,52 @@ def plot_time_series(ax, wind, avg, epbs):
            ylabel = "Velocidade zonal (m/s)")
     s.format_axes_date(ax, time_scale= "hour")
     
+        
+
+
+def plot_scatter_corr(ax, df):
+   
+    x, y = df["zon"].values, df["vel"].values
     
-plot_time_series(ax[0], wind, avg, epbs)
+    ax.scatter(x, y,  color = "k")
 
-df = pd.concat([epbs, avg], axis = 1).dropna()
+    x = x.reshape(-1, 1)
+    y = y.reshape(-1, 1)
+    
+    r2, fit = get_fit(x, y)
+     
+    ax.plot(x, fit, 
+            color = "k", 
+            lw = 2,
+            label = f"$R^2 = {r2}$")
+    
+    ax.legend()
+    
+    ax.set(ylabel = "EPBs", 
+           xlabel = "FPI", 
+           title = "Correlação")
+    
+    return df
 
-ax[1].scatter(df["zon"], df["vel"])
+
+def main():
+    f1 = 'database/FabryPerot/2013/minime01_car_20130112.cedar.005.txt'
+    f2 = 'database/KTC_RES/KTC_2013_0112/KTC_2013_0112_-5/KTC_2013_0112_-5-00/Keo_Tec_Geo_2013_0112.txt'
+        
+    epbs = get_mean_vals(f2)
+    wind = FabryPerot(f1).wind
+    avg = running_avg(wind, Dir = "zon")
+    
+    
+    df = epbs.join(avg).dropna()
+     
+    fig, ax = plt.subplots(figsize = (10, 4), 
+                           ncols = 2)
+    
+    plot_time_series(ax[0], wind, avg, epbs)
+    
+    plot_scatter_corr(ax[1], df)
+    ax[0].axvspan(df.index[0], 
+                  df.index[-1],
+                  alpha = 0.3, 
+                  color = "gray")
