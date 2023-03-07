@@ -1,20 +1,15 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 from FabryPerot.core import load_FPI
-from Liken.utils import get_fit2
+from liken.utils import get_fit
+from liken.core import load_EPB
 
-def load_EPB(lat = -5):
-    df = pd.read_csv("EPBs_DRIFT.txt", index_col = 0)
-    df.index = pd.to_datetime(df.index)
-    return df.loc[df["lat"] == lat, ["vel"]]
-
-
-
-def plot_corr_EPB_FPI():
+def plot_corr_EPB_FPI(fontsize = 20):
     
-    df = pd.concat([load_EPB(lat = -5), 
-                    load_FPI().loc[:, ["zon"]]], 
-                   axis = 1).dropna()
+    FPI = load_FPI()
+
+    EPB = load_EPB('EPBs_DRIFT.txt', lat = -5)
+
+    df = EPB.join(FPI).dropna()
     
     fig, ax = plt.subplots(figsize = (12, 8), 
                            sharey = True, 
@@ -35,7 +30,7 @@ def plot_corr_EPB_FPI():
         x = x.reshape(-1, 1)
         y = y.reshape(-1, 1)
         
-        r2, y_predicted = get_fit2(x, y)
+        r2, y_predicted = get_fit(x, y)
         
         ax.set(title = f"Mês: {n}")
         ax.scatter(x, y)
@@ -44,14 +39,14 @@ def plot_corr_EPB_FPI():
         
         ax.legend(loc = "lower right")
         
-        
-        
-    fontsize = 20
     
-    fig.text(0.04, 0.35, "EPBs",
+    fig.text(0.04, 0.45, "EPBs",
              rotation = "vertical", 
              fontsize = fontsize)
     
-    fig.text(0.4, 0.08, "FPI", 
+    fig.text(0.5, 0.06, "FPI", 
              rotation = "horizontal", 
              fontsize = fontsize)
+    
+plot_corr_EPB_FPI(fontsize = 20)
+
