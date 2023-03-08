@@ -35,6 +35,23 @@ def load_EPB(n, lat = -5):
                          index = "time", 
                          values = "vel")
     
+def load_HWM(n):
+    infile = "database/HWM/car_250_2013.txt"
+
+    df = pd.read_csv(infile, index_col = "time")
+    df.index = pd.to_datetime(df.index)
+    
+    df = df.loc[(df.index.month == n)]
+    
+    df["time2"] = time2float(df.index.time, sum24 = True)
+    
+    return pd.pivot_table(df, 
+                         columns = df.index.date, 
+                         index = "time2", 
+                         values = "zon")
+
+
+
 
 def plot_monthly_averages():
     
@@ -53,6 +70,7 @@ def plot_monthly_averages():
     
         EPB = load_EPB(m, lat = None)
         FPI = load_FPI(m)
+        HWM = load_HWM(m)
         
         FPI = FPI.reindex(np.arange(21, 30, 0.5), 
                           method = "nearest")
@@ -68,7 +86,13 @@ def plot_monthly_averages():
                 marker = "o",
                 markersize = 3, 
                 color = "r", 
-                linestyle = "none")
+                linestyle = "none", 
+                label = "EPBs")
+        
+        ax.plot(HWM.mean(axis = 1),
+                color = "blue",
+                lw = 2,
+                label = "HWM-14")
         
         ax.errorbar(FPI.index, 
                     FPI.mean(axis = 1), 
@@ -76,7 +100,10 @@ def plot_monthly_averages():
                     color = "k", 
                     marker = "s", 
                     markersize = 3,
-                    capsize = 3)
+                    capsize = 3, 
+                    label = "FPI")
+        
+    ax.legend()
         
     fontsize = 20
     
@@ -88,5 +115,7 @@ def plot_monthly_averages():
              rotation = "horizontal", 
              fontsize = fontsize)
     
-    
+    fig.suptitle("Média horária mensal - 2013", 
+                 fontsize = fontsize, 
+                 y = 0.95)
 plot_monthly_averages()
