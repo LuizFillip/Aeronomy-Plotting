@@ -16,7 +16,12 @@ def join_data():
     return mod.join(obs).dropna()
 
 
-def plot_corr_FPI_HWM(fig, ax, time = None):
+def plot_corr_FPI_HWM(time = None):
+    
+    fig, ax = plt.subplots(nrows = 2, 
+                           figsize = (7, 5), 
+                           sharex = True, 
+                           sharey = True)      
 
     df = join_data()
     
@@ -66,12 +71,9 @@ def plot_corr_FPI_HWM(fig, ax, time = None):
     
         
         
-fig, ax = plt.subplots(nrows = 2, 
-                       figsize = (7, 5), 
-                       sharex = True, 
-                       sharey = True)       
+ 
 
 time = dt.time(22, 0, 0)
 
-plot_corr_FPI_HWM(fig, ax, time)
+plot_corr_FPI_HWM()
 

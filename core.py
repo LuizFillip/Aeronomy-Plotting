@@ -1,43 +1,25 @@
-from FabryPerot.core import load_FPI
-from Digisonde.drift import load_DRIFT
 import pandas as pd
-import datetime as dt
-from scipy.optimize import curve_fit
-import matplotlib.pyplot as plt
 
-def func(x, a, c):
-    return a * x + c
-
-
-def get_values(time, coords = ["mer", "vy"], 
-               month = 1):
-
-    df = pd.concat([load_FPI(), 
-                load_DRIFT()], axis = 1).dropna()
-
-    sel = df.loc[(df.index.time == time) &
-                 (df.index.month == month), coords ]
+def load_HWM():
+    f3 = "database/HWM/car_250_2013.txt"
     
-    return sel.iloc[:, 0].values, sel.iloc[:, 1].values
+    df = pd.read_csv(f3, index_col = "time")
+    df.index = pd.to_datetime(df.index)
+    del df["Unnamed: 0"]
+    return df
 
+def load_EPB(infile, lat = -5):
+    df = pd.read_csv(infile, index_col = 0)
+    df.index = pd.to_datetime(df.index)
+    if lat is None:
+        return df
+    else:
+        return  df.loc[df["lat"] == lat]
 
-def plotScatter(ax, 
-                n, 
-                time, 
-                coords = ["zon", "vx"]):
-        
-    xdata, ydata =  get_values(time,  
-                              coords = coords, 
-                              month = n)
-    
-    
-    ax.plot(xdata, ydata, color = "k",
-             linestyle = "none", marker = "o")
-    
-    ax.set(title = f"Mês - {n}")
-    
-    popt, pcov = curve_fit(func, xdata, ydata)
-    
-    ax.grid()
-    ax.plot(xdata, func(xdata, *popt), 'r-')
+def main():
+   infile = 'EPBs_DRIFT.txt'
+
+   df = load_EPB(infile, lat = -5)
+
+   print(df)
     

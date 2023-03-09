@@ -3,6 +3,14 @@ from sklearn.linear_model import LinearRegression
 import datetime as dt
 import matplotlib.pyplot as plt
 
+def rename_cols(obs, name= "FPI"):
+
+    obs = obs.rename(
+         columns = {"zon": "zon_" + name, 
+                    "mer": "mer_" + name}
+         )
+    
+    return obs
 
 def get_datetime_fpi(filename):
     s = filename.split('_')
@@ -12,7 +20,8 @@ def get_datetime_fpi(filename):
         date_str, "%Y%m%d")
 
 def get_datetime_epb(filename):
-    year, mon_day, lat = tuple(filename.replace(".txt", "").split("_"))
+    year, mon_day, lat = tuple(
+        filename.replace(".txt", "").split("_"))
     month = int(mon_day[:2])
     day = int(mon_day[2:])
     year = int(year)
