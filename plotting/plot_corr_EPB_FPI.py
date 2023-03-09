@@ -5,11 +5,11 @@ from liken.core import load_EPB
 
 def plot_corr_EPB_FPI(fontsize = 20):
     
-    FPI = load_FPI()
+    #FPI = load_FPI()
 
-    EPB = load_EPB('EPBs_DRIFT.txt', lat = -5)
+    df = load_EPB('corr_06.txt', lat = -5)
 
-    df = EPB.join(FPI).dropna()
+    #df = EPB.join(FPI).dropna()
     
     fig, ax = plt.subplots(figsize = (12, 8), 
                            sharey = True, 
@@ -49,4 +49,3 @@ def plot_corr_EPB_FPI(fontsize = 20):
              fontsize = fontsize)
     
 plot_corr_EPB_FPI(fontsize = 20)
-

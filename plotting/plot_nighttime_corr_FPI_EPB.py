@@ -59,12 +59,29 @@ def plot_time_series(ax, wind, avg, epbs):
     
         
 
-
-def plot_scatter_corr(ax, df):
-   
-    x, y = df["zon"].values, df["vel"].values
+def plot_scatter_corr2(ax, x, y):
     
-    ax.scatter(x, y,  color = "k")
+    ax.scatter(x, y, color = "k")
+
+    x = x.reshape(-1, 1)
+    y = y.reshape(-1, 1)
+    
+    r2, fit = get_fit(x, y)
+     
+    ax.plot(x, fit, 
+            color = "k", 
+            lw = 2)
+        
+    ax.set(ylabel = "EPBs", 
+           xlabel = "FPI", 
+           title =  f"$R^2 = {r2}$", 
+           ylim = [40, 200], 
+           xlim = [40, 200])
+    
+    return r2
+def plot_scatter_corr(ax, x, y):
+   
+    ax.scatter(x, y, color = "k")
 
     x = x.reshape(-1, 1)
     y = y.reshape(-1, 1)
@@ -100,7 +117,8 @@ def plot_nigthttime_corr_FPI_EPB(
     
     plot_time_series(ax[0], wind, avg, epbs)
     plot_HWM(ax[0], avg)
-    r2 = plot_scatter_corr(ax[1], df)
+    x1, y1 = df["zon"].values, df["vel"].values
+    r2 = plot_scatter_corr(ax[1], x1, y1)
     
     ax[0].axvspan(df.index[0], 
                    df.index[-1],
