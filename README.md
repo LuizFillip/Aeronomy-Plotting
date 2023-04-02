@@ -1,2 +1,3 @@
-# Atmospheric-models
-Plotting of modeled data from atmospheric and ionospheric models 
+# Compare aeronomy parameters 
+
+Plotting and comparation analysis data from atmospheric and ionospheric models 
