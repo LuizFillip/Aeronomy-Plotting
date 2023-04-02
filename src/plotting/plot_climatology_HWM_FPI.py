@@ -1,12 +1,13 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import setup as s
-from FabryPerot.core import load
-from build import paths as p
+import settings as s
+from FabryPerot.src.core import load_FPI
+from common import load
+from utils import time2float
 
 
-def plot(
+def plot_component(
         ax, 
         res, 
         coord = "zon", 
@@ -23,9 +24,12 @@ def plot(
     
     year = res.index[0].year
     
+    res["time2"] = time2float(res.index)
+
+    
     df = pd.pivot_table(res, 
                         values = coord, 
-                        columns = "day", 
+                        columns = res.index.date, 
                         index = "time2")
     
     df = df.interpolate()
@@ -52,10 +56,11 @@ def plot(
         title = f"Vento {label} para {year}",
         ylabel = "Hora (UT)", 
         xlabel = "Meses", 
-        yticks = np.arange(20, 34, 2)
+        yticks = np.arange(20, 34, 2),
+        ylim = [20, 32]
            )
     
-    ax.text(0.01, 1.01, f"Vento {Type}", 
+    ax.text(0.01, 1.01, f"{Type}", 
             transform = ax.transAxes) 
     
     s.format_axes_date(ax)
@@ -63,36 +68,36 @@ def plot(
     return ax
 
 
-def plot_hwm_fpi_comparation(coord = "zon"):
+def plot_climatology_HWM_FPI(coord = "zon"):
 
     fig, ax = plt.subplots(figsize = (8, 6), 
                            nrows = 2, 
                            sharey = True,
-                           sharex = True)
+                           sharex = True, 
+                           dpi = 300)
     s.config_labels()
     plt.subplots_adjust(hspace = 0.1)
+         
+    df = load().HWM(infile = "database/HWM/car_250_2013.txt") 
     
-    modeled = p("HWM").files[1]
-    observed = p("FabryPerot").get_files_in_dir("processed")
-        
-    df = load(modeled)
-    
-    ax1 = plot(ax[0], df, 
+    ax1 =  plot_component(ax[0], df, 
                coord = coord, 
-               Type = "modelado")
+               Type = "HWM-14")
     
-    df = load(observed)
+    df = load_FPI()
 
     df = df.loc[(df["zon"] > -10) &
                 (df["zon"] < 170) 
                 ]
         
     ax1.set(xlabel = "")
-    ax2 = plot(ax[1], df,  
-               coord = coord)
+    ax2 =  plot_component(
+        ax[1], df, coord = coord, Type = "FPI (Cariri)"
+        )
     
     ax2.set(title = "")
     
-plotCompare_Model_Observation()
+    return fig
+    
 
- 
+plot_climatology_HWM_FPI()
