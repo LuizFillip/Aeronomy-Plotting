@@ -1,3 +1,3 @@
-# Compare aeronomy parameters 
+# Parameters comparation
 
-Plotting and comparation analysis data from atmospheric and ionospheric models 
+Plotting and comparation analysis data from atmospheric and ionospheric models, intrumentation data
