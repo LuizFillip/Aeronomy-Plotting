@@ -1,13 +1,12 @@
 import matplotlib.pyplot as plt
-from FabryPerot.core import load_FPI
-from liken.utils import get_fit, rename_cols
-from liken.core import load_HWM
+from FabryPerot.src.core import load_FPI
+from liken.src.utils import get_fit, rename_cols
 import datetime as dt
-
+from common import load
 
 def join_data():
     
-    mod = load_HWM()
+    mod = load().HWM(infile = "database/HWM/car_250_2013.txt")
     obs = load_FPI()
     
     mod = rename_cols(mod, name = "HWM")
@@ -18,10 +17,12 @@ def join_data():
 
 def plot_corr_FPI_HWM(time = None):
     
-    fig, ax = plt.subplots(nrows = 2, 
-                           figsize = (7, 5), 
-                           sharex = True, 
-                           sharey = True)      
+    fig, ax = plt.subplots(
+        nrows = 2, 
+        figsize = (7, 5), 
+        sharex = True, 
+        sharey = True
+        )      
 
     df = join_data()
     
@@ -49,7 +50,7 @@ def plot_corr_FPI_HWM(time = None):
         r2, fit = get_fit(x, y)
         
         ax.plot(x, fit, 
-                color = "k", 
+                color = "r", 
                 lw = 2, 
                 label = f"$R^2$ = {r2}")
     
@@ -68,10 +69,8 @@ def plot_corr_FPI_HWM(time = None):
     fig.suptitle(f"Cariri - {title}")
 
     
-    
+    return fig
         
-        
- 
 
 time = dt.time(22, 0, 0)
 

@@ -4,7 +4,7 @@ import numpy as np
 import settings as s
 from FabryPerot.src.core import load_FPI
 from common import load
-from utils import time2float
+from utils import time2float, save_plot
 
 
 def plot_component(
@@ -21,9 +21,7 @@ def plot_component(
     else:
         label = "meridional"
         vmin, vmax, step = -100, 100, 50
-    
-    year = res.index[0].year
-    
+        
     res["time2"] = time2float(res.index)
 
     
@@ -53,7 +51,7 @@ def plot_component(
         )
     
     ax.set(
-        title = f"Vento {label} para {year}",
+        title = f"Vento {label}",
         ylabel = "Hora (UT)", 
         xlabel = "Meses", 
         yticks = np.arange(20, 34, 2),
@@ -63,41 +61,49 @@ def plot_component(
     ax.text(0.01, 1.01, f"{Type}", 
             transform = ax.transAxes) 
     
-    s.format_axes_date(ax)
+    s.format_axes_date(ax, interval = 2)
     
     return ax
 
+def plot_dir(ax, col, HWM, FPI, coord = "zon"):
 
-def plot_climatology_HWM_FPI(coord = "zon"):
+     ax1 =  plot_component(
+         ax[0, col], HWM, coord = coord,
+                Type = "HWM-14")
+     
+     ax1.set(xlabel = "")
+     ax2 =  plot_component(
+         ax[1, col], FPI, coord = coord, Type = "FPI (Cariri)"
+         )
+     
+     ax2.set(title = "")
+     return ax1, ax2
 
-    fig, ax = plt.subplots(figsize = (8, 6), 
+
+def plot_climatology_HWM_FPI():
+
+    fig, ax = plt.subplots(figsize = (14, 6), 
                            nrows = 2, 
+                           ncols = 2,
                            sharey = True,
                            sharex = True, 
                            dpi = 300)
     s.config_labels()
-    plt.subplots_adjust(hspace = 0.1)
+    plt.subplots_adjust(hspace = 0.15, wspace=0.25)
          
-    df = load().HWM(infile = "database/HWM/car_250_2013.txt") 
+    HWM = load().HWM(infile = "database/HWM/car_250_2013.txt") 
     
-    ax1 =  plot_component(ax[0], df, 
-               coord = coord, 
-               Type = "HWM-14")
+    FPI = load_FPI()
     
-    df = load_FPI()
+    year = FPI.index[0].year
 
-    df = df.loc[(df["zon"] > -10) &
-                (df["zon"] < 170) 
-                ]
-        
-    ax1.set(xlabel = "")
-    ax2 =  plot_component(
-        ax[1], df, coord = coord, Type = "FPI (Cariri)"
-        )
+    plot_dir(ax, 0, HWM, FPI, coord = "zon")
+    ax1, ax2 = plot_dir(ax, 1, HWM, FPI, coord = "mer")
     
-    ax2.set(title = "")
+    ax1.set(ylabel = "")
+    ax2.set(ylabel = "")
     
+    fig.suptitle(year, y = 0.98)
     return fig
     
-
-plot_climatology_HWM_FPI()
+save_plot(plot_climatology_HWM_FPI)

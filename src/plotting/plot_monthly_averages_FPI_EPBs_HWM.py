@@ -1,9 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from FabryPerot.utils import time2float
 import numpy as np
-import setup as s
+import settings as s
 from build import paths as p
+from utils import translate, save_plot, time2float
 
 def load_FPI(n):
     files = p("FabryPerot").get_files_in_dir("avg")
@@ -17,7 +17,7 @@ def load_FPI(n):
 
 
 def load_EPB(n, lat = -5):
-    infile = "EPBs_DRIFT.txt"
+    infile = "database/EPBs/EPBs_DRIFT.txt"
     
     df = pd.read_csv(infile, index_col = 0)
     df.index = pd.to_datetime(df.index)
@@ -28,7 +28,7 @@ def load_EPB(n, lat = -5):
         df = df.loc[(df.index.month == n) &
                 (df["lat"] == lat)]
     
-    df["time"] = time2float(df.index.time, sum24 = True)
+    df["time"] = time2float(df.index.time)
 
     return pd.pivot_table(df, 
                          columns = df.index.date, 
@@ -43,23 +43,26 @@ def load_HWM(n):
     
     df = df.loc[(df.index.month == n)]
     
-    df["time2"] = time2float(df.index.time, sum24 = True)
+    df["time2"] = time2float(df.index.time)
     
-    return pd.pivot_table(df, 
-                         columns = df.index.date, 
-                         index = "time2", 
-                         values = "zon")
+    return pd.pivot_table(
+        df, 
+        columns = df.index.date, 
+        index = "time2", 
+        values = "zon"
+        )
 
 
 
 
-def plot_monthly_averages():
+def plot_monthly_averages_FPI_EPBs_HWM(fontsize = 20):
     
-    fig, ax = plt.subplots(figsize = (12, 10), 
+    fig, ax = plt.subplots(figsize = (10, 8), 
                            nrows = 3, 
                            ncols = 2, 
                            sharey = True, 
-                           sharex = True)
+                           sharex = True, 
+                           dpi = 300)
     s.config_labels()
     
     months = [1, 2, 3, 10, 11, 12]
@@ -76,8 +79,10 @@ def plot_monthly_averages():
                           method = "nearest")
         
         dn = EPB.columns[0].strftime("%B")
+        
+        title = translate(dn)
                 
-        ax.set(title = dn, 
+        ax.set(title = title, 
                xticks = np.arange(21, 30, 1),
                xlim = [21, 30], 
                ylim = [0, 200])
@@ -101,21 +106,23 @@ def plot_monthly_averages():
                     marker = "s", 
                     markersize = 3,
                     capsize = 3, 
-                    label = "FPI")
+                    label = "FPI"
+                    )
         
     ax.legend()
         
-    fontsize = 20
-    
     fig.text(0.04, 0.35, "Velocidade zonal (m/s)",
              rotation = "vertical", 
              fontsize = fontsize)
     
-    fig.text(0.4, 0.08, "Hora universal (UT)", 
+    fig.text(0.4, 0.05, "Hora universal (UT)", 
              rotation = "horizontal", 
              fontsize = fontsize)
     
     fig.suptitle("Média horária mensal - 2013", 
                  fontsize = fontsize, 
                  y = 0.95)
-plot_monthly_averages()
+    
+    return fig
+
+save_plot(plot_monthly_averages_FPI_EPBs_HWM)

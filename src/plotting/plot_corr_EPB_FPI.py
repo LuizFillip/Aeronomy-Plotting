@@ -1,13 +1,13 @@
 import matplotlib.pyplot as plt
-from FabryPerot.core import load_FPI
-from liken.utils import get_fit
-from liken.core import load_EPB
+from FabryPerot.src.core import load_FPI
+from liken.src.utils import get_fit
+from liken.src.core import load_EPB
 
 def plot_corr_EPB_FPI(fontsize = 20):
     
     #FPI = load_FPI()
 
-    df = load_EPB('corr_06.txt', lat = -5)
+    df = load_EPB('database/EPBs/corr_06.txt', lat = -5)
 
     #df = EPB.join(FPI).dropna()
     
@@ -47,5 +47,6 @@ def plot_corr_EPB_FPI(fontsize = 20):
     fig.text(0.5, 0.06, "FPI", 
              rotation = "horizontal", 
              fontsize = fontsize)
-    
+    return fig
+
 plot_corr_EPB_FPI(fontsize = 20)

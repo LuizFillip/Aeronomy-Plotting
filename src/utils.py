@@ -34,16 +34,6 @@ def get_datetime_epb(filename):
 
 
 
-def save_img(fig, 
-             save_in):
-    
-    plt.ioff()
-    fig.savefig(save_in, 
-                dpi = 100, 
-                pad_inches = 0, 
-                bbox_inches = "tight")
-    plt.clf()   
-    plt.close()
 
 
 
