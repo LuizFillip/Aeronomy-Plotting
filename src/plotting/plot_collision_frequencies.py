@@ -3,6 +3,9 @@ import ionosphere as io
 from GEO import load_meridian
 import datetime as dt
 import matplotlib.pyplot as plt
+
+
+
 dn = dt.datetime(2013, 1, 1, 21, 0) 
 
 mlon, mlat, _, _, = load_meridian()

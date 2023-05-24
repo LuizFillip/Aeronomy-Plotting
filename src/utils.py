@@ -1,7 +1,6 @@
 from sklearn.metrics import r2_score
 from sklearn.linear_model import LinearRegression
 import datetime as dt
-import matplotlib.pyplot as plt
 
 def rename_cols(obs, name= "FPI"):
 
