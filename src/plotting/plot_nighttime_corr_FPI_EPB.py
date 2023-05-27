@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from FabryPerot.core import FabryPerot
-import setup as s
-from FabryPerot.base import running_avg
+import settings as s
+from FabryPerot import running_avg
 from liken.utils import get_fit
 from liken.core import load_EPB
 import pandas as pd
@@ -79,6 +79,8 @@ def plot_scatter_corr2(ax, x, y):
            xlim = [40, 200])
     
     return r2
+
+
 def plot_scatter_corr(ax, x, y):
    
     ax.scatter(x, y, color = "k")

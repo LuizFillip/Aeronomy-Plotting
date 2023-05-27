@@ -1,40 +1,34 @@
-import FluxTube as ft
-import ionosphere as io
-from GEO import load_meridian
-import datetime as dt
 import matplotlib.pyplot as plt
+from models import altrange_iri
+from GEO import sites
+import digisonde as dg
+
+
+infile = "database/Digisonde/SAA0K_20130316(075).TXT"
+
+df = dg.load_profilogram(infile)
+
+times = df.index.unique()
+dn = times[130]
 
 
 
-dn = dt.datetime(2013, 1, 1, 21, 0) 
-
-mlon, mlat, _, _, = load_meridian()
-
-kwargs = dict(
-    dn = dn, 
-    glat = mlat, 
-    glon = mlon,
-    hmin = 90,
-    step = 5,
-    hmax = 1000
-    
-    )
-
-ds = io.test_data(**kwargs)
+ds = df.loc[df.index == dn]
 
 
-def plot_collision_frequency(ax):
 
-   
-    #ax.plot(nu_eff, apex)
-    
-    ax.set(xlabel = "$\nu_{eff}^F$", 
-           ylabel = "Altura de apex (km)")
+plt.plot(ds["ne"], ds["alt"])
 
 
-infile = "database/FluxTube/201301012100.txt"
 
-ds = io.load_calculate(infile)
-ne = ft.IntegratedParameters(ds)
 
-ds
+lat, lon = sites["saa"]["coords"]
+
+iri = altrange_iri(dn = dn, glat = lat, glon = lon, hmin = 75, 
+                   hmax = 800)
+
+plt.plot(iri["ne"], iri.index)
+
+plt.show()
+
+dn
