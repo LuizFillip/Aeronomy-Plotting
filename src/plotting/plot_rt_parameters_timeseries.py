@@ -2,7 +2,7 @@ import settings as s
 import pandas as pd
 import datetime as dt
 import matplotlib.pyplot as plt
-from labels import Labels, y_label
+from labels import y_label
 from common import load_by_alt_time
 import digisonde as dg
 from utils import smooth2
@@ -126,4 +126,4 @@ def main():
         fig = plot_rt_parameters_timeseries(df)
         
 
-main()
+# main()
