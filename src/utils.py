@@ -1,5 +1,4 @@
-from sklearn.metrics import r2_score
-from sklearn.linear_model import LinearRegression
+
 import datetime as dt
 
 def rename_cols(obs, name= "FPI"):
@@ -35,17 +34,6 @@ def get_datetime_epb(filename):
 
 
 
-
-def get_fit(x, y):
-    
-    regression_model = LinearRegression()
-    # Fit the data(train the model)
-    regression_model.fit(x, y)
-    # Predict
-    y_predicted = regression_model.predict(x)
-
-    r2 = r2_score(y, y_predicted)
-    return round(r2, 3), y_predicted
 
 
 

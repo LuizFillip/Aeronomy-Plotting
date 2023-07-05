@@ -52,6 +52,6 @@ def find_sames(lat_check = 5,
     return ts
 
 
-ts = find_sames(lat_check = 5)
-print(ts)
+# ts = find_sames(lat_check = 5)
+# print(ts)
        
