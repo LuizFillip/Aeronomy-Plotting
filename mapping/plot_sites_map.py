@@ -2,10 +2,12 @@ from GEO import quick_map, sites
 import json
 import numpy as np
 from GEO import circle_range
+import base as s
 
+s.config_labels(fontsize = 10)
 def plot_meridian(ax):
     
-    infile = 'database/GEO/meridian.json'
+    infile = 'database/GEO/meridians/saa_2013.json'
     
     dat = json.load(open(infile))
     
@@ -17,16 +19,16 @@ def plot_meridian(ax):
     ax.text(-47, 6, 'Magnetic\nmeridian')
     ax.text(-37, 2, 'Geomagnetic\nequator', color = 'red')
     
-lat_lims = dict(min = -20, max = 10, stp = 5)
+lat_lims = dict(min = -40, max = 10, stp = 10)
 
-lon_lims = dict(min = -60, max = -30, stp = 5)    
+lon_lims = dict(min = -80, max = -30, stp = 10)    
 
 
 def plot_sites_map():
     fig, ax = quick_map(
         lat_lims = lat_lims, 
         lon_lims = lon_lims, 
-        figsize = (10, 10)
+        figsize = (5,5)
         )
     
     markers = ['s', '^', 'o']
@@ -43,7 +45,7 @@ def plot_sites_map():
         s = sites[site]
         clat, clon = s["coords"]
         ax.scatter(
-            clon, clat, s = 200, 
+            clon, clat, s = 50, 
             marker = markers[i], 
             label = f'{s["name"]} ({instrs[i]})'
             )
@@ -65,3 +67,5 @@ def plot_sites_map():
     ax.legend(bbox_to_anchor = (.5, 1.2), 
               ncol = 1,
               loc = 'upper center')
+    
+# plot_sites_map()

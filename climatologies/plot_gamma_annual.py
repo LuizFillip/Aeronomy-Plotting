@@ -1,34 +1,43 @@
 import matplotlib.pyplot as plt
-from common import load_by_time
+import base as s
 import RayleighTaylor as rt
+import pandas as pd
+s.config_labels()
 
 
-fig, ax = plt.subplots(
-    sharex = True,
-    dpi = 300, 
-    nrows = 1, 
-    figsize = (12, 6), 
-    )
+def gamma_annual():
 
-# plt.subplots_adjust(hspace = 0.5)
+    fig, ax = plt.subplots(
+        sharex = True,
+        dpi = 300, 
+        nrows = 1, 
+        figsize = (10, 4), 
+        )
 
-infile = 'database/Results/maximus/local_2013_dusk.txt'
+    
+    
+    infile = 'database/Results/all_parameters/saa_2013_2015.txt'
+    
+    df = s.load(infile)
+    
+    df = df.groupby(df.index).first()
+    df['all'] = df['all'] * 1e4
+  
+    epb = df[df['epbs'].isin([1])]
+    no_epb = df[df['epbs'].isin([0])]
+    
+    
+    ax.scatter(epb.index, epb['all'])
+    ax.scatter(no_epb.index, no_epb['all'], 
+               marker='x', color = 'red')
+    
+    lbs = rt.EquationsFT(r = False)
+    
+    s.axes_month_format(ax, month_locator = 4)
+    
+    ax.set(ylabel = lbs.label)
+    
 
-df = load_by_time(infile, dn = None)
 
-ax.plot(df['all_perp'], label = 'Local quantities')
 
-# infile = 'database/Results/maximus/integrated_2013_dusk.txt'
-infile = 'integrated_2013_dusk.txt'
-
-df = load_by_time(infile, dn = None)
-
-ax.plot(df['all_perp'], label = 'Integraded quantities')
-import settings as s 
-
-lbs = rt.EquationsRT(r = False)
-
-s.axes_month_format(ax)
-
-ax.set(ylabel = lbs.label)
-ax.legend()
+gamma_annual()

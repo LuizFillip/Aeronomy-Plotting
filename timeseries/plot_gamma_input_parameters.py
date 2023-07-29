@@ -1,11 +1,8 @@
-import settings as s
+import base as s
 import pandas as pd
 import datetime as dt
 import matplotlib.pyplot as plt
-from labels import y_label
-from common import load_by_alt_time
 import digisonde as dg
-from utils import smooth2
 
 
 
@@ -30,35 +27,12 @@ def plot_nui_g(ax, df):
     
     ax.plot(9.81 / df["nui"], color = "k")
   
-    ax.set(ylabel = y_label('gravity'), 
-           ylim = [10, 50])
-    
     
 def plot_vertival_drift(ax, df):
     
-    infile = "database/Digisonde/SAA0K_20130216_freq.txt"
-
-    vz = dg.drift(pd.read_csv(
-        infile, index_col = 0
-        ),
-        sel_columns = [6, 7, 8]
-        )
-    
-    vz.index = pd.to_datetime(vz.index)
-    
-    vz = vz.loc[(vz.index >= df.index[0]) &
-                (vz.index <= df.index[-1])]
-
-
-    vz['avg'] = smooth2(vz['avg'], 7)
-
-    vz = vz.interpolate()
-    ax.plot(vz["avg"], color = "k")
-    ax.axhline(0, linestyle = "--")
+    ...
    
-    ax.set(ylabel = y_label('vz'), 
-           ylim = [-70, 70])
-    
+   
 def plot_winds(ax, df):
     
     ax.plot(df["mer_ef"], label = "Paralelo a B")
@@ -113,17 +87,29 @@ def plot_rt_parameters_timeseries(df):
     
     return fig
 
+path = 'FluxTube/data/reduced/SAA/'
+
+def dataset(path):
+    
+    out = [
+           ]
+    
+    for year in range(2013, 2016):
+        
+        ds = s.load(path + f'300_{year}.txt') 
+        
+        if year == 2013:
+            ds['ratio'] = ds['ratio'] / 2
+            
+        out.append(ds)
+   
+    return pd.concat(out).dropna()
+
+    
 def main():
+    for year in range(2013, 2016):
+        ds = pd.read_csv(f'{year}02012000.txt', 
+                         index_col = 0)
+        
+        plt.plot(ds['Te'], ds.alt)
 
-    alt = 300
-    for i in [16, 17, 18]:
-        dn = dt.datetime(2013, 3, i, 20)
-        infile = "gamma_perp_mer.txt"
-        
-        df = load_by_alt_time(infile, alt, dn)
-        
-        
-        fig = plot_rt_parameters_timeseries(df)
-        
-
-# main()

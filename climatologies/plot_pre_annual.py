@@ -1,18 +1,16 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import settings as s
-from common import load
+import base as s
 
-def join():
+def dataset(site = 'saa'):
     
-    infile = 'database/Drift/PRE/SAA/'
+    infile = 'digisonde/data/drift/PRE/saa/'
     
-    out = [load(infile + f'{year}.txt') 
+    out = [s.load(infile + f'{year}.txt') 
            for year in range(2013, 2016)]
    
     return pd.concat(out).dropna()
     
-
 
 def plot_pre_annual_variation():
     
@@ -21,7 +19,7 @@ def plot_pre_annual_variation():
         figsize = (10, 6)
         )
        
-    df = join()
+    df = dataset()
     ax.scatter(df.index, df['vp'])
     
     
@@ -38,7 +36,7 @@ def plot_pre_annual_variation():
     
     return fig
 
-# plot_pre_annual_variation()
+# f = plot_pre_annual_variation()
 
     
     
