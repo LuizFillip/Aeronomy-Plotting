@@ -5,6 +5,8 @@ from GEO import circle_range
 import base as s
 
 s.config_labels(fontsize = 10)
+
+
 def plot_meridian(ax):
     
     infile = 'database/GEO/meridians/saa_2013.json'
@@ -19,18 +21,9 @@ def plot_meridian(ax):
     ax.text(-47, 6, 'Magnetic\nmeridian')
     ax.text(-37, 2, 'Geomagnetic\nequator', color = 'red')
     
-lat_lims = dict(min = -40, max = 10, stp = 10)
-
-lon_lims = dict(min = -80, max = -30, stp = 10)    
 
 
-def plot_sites_map():
-    fig, ax = quick_map(
-        lat_lims = lat_lims, 
-        lon_lims = lon_lims, 
-        figsize = (5,5)
-        )
-    
+def plot_instrumention(ax):
     markers = ['s', '^', 'o']
     
     instrs = ['All-Sky imager and FPI', 
@@ -58,14 +51,30 @@ def plot_sites_map():
             radius = radius[i], 
             color = colors[i]
             )
-    
+     ad
     ax.text(-37, -13, 'All-Sky range', color = 'red')
     ax.text(-42.5, -2, 'Digisonde range', color = 'blue')
-    
-    
-    plot_meridian(ax)
     ax.legend(bbox_to_anchor = (.5, 1.2), 
               ncol = 1,
               loc = 'upper center')
+
+def plot_sites_map():
     
-# plot_sites_map()
+    lat_lims = dict(min = -40, max = 10, stp = 10)
+
+    lon_lims = dict(min = -80, max = -30, stp = 10)    
+
+    fig, ax = quick_map(
+        lat_lims = lat_lims, 
+        lon_lims = lon_lims, 
+        figsize = (5, 5)
+        )
+    
+    
+    # plot_meridian(ax)
+    
+    
+plot_sites_map()
+
+p = 'database/GEO/coords_receivers.json'
+cood = json.load(open(p))
