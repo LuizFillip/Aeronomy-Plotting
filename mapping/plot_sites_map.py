@@ -51,7 +51,6 @@ def plot_instrumention(ax):
             radius = radius[i], 
             color = colors[i]
             )
-     ad
     ax.text(-37, -13, 'All-Sky range', color = 'red')
     ax.text(-42.5, -2, 'Digisonde range', color = 'blue')
     ax.legend(bbox_to_anchor = (.5, 1.2), 

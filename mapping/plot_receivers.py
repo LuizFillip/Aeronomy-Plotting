@@ -1,48 +1,90 @@
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import GEO.mapping as m
-import setup as s
+import GEO as g
 import json 
-from build import paths as p
+import numpy as np
 
+def plot_annotate(
+        axs, 
+        name, 
+        lon, 
+        lat
+        ):
+ 
+     axs.annotate(
+         name, 
+         xy=(lon, lat),  
+         xycoords='data',
+         xytext=(lon - 100, lat + 10), 
+         textcoords='offset points',
+         arrowprops=dict(facecolor='black', arrowstyle="->"), 
+         horizontalalignment='right',
+         verticalalignment='top',
+         transform = ccrs.Geodetic()
+         )
 
+def distance_from_equator(
+        lon, lat, year = 2013
+        ):
+    eq = g.load_equator(year)
+    x, y = eq[:, 0], eq[:, 1]
+    min_x, min_y, min_d = g.compute_distance(
+        x, y, lon, lat)
+    return min_d
 
 def plot_mapping_with_sites_locations():
-    
     fig, axs = plt.subplots(
-        figsize = (10, 10),
+        dpi = 300,
         subplot_kw={'projection': ccrs.PlateCarree()}
         )
 
-    s.config_labels()
+    g.map_features(axs)
 
-    m.map_features(axs)
+    lat = g.limits(min = -40.0, max = 10, stp = 10)
+    lon = g.limits(min = -80, max = -30, stp = 10)    
 
-    lat = m.limits(min = -40.0, max = 10, stp = 10)
-    lon = m.limits(min = -80, max = -30, stp = 10)    
+    g.map_boundaries(axs, lon, lat)
 
-    m.map_boundaries(axs, lon, lat)
-    
-    infile = p("GEO").get_files_in_dir("sites")
+    infile = 'database/GEO/coords_receivers.json'
     sites = json.load(open(infile))
-    
-    for name, key in sites.items():
-        lat = key["lat"]
-        lon = key["lon"]
-        
-        axs.scatter(lon, lat, s = 20, color = 'red', 
-                transform = ccrs.PlateCarree(), label = name)
-        
-        axs.annotate(name, xy=(lon, lat),  xycoords='data',
-                xytext=(lon - 100, lat + 10), textcoords='offset points',
-                arrowprops=dict(facecolor='black', arrowstyle="->"), 
-                horizontalalignment='right', verticalalignment='top',
-                transform = ccrs.Geodetic())
-    
-    axs.axhline(0, color= 'k', linestyle = '--', lw =1)
-    
-    
 
+    for name, key in sites.items():
+        lon, lat, alt = tuple(key)
+        
+        min_d = distance_from_equator(
+                lon, lat, year = 2013
+                )
+        
+        if min_d < 7:
+        
+            axs.scatter(
+                lon, lat, 
+                s = 20, 
+                color = 'k', 
+                transform = ccrs.PlateCarree(), 
+                label = name
+                )
+        
+    for long in np.arange(-70, -30, 10):
+        axs.axvline(long)
+        
+        
+    g.mag_equator(
+            axs, 
+            year = 2013, 
+            color = 'r'
+            )
+    
 
 plot_mapping_with_sites_locations()
+
+
+# infile = 'database/GEO/coords_receivers.json'
+# sites = json.load(open(infile))
+
+
+# for name, key in sites.items():
+#     lon, lat, alt = tuple(key)
+    
+  
 
