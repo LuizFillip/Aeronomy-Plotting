@@ -32,10 +32,11 @@ def distance_from_equator(
         x, y, lon, lat)
     return min_d
 
-def plot_mapping_with_sites_locations():
+def plot_receivers():
     fig, axs = plt.subplots(
         dpi = 300,
-        subplot_kw={'projection': ccrs.PlateCarree()}
+        subplot_kw={
+            'projection': ccrs.PlateCarree()}
         )
 
     g.map_features(axs)
@@ -76,15 +77,5 @@ def plot_mapping_with_sites_locations():
             )
     
 
-plot_mapping_with_sites_locations()
-
-
-# infile = 'database/GEO/coords_receivers.json'
-# sites = json.load(open(infile))
-
-
-# for name, key in sites.items():
-#     lon, lat, alt = tuple(key)
-    
-  
+# plot_mapping_with_sites_locations()
 
