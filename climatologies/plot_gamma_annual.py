@@ -40,4 +40,4 @@ def gamma_annual():
 
 
 
-gamma_annual()
+# gamma_annual()
