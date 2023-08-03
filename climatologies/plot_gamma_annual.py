@@ -11,8 +11,9 @@ def plot_parameter(ax, df, col = 'all'):
     no_epb = df[df['epbs'].isin([0])]
     
     
-    ax.scatter(epb.index, epb[col])
+    ax.scatter(epb.index, epb[col], label = 'EPBs')
     ax.scatter(no_epb.index, no_epb[col], 
+               label = 'No EPBs',
                marker = 'x', color = 'red')
 
 def gamma_annual():
@@ -20,7 +21,7 @@ def gamma_annual():
     fig, ax = plt.subplots(
         sharex = True,
         dpi = 300, 
-        nrows = 3, 
+        nrows = 4, 
         figsize = (10, 10), 
         )
 
@@ -49,14 +50,22 @@ def gamma_annual():
     
     plot_parameter(ax[2], df, col = 'kp')
     
-    ax[2].set(ylim = [0, 9], 
+    ax[2].set(ylim = [0, 10], 
               ylabel = 'Kp', 
               xlim = [df.index[0], df.index[-1]])
     
-    s.axes_month_format(ax[2], 
+    s.axes_month_format(ax[3], 
                         month_locator = 4)
     
+    # ax[3].plot(df['vp'])
     
+    plot_parameter(ax[3], df, col = 'vp')
+    
+    ax[3].set(ylim = [-10, 90], 
+              ylabel = '$V_{zp}$ (m/s)')
+    ax[0].legend(ncol = 2, 
+                 bbox_to_anchor = (0.5, 1.3),
+                 loc = 'upper center')
 
 
 gamma_annual()
