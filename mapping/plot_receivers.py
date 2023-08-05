@@ -17,7 +17,8 @@ def plot_annotate(
          xycoords='data',
          xytext=(lon - 100, lat + 10), 
          textcoords='offset points',
-         arrowprops=dict(facecolor='black', arrowstyle="->"), 
+         arrowprops = dict(
+             facecolor='black', arrowstyle="->"), 
          horizontalalignment='right',
          verticalalignment='top',
          transform = ccrs.Geodetic()
@@ -32,9 +33,14 @@ def distance_from_equator(
         x, y, lon, lat)
     return min_d
 
-def plot_receivers():
+def plot_receivers(
+        distance = 7
+        ):
+    
+    
     fig, axs = plt.subplots(
         dpi = 300,
+        figsize = (6,6),
         subplot_kw={
             'projection': ccrs.PlateCarree()}
         )
@@ -42,21 +48,25 @@ def plot_receivers():
     g.map_features(axs)
 
     lat = g.limits(min = -40.0, max = 10, stp = 10)
-    lon = g.limits(min = -80, max = -30, stp = 10)    
+    lon = g.limits(min = -85, max = -30, stp = 10)    
 
     g.map_boundaries(axs, lon, lat)
 
     infile = 'database/GEO/coords_receivers.json'
     sites = json.load(open(infile))
+    
+    out = []
 
     for name, key in sites.items():
         lon, lat, alt = tuple(key)
         
         min_d = distance_from_equator(
-                lon, lat, year = 2013
+                lon, 
+                lat, 
+                year = 2014
                 )
         
-        if min_d < 7:
+        if min_d < distance:
         
             axs.scatter(
                 lon, lat, 
@@ -65,8 +75,13 @@ def plot_receivers():
                 transform = ccrs.PlateCarree(), 
                 label = name
                 )
+            
+            axs.text(lon, lat, name)
+            
+            out.append(name)
+    
         
-    for long in np.arange(-70, -30, 10):
+    for long in np.arange(-80, -20, 10):
         axs.axvline(long)
         
         
@@ -76,6 +91,8 @@ def plot_receivers():
             color = 'r'
             )
     
+    return out
+    
 
-# plot_mapping_with_sites_locations()
+plot_receivers(5.1)
 
