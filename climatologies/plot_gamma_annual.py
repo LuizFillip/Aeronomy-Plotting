@@ -56,9 +56,7 @@ def gamma_annual():
     
     s.axes_month_format(ax[3], 
                         month_locator = 4)
-    
-    # ax[3].plot(df['vp'])
-    
+        
     plot_parameter(ax[3], df, col = 'vp')
     
     ax[3].set(ylim = [-10, 90], 

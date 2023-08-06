@@ -88,11 +88,9 @@ def plot_receivers(
     g.mag_equator(
             axs, 
             year = 2013, 
-            color = 'r'
             )
     
     return out
     
 
-plot_receivers(5.1)
-
+# plot_receivers(5.1)

@@ -73,7 +73,7 @@ def plot_sites_map():
     # plot_meridian(ax)
     
     
-plot_sites_map()
+# plot_sites_map()
 
-p = 'database/GEO/coords_receivers.json'
-cood = json.load(open(p))
+# p = 'database/GEO/coords_receivers.json'
+# cood = json.load(open(p))

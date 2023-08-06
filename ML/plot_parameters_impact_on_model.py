@@ -9,7 +9,8 @@ from sklearn.inspection import permutation_importance
 def plot_parameters_impact_on_model(
         model, 
         X,
-        y
+        y, 
+        cols
         ):
     
     results = permutation_importance(
@@ -19,9 +20,7 @@ def plot_parameters_impact_on_model(
     
     explainer = shap.Explainer(model, X)
     shap_values = explainer.shap_values(X)
-    
-    shap_values
-    
+        
     
     sorted_indices = feature_importance.argsort()[::-1]
     sorted_importance = feature_importance[sorted_indices]
@@ -29,8 +28,11 @@ def plot_parameters_impact_on_model(
     
     # Plot the feature importances
     plt.figure(figsize=(10, 6))
-    plt.bar(range(len(sorted_importance)), sorted_importance)
-    plt.xticks(range(len(sorted_importance)), sorted_feature_names, rotation=45, ha='right')
+    plt.bar(range(len(sorted_importance)), 
+            sorted_importance)
+    plt.xticks(range(len(sorted_importance)), 
+               sorted_feature_names, 
+               rotation=45, ha='right')
     plt.xlabel('Features')
     plt.ylabel('Importance')
     plt.title('Feature Importance')
