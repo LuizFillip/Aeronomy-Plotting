@@ -62,9 +62,9 @@ def plot_roti(df):
     return fig
 
 
-# infile = '2013.txt'
-# df = dataset(infile, col = '')
-# fig = plot_roti(df)
+infile = 'database/EPBs/2014.txt'
+df = dataset(infile, col = 'alar')
+fig = plot_roti(df)
     
 
-    
+# load(infile).sort_index()

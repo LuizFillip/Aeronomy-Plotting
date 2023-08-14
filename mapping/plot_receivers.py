@@ -34,7 +34,8 @@ def distance_from_equator(
     return min_d
 
 def plot_receivers(
-        distance = 7
+        distance = 7,
+        year = 2015
         ):
     
     
@@ -52,7 +53,7 @@ def plot_receivers(
 
     g.map_boundaries(axs, lon, lat)
 
-    infile = 'database/GEO/coords_receivers.json'
+    infile = 'database/GEO/coords_2015.json'
     sites = json.load(open(infile))
     
     out = []
@@ -63,7 +64,7 @@ def plot_receivers(
         min_d = distance_from_equator(
                 lon, 
                 lat, 
-                year = 2014
+                year = year
                 )
         
         if min_d < distance:
@@ -76,7 +77,7 @@ def plot_receivers(
                 label = name
                 )
             
-            axs.text(lon, lat, name)
+            # axs.text(lon, lat, name)
             
             out.append(name)
     
@@ -87,10 +88,12 @@ def plot_receivers(
         
     g.mag_equator(
             axs, 
-            year = 2013, 
+            year = year, 
+            degress = 7
             )
     
     return out
     
 
-# plot_receivers(5.1)
+# d = plot_receivers(5.1)
+

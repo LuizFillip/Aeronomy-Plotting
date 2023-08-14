@@ -1,11 +1,17 @@
 from GEO import quick_map
 from base import load
 import numpy as np
+from base import (
+    sel_times,
+    aware_dn,
+    config_labels
+    )
+import pandas as pd
+import datetime as dt
 
+config_labels()
 
-
-
-def plot_ipp_and_equator_range(df):
+def plot_ipp_and_equator_range(ds):
     lat_lims = dict(
         min = -40, 
         max = 10, 
@@ -24,105 +30,51 @@ def plot_ipp_and_equator_range(df):
         figsize = (8, 8)
         )
     
-    prns = df['prn'].unique()
-    stations = df['sts'].unique()
+    # prns = df['prn'].unique()
+    # stations = df['sts'].unique()
     
-    for sts in stations:
-        for prn in prns:
-            ds = df.loc[
-                (df['prn'] == prn) &
-                (df['sts'] == sts)]
+    # for sts in stations:
+    #     for prn in prns:
+    #         ds = df.loc[
+    #             (df['prn'] == prn) &
+    #             (df['sts'] == sts)]
             
-            ax.plot(ds['lon'], ds['lat'], 
-                    lw = 1, color = 'k'
-                    )
+    ax.scatter(
+        ds['lon'], 
+        ds['lat'],
+        c = ds['roti'],
+        s = 50,
+        cmap = 'jet',
+        vmin = 0, 
+        vmax = 6
+        )
         
     for long in np.arange(-80, -20, 10):
         ax.axvline(long)
         
 
-# # stations = df['sts'].unique()
-# # stations
-
-#  = -80
-#  = -70 
-import matplotlib.pyplot as plt
-
-fig, ax = plt.subplots(
-    nrows = 5,
-    dpi = 300,
-    figsize = (8, 10),
-    sharex = True, 
-    sharey = True
-    )
 
 
 
-from base import format_time_axes
+def concat():
+    p = 'database/GNSS/roti/2014/'
+    files = ['001.txt', '002.txt']
+    return pd.concat(
+        [load(p + f) for f in files])
 
-p = 'database/GNSS/roti/2014/001.txt'
-df = load(p)
-
+df = concat().sort_index()
 df = df.loc[df['roti'] < 6]
 
-lons = np.arange(-80, -20, 10)
+dn = dt.datetime(2014, 1, 1, 20)
+df = sel_times(df, dn)
 
-for i, ax in enumerate(ax.flat):
-    lon_s, lon_e = lons[i], lons[i + 1]
-    
-    cond_long = (
-        (df['lon'] > lon_s) & 
-        (df['lon'] < lon_e)
-        )
-    ds = df.loc[cond_long].sort_index()
-    
-    
-    ax.plot(ds['roti'])
-    
-    ax1 = ax.twinx()
-    ax1.plot(ds.index, 
-             np.zeros(len(ds)) + lon_s, 
-             color = 'white')
-    
-    ax1.set(yticks = [lon_s])
-    
-    if i == 4:
-        format_time_axes(
-            ax, pad = 60, hour_locator = 3
-            )
-        
-#%%
+delta = dt.timedelta(minutes = 9, 
+                     seconds = 59)
+ds = df.loc[(df.index > dn) & 
+            (df.index < dn + delta)]
 
-import pytz
-import datetime as dt
+
+plot_ipp_and_equator_range(ds)
 
 
 
-
-from timezonefinder import TimezoneFinder
-
-def obter_fuso_horario(longitude):
-   
-    tf = TimezoneFinder()
-    
-    return tf.timezone_at(lng=longitude, lat= 0)
-
-def round_dn(dn):
-    return dt.datetime(
-        dn.year, 
-        dn.month, 
-        dn.day, 
-        dn.hour, 
-        dn.minute
-        )
-timezone = pytz.timezone(obter_fuso_horario(-40))
-
-
-local_time = dt.datetime.now(timezone)
-
-universal_time = local_time.astimezone(pytz.utc)
-
-delta = round_dn(universal_time) - round_dn(local_time)
-
-
-dt.datetime(2014, 1, 1, 3, 0) - delta

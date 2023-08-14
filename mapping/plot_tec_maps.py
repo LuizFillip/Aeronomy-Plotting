@@ -128,7 +128,7 @@ def plot_tec_map(infile, fontsize = 40):
              fontsize = fontsize)
                 
     return fig
-infile = "D:\\database\\TEC_2013\\TEC_2013_03\\"
-fig = plot_tec_map(infile)     
-fig.savefig("digisonde/src/figures/tec_maps.png")
-plt.show()
+# infile = "D:\\database\\TEC_2013\\TEC_2013_03\\"
+# fig = plot_tec_map(infile)     
+# fig.savefig("digisonde/src/figures/tec_maps.png")
+# plt.show()

@@ -66,4 +66,4 @@ def gamma_annual():
                  loc = 'upper center')
 
 
-gamma_annual()
+# gamma_annual()
