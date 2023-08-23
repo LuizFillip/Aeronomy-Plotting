@@ -41,7 +41,7 @@ def plot_receivers(
     
     fig, axs = plt.subplots(
         dpi = 300,
-        figsize = (6,6),
+        figsize = (6, 6),
         subplot_kw={
             'projection': ccrs.PlateCarree()}
         )
@@ -53,7 +53,7 @@ def plot_receivers(
 
     g.map_boundaries(axs, lon, lat)
 
-    infile = 'database/GEO/coords_2015.json'
+    infile = f'database/GEO/coords/{year}.json'
     sites = json.load(open(infile))
     
     out = []
@@ -95,5 +95,5 @@ def plot_receivers(
     return out
     
 
-# d = plot_receivers(5.1)
+d = plot_receivers(5.1)
 

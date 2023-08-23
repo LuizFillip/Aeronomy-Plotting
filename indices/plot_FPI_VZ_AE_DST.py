@@ -43,6 +43,8 @@ def plot_aroural(ax, infile):
     
     ax.legend(ncol = 2, loc = 'upper right')
     
+    
+    
 def plot_dst(ax, infile):
     dst = load(infile + "kyoto2000.txt")
     

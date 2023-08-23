@@ -149,6 +149,6 @@ def main():
     #fig.savefig("img/PlanetaryIndices.png")
     
 # main()
-year = 2013
-df = OMNI2Data(infile = "database/PlanetaryIndices/omni.txt",
-               year = year, parameter = None)
+# year = 2013
+# df = OMNI2Data(infile = "database/PlanetaryIndices/omni.txt",
+#                year = year, parameter = None)
