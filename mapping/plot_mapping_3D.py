@@ -5,11 +5,10 @@ import cartopy.feature as cfeature
 import itertools
 import matplotlib.pyplot as plt
 import numpy as np
-import settings as s
-from GEO.src.mapping import mag_equator
-from GEO.src.core import compute_meridian, coords
-from FluxTube.src.mag import Apex
-from utils import save_plot
+import base as s
+from GEO import mag_equator
+from GEO import compute_meridian, coords
+from FluxTube import Apex
 
 
 def mapping_3D(fig):
@@ -114,4 +113,6 @@ def plot_mapping_3D():
     
     return fig
 
-save_plot(plot_mapping_3D)
+# save_plot(plot_mapping_3D)
+
+plot_mapping_3D()

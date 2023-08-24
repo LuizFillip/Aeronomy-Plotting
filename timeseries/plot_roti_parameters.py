@@ -2,43 +2,43 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from GNSS import paths
-from base import load
+import base as b
+import datetime as dt
 
+b.config_labels()
 
+def plot_roti_parameters(
+        path, 
+        station = 'amte', 
+        prn = 'E18'):
+    
+    ds = b.load(path.fn_roti)
 
-station = "salu"
-prn = "G10"
+    ds = ds[(ds['sts'] ==  station)] 
 
+    fig, ax = plt.subplots(
+        figsize = (10, 6),
+        nrows = 2,
+        sharex = True
+        )
 
+    roti  = ds.loc[(ds['prn'] == prn), 
+           'roti'].dropna()
+    ax[0].scatter(roti.index, roti, s = 1)
 
-def plot_roti_parameters(path):
-    
-    fig, ax = plt.subplots(figsize = (10, 8), 
-                           nrows = 3, 
-                           sharex = True)
-    
-    plt.subplots_adjust(hspace = 0.05)
-    args = dict(color = "k", lw = 1.5)
-    
-    path = paths(2013, 1)
-    
-    ds = load(path.fn_roti)
-        
-    ax[0].plot(ds["el"], **args)
-    ax[1].plot(ds["roti"], **args)
-        
-    df = load(path.fn_tec('station'))
-    
-    ax[0].set(ylabel = "Elevação (°)")
-    
-    ax[1].set(ylabel = "STEC (TECU)")
-        
-    ax[2].plot(df, **args)
-    
-    ax[2].set(ylim = [0, 5], 
-              yticks = np.arange(0, 6, 1),   
-              xlabel = "Hora universal",
+    ax[0].set(title = prn, 
+              ylim = [0, 6], 
               ylabel = "ROTI")
+
+    ax[0].axhline(1, color = 'r')
+
+    tec = b.load(path.fn_tec(station))
+
+    ax[1].plot(tec[prn].dropna())
+    ax[1].set(ylabel = "STEC (TECU)")
+    b.format_time_axes(ax[1])
+    
+
     
 
 # plot_roti_parameters(station, prn, tec)
@@ -59,7 +59,7 @@ def run_roti(ds):
         
 
 def run_tec():
-    ds = load(path.fn_tec('apma'))
+    ds = b.load(path.fn_tec('apma'))
     
     for prn in ds.columns:
         fig, ax = plt.subplots()
@@ -67,20 +67,26 @@ def run_tec():
         
         ax.set(title = prn)
         
-        
-        
-path = paths(2022, 3)
-ds = load(path.fn_roti)
 
-station = 'amte'
-prn = 'R21'
+path = paths(2013, 1)
+ds = b.load(path.fn_roti)
 
-df = ds[(ds['sts'] ==  station)] 
+# run_roti(ds)
 
-for prn in ds['prn'].unique():
-    fig, ax = plt.subplots()
+# station = 'salu'
+
+# sel_sts = ds.loc[ds['sts'] ==  station]
+
+# for prn in sel_sts['prn'].unique():
+#     plot_roti_parameters(
+#             path, 
+#             station = 'salu', 
+#             prn = prn)
+
+# def test_mean(roti):
+#     d = roti[roti.index> dt.datetime(2022, 1, 3, 9)]
     
-    ds.loc[(ds['prn'] == prn)]['roti'].plot(ax = ax)
-    ax.set(title = prn, ylim = [0, 6])
-
-
+#     d = d.loc[~(d > np.mean(d))]
+    
+#     plt.scatter(d.index, d)
+#     plt.ylim([0, 1])
