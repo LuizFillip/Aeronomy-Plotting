@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import base as s
 from GEO import mag_equator
-from GEO import compute_meridian, coords
+from GEO import load_meridian, sites
 from FluxTube import Apex
 
 
@@ -28,10 +28,10 @@ def mapping_3D(fig):
     
     ax.set(xlim = [-180, 180], 
            ylim = [-90, 90],
-           zlim = [0, 300]
+           zlim = [0, 500]
            )
    
-    ax.view_init(azim = -20, elev = 50)
+    ax.view_init(azim = 230, elev = 50)
     
     target_projection = ccrs.PlateCarree()
     
@@ -62,35 +62,44 @@ def mapping_3D(fig):
     ax.add_collection3d(lc)
     return ax
 
-def plot_mapping_3D():
+def plot_mapping_3D(
+        year = 2015, 
+        apex = 300, 
+        site = 'saa'
+        ):
         
     fig = plt.figure(
-        figsize = (12, 10),
+        figsize = (12, 14),
         dpi = 400, 
         )
     
     ax = mapping_3D(fig)
     
     mag_equator(ax)
+        
+    apx = Apex(apex)
     
-    start_lon = -50
+    nx, ny, xx, yy  = load_meridian(
+        year, site = site
+        )
     
-    apx = Apex(300)
-    max_lat = np.degrees(apx.apex_lat_base(base = 0))
-    
-    xx, yy  = compute_meridian(
-            lon = start_lon, 
-            max_lat = max_lat,
-            alt = 0, 
-            year = 2013
+    ax.plot(xx, yy, 
+            np.zeros(len(xx)), 
+            lw = 2, 
+            color = "k", 
+            linestyle = '--',
+            label = "Meridiano magnético"
+            
             )
     
-    ax.plot(xx, yy, np.zeros(len(xx)), lw = 2, 
-            color = "b", label = "Meridiano magnético")
-    heights = apx.apex_range(step = len(xx), base = 0)
+    heights = apx.apex_range(
+        points = len(xx), base = 0)
     
-    ax.plot(xx, yy, heights, color = "k", lw = 2, 
-            label = 'Linha de campo')
+    ax.plot(xx, yy, heights, 
+            color = "k",
+            lw = 2, 
+            label = 'Linha de campo'
+            )
     
     
     ax.set(ylabel = "Latitude (°)", 
@@ -99,7 +108,7 @@ def plot_mapping_3D():
            xticks = np.arange(-180, 200, 45), 
            yticks = np.arange(-90, 100, 30))
     
-    glon, glat = coords["saa"][::-1]
+    glat, glon = sites["saa"]['coords']
     
     ax.plot(glon, glat, 0,
             marker = "^", 

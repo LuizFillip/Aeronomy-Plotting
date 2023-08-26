@@ -26,7 +26,7 @@ def plot_roti_parameters(
            'roti'].dropna()
     ax[0].scatter(roti.index, roti, s = 1)
 
-    ax[0].set(title = prn, 
+    ax[0].set(title = f'{station} -{prn}', 
               ylim = [0, 6], 
               ylabel = "ROTI")
 
@@ -58,35 +58,24 @@ def run_roti(ds):
             ax.set(title = station, ylim = [0, 5])
         
 
-def run_tec():
-    ds = b.load(path.fn_tec('apma'))
-    
-    for prn in ds.columns:
-        fig, ax = plt.subplots()
-        ds[prn].dropna().plot(ax = ax)
+
+
+def test():
+    path = paths(2021, 186)
+    ds = b.load(path.fn_roti)
         
-        ax.set(title = prn)
+    # for station in ds['sts'].unique():
         
-
-path = paths(2013, 1)
-ds = b.load(path.fn_roti)
-
-# run_roti(ds)
-
-# station = 'salu'
-
-# sel_sts = ds.loc[ds['sts'] ==  station]
-
-# for prn in sel_sts['prn'].unique():
-#     plot_roti_parameters(
-#             path, 
-#             station = 'salu', 
-#             prn = prn)
-
-# def test_mean(roti):
-#     d = roti[roti.index> dt.datetime(2022, 1, 3, 9)]
+    station = 'pasm'
     
-#     d = d.loc[~(d > np.mean(d))]
+    sel_sts = ds.loc[ds['sts'] ==  station]
     
-#     plt.scatter(d.index, d)
-#     plt.ylim([0, 1])
+    for prn in sel_sts['prn'].unique():
+        plot_roti_parameters(
+                path, 
+                station = station, 
+                prn = prn
+                )
+
+
+# test()

@@ -32,11 +32,10 @@ def heat_map_for_events(
         df, 
         ax = ax,
         linecolor='white',
-        vmax=1,
-        vmin=0,
-        cbar_kws={
+        vmax = 1,
+        vmin = 0,
+        cbar_kws = {
         'pad': .02, 
-        
         'ticks': [0, 1],
     },
         xticklabels = xticks_spacing)
@@ -73,10 +72,5 @@ dn = get_date_range(ds)[0]
 
 df = b.sel_times(ds, dn)
 
-
-# heat_map_for_events(
-#         df, 
-#         values = 'event'
-#         )
 
 df
