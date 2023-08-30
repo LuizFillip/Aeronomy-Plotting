@@ -27,13 +27,13 @@ def gamma_annual():
 
     plt.subplots_adjust(hspace = 0.1)
     
-    infile = 'database/Results/all_parameters/saa_2013_2015.txt'
+    infile = 'database/Results/gamma/saa.txt'
     
     df = s.load(infile)
     
-    df = df.groupby(df.index).first()
+    # df = df.groupby(df.index).first()
         
-    df['all'] = df['all'] * 1e4
+    # df['all'] = df['all'] * 1e4
   
     
     plot_parameter(ax[0], df, col = 'all')
@@ -64,6 +64,26 @@ def gamma_annual():
     ax[0].legend(ncol = 2, 
                  bbox_to_anchor = (0.5, 1.3),
                  loc = 'upper center')
+    
+    
+def main():
 
-
-# gamma_annual()
+    fig, ax = plt.subplots(
+        sharex = True,
+        dpi = 300, 
+        nrows = 1, 
+        figsize = (10, 5), 
+        )
+    
+    plt.subplots_adjust(hspace = 0.1)
+    
+    infile = 'database/Results/gamma/saa.txt'
+    
+    df = s.load(infile)
+    
+    df['all'].plot(ax = ax)
+    
+    ax.set(ylabel = '$\\gamma_{FT} ~~(s^{-1})$', 
+           xlabel = 'years')
+    
+# main()
