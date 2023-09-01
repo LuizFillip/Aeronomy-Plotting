@@ -5,18 +5,22 @@ import pandas as pd
 import datetime as dt
 
 def heat_map_for_events(
-        ds, 
+        df, 
         values = 'roti',
         freq = '1h'
         ):
     
-    df = pd.pivot_table(
-        ds, 
-        values = values,
-        index = 'long', 
-        columns = ds.index
-        )
-    df.columns = pd.DatetimeIndex(
+    # df = pd.pivot_table(
+    #     ds, 
+    #     values = values,
+    #     index = , 
+    #     columns = ds.index
+    #     )
+    
+    df.columns = pd.to_numeric(df.columns)
+    
+    
+    df.index = pd.DatetimeIndex(
         df.columns).strftime('%H:00')
     
     fig, ax = plt.subplots(
@@ -54,7 +58,7 @@ def heat_map_for_events(
     colorbar.set_ticklabels(list(value_to_int.keys()))   
 
 
-infile = 'D:\\database\\epbs\\2021\\01.txt'
+infile = 'D:\\database\\epbs\\events\\2021.txt'
 
 
 ds = b.load(infile)
@@ -73,4 +77,7 @@ dn = get_date_range(ds)[0]
 df = b.sel_times(ds, dn)
 
 
-df
+heat_map_for_events(
+        df, 
+        freq = '1h'
+        )

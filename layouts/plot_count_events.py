@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
+import base as s 
+
 
 def plot(ax, infile, filename):
     args = filename.split("_")
