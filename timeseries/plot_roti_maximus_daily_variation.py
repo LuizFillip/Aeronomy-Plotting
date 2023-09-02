@@ -26,9 +26,7 @@ def dataset(year):
         out.append(pb.long_dataset(path))
         
     ds = pd.concat(out)
-    
-    ds = ds[ds < 5]
-         
+             
     df = b.sel_times(ds, dn)
     
     df.index = b.time2float(df.index)
@@ -55,9 +53,9 @@ def concat_datasets(
 
 years = list(range(2013, 2022))
 
-# ds = concat_datasets(years)
+ds = concat_datasets(years)
     
-# ds.to_csv('0101.txt')
+ds.to_csv('0101.txt')
 
 
 def plot_annual_compararion_roti(years):
@@ -88,11 +86,26 @@ def plot_annual_compararion_roti(years):
                 linestyle = 'none', 
                 markersize = 4)
         
-        ax.set(title = cols[i])
+        ax.set(title = cols[i], ylim = [0, 6], 
+               yticks = range(6))
         
-        ax.axhline(1, lw = 2)
+        ax.axhline(1, lw = 2, color = 'r')
+        
+    fontsize = 30   
+        
+    fig.text(0.05, 0.4, "ROTI (TECU/min)",
+             rotation = "vertical", 
+             fontsize = fontsize)
+    
+    fig.text(0.4, 0.05, "Hora universal (UT)", 
+             rotation = "horizontal", 
+             fontsize = fontsize)
+    
+    fig.suptitle("1 de Janeiro", 
+                 fontsize = fontsize, 
+                 y = 0.95)
         
     
         
 
-plot_annual_compararion_roti(years)
+# plot_annual_compararion_roti(years)
