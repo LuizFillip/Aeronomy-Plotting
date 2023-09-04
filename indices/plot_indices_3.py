@@ -72,17 +72,17 @@ def plot_long_term():
     ax[2].set(ylabel = '$F_{10.7}$ (sfu)', 
               ylim = [50, 300])
     
-    df = s.load('pre_all_years_2.txt')
+    # df = s.load('pre_all_years_2.txt')
 
-    ax[3].scatter(df.index, df['vp'], s = 5)
+    # ax[3].scatter(df.index, df['vp'], s = 5)
     
-    avg = df['vp'].resample('1M').mean()
-    ax[3].plot(avg, color = 'r', lw = 2)
+    # avg = df['vp'].resample('1M').mean()
+    # ax[3].plot(avg, color = 'r', lw = 2)
     ax[3].set(
         xlabel = 'years',
         ylabel = '$V_{zp}$ (m/s)', 
         ylim = [-10, 100], 
-        xlim = [df.index[0], df.index[-1]])
+        xlim = [ dialy.index[0],  dialy.index[-1]])
     
 
 import numpy as np

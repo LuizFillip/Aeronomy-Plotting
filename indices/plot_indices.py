@@ -14,7 +14,7 @@ def plot_solar_flux(ax,
     sflux = postdamData(infile = "database/postdam.txt")
     
     sflux = sflux.loc[(sflux.index.year >= years[0]) & 
-                      (sflux.index.year <=   years[-1]) & 
+                      (sflux.index.year <= years[-1]) & 
                       (sflux["F10.7obs"] > 10) & 
                       (sflux["F10.7obs"] < 500)]
     
