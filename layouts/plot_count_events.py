@@ -47,7 +47,7 @@ def plot(ax, infile, filename):
  
 def plot_count_events(): 
     infile = "database/counts/"
-    _, _, files = next(os.walk(infile))
+    files = os.listdir(infile)
     
     fig, axes = plt.subplots(nrows = 2, 
                              figsize = (12, 8), 

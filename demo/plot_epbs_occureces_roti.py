@@ -78,4 +78,5 @@ df = b.load(infile)
 
 ds = b.sel_times(df, dn, hours = 9)
     
-fig = plot_epbs_occurrences_roti(ds)
+# fig = plot_epbs_occurrences_roti(ds)
+# ds.plot()
