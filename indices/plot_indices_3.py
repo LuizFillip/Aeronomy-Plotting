@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import base as s
 import geophysical_indices as gd
 import datetime as dt
-from base import smooth2
 
     
 s.config_labels()
@@ -23,7 +22,7 @@ def plot_dst(ax):
     
     ax.set(
         xlim = [dst.index[0], dst.index[-1]], 
-        ylim = [-200, 70],
+        ylim = [-300, 70],
         ylabel = "Dst (nT)"
         )
     
@@ -43,19 +42,16 @@ def plot_long_term():
     plt.subplots_adjust(hspace = 0.1)
     
     
-    dialy, hourly = gd.GFZ()
+    dialy = gd.GFZ()
     
     dialy = s.sel_dates(
         dialy, 
         dt.datetime(2012, 12, 1), 
         dt.datetime(2023, 1, 13)
         )
+        
     
-
-    dialy['kp'] = dialy['kp'] / 9
-    
-    
-    ax[0].bar(dialy.index, dialy['kp'])
+    ax[0].bar(dialy.index, dialy['kp_max'])
     ax[0].set(ylabel = 'Kp', 
               ylim = [0, 10], 
               yticks = np.arange(0, 9, 2))
