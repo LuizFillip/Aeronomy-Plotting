@@ -1,4 +1,3 @@
-import pandas as pd
 import datetime as dt
 import base as b 
 import matplotlib.pyplot as plt
@@ -26,9 +25,11 @@ def plot_epbs_occurrences_roti(
     
     ax[0].plot(ds)
     
-    ax[0].set(ylim = [0, 5], 
-              yticks = range(6),
-              ylabel = 'ROTI (TECU/min)')
+    ax[0].set(
+        ylim = [0, 5], 
+        yticks = list(range(6)),
+        ylabel = 'ROTI (TECU/min)'
+        )
 
     
     ax[0].legend(
