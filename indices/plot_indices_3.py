@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import base as s
-import geophysical_indices as gd
 import datetime as dt
+import numpy as np
 
     
 s.config_labels()
@@ -22,9 +22,14 @@ def plot_dst(ax):
     
     ax.set(
         xlim = [dst.index[0], dst.index[-1]], 
-        ylim = [-300, 70],
+        ylim = [-300, 100],
+        yticks = np.arange(-300, 100, 100),
         ylabel = "Dst (nT)"
         )
+    
+    for limit in [-50, -100]:
+        ax.axhline(limit, lw = 2, color = 'r')
+    
     
     return dst
 
@@ -35,64 +40,59 @@ def plot_long_term():
     fig, ax = plt.subplots(
         dpi = 300,
         figsize = (14, 10), 
-        nrows = 4, 
+        nrows = 3, 
         sharex = True
         )
     
     plt.subplots_adjust(hspace = 0.1)
     
     
-    dialy = gd.GFZ()
+    df = s.load('database/indices/indeces.txt')
     
-    dialy = s.sel_dates(
-        dialy, 
+    df = s.sel_dates(
+        df, 
         dt.datetime(2012, 12, 1), 
         dt.datetime(2023, 1, 13)
         )
         
     
-    ax[0].bar(dialy.index, dialy['kp_max'])
+    ax[0].bar(df.index, df['kp_max'])
     ax[0].set(ylabel = 'Kp', 
               ylim = [0, 10], 
-              yticks = np.arange(0, 9, 2))
+              yticks = np.arange(0, 10, 2)
+              )
     
     
     ax[0].axhline(4, lw = 2, color = 'r')
     
     plot_dst(ax[1])
     
-    ax[2].plot(dialy['f107'])
-    ax[2].plot(dialy['f107a'], 
-               lw = 2, color='cornflowerblue')
-    
-    ax[2].set(ylabel = '$F_{10.7}$ (sfu)', 
-              ylim = [50, 300])
-    
-    # df = s.load('pre_all_years_2.txt')
-
-    # ax[3].scatter(df.index, df['vp'], s = 5)
-    
-    # avg = df['vp'].resample('1M').mean()
-    # ax[3].plot(avg, color = 'r', lw = 2)
-    ax[3].set(
+    ax[2].plot(df['f107'])
+    ax[2].plot(df['f107a'], 
+               lw = 2, 
+               color = 'cornflowerblue'
+               )
+        
+    ax[2].set(
+        ylabel = '$F_{10.7}$ (sfu)', 
+        ylim = [50, 300],
+        yticks = np.arange(50, 350, 50),
         xlabel = 'years',
-        ylabel = '$V_{zp}$ (m/s)', 
-        ylim = [-10, 100], 
-        xlim = [ dialy.index[0],  dialy.index[-1]])
+        xlim = [df.index[0], df.index[-1]]
+        )
+    
+    for limit in [100, 150]:
+        ax[2].axhline(limit, lw = 2, color = 'r')
+        
+        
+    c = s.chars()
+    s.config_labels(fontsize = 20)
+
+    for i, ax in enumerate(ax.flat):
+        
+        ax.text(0.02, 0.85, f'({c[i]})', 
+                transform = ax.transAxes)
     
 
-import numpy as np
 
 plot_long_term()
-# df = s.load('pre_all_years.txt')
-
-# df = df.replace(0, np.nan)
-
-# df['doy'] = (df.index.day_of_year / 365) + df.index.year
-
-
-
-
-# x = df['doy'].values
-# y = df['vp'].values
-
