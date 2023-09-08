@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from PRE_EPBsOccurrence import pre_probability
 
 def plot_vertical_drift_distribution(
         df, 
@@ -51,15 +50,3 @@ def plot_vertical_drift_distribution(
     
     return fig
 
-
-def main():
-    pre_infile = "test.txt"
-    epb_infile = "epbs_2013.txt"
-    
-    
-    res = pre_probability(pre_infile, 
-                          epb_infile)
-    
-    plot_vertical_drift_distribution(res)
-        
-    
