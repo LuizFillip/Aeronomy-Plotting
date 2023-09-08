@@ -2,14 +2,21 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import base as s
 
-def dataset(site = 'saa'):
+def dataset(site = 'saa', ys = 2013, ye = 2023):
     
-    infile = 'digisonde/data/drift/PRE/saa/'
+    infile = f'digisonde/data/drift/PRE/{site}/'
+
+    years = list( range(ys, ye))
     
-    out = [s.load(infile + f'{year}.txt') 
-           for year in range(2013, 2016)]
+    
+    out = []
+    for year in years:
+        ds = s.load(infile + f'{year}.txt')
+        
+        
+    
    
-    return pd.concat(out).dropna()
+    return pd.concat(out)
     
 
 def plot_pre_annual_variation():
@@ -37,6 +44,10 @@ def plot_pre_annual_variation():
     return fig
 
 # f = plot_pre_annual_variation()
+
+df = dataset()
+
+df
 
     
     

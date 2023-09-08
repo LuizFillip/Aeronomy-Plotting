@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt 
+import datetime as dt 
+import events as ev 
 
 def sel_year(ds, yr):
     ds1 = ds.loc[ds.index.year == yr]
@@ -29,15 +31,13 @@ def plot_scatter_occorrence(
     ye = ds.index[-1] 
     
     years = list(range(ys.year, ye.year))
-
-
     for yr in years:
         
         ds1 = sel_year(ds, yr)
         
         ax.scatter(ds1.doy, ds1.occ, color = 'k', s = 20)
         
-        ax.scatter(get_doy(dn), yr, s = 80, color = 'r')
+        ax.scatter(ev.get_doy(dn), yr, s = 80, color = 'r')
         
     name = names_seasons[month]
     
@@ -46,23 +46,26 @@ def plot_scatter_occorrence(
             title = f'{name} ({dn.strftime("%d/%m")})')
 
 
-
-fig, ax = plt.subplots(
-    ncols = 2,
-    nrows = 2,
-    sharey = True, 
-    figsize = (14, 8)
-    )
-
-
-plt.subplots_adjust(hspace = 0.35, wspace = 0.1)
-
-for i, ax in enumerate(ax.flat):
+def plot_seasons_disponibility(df):
     
-    month = (i + 1) * 3
+    fig, ax = plt.subplots(
+        ncols = 2,
+        nrows = 2,
+        sharey = True, 
+        figsize = (14, 8)
+        )
     
- 
-    ds = season(df, month)
     
-    plot_scatter_occorrence(ax, ds, month = month)
+    plt.subplots_adjust(
+        hspace = 0.35, wspace = 0.1)
+    
+    for i, ax in enumerate(ax.flat):
+        
+        month = (i + 1) * 3
+        
+     
+        ds = ev.season(df, month)
+        
+        plot_scatter_occorrence(
+            ax, ds, month = month)
 

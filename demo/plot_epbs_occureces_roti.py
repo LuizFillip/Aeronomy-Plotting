@@ -26,7 +26,7 @@ def plot_epbs_occurrences_roti(
     ax[0].plot(ds)
     
     ax[0].set(
-        ylim = [0, 5], 
+        ylim = [0, 6], 
         yticks = list(range(6)),
         ylabel = 'ROTI (TECU/min)'
         )
@@ -34,9 +34,11 @@ def plot_epbs_occurrences_roti(
     
     ax[0].legend(
         ds.columns, 
-        ncol = 5, title = 'Zones',
+        ncol = 5, 
+        title = 'Longitudinal zones',
         bbox_to_anchor = (.5, 1.5), 
-        loc = "upper center")
+        loc = "upper center"
+        )
     
     ax[0].axhline(
         threshold, 
@@ -45,39 +47,42 @@ def plot_epbs_occurrences_roti(
         linestyle = '--'
         )
     
-    infos = f' -- Threshold = {threshold} TECU/min'
+    infos = f' (a) Threshold = {threshold} TECU/min'
     
-    ax[0].text(0.55, 0.85, infos, 
+    ax[0].text(0.05, 0.8, infos, 
                transform = ax[0].transAxes)
         
     
     ax[1].plot(
         pb.get_events(
             ds, window = window, 
-            threshold = threshold)
+            threshold = threshold
+            )
         )
     
     ax[1].set(ylabel = 'EPBs occurence', 
-              yticks = [0, 1])
+              yticks = [0, 1], 
+              ylim = [-0.2, 1.2])
     
-    infos = f'$\\Delta t$ = {window} min'
+    infos = f'(b) $\\Delta t$ = {window} min'
     
-    ax[1].text(0.8, 0.85, infos, 
+    ax[1].text(0.05, 0.8, 
+               infos, 
                transform = ax[1].transAxes)
     
     b.format_time_axes(ax[1])
     
     return fig
     
-year = 2021
-infile = f'database/EPBs/longs/{year}.txt'
+year = 2013
+# infile = f'database/EPBs/longs/{year}.txt'
 infile = f"D:\\database\\epbs\\longs\\{year}.txt"
 
-dn = dt.datetime(year, 1, 4, 21)
+dn = dt.datetime(year, 3, 17, 21)
 
 df = b.load(infile)
 
 ds = b.sel_times(df, dn, hours = 9)
     
-# fig = plot_epbs_occurrences_roti(ds)
+fig = plot_epbs_occurrences_roti(ds)
 # ds.plot()

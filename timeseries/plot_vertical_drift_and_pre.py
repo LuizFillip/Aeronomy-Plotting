@@ -1,10 +1,9 @@
 import matplotlib.pyplot as plt
-from common import sun_terminator, load, sel_dates
+from common import sun_terminator,  sel_dates
 import settings as s
 import datetime as dt
 import numpy as np
 import pandas as pd
-from utils import smooth2
 
 
 def sel_one(df):
@@ -63,38 +62,3 @@ def plot_vertical_drift_and_pre(ds, dn):
  
  
 
-
-def save_plots(df, year):
-    from utils import dn2FigureName, save_img
- 
-    save_in = f'D:\\plots2\\PRE\\drift\\{year}\\'
-    
-    for dn in np.unique(df.index.date):
-        
-        dn = pd.to_datetime(dn)
-        start = dn + dt.timedelta(hours = 18)
-        ds = sel_dates(
-            df, 
-            start = start, 
-            end = start + dt.timedelta(hours = 8)
-            )
-        
-        try:
-            print(dn)
-            f = plot_vertical_drift_and_pre(
-                ds, dn)
-            
-            save_img(
-                f, save_in + dn2FigureName(dn))
-        except:
-            continue
-        
-def main():
-    for year in [2014, 2015]:
-        
-        infile = f'{year}_drift.txt'
-        
-        df = load(infile)
-        df['vz'] = smooth2(df['vz'], 5)
-        
-        save_plots(df, year)

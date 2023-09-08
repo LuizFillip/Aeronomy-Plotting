@@ -3,55 +3,11 @@ import matplotlib.pyplot as plt
 from math import floor, ceil
 import base as b
 import events as ev 
+from plotting import plot_distribution
 
 
 
-def plot_distribution(
-        ax, 
-        df, 
-        name, 
-        step = 0.2, 
-        col_gamma = 'all',
-        col_epbs = '-40'
-        ):
-    
-    b.config_labels()
-
-
-    ds = ev.probability_distribuition(
-        df,
-        step = step, 
-        col_gamma = col_gamma,
-        col_epbs = col_epbs
-        )
-
-  
-    args = dict(capsize = 3,
-                marker = 's')
-    
-    ax.errorbar(
-        ds['mean'], 
-        ds['rate'], 
-        xerr = ds['std'],
-        yerr = ds['epb_std'],
-        **args,
-        label = name
-        )
-    
-
-    for bar in [0, 1]:
-        ax.axhline(
-            bar, 
-            linestyle = ":", 
-            lw = 2, 
-            color = "k"
-            )
-        
-    return ds['epbs'].sum()
-    
-
-
-
+b.config_labels()
 
 def plot_distributions_solar_flux(
         df, 
@@ -128,17 +84,18 @@ def plot_distributions_solar_flux(
     fig.suptitle(title, y = 1.05)
 
     return fig
+
+
+def main():
     
-df = b.load('all_results.txt')
-
-cols = ['all', '-40', 'f107', 'kp_max']
-
-
-
-f = plot_distributions_solar_flux(
-    df, 
-    geomag = 'dist'
-    )
+    df = b.load('all_results.txt')
+    
+    
+    f = plot_distributions_solar_flux(
+        df, 
+        geomag = 'dist'
+        )
 
 
 
+# main()

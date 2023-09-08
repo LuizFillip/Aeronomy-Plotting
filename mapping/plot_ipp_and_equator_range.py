@@ -139,9 +139,9 @@ def plot_ipp_and_equator_range(
         else:
             ax.set(xticks = lons)
             
-    bounds = np.linspace(1, 5, 5-)
+    bounds = np.linspace(1, 5, 50)
     cbar_ax = fig.add_axes([1., 0.06, 0.02, 0.8])
-    fig.colorbar(img, cax=cbar_ax,
+    cb = fig.colorbar(img, cax=cbar_ax,
                  ticks=np.arange(1,6),
                  boundaries=bounds)
             
