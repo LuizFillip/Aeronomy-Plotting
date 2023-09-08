@@ -17,9 +17,9 @@ config_labels(fontsize = 15)
 def map_attrs(ax, dn):
 
     lat_lims = dict(
-        min=-40,
-        max=10,
-        stp=15
+        min = -20,
+        max = 10,
+        stp = 10
     )
 
     lon_lims = dict(
@@ -51,15 +51,17 @@ def map_attrs(ax, dn):
 def plot_ipp_(ax, ds):
     
 
-    ax.scatter(
+    img = ax.scatter(
         ds['lon'],
         ds['lat'],
         c = ds['roti'],
-        s = 15,
+        s = 10,
         cmap = 'jet',
         vmin = 0,
-        vmax = 6
+        vmax = 5
     )
+    
+    return img
 
     
 
@@ -84,51 +86,69 @@ def sel_df(df, dn):
         (df.index < dn + delta)].copy()
 
 
-# plot_ipp_and_equator_range(ds)
 
+def plot_ipp_and_equator_range(
+        df, 
+        dn, 
+        ncols = 3
+        ):
 
-ncols = 3
-fig, ax = plt.subplots(
-    figsize=(10, 8),
-    ncols=ncols,
-    nrows = 2,
-    dpi = 300,
-    subplot_kw={'projection': ccrs.PlateCarree()}
-)
+    fig, ax = plt.subplots(
+        figsize = (12, 5),
+        ncols = ncols,
+        nrows = 2,
+        dpi = 300,
+        subplot_kw=
+        {'projection': ccrs.PlateCarree()}
+    )
+    
+    plt.subplots_adjust(
+        hspace = 0.0,
+        wspace = 0.1
+    )
+    
+    
+    lons = np.arange(-80, -20, 10)
+    
 
-plt.subplots_adjust(
-    hspace=0.0,
-    wspace=0.1
-)
-
+    for i, ax in enumerate(ax.flat):
+        
+        for long in lons:
+    
+            ax.axvline(long)
+    
+        delta = dt.timedelta(hours=i)
+    
+        time = dn + delta
+        
+        
+        img = plot_ipp_(ax, sel_df(df, time))
+    
+        map_attrs(ax, time)
+    
+        ax.set(title = time.strftime('%Hh00 (UT)'))
+    
+        if i != ncols:
+    
+            ax.set(xticklabels = [],
+                   yticklabels = [],
+                   xlabel = '', 
+                   ylabel = ''
+                   )
+        
+        else:
+            ax.set(xticks = lons)
+            
+    bounds = np.linspace(1, 5, 5-)
+    cbar_ax = fig.add_axes([1., 0.06, 0.02, 0.8])
+    fig.colorbar(img, cax=cbar_ax,
+                 ticks=np.arange(1,6),
+                 boundaries=bounds)
+            
 
 df = concat()
 
 dn = dt.datetime(2014, 1, 1, 23, 0)
 
-lons = np.arange(-80, -20, 10)
 
-
-
-for i, ax in enumerate(ax.flat):
-    
-    for long in lons:
-
-        ax.axvline(long)
-
-    delta = dt.timedelta(hours=i)
-
-    time = dn + delta
-    plot_ipp_(ax, sel_df(df, time))
-
-    map_attrs(ax, time)
-
-    ax.set(title = time.strftime('%Hh00 (UT)'))
-
-    if i != ncols:
-
-        ax.set(xticks=[], yticks=[],
-               xlabel='', ylabel='')
-    
-    else:
-        ax.set(xticks = lons)
+plot_ipp_and_equator_range(df, dn)
