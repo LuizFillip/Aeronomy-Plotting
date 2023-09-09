@@ -4,13 +4,11 @@ import base as b
 def plot_distribution(
         ax, 
         df, 
-        name, 
+        label = '', 
         step = 0.2, 
         col_gamma = 'all',
         col_epbs = '-40'
         ):
-    
-    
 
     ds = ev.probability_distribuition(
         df,
@@ -30,7 +28,7 @@ def plot_distribution(
         xerr = ds['std'],
         yerr = ds['epb_std'],
         **args,
-        label = name
+        label = label
         )
     
 

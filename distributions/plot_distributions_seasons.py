@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import events as ev
 from plotting import  plot_distribution
 
-def plot_distributions_seasons():
+def plot_distributions_seasons(df):
     
 
     fig, ax = plt.subplots(
@@ -26,17 +26,8 @@ def plot_distributions_seasons():
     
     plt.subplots_adjust(wspace = 0.1)
     
-    df = b.load('all_results.txt')
-    
-    df['doy'] = df.index.day_of_year
-    
-    def kp_levels(df):
-        quiet = df[df['kp_max'] <= 3]
-        
-        disturbed = df[df['kp_max'] > 3]
-        
-        return [quiet, disturbed]
-    
+   
+
     for i, ax in enumerate(ax.flat):
         
         month = (i + 1) * 3
@@ -45,7 +36,7 @@ def plot_distributions_seasons():
         count = []
         name = ['$Kp \\leq 3$', '$Kp > 3$']
         
-        for i, level in enumerate(kp_levels(df)):
+        for i, level in enumerate(ev.kp_levels(df)):
             index = i + 1
             ds = ev.seasons(level, month)
         
@@ -77,4 +68,13 @@ def plot_distributions_seasons():
              "$\\gamma_{FT}~$ ($\\times 10^{-3}~s^{-1}$)", 
              fontsize = fontsize)
     
-plot_distributions_seasons()
+    
+df = b.load('all_results.txt')
+
+df = df.loc[~(df['all'] > 3.5)]
+
+
+df['doy'] = df.index.day_of_year
+
+    
+plot_distributions_seasons(df)
