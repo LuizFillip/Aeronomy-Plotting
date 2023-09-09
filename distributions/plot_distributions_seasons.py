@@ -68,13 +68,13 @@ def plot_distributions_seasons(df):
              "$\\gamma_{FT}~$ ($\\times 10^{-3}~s^{-1}$)", 
              fontsize = fontsize)
     
+def main():
+    df = b.load('all_results.txt')
     
-df = b.load('all_results.txt')
-
-df = df.loc[~(df['all'] > 3.5)]
-
-
-df['doy'] = df.index.day_of_year
-
+    df = df.loc[~(df['all'] > 3.5)]
     
-plot_distributions_seasons(df)
+    
+    df['doy'] = df.index.day_of_year
+    
+        
+    plot_distributions_seasons(df)
