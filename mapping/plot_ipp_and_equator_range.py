@@ -1,17 +1,14 @@
-from base import load
+import base as b
 import numpy as np
-from base import (
-    sel_times,
-    config_labels
-)
+import GNSS as gs
 import pandas as pd
 import datetime as dt
 import cartopy.crs as ccrs
 import GEO as g
 import matplotlib.pyplot as plt
+import PlasmaBubbles as pb
 
-
-config_labels(fontsize = 15)
+b.config_labels(fontsize = 15)
 
 
 def map_attrs(ax, dn):
@@ -48,36 +45,24 @@ def map_attrs(ax, dn):
             lw = 2)
 
 
-def plot_ipp_(ax, ds):
-    
 
-    img = ax.scatter(
-        ds['lon'],
-        ds['lat'],
-        c = ds['roti'],
-        s = 10,
-        cmap = 'jet',
-        vmin = 0,
-        vmax = 5
-    )
-    
-    return img
-
-    
-
-
-def concat():
-    p = 'database/GNSS/roti/2014/'
-    files = ['001.txt', '002.txt']
-
-    df = pd.concat(
-        [load(p + f) for f in files]).sort_index()
-
-    return df.loc[df['roti'] < 6]
+def concat_files(year):
+     
+    out = []
+    for i in [1, 2]:
+        
+        path = gs.paths(year, i)
+        
+        out.append(
+            pb.load_filter(path.fn_roti)
+            )
+        
+        
+    return pd.concat(out)
 
 
 def sel_df(df, dn):
-    df = sel_times(df, dn)
+    df = b.sel_times(df, dn)
 
     delta = dt.timedelta(minutes=9,
                          seconds=59)
@@ -94,11 +79,11 @@ def plot_ipp_and_equator_range(
         ):
 
     fig, ax = plt.subplots(
-        figsize = (12, 5),
+        figsize = (14, 6),
         ncols = ncols,
         nrows = 2,
         dpi = 300,
-        subplot_kw=
+        subplot_kw =
         {'projection': ccrs.PlateCarree()}
     )
     
@@ -106,7 +91,6 @@ def plot_ipp_and_equator_range(
         hspace = 0.0,
         wspace = 0.1
     )
-    
     
     lons = np.arange(-80, -20, 10)
     
@@ -117,12 +101,22 @@ def plot_ipp_and_equator_range(
     
             ax.axvline(long)
     
-        delta = dt.timedelta(hours=i)
+        delta = dt.timedelta(hours = i)
     
         time = dn + delta
         
+        ds =  sel_df(df, time)
         
-        img = plot_ipp_(ax, sel_df(df, time))
+        img = ax.scatter(
+            ds['lon'],
+            ds['lat'],
+            c = ds['roti'],
+            s = 10,
+            cmap = 'jet',
+            vmin = 0,
+            vmax = 5
+        )        
+        # img = plot_ipp_(ax,)
     
         map_attrs(ax, time)
     
@@ -139,16 +133,31 @@ def plot_ipp_and_equator_range(
         else:
             ax.set(xticks = lons)
             
-    bounds = np.linspace(1, 5, 50)
-    cbar_ax = fig.add_axes([1., 0.06, 0.02, 0.8])
-    cb = fig.colorbar(img, cax=cbar_ax,
-                 ticks=np.arange(1,6),
-                 boundaries=bounds)
-            
+    ticks = np.arange(0, 6, 1)
+    
+    
+    b.colorbar_setting(
+            img, 
+            ax, 
+            ticks, 
+            width = "6%")
+    
+    
+    s, e = df.index[0], df.index[-1]
+    
+    m = s.strftime('%m')
+    y = s.strftime('%Y')
+    s = s.strftime('%d')
+    e = e.strftime('%d')
+    fig.suptitle(f'{s}-{e}/{m}/{y}')
 
-df = concat()
 
-dn = dt.datetime(2014, 1, 1, 23, 0)
-
-
-plot_ipp_and_equator_range(df, dn)
+def main():
+    
+    year = 2013
+    
+    df = concat_files(year)
+    
+    dn = dt.datetime(year, 1, 1, 23, 0)
+    
+    plot_ipp_and_equator_range(df, dn)

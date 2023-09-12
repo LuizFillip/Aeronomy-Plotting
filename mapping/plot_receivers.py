@@ -35,7 +35,7 @@ def distance_from_equator(
 
 def plot_receivers(
         distance = 7,
-        year = 2015
+        year = 2013
         ):
     
     

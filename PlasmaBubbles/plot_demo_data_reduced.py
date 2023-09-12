@@ -61,7 +61,9 @@ def plot_demo_data_reduced(
     df = df.loc[
         (df['el'] > 30) & (df['roti'] < 5)]
     
-    ax[0].set(title = 'All PRNs (GPS and GLONASS) and stations')
+    ax[0].set(
+        title = 'All PRNs (GPS and GLONASS) and stations'
+        )
     
     
     ax[1].plot(df['roti'], **args)
@@ -74,12 +76,11 @@ def plot_demo_data_reduced(
     
     ax[2].set(ylim = [0, 10], 
               yticks = np.arange(0, 10, 3))
-    
-    print(df.sort_index())
-    
+        
     b.format_time_axes(ax[2])
     
     c = b.chars()
+    
     names = ['Raw data', 
              '$el > 30^\circ$ and ROTI$ < 5$ TECU/min', 
              'Removing bad receivers']
@@ -106,7 +107,9 @@ dn = dt.datetime(year, 1, 2, 5)
 
 # df.sort_index()
 
-def plot_bad_receiver_example(ds):
+def plot_bad_receiver_example(
+        ds, station = 'brft'
+        ):
     
     fig, ax = plt.subplots(
         figsize = (8, 4), 
@@ -119,11 +122,12 @@ def plot_bad_receiver_example(ds):
                 color = 'k'
                 )
     
-    df = ds.loc[ds['sts'] == 'brft']
+    df = ds.loc[ds['sts'] == station]
     
     ax.plot(df['roti'], **args)
     
-    ax.set(ylabel = 'ROTI (TECU/min)', 
+    ax.set(title = station.upper(), 
+           ylabel = 'ROTI (TECU/min)', 
            ylim = [0, 10],
            xlim = [df.index[0], 
                    df.index[-1]])
@@ -133,3 +137,6 @@ def plot_bad_receiver_example(ds):
         hour_locator = 2)
     
     ax.axhline(1, lw = 2, color = 'r')
+    
+    
+plot_bad_receiver_example(ds)
