@@ -114,7 +114,7 @@ def plot_distributions_solar_flux(
         )
     
     
-#  fig.suptitle(title, y = 1.05)
+    return fig
  
  
 df = b.load('all_results.txt')

@@ -65,25 +65,45 @@ def gamma_annual():
                  bbox_to_anchor = (0.5, 1.3),
                  loc = 'upper center')
     
-    
+
+from RayleighTaylor import EquationsFT
+
+
 def main():
 
     fig, ax = plt.subplots(
         sharex = True,
+        sharey = True,
         dpi = 300, 
-        nrows = 1, 
         figsize = (10, 5), 
         )
     
     plt.subplots_adjust(hspace = 0.1)
     
-    infile = 'database/Results/gamma/saa.txt'
+    infile = 'all_results.txt'
     
     df = s.load(infile)
+    df = df.loc[~(df['all']> 3.5)]
     
-    df['all'].plot(ax = ax)
     
-    ax.set(ylabel = '$\\gamma_{FT} ~~(s^{-1})$', 
-           xlabel = 'years')
+    df['gravity'] = df['gravity'] * 1e3
     
-# main()
+    df['winds'] = df['winds']  * 1e3
+    
+    lb = EquationsFT()
+    cols = ['gravity', 'winds', 'all']
+    lbs = [lb.gravity, lb.winds, lb.complete]
+    for i, col in enumerate(cols):
+        
+        ax.plot(df[col], label = lbs[i])
+    
+    ax.set(
+        ylabel = '$\\gamma_{FT} ~(\\times 10^{-3}~s^{-1})$', 
+        xlabel = 'years'
+        )
+    
+    ax.legend(ncol = 1, 
+              bbox_to_anchor = (.5, 1.55),
+              loc = "upper center")
+    
+main()

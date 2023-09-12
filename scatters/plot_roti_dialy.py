@@ -64,7 +64,8 @@ def sel_prns():
                 label = names[i]
                 )
             
-            ax.set(ylim = [0, 5], ylabel = 'ROTI', 
+            ax.set(ylim = [0, 5], 
+                   ylabel = 'ROTI', 
                    title = station)
             
             b.format_time_axes(ax, hour_locator = 3)

@@ -9,10 +9,6 @@ import pandas as pd
 b.config_labels()
 
 
-
-
-# fig.suptitle('04 de janeiro')
-
 def dataset(year):
     
     dn = dt.datetime(year, 1, 1, 20)
@@ -48,14 +44,14 @@ def concat_datasets(
         
     ds = pd.concat(out, axis=1)
     ds.columns = years
-    
+        
     return ds
 
 years = list(range(2013, 2022))
 
-ds = concat_datasets(years)
+# ds = concat_datasets(years)
     
-ds.to_csv('0101.txt')
+# ds.to_csv('0101.txt')
 
 
 def plot_annual_compararion_roti(years):
@@ -74,32 +70,58 @@ def plot_annual_compararion_roti(years):
 
 
     plt.subplots_adjust(
-        hspace = 0.2, 
-        wspace = 0.1
+        hspace = 0.15, 
+        wspace = 0.05
         )
 
     cols = ds.columns
+    
+    df = b.load('database/indices/indeces.txt')
+
     for i, ax in enumerate(ax.flat):
+        
+        year = cols[i]
+        dn = dt.datetime(int(year), 1, 1)
+        flux = df.loc[df.index == dn, 'f107'].item()
      
-        ax.plot(ds[cols[i]], 
+        ax.plot(ds[year], 
                 marker = 'o', 
                 linestyle = 'none', 
                 markersize = 4)
         
-        ax.set(title = cols[i], ylim = [0, 6], 
+        ax.text(0.1, 0.8, 
+                f'F10.7 = {flux} sfu', 
+                transform = ax.transAxes
+                )
+        
+        ax.set(title = cols[i], ylim = [0, 5], 
                yticks = range(6))
-        
-        ax.axhline(1, lw = 2, color = 'r')
-        
+        color = ['r', 'm']
+        for i, threshold in enumerate([0.5, 1]):
+            ax.axhline(
+                threshold, 
+                lw = 2, 
+                color= color[i],
+                label = f'{threshold} TECU/min'
+                )
+    
+    ax.legend(title = 'Thresholds', 
+              ncol = 2, 
+              bbox_to_anchor = (-.5, 4),
+              loc = "upper center")
+    
     fontsize = 30   
         
-    fig.text(0.05, 0.4, "ROTI (TECU/min)",
-             rotation = "vertical", 
-             fontsize = fontsize)
+    fig.text(
+        0.08, 0.37, "ROTI (TECU/min)",
+        rotation = "vertical", 
+        fontsize = fontsize)
     
-    fig.text(0.4, 0.05, "Hora universal (UT)", 
-             rotation = "horizontal", 
-             fontsize = fontsize)
+    fig.text(
+        0.45, 0.05, "Universal time", 
+        rotation = "horizontal", 
+        fontsize = fontsize
+        )
     
     fig.suptitle("1 de Janeiro", 
                  fontsize = fontsize, 
@@ -109,3 +131,9 @@ def plot_annual_compararion_roti(years):
         
 
 # plot_annual_compararion_roti(years)
+
+
+# ds = pd.read_csv('0101.txt', index_col = 0)
+
+
+# year = 2013

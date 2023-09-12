@@ -1,11 +1,9 @@
 import matplotlib.pyplot as plt
-from build import paths as p
-from Digisonde.drift import load_raw
 import datetime as dt
-import setup as s
+import base as b
 
 
-def plotDRIFTComponents(ts):
+def plot_drift_components(ts):
     
     """
     Vz: Vertical component (positive to up)
@@ -13,12 +11,15 @@ def plotDRIFTComponents(ts):
     Vy: Zonal component (positive to east)
     """
 
-    fig, ax = plt.subplots(nrows = 3, 
-                           sharex = True, 
-                           figsize = (12, 10))
+    fig, ax = plt.subplots(
+        nrows = 3, 
+        dpi = 300, 
+        sharex = True, 
+        figsize = (12, 10)
+        )
     
     plt.subplots_adjust(hspace = 0.2)
-    s.config_labels()
+    b.config_labels()
     
     date = ts.index[0].strftime("%d de %B de %Y")
     
@@ -29,14 +30,15 @@ def plotDRIFTComponents(ts):
                 fillstyle = "none",
                 capsize = 3)
     
-    li = [ 50, 150, 150]
+    li = [100, 150, 150]
     na = ["vertical", "meridional", "zonal"]
     co = ["vz", "vx", "vy"]
     
     
     for n, ax in enumerate(ax.flat):
         
-        ts[co[n]].plot(ax = ax, yerr = ts["e" + co[n]], **args)
+        ts[co[n]].plot(
+            ax = ax, yerr = ts["e" + co[n]], **args)
         
         ax.axhline(0, color = "red")
         
@@ -50,22 +52,20 @@ def plotDRIFTComponents(ts):
         ax.text(0, 1.04, "Componente " + na[n], 
                 transform = ax.transAxes)
         
-        s.format_axes_date(ax, time_scale = "hour")
         
         if n == 2:
+            b.format_time_axes(ax)
             ax.set(xlabel = "Hora universal (UT)")
     
     fig.autofmt_xdate(rotation = 0, ha = 'center')
     fig.suptitle(date, y = 0.91)
 
 def main():
-    infile = p("Drift").get_files_in_dir("SSA")
     
-        
-    ts = load_raw(infile[1], 
-                 date = dt.date(2013, 1, 1), 
-                 smooth_values =  False)
-        
-    plotDRIFTComponents(ts)
+    infile = 'digisonde/data/drift/data/saa/2016_drift.txt'
     
-main()
+    df = b.load(infile)
+    dn = dt.datetime(2016, 11, 19, 18)
+    ts = b.sel_times(df, dn, hours = 12)
+    
+    plot_drift_components(ts)

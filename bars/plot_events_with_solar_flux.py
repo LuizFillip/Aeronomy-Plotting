@@ -25,11 +25,11 @@ def plot_events_with_solar_activities():
     
     for attribute, measurement in penguin_means.items():
         offset = width * multiplier
-        rects = ax.bar(x + offset, measurement, width, label=attribute)
+        rects = ax.bar(
+            x + offset, measurement, width, label=attribute)
         ax.bar_label(rects, padding=3)
         multiplier += 1
     
-    # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_ylabel('Length (mm)')
     ax.set_title('Penguin attributes by species')
     ax.set_xticks(x + width, species)

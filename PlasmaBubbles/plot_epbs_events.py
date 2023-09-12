@@ -1,7 +1,10 @@
 import pandas as pd
 import datetime as dt
-from PlasmaBubbles import find
-
+import GNSS as gs 
+import base as b 
+import matplotlib.pyplot as plt
+import PlasmaBubbles as pb 
+import numpy as np 
 
 def shade(
         ax, 
@@ -14,15 +17,119 @@ def shade(
     
     ax.axvspan(start, end, alpha = 0.3, color = "gray")
     
-    if label:
+    
+
+def concat_files(year):
+     
+    out = []
+    for i in [1, 2]:
         
-        bubble = find(
+        path = gs.paths(year, i)
+        
+        out.append(b.load(path.fn_roti))
+        
+        
+    return pd.concat(out)
+
+
+def plot_demo_data_reduced(
+        df, 
+        fontsize = 20
+        ):
+    
+    b.config_labels()
+    
+    fig, ax = plt.subplots(
+        nrows = 3, 
+        dpi = 300,
+        sharex = True,
+        sharey = True,
+        figsize = (10, 8)
+        )
+    
+    plt.subplots_adjust(hspace = 0.1)
+    
+    args = dict(marker = 'o', 
+                markersize = 1,
+                linestyle = 'none', 
+                color = 'k'
+                )
+    
+    
+    ax[0].plot(df['roti'], **args)
+    
+    df = df.loc[
+        (df['el'] > 30) & (df['roti'] < 5)]
+    
+    ax[0].set(title = 'All PRNs (GPS and GLONASS) and stations')
+    
+    
+    ax[1].plot(df['roti'], **args)
+    
+    df = pb.remove_bad_stations(
             df, 
-            start, 
-            end, 
-            col = "roti"
+            threshold = 0.2 
             )
-        delta = dt.timedelta(minutes = 2.5)
-        ax.text(start + delta, 7.5, 
-                bubble, 
-                transform = ax.transData)
+    ax[2].plot(df['roti'], **args)
+    
+    ax[2].set(ylim = [0, 10], 
+              yticks = np.arange(0, 10, 3))
+    
+    print(df.sort_index())
+    
+    b.format_time_axes(ax[2])
+    
+    c = b.chars()
+    names = ['Raw data', 
+             '$el > 30^\circ$ and ROTI$ < 5$ TECU/min', 
+             'Removing bad receivers']
+    
+    for i, ax in enumerate(ax.flat):
+        name = names[i]
+        ax.text(0.01, 0.82, f'({c[i]}) {name}', 
+                transform = ax.transAxes)
+    
+    fig.text(
+        0.06, 0.35, "ROTI (TECU/min)",
+        rotation = "vertical", 
+        fontsize = fontsize)
+    
+year = 2013
+ 
+ds = concat_files(year)
+dn = dt.datetime(year, 1, 2, 5)
+
+# df = b.sel_times(ds, dn, hours = 1)
+
+
+# plot_demo_data_reduced(df)
+
+# df.sort_index()
+
+def plot_bad_receiver_example(ds):
+    
+    fig, ax = plt.subplots(
+        figsize = (8, 4), 
+        dpi = 300
+        )
+    
+    args = dict(marker = 'o', 
+                markersize = 1,
+                linestyle = 'none', 
+                color = 'k'
+                )
+    
+    df = ds.loc[ds['sts'] == 'brft']
+    
+    ax.plot(df['roti'], **args)
+    
+    ax.set(ylabel = 'ROTI (TECU/min)', 
+           ylim = [0, 10],
+           xlim = [df.index[0], 
+                   df.index[-1]])
+    
+    b.format_time_axes(
+        ax, 
+        hour_locator = 2)
+    
+    ax.axhline(1, lw = 2, color = 'r')

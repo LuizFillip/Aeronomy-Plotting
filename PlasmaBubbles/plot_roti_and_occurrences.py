@@ -53,4 +53,4 @@ def plot_roti(ax, df):
     ax.axhline(1, color = 'magenta', lw = 2)
     
 
-plot_roti_and_occurrences()
+# plot_roti_and_occurrences()

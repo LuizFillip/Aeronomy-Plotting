@@ -70,7 +70,8 @@ def plot_vz_and_frequencies():
     for i, ax in enumerate(ax.flat):
         
         plot_terminators(ax, df)
-        ax.text(0.01, 1.1, f'({c[i]})', transform = ax.transAxes)
+        ax.text(0.01, 1.1, f'({c[i]})', 
+                transform = ax.transAxes)
         
       
     return fig
