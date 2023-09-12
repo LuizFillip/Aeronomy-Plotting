@@ -79,3 +79,4 @@ def plot_local_maximus(df):
         'Maximus for each longitude sector',
         y = 0.95
         )
+    

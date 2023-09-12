@@ -4,18 +4,6 @@ import numpy as np
 import base as b 
 import datetime as dt 
 
-
-
-
-
-year = 2013 
-df = pb.concat_files(year)
-
-dn = dt.datetime(year, 1, 1, 20)
-
-df = b.sel_times(df, dn, hours = 11)
-
-
 def plot_longitudinal_scattering(df):
     
     longs = np.arange(-80, -30, 10)
@@ -28,28 +16,33 @@ def plot_longitudinal_scattering(df):
         figsize = (10, 8)
         )
     
-    args = dict(marker = 'o', 
-                 markersize = 1,
-                 linestyle = 'none', 
-                 color = 'k'
-                 )
-    
+    args = dict(
+        marker = 'o', 
+        markersize = 1,
+        linestyle = 'none', 
+        color = 'k'
+        )
     
     c = b.chars()
     
     for i, long in enumerate(longs):
         
-        long_df = pb.longitude_sector(df, long)
+        long_df = pb.longitude_sector(
+            df, long)
         
-        ax[i].plot(long_df['roti'], 
-                   label = long,
-                   **args
-                   )
+        ax[i].plot(
+            long_df['roti'], 
+            **args
+             )
     
         info =  f'({c[i]}) {long}° to {long + 10}°'
             
-        ax[i].text(0.02, 0.7, info, 
-                transform = ax[i].transAxes)
+        ax[i].text(
+            0.02, 
+            0.7, 
+            info, 
+            transform = ax[i].transAxes
+            )
         
     b.format_time_axes(ax[4])
     
@@ -66,5 +59,14 @@ def plot_longitudinal_scattering(df):
         'Raw data for each longitude sector',
         y = 0.95)
     
+    return fig
     
-plot_longitudinal_scattering(df)
+
+year = 2013 
+df = pb.concat_files(year)
+
+dn = dt.datetime(year, 1, 1, 20)
+
+df = b.sel_times(df, dn, hours = 11)
+
+f = plot_longitudinal_scattering(df)
