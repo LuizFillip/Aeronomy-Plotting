@@ -86,20 +86,17 @@ def plot_distributions_solar_flux(
             ev.solar_flux_cycles(df)
             ):
         
-    
         plot_single_distribution(ax[i], ds)
          
         ax[i].set(title = cycles[i])
         
         
     ax[0].legend(
-        ncol = 3, 
-        bbox_to_anchor = (.5, 1.5),
-        loc = "upper center"
-         )
+            ncol = 3, 
+            bbox_to_anchor = (.5, 1.5),
+            loc = "upper center"
+            )
     
-      
-        
     fig.text(
         0.03, 0.35, 
         'EPB occurrence probability',
@@ -119,4 +116,16 @@ def plot_distributions_solar_flux(
  
 df = b.load('all_results.txt')
 
-plot_distributions_solar_flux(df)
+# plot_distributions_solar_flux(df)
+
+df = df.loc[(df['f107'] < 100) &
+            (df['kp_max'] <= 3)]
+
+ds = ev.probability_distribuition(
+    df,
+    step = 0.2, 
+    col_gamma = 'all',
+    col_epbs = '-40'
+    )
+
+ds

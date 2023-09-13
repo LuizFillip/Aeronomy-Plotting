@@ -66,7 +66,6 @@ def gamma_annual():
                  loc = 'upper center')
     
 
-from RayleighTaylor import EquationsFT
 
 
 def main():
@@ -90,7 +89,7 @@ def main():
     
     df['winds'] = df['winds']  * 1e3
     
-    lb = EquationsFT()
+    lb =rt.EquationsFT()
     cols = ['gravity', 'winds', 'all']
     lbs = [lb.gravity, lb.winds, lb.complete]
     for i, col in enumerate(cols):
@@ -106,4 +105,4 @@ def main():
               bbox_to_anchor = (.5, 1.55),
               loc = "upper center")
     
-main()
+# main()

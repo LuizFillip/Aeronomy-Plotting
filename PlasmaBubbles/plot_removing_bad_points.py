@@ -4,15 +4,7 @@ import base as b
 import datetime as dt 
 import matplotlib.dates as dates 
 
-def format_minutes_axes(ax):
-    
 
-    major_formatter = dates.DateFormatter("%H:%M")
-    major_locator = dates.MinuteLocator(interval = 10)
-    
-    ax.xaxis.set_major_locator(major_locator)
-    ax.xaxis.set_major_formatter(major_formatter)
-    
     
 
 
@@ -48,7 +40,7 @@ def plot_section(ax, df, dn, i = 1):
                     )
     
     
-    format_minutes_axes(ax)
+    b.format_minutes_axes(ax)
     
     ax.set(ylim = [-0.2, 5], 
             xlabel = 'Universal time', 
@@ -74,7 +66,7 @@ df = pb.longitude_sector(
     )
 
 
-def plot_removing_bad_points():
+def plot_removing_bad_points(df):
     
     fig = plt.figure(
         figsize = (12, 5), 
@@ -108,4 +100,5 @@ def plot_removing_bad_points():
         plot_section(ax, df, dn, i = 1)
         
         
-df
+
+plot_removing_bad_points(df)
