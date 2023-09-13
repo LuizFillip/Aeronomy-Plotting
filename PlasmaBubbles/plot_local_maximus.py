@@ -80,3 +80,4 @@ def plot_local_maximus(df):
         y = 0.95
         )
     
+    return fig

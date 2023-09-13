@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
 
+
 b.config_labels()
 
 
@@ -14,24 +15,6 @@ args = dict(marker = 'o',
             )
 
 
-def threshold(
-        df, 
-        percent = 0.8, 
-        freq = 60
-        ):
-    
-    dat = b.running(df.values, N = freq)
-    
-    vmax = dat.max() 
-    vavg = dat.mean() 
-        
-    value = ((vmax + vavg) / 2 ) * percent
-    
-    if value < vavg:
-        value = (vmax + vavg) * (1 + percent)
-  
-    return round(value, 2)
-    
     
 def plot_thresholds_example(
         ax, 
@@ -46,7 +29,7 @@ def plot_thresholds_example(
     ax.plot(df.index, avg, lw = 2, 
             color = 'indigo')
     
-    value = threshold(
+    value = pb.threshold(
         df, 
         freq = freq, 
         percent = percent
@@ -61,10 +44,11 @@ def plot_thresholds_example(
     
     ax.legend(loc = 'upper right')
     
-    if value < 1:
-        vmax = 1
-    else:
-        vmax = 5
+    # if value < 1:
+    #     vmax = 1
+    # else:
+    
+    vmax = 4
         
     ax.set(ylim = [0, vmax],
            yticks = np.linspace(0, vmax, 5),
@@ -96,21 +80,30 @@ def plot_thresholds_in_longitudes(df, dn):
         
         plot_thresholds_example(ax[i], df[col])
         
-        ax[i].text(0.01, 0.83, f'({c[i]}) Long = {col}°', 
-                   transform = ax[i].transAxes
-                   )
+        info =  f'({c[i]}) Long = {col}°'
+        ax[i].text(
+                0.01, 
+                0.83,
+                info, 
+                transform = ax[i].transAxes
+                 )
     
     b.format_time_axes(ax[1])
+    
+    year = df.index[0].year
     
     ax[0].set(title = year)
     
     return fig
+
+def main():
     
-year = 2013
-path = f'database/epbs/longs/{year}.txt'
-
-df = b.load(path)
-dn = dt.datetime(year, 6, 1, 20)
-
-fig = plot_thresholds_in_longitudes(df, dn)
+    year = 2016
+    
+    path = f'database/epbs/longs/{year}.txt'
+    
+    df = b.load(path)
+    dn = dt.datetime(year, 11, 1, 20)
+    
+    fig = plot_thresholds_in_longitudes(df, dn)
 

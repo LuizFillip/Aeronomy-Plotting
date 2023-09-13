@@ -19,19 +19,6 @@ def shade(
     
     
 
-def concat_files(year):
-     
-    out = []
-    for i in [1, 2]:
-        
-        path = gs.paths(year, i)
-        
-        out.append(b.load(path.fn_roti))
-        
-        
-    return pd.concat(out)
-
-
 def plot_demo_data_reduced(
         df, 
         fontsize = 20
@@ -97,7 +84,7 @@ def plot_demo_data_reduced(
     
 year = 2013
  
-ds = concat_files(year)
+ds = pb.concat_files(year)
 dn = dt.datetime(year, 1, 2, 5)
 
 # df = b.sel_times(ds, dn, hours = 1)
@@ -108,7 +95,8 @@ dn = dt.datetime(year, 1, 2, 5)
 # df.sort_index()
 
 def plot_bad_receiver_example(
-        ds, station = 'brft'
+        ds, 
+        station = 'brft'
         ):
     
     fig, ax = plt.subplots(

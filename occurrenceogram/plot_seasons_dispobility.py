@@ -10,8 +10,6 @@ def sel_year(ds, yr):
     return ds1
 
 
-
-
 def plot_scatter_occorrence(
         ax, ds, month = 3
         ):
