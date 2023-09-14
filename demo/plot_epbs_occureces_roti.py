@@ -84,18 +84,63 @@ def plot_epbs_occurrences_roti(ds):
     
     return fig
 
-def main():
+
+def save_img(df, dn, root):
     
-    
-    year = 2021
-    infile = f'database/EPBs/longs/{year}.txt'
-    
-    dn = dt.datetime(year, 1, 1, 21)
-    
-    df = b.load(infile)
-    
+
     ds = b.sel_times(df, dn, hours = 10)
+    
+    plt.ioff()
         
     fig = plot_epbs_occurrences_roti(ds)
     
-main()
+    FigureName = dn.strftime('%j.png')
+    
+    fig.savefig(root + FigureName,
+                pad_inches = 0, 
+                bbox_inches = "tight")
+    
+    plt.clf()   
+    plt.close()
+    
+    
+
+from tqdm import tqdm  
+
+
+def save_year(year, root):
+    
+
+    b.make_dir(root)
+    
+    infile = f'database/EPBs/longs/{year}.txt'
+    
+    for day in tqdm(range(365), 
+                    desc = str(year)):
+        
+        delta = dt.timedelta(days = day)
+        
+        dn = dt.datetime(year, 1, 1, 21) + delta
+        
+        df = b.load(infile)
+        
+        save_img(df, dn, root)
+        
+        
+# for year in range(2013, 2023):
+    
+#     root = f'D:\\img\\{year}\\'
+#     save_year(year, root)
+
+
+year = 2013
+infile = f'database/EPBs/longs/{year}.txt'
+dn = dt.datetime(year, 6, 8, 21)
+
+df = b.load(infile)
+
+ds = b.sel_times(df, dn, hours = 10)
+
+fig = plot_epbs_occurrences_roti(ds)
+
+plt.show()
