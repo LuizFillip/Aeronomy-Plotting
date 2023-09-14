@@ -15,7 +15,8 @@ def plot_single_distribution(
         geomag = 'quiet', 
         step = 0.2, 
         gamma = 'all',
-        epbs = '-40'
+        epbs = '-40', 
+        quiet_level = 4
         ):
     
 
@@ -24,11 +25,13 @@ def plot_single_distribution(
     vmin, vmax = floor(vmin), ceil(vmax)
     
         
-    labels = ['$Kp \\leq 3$', '$Kp > 3$']
+    labels = [f'$Kp \\leq$ {quiet_level}', 
+              f'$Kp >$ {quiet_level}']
     
-    datasets = [df[df['kp_max'] <= 3], 
-                df[df['kp_max'] > 3]
-                ]
+    datasets = ev.kp_levels(
+        df, 
+        quiet_level = quiet_level
+        )
     count = []
 
     for i, ds in enumerate(datasets):
@@ -44,7 +47,6 @@ def plot_single_distribution(
             col_epbs = epbs
             )
         
-
         count.append(f'({index}) {c} events')
         
 
@@ -98,13 +100,14 @@ def plot_distributions_solar_flux(
             )
     
     fig.text(
-        0.03, 0.35, 
+        0.03, 0.32, 
         'EPB occurrence probability',
         rotation = "vertical", 
-        fontsize = fontsize)
+        fontsize = fontsize
+        )
     
     fig.text(
-        0.4, 0.05, 
+        0.4, 0.07, 
         "$\\gamma_{FT}~$ ($\\times 10^{-3}~s^{-1}$)", 
         rotation = "horizontal", 
         fontsize = fontsize
@@ -116,16 +119,21 @@ def plot_distributions_solar_flux(
  
 df = b.load('all_results.txt')
 
-# plot_distributions_solar_flux(df)
+# fig = plot_distributions_solar_flux(df)
 
-df = df.loc[(df['f107'] < 100) &
-            (df['kp_max'] <= 3)]
+# df = df.loc[(df['f107'] < 100) &
+#             (df['kp_max'] <= 3)]
 
-ds = ev.probability_distribuition(
-    df,
-    step = 0.2, 
-    col_gamma = 'all',
-    col_epbs = '-40'
-    )
+# ds = ev.probability_distribuition(
+#     df,
+#     step = 0.2, 
+#     col_gamma = 'all',
+#     col_epbs = '-40'
+#     )
 
-ds
+# ds
+
+
+df['drift'] = df['drift'] *1e3
+# df['gravity'] = df['gravity'] *1e3
+

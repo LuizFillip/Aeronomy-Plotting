@@ -27,7 +27,7 @@ def plot_distribution(
         ds['mean'], 
         ds['rate'], 
         xerr = ds['std'],
-        yerr = ds['epb_std'],
+        yerr = ds['epb_error'],
         **args,
         label = label
         )
