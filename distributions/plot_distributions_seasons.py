@@ -24,7 +24,6 @@ def plot_distributions_seasons(
          6:  'june solstice',
          9:  'setember equinox',
          12: 'december solstice'
-        
          }
     
     plt.subplots_adjust(wspace = 0.1)

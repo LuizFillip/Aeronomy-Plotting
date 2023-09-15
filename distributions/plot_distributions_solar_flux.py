@@ -67,7 +67,8 @@ def plot_single_distribution(
 
 
 def plot_distributions_solar_flux(
-        df, fontsize = 30 
+        df, 
+        fontsize = 30 
         ):
     
 
@@ -119,7 +120,7 @@ def plot_distributions_solar_flux(
  
 df = b.load('all_results.txt')
 
-# fig = plot_distributions_solar_flux(df)
+fig = plot_distributions_solar_flux(df)
 
 # df = df.loc[(df['f107'] < 100) &
 #             (df['kp_max'] <= 3)]
@@ -134,6 +135,6 @@ df = b.load('all_results.txt')
 # ds
 
 
-df['drift'] = df['drift'] *1e3
+# df['drift'] = df['drift'] *1e3
 # df['gravity'] = df['gravity'] *1e3
 
