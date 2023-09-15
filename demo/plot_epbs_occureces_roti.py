@@ -133,14 +133,14 @@ def save_year(year, root):
 #     save_year(year, root)
 
 
-year = 2013
-infile = f'database/EPBs/longs/{year}.txt'
-dn = dt.datetime(year, 6, 8, 21)
+# year = 2015
+# infile = f'database/EPBs/longs/{year}.txt'
+# dn = dt.datetime(year, 2, 17, 21)
 
-df = b.load(infile)
+# df = b.load(infile)
 
-ds = b.sel_times(df, dn, hours = 10)
+# ds = b.sel_times(df, dn, hours = 10)
 
-fig = plot_epbs_occurrences_roti(ds)
+# fig = plot_epbs_occurrences_roti(ds)
 
-plt.show()
+# plt.show()

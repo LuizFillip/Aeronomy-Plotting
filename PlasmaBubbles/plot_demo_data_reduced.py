@@ -87,12 +87,7 @@ year = 2013
 ds = pb.concat_files(year)
 dn = dt.datetime(year, 1, 2, 5)
 
-# df = b.sel_times(ds, dn, hours = 1)
 
-
-# plot_demo_data_reduced(df)
-
-# df.sort_index()
 
 def plot_bad_receiver_example(
         ds, 
