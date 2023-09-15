@@ -32,11 +32,7 @@ def dataset(year):
 
 
 
-
-
-
-def concat_datasets(
-        years):
+def concat_datasets(years):
     
     out = []
     for year in years: 
@@ -49,9 +45,9 @@ def concat_datasets(
 
 years = list(range(2013, 2022))
 
-# ds = concat_datasets(years)
+ds = concat_datasets(years)
     
-# ds.to_csv('0101.txt')
+ds.to_csv('0101.txt')
 
 
 def plot_annual_compararion_roti(years):
@@ -77,13 +73,14 @@ def plot_annual_compararion_roti(years):
     cols = ds.columns
     
     df = b.load('database/indices/indeces.txt')
-
+    df = df.interpolate()
+    
     for i, ax in enumerate(ax.flat):
         
         year = cols[i]
         dn = dt.datetime(int(year), 1, 1)
-        flux = df.loc[df.index == dn, 'f107'].item()
-     
+        flux = df.loc[df.index == dn, 'f107a'].item()
+        flux = round(flux, 3)
         ax.plot(ds[year], 
                 marker = 'o', 
                 linestyle = 'none', 
@@ -130,7 +127,7 @@ def plot_annual_compararion_roti(years):
     
         
 
-# plot_annual_compararion_roti(years)
+plot_annual_compararion_roti(years)
 
 
 # ds = pd.read_csv('0101.txt', index_col = 0)

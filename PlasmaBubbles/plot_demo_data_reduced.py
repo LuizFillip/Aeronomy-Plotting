@@ -127,4 +127,4 @@ def plot_bad_receiver_example(
     ax.axhline(1, lw = 2, color = 'r')
     
     
-plot_bad_receiver_example(ds)
+# plot_bad_receiver_example(ds)
