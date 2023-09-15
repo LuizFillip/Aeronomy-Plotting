@@ -69,3 +69,5 @@ def main():
     ts = b.sel_times(df, dn, hours = 12)
     
     plot_drift_components(ts)
+    
+# main()
