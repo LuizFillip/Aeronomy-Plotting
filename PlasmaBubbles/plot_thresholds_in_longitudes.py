@@ -29,11 +29,15 @@ def plot_thresholds_example(
     ax.plot(df.index, avg, lw = 2, 
             color = 'indigo')
     
-    value = pb.threshold(
-        df, 
-        freq = freq, 
-        percent = percent
-        )
+    dn = df.index[0]
+    lon = int(df.name)
+    # value = pb.threshold(
+    #     df, 
+    #     freq = freq, 
+    #     percent = percent
+    #     )
+    
+    value = pb.threshold(dn, lon)
 
     ax.axhline(
         value, 
@@ -43,10 +47,7 @@ def plot_thresholds_example(
         )
     
     ax.legend(loc = 'upper right')
-    
-    # if value < 1:
-    #     vmax = 1
-    # else:
+
     
     vmax = 4
         
@@ -105,5 +106,7 @@ def main():
     df = b.load(path)
     dn = dt.datetime(year, 11, 1, 20)
     
+    
     fig = plot_thresholds_in_longitudes(df, dn)
 
+main()

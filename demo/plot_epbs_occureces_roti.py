@@ -9,6 +9,9 @@ args = dict(marker = 'o',
              )
 
 
+
+
+
 def plot_epbs_occurrences_roti(ds):
 
     fig, ax = plt.subplots(
@@ -20,16 +23,16 @@ def plot_epbs_occurrences_roti(ds):
     
     b.config_labels()
     
-    ds = ds[['-60', '-40', '-50']]
+    ds = ds[['-60', '-50', '-40']]
     
     plt.subplots_adjust(hspace = 0.1)
     
     color = ['k', 'b', 'r']
-    
+    dn = ds.index[0]
     for i, col in enumerate(ds.columns):
         
-        the = pb.threshold(ds[col])
-        
+        # the = pb.threshold(ds[col])
+        the = pb.threshold(dn, int(col))
         line, = ax[0].plot(
             ds[col], label = f'{col}° ({the})', 
             color = color[i], 
@@ -43,14 +46,11 @@ def plot_epbs_occurrences_roti(ds):
         
     
         ax[1].plot(
-            pb.get_events(
-                ds[col], 
-                progress_bar = False
-                ), 
-            marker = 'o',
-            markersize = 3,
-            color = line.get_color(), 
-            label = f'{col}° ({the})'
+             get_events_series(ds[col]), 
+             marker = 'o',
+             markersize = 3,
+               color = line.get_color(), 
+             label = f'{col}° ({the})'
             )
     
 
@@ -133,14 +133,20 @@ def save_year(year, root):
 #     save_year(year, root)
 
 
-# year = 2015
-# infile = f'database/EPBs/longs/{year}.txt'
-# dn = dt.datetime(year, 2, 17, 21)
+def single_plot():
+    
 
-# df = b.load(infile)
+    year = 2019
+    infile = f'database/EPBs/longs/{year}.txt'
+    dn = dt.datetime(year, 5, 5, 21)
+    
+    df = b.load(infile)
+    
+    ds = b.sel_times(df, dn, hours = 10)
+    
+    fig = plot_epbs_occurrences_roti(ds)
+    
+    plt.show()
 
-# ds = b.sel_times(df, dn, hours = 10)
 
-# fig = plot_epbs_occurrences_roti(ds)
-
-# plt.show()
+single_plot()

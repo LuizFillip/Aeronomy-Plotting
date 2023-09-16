@@ -23,10 +23,9 @@ def plot_corr_EPB_FPI(fontsize = 20):
     # # ip = ip.replace((-1, 0), np.nan)
     ds = pd.concat([df, ip], axis = 1).dropna()
 
-    ds = ds.loc[(ds['base'] > 0.1) & 
-                (ds['mean'] < 3)]
+    ds = ds.loc[ds.index.day == 5]
       
-    import matplotlib.pyplot as plt 
+    print(ds)
 
 
     fig, ax = plt.subplots(
@@ -48,5 +47,5 @@ def plot_corr_EPB_FPI(fontsize = 20):
 
     
 
-    return fig
 
+plot_corr_EPB_FPI(fontsize = 20)

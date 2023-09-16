@@ -81,10 +81,13 @@ def plot_annual_compararion_roti(years):
         dn = dt.datetime(int(year), 1, 1)
         flux = df.loc[df.index == dn, 'f107a'].item()
         flux = round(flux, 3)
-        ax.plot(ds[year], 
-                marker = 'o', 
-                linestyle = 'none', 
-                markersize = 4)
+        
+        ax.plot(
+            ds[year], 
+            marker = 'o', 
+            linestyle = 'none', 
+            markersize = 4
+            )
         
         ax.text(0.1, 0.8, 
                 f'F10.7 = {flux} sfu', 
