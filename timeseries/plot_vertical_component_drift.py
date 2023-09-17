@@ -18,6 +18,9 @@ def get_maximum_row(ts, dn, N = 5):
     ts['filt'] = b.running(ts['vz'], N)
     
     ds = dg.sel_between_terminators(ts, dn)
+    
+    if len(ds) == 0:
+        ds = ts.copy()
         
     ds = ds.sort_values(
         'vz',  
@@ -27,7 +30,7 @@ def get_maximum_row(ts, dn, N = 5):
 
     return ds.iloc[0, :].to_frame().T 
 
-def plot_vertical_component_drift(ts, ds, dn, N = 5):
+def plot_vertical_component_drift(ts, dn, ds = None, N = 5):
     
     fig, ax = plt.subplots(
         dpi = 300, 
@@ -82,15 +85,20 @@ def plot_vertical_component_drift(ts, ds, dn, N = 5):
     
     b.format_time_axes(ax)
     
-    raw = ds['vz'].item()
-    filt = ds['filt'].item()
+    
     
     ax.set(ylim = [-45, 90], 
            xlim = [ts.index[0], ts.index[-1]], 
            yticks = np.arange(-45, 90, 15),
            ylabel = "Velocity (m/s)", 
-           title = f'Raw = {raw} m/s, Filter = {filt} m/s'
+          
            )
+    
+    if ds is not None:
+        
+        raw = ds['vz'].item()
+        filt = ds['filt'].item()
+        ax.set( title = f'Raw = {raw} m/s, Filter = {filt} m/s')
     
     return fig
     
@@ -99,48 +107,45 @@ def plot_vertical_component_drift(ts, ds, dn, N = 5):
 
 from tqdm import tqdm 
 
-
+def save_imgs(ts, ds, dn, root):
+    
+    plt.ioff()
+    fig = plot_vertical_component_drift(
+        ts, ds, dn, N = 5)
+    
+    FigureName = dn.strftime('%j.png')
+    
+    fig.savefig(root + FigureName,
+                pad_inches = 0, 
+                bbox_inches = "tight")
+    
+    plt.clf()   
+    plt.close()
 
 def run_days(year, root):
     
     infile = 'digisonde/data/drift/data/saa/'
 
     df = b.load(infile + f'{year}_drift.txt')
-
+    df.replace(0.0, np.nan, inplace = True)
     df = df[['vz', 'evz']]
-
+    df = df.loc[~(df['evz'] > 10)]
     out = []
     
     for day in tqdm(range(365), desc = str(year)):
         
         delta = dt.timedelta(days = day)
         
-        dn = dt.datetime(year, 1, 1, 18) + delta
+        dn = dt.datetime(year, 1, 1, 19) + delta
         
+        ts = b.sel_times(df, dn, hours = 5)
         
-        
-        try:
-            ts = b.sel_times(df, dn, hours = 6)
-            
-            ts = ts.loc[~(ts['evz'] > 20)]
-            
-            ds = get_maximum_row(ts, dn)
-        
-            out.append(ds)
-            plt.ioff()
-            fig = plot_vertical_component_drift(
-                ts, ds, dn, N = 5)
-            
-            FigureName = dn.strftime('%j.png')
-            
-            fig.savefig(root + FigureName,
-                        pad_inches = 0, 
-                        bbox_inches = "tight")
-            
-            plt.clf()   
-            plt.close()
-        except:
-            continue
+        if len(ts) > 5:
+            try:
+                out.append(get_maximum_row(ts, dn))
+            except:
+                print(dn)
+                continue
         
         
     df1 = pd.concat(out)
@@ -163,23 +168,26 @@ def run_years():
 
 def single_plot():
     
-    year = 2015  
+    year = 2013 
     infile = 'digisonde/data/drift/data/saa/'
     
     df = b.load(infile + f'{year}_drift.txt')
     
     
-    dn = dt.datetime(year, 2, 18, 18)
+    dn = dt.datetime(year, 1, 2, 19)
     
-    ts = b.sel_times(df, dn, hours = 6)
+    ts = b.sel_times(df, dn, hours = 5)
     
-    ts = ts.loc[~(ts['evz'] > 20)]
+    ts = ts.loc[~(ts['evz'] > 10)]
     
     ds = get_maximum_row(ts, dn)
-    
+        
     plot_vertical_component_drift(
-        ts, ds, dn, N = 5)
+        ts, dn, ds, N = 5)
 
 
 
 # run_years()
+
+
+# single_plot()
