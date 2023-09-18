@@ -95,5 +95,5 @@ def plot_receivers(
     return out
     
 
-d = plot_receivers(5.1)
+# d = plot_receivers(5.1)
 

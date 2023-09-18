@@ -1,94 +1,99 @@
-from ..core import sites
-from ..meridians import meridians
-from ..mapping import quick_map
+import GEO as gg
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import settings as s
-from utils import save_plot
+import base as b
+from FluxTube import Apex
 import numpy as np
 
-def plot_all_meridians(
-         ax, 
-         slon = -100, 
-         elon = -30, 
-         step = 1, 
-         max_lat = 40, 
-         alt = 300, 
-         year = 2013
-         ):
+b.config_labels()
+
+def plot_sites(ax, year = 2013):
     
+    gg.mag_equator(ax,
+                  year,
+                  degress=None
+                  )
     
-     m = meridians(year)
-     
-     arr = m.range_meridians()
- 
-     for lon in np.arange(slon, elon, step):
-         
-         x, y  = compute_meridian(
-             lon = lon, 
-             alt = alt, 
-             max_lat = max_lat,
-             year = year
-                 )
-             
-         ax.plot(x, y, lw = 1, color = "tomato")
-         
-def plot_sites(ax):
-    
-    for site in ["jic", "saa", "car"]:
-    
-        glat, glon = sites[site]["coords"]
-        name = sites[site]["name"]
+    color = ['blue', 'g']
+    for i, site in enumerate(["jic", "saa"]):
+        
+        glat, glon = gg.sites[site]["coords"]
+        name = gg.sites[site]["name"]
         
         ax.scatter(glon, glat,
-            marker = "^", 
+            marker = "o", 
             s = 100,
-            label = name)
+            label = name,
+            c = color[i]
+            )
+    
+        nx, ny, x, y = gg.load_meridian(year, site)
+        
+        line, = ax.plot(x, y, color = color[i])
+
+        ax.scatter(nx, ny,
+            marker = "^", 
+            s = 100, 
+            c = color[i]
+            )
+        
+        mlat = Apex(300).apex_lat_base(base = 75)
+
+        rlat = np.degrees(mlat)
+
+        x1, y1 = gg.limit_hemisphere(
+                x, y, nx, ny, rlat, 
+                hemisphere = 'both'
+                )
+        
+        ax.plot(x1, y1, linestyle = '--', lw = 3, 
+                color = line.get_color())
         
         
 
 def plot_mag_meridians(
-        alt = 300, 
-        max_lat = 10, 
-        year = 2013,
+        year = 2021
         ):
     
+ 
+    
     fig, ax = plt.subplots(
-        figsize = (8, 8), 
-        dpi = 300, 
+        dpi = 300,
+        figsize = (8, 8),
         subplot_kw = 
-        {'projection': ccrs.PlateCarree()}
+            {
+            'projection': ccrs.PlateCarree()
+            }
         )
+
+    gg.map_features(ax)
+
+    lat = gg.limits(
+        min = -25, 
+        max = 15, 
+        stp = 10
+        )
+    lon = gg.limits(
+        min = -85, 
+        max = -30, 
+        stp = 10
+        )    
+
+    gg.map_boundaries(ax, lon, lat)
     
-    s.config_labels(fontsize = 15)
+    plot_sites(ax, year)
     
-    lat_lims = dict(min = -30, max = 15, stp = 5)
-    lon_lims = dict(min = -100, max = -30, stp = 10)    
-    
-    quick_map(ax, lon_lims, lat_lims)
-        
-    
-    plot_all_meridians(
-             ax, 
-             slon = -100, 
-             elon = -30, 
-             step = 0.5, 
-             max_lat = 80, 
-             alt = alt, 
-             year = 2013
-             )
-    
-    plot_sites(ax)
-    
-    ax.set(title = f"{alt} km - {year}")
+    ax.set(title = f"{year}")
     ax.legend(ncol = 1, loc = "upper right")
-    
-    plt.show()
-    
+        
     return fig 
+
+
+fig = plot_mag_meridians(
+        year = 2013
+        )
 
 
 #save_plot(plot_mag_meridians)
 
-
-
+ 

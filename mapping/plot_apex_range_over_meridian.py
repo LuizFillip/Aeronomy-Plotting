@@ -1,4 +1,4 @@
-from GEO import quick_map, sites, load_equator
+import GEO as gg 
 from intersect import intersection
 import numpy as np
 from FluxTube import Apex
@@ -21,7 +21,7 @@ def plot_ranges_for_each_apex(
          
          rlat = np.degrees(mlat)
          
-         x1, y1 = limit_hemisphere(
+         x1, y1 = gg.limit_hemisphere(
                  x, y, rlat, 
                  hemisphere = set_hemis
                  )
