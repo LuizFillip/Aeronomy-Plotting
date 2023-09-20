@@ -1,7 +1,7 @@
 /__pycache__/*
 /layouts/__pycache__/*
 /histograms/__pycache__/*
-/flux_tube/__pycache__/*
+/FluxTube/__pycache__/*
 /correlations/__pycache__/*
 /time_heights/__pycache__/*
 /timeseries/__pycache__/*
@@ -12,3 +12,5 @@
 /distributions/__pycache__/*
 /ROTI_gammas/__pycache__/*
 /wavelets/__pycache__/*
+/PlasmaBubbles/__pycache__/*
+/occurrengram/__pycache__/*
