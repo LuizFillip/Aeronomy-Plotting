@@ -45,9 +45,9 @@ def concat_datasets(years):
 
 years = list(range(2013, 2022))
 
-ds = concat_datasets(years)
+# ds = concat_datasets(years)
     
-ds.to_csv('0101.txt')
+# ds.to_csv('0101.txt')
 
 
 def plot_annual_compararion_roti(years):
@@ -89,7 +89,8 @@ def plot_annual_compararion_roti(years):
             markersize = 4
             )
         
-        ax.text(0.1, 0.8, 
+        ax.text(
+            0.1, 0.8, 
                 f'F10.7 = {flux} sfu', 
                 transform = ax.transAxes
                 )

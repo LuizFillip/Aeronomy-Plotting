@@ -2,6 +2,9 @@ import GEO as gg
 from intersect import intersection
 import numpy as np
 from FluxTube import Apex
+import base as b 
+import matplotlib.pyplot as plt 
+import cartopy.crs as ccrs
 
 def plot_ranges_for_each_apex(
          x, y,
@@ -33,36 +36,66 @@ def plot_ranges_for_each_apex(
       
 def plot_site_and_closest_meridian(
         ax, 
-        site = "saa"):
+        site = "saa"
+        ):
       
-      glat, glon = sites[site]["coords"]
-      name = sites[site]["name"]
-      
-      ax.scatter(
-          glon, glat, 
-          s = 100, 
-          label = name, 
-          marker = "^"
+      fig, ax = plt.subplots(
+          dpi = 300,
+          figsize = (8, 8),
+          subplot_kw = 
+              {
+              'projection': ccrs.PlateCarree()
+              }
           )
+
+      path = 'database/20130101.txt'
+
+      df = b.load(path)
+
+      dn = df.index.unique()[0]
       
-      x, y = find_closest_meridian(glon, glat)
+      gg.map_features(ax)
+
+      ds = df.loc[(df.index == dn) & 
+                  (df['apex'] == 300)]
       
-      eq = load_equator()
       
-      nx, ny = intersection(
-          eq[:, 0], 
-          eq[:, 1], 
-          x, y
+      print(len(ds))
+      lat = gg.limits(
+          min = -25, 
+          max = 15, 
+          stp = 10
           )
-      
-      ax.scatter(nx, ny, s = 100, c = "r",
-                 label = "intersecção")
-      
-      ax.plot(x, y, lw = 2, 
-              color = "salmon", 
-              label = "meridiano magnético")
-      
-      return x, y
+      lon = gg.limits(
+          min = -85, 
+          max = -30, 
+          stp = 10
+          )    
+
+      gg.map_boundaries(ax, lon, lat)
+
+
+      img = ax.scatter(
+          ds['glon'], 
+          ds['glat'], 
+          c = ds['zon']
+          )
+
+
+      return 
 
 
 
+
+
+# path = 'database/20130101.txt'
+
+# df = b.load(path)
+
+# dn = df.index.unique()[0]
+
+# ds = df.loc[(df.index == dn) & 
+#             (df['apex'] == 300)]
+
+
+# ds['glat'], ds['glon']

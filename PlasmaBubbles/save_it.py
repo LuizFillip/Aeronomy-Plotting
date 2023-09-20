@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm  
 import os
 from plotting import plot_epbs_occurrences_roti
+import PlasmaBubbles as pb 
+import pandas as pd
+
 
 def save_img(ds, func, save_in):
 
@@ -28,6 +31,7 @@ def save_year(year, root):
     
     infile = f'database/EPBs/longs/{year}.txt'
     
+    out = []
     for day in tqdm(range(365), 
                     desc = str(year)):
         
@@ -35,25 +39,40 @@ def save_year(year, root):
         
         dn = dt.datetime(year, 1, 1, 21) + delta
         
-        ds = b.sel_times(
-            b.load(infile), 
-            dn, hours = 10
-            )
+        try:
         
-      
-        save_in = os.path.join(
-            root,  
-            dn.strftime('%j.png')
-            )
+            ds = b.sel_times(
+                b.load(infile), 
+                dn, hours = 9
+                )
+            
+            out.append(pb.get_all_events(ds))
+            
+            save_in = os.path.join(
+                root,  
+                dn.strftime('%j.png')
+                )
+            
+            save_img(
+                ds, 
+                plot_epbs_occurrences_roti, 
+                save_in
+                )
+        except:
+            continue
         
-        save_img(
-            ds, 
-            plot_epbs_occurrences_roti, 
-            save_in
-            )
+    return pd.concat(out)
+
         
-        
+out = []
 for year in range(2013, 2023):
     
     root = f'D:\\img\\{year}\\'
-    save_year(year, root)
+    
+    out.append(save_year(year, root))
+    
+    
+df = pd.concat(out)
+
+
+df.to_csv('events.txt')

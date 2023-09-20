@@ -3,6 +3,7 @@ import base as b
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
 
+
 INDEX_PATH = 'database/indices/omni.txt'
 
 
@@ -32,6 +33,7 @@ def get_infos(dn):
         out.append(f'{c} = {item}')
     
     return '\n'.join(out)
+
 
 def plot_epbs_occurrences_roti(
         ds
@@ -100,11 +102,11 @@ def plot_epbs_occurrences_roti(
      
     b.format_time_axes(ax[1])
     
-    ax[0].text(
+    ax[1].text(
         0.77, 
-        0.5, 
+        0.48, 
         get_infos(dn), 
-        transform = ax[0].transAxes
+        transform = ax[1].transAxes
         )
     
     
@@ -121,7 +123,7 @@ def plot_epbs_occurrences_roti(
 def single_plot(year = 2019):
     
     infile = f'database/EPBs/longs/{year}.txt'
-    dn = dt.datetime(year, 5, 5, 21)
+    dn = dt.datetime(year, 2, 10, 21)
          
     ds = b.sel_times(
         b.load(infile), 
@@ -129,16 +131,11 @@ def single_plot(year = 2019):
         hours = 9
         )
     
+   
     plot_epbs_occurrences_roti(ds)
     
-    plt.show()
+    return pb.get_all_events(ds)
 
-
-single_plot(year = 2019)
-# 
-# dn = dt.datetime(2019, 5, 5, 21)
-
-
-
+# ds = single_plot(year = 2013)
 
 

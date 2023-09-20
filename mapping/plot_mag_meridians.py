@@ -7,12 +7,20 @@ import numpy as np
 
 b.config_labels()
 
-def plot_sites(ax, year = 2013):
+def plot_sites_and_meridians(
+        ax, 
+        year = 2013
+        ):
     
-    gg.mag_equator(ax,
-                  year,
-                  degress=None
-                  )
+    mlat = Apex(300).apex_lat_base(base = 75)
+
+    rlat = np.degrees(mlat)
+    
+    gg.mag_equator(
+        ax,
+        year,
+        degress = None
+        )
     
     color = ['blue', 'g']
     for i, site in enumerate(["jic", "saa"]):
@@ -29,6 +37,13 @@ def plot_sites(ax, year = 2013):
     
         nx, ny, x, y = gg.load_meridian(year, site)
         
+        x = sorted(x)
+        
+        x, y = gg.interpolate(
+             x, y, 
+             points = 50
+             )
+        
         line, = ax.plot(x, y, color = color[i])
 
         ax.scatter(nx, ny,
@@ -37,10 +52,6 @@ def plot_sites(ax, year = 2013):
             c = color[i]
             )
         
-        mlat = Apex(300).apex_lat_base(base = 75)
-
-        rlat = np.degrees(mlat)
-
         x1, y1 = gg.limit_hemisphere(
                 x, y, nx, ny, rlat, 
                 hemisphere = 'both'
@@ -81,8 +92,9 @@ def plot_mag_meridians(
 
     gg.map_boundaries(ax, lon, lat)
     
-    plot_sites(ax, year)
+    plot_sites_and_meridians(ax, year)
     
+    ax.axhline(0, lw = 2, color = 'r', linestyle = '--')
     ax.set(title = f"{year}")
     ax.legend(ncol = 1, loc = "upper right")
         
