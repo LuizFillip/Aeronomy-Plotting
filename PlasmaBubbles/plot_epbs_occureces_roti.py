@@ -36,7 +36,8 @@ def get_infos(dn):
 
 
 def plot_epbs_occurrences_roti(
-        ds
+        ds,
+        cols = ['-60', '-50', '-40']
         ):
 
     fig, ax = plt.subplots(
@@ -46,14 +47,15 @@ def plot_epbs_occurrences_roti(
         figsize = (10, 6)
         )
     
-    ds = ds[['-60', '-50', '-40']]
+    ds = ds[cols]
     
     plt.subplots_adjust(hspace = 0.1)
     
     color = ['k', 'b', 'r']
+    
     dn = ds.index[0]
     
-    for i, col in enumerate(ds.columns):
+    for i, col in enumerate(cols):
         
         the = pb.threshold(dn, int(col))
         
@@ -63,7 +65,6 @@ def plot_epbs_occurrences_roti(
             color = color[i], 
             **args
             )
-        
         
         ax[0].axhline(
             the, 
@@ -97,16 +98,18 @@ def plot_epbs_occurrences_roti(
     ax[1].set(
         ylabel = 'EPBs occurrence', 
         yticks = [0, 1], 
+        xlim = [ds.index[0], 
+                ds.index[-1]],
         ylim = [-0.2, 1.2]
         )
      
     b.format_time_axes(ax[1])
     
-    ax[1].text(
+    ax[0].text(
         0.77, 
-        0.48, 
+        0.53, 
         get_infos(dn), 
-        transform = ax[1].transAxes
+        transform = ax[0].transAxes
         )
     
     
@@ -120,22 +123,26 @@ def plot_epbs_occurrences_roti(
     return fig
 
 
-def single_plot(year = 2019):
-    
-    infile = f'database/EPBs/longs/{year}.txt'
-    dn = dt.datetime(year, 2, 10, 21)
-         
+def single_plot(dn, hours = 9):
+        
+    infile = f'database/EPBs/longs/{dn.year}.txt'
+     
     ds = b.sel_times(
-        b.load(infile), 
-        dn, 
-        hours = 9
+            b.load(infile), 
+            dn, 
+            hours = hours
         )
     
    
-    plot_epbs_occurrences_roti(ds)
+    plot_epbs_occurrences_roti(
+            ds, 
+            cols = ['-80', '-70', '-60']
+        )
     
-    return pb.get_all_events(ds)
+    return ds #pb.get_all_events(ds)
 
-# ds = single_plot(year = 2013)
+dn = dt.datetime(2015, 2, 18, 3)
+
+ds = single_plot(dn)
 
 

@@ -13,7 +13,7 @@ def plot_longitudinal_scattering(df):
         sharex = True, 
         sharey = True,
         nrows = 5, 
-        figsize = (10, 8)
+        figsize = (12, 10)
         )
     
     args = dict(
@@ -38,7 +38,7 @@ def plot_longitudinal_scattering(df):
         info =  f'({c[i]}) {long}° to {long + 10}°'
             
         ax[i].text(
-            0.02, 
+            0.8, 
             0.7, 
             info, 
             transform = ax[i].transAxes
@@ -46,27 +46,31 @@ def plot_longitudinal_scattering(df):
         
     b.format_time_axes(ax[4])
     
-    ax[0].set(yticks = np.arange(0, 6, 1))
+    title = 'Raw data for each longitude sector'
+    
+    ax[0].set(
+        title = title, 
+        yticks = np.arange(0, 6, 1), 
+        ylim = [0, 5]
+        )
     
     fig.text(
-        0.06, 0.35, "ROTI (TECU/min)",
+        0.06, 0.45, "ROTI (TECU/min)",
         rotation = "vertical", 
         fontsize = 20
         )
     
-    
-    fig.suptitle(
-        'Raw data for each longitude sector',
-        y = 0.95)
-    
     return fig
+
     
+dn = dt.datetime(2015, 2, 17, 21)
 
-year = 2013 
-df = pb.concat_files(year)
-
-dn = dt.datetime(year, 1, 1, 20)
-
-df = b.sel_times(df, dn, hours = 11)
+df = b.sel_times(
+        pb.concat_files(dn), 
+        dn, 
+        hours = 15
+        )   
 
 f = plot_longitudinal_scattering(df)
+
+plt.show()

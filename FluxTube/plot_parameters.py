@@ -54,7 +54,7 @@ def plot_int_profiles():
 
 # fig = plot_int_profiles()
 
-
+b.config_labels()
 
 fig, ax = plt.subplots(
     ncols = 2, 
@@ -64,7 +64,7 @@ fig, ax = plt.subplots(
     dpi = 300
     )
 
-plt.subplots_adjust(wspace = 0.1)
+plt.subplots_adjust(wspace = 0.2)
 
 
 site = 'saa'
@@ -82,7 +82,9 @@ def plot_site(ax, site):
     
     for i, ax in enumerate(ax.flat):
         
-        ax.plot(ds[cols[i]])
+        ax.plot(ds[cols[i]], label = site)
+        
+        ax.set(ylabel = cols[i])
         
         if i >= 2:
         
@@ -92,3 +94,6 @@ def plot_site(ax, site):
 plot_site(ax, 'saa')
 
 plot_site(ax, 'jic')
+
+
+ax[0, 0].legend()

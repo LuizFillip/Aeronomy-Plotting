@@ -91,9 +91,9 @@ def plot_annual_compararion_roti(years):
         
         ax.text(
             0.1, 0.8, 
-                f'F10.7 = {flux} sfu', 
-                transform = ax.transAxes
-                )
+            f'F10.7 = {flux} sfu', 
+            transform = ax.transAxes
+            )
         
         ax.set(title = cols[i], ylim = [0, 5], 
                yticks = range(6))
