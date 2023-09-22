@@ -50,16 +50,13 @@ def plot_roti_parameters(
     ax[1].axhline(0, color = 'r')
     ax[1].set(ylabel = "ROT", ylim = [-10, 10])
     
-    
-    
-    b.format_time_axes(ax[2], hour_locator = 3)
+    b.format_time_axes(
+        ax[2], 
+        hour_locator = 3
+        )
     
     return ax
     
-
-    
-
-# plot_roti_parameters(station, prn, tec)
 
 
 

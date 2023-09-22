@@ -14,16 +14,12 @@ args = dict(marker = 'o',
             color = 'k'
             )
 
-
-    
 def plot_thresholds_example(
         ax, 
         df, 
-        percent = 0.8, 
-        freq = 60
         ):
     
-    avg = b.running(df.values, N =  freq)
+    avg = b.running(df.values, N = 60)
     ax.plot(df, **args)
     
     ax.plot(df.index, avg, lw = 2, 
@@ -31,11 +27,6 @@ def plot_thresholds_example(
     
     dn = df.index[0]
     lon = int(df.name)
-    # value = pb.threshold(
-    #     df, 
-    #     freq = freq, 
-    #     percent = percent
-    #     )
     
     value = pb.threshold(dn, lon)
 
