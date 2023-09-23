@@ -74,7 +74,7 @@ def save_year(year, root):
     
 
         
-for year in range(2021, 2023):
+for year in range(2013, 2021):
     
     root = f'D:\\img\\{year}\\'
     

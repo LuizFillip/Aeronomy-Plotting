@@ -10,7 +10,7 @@ b.config_labels()
 def plot_compare_maximus(
         dn,
         long = -60, 
-        factor = 2
+        factor = 3
         ):
 
     fig, ax = plt.subplots(
@@ -40,5 +40,5 @@ def plot_compare_maximus(
     
     ax[0].set(ylim = [0, 4])
     
-dn = dt.datetime(2013, 3, 16, 21)
-plot_compare_maximus(dn)
+# dn = dt.datetime(2013, 3, 17, 21)
+# plot_compare_maximus(dn, long = -40)
