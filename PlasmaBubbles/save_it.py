@@ -29,7 +29,10 @@ def save_year(year, root):
 
     b.make_dir(root)
     
-    infile = f'database/EPBs/longs/{year}.txt'
+    infile = os.path.join(
+        pb.PATH_LONG, 
+        f'{year}.txt'
+        )
     
     out = []
     for day in tqdm(range(365), 
@@ -43,10 +46,12 @@ def save_year(year, root):
         
             ds = b.sel_times(
                 b.load(infile), 
-                dn, hours = 9
+                dn, hours = 10
                 )
             
-            out.append(pb.get_all_events(ds))
+            out.append(
+                pb.get_all_events(ds)
+                )
             
             save_in = os.path.join(
                 root,  
@@ -60,19 +65,19 @@ def save_year(year, root):
                 )
         except:
             continue
-        
-    return pd.concat(out)
+    
+    df = pd.concat(out)
+    
+    save_in = infile.replace('longs', 'events')
+
+    df.to_csv(save_in)
+    
 
         
-out = []
-for year in range(2013, 2023):
+for year in range(2021, 2023):
     
     root = f'D:\\img\\{year}\\'
     
-    out.append(save_year(year, root))
+    save_year(year, root)
     
     
-df = pd.concat(out)
-
-
-df.to_csv('events.txt')
