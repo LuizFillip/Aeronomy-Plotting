@@ -13,64 +13,88 @@ def get_flux(dn):
 
 b.config_labels()
 
+def plot_get_thresholds_demo(df):
+    
+    fig, ax = plt.subplots(
+        dpi = 300,
+        sharex = True, 
+        sharey = True,
+        figsize = (12, 4)
+        )
+    
+    args = dict(
+        marker = 'o', 
+        markersize = 1,
+        linestyle = 'none', 
+        color = 'k'
+        )
+    
 
-fig, ax = plt.subplots(
-    dpi = 300,
-    sharex = True, 
-    sharey = True,
-    figsize = (12, 4)
-    )
+    ax.plot(df['roti'], **args)
+    
+    b.format_time_axes(ax)
+    
+        
+    ax.set(
+        title = 'Obtaining the threshold', 
+        yticks = np.arange(0, 4, 1), 
+        ylim = [0, 3], 
+        xlim = [df.index[0], df.index[-1]]
+        )
+    
+    
+    return ax
+    
+    
+def plot_elements(ax, df):
+    # ds = df.rolling('60min').agg('mean')
+    avg = b.running(df['roti'], N = 60)
+    
+    ax.plot(df.index, avg, color = 'r', lw = 3)
+    base = df['roti'].mean()
+    ax.axhline(base, lw = 3, color = 'b')
+    flux = get_flux(dn)
+    threshold = pb.set_value(
+        avg.max(), flux)
+    ax.axhline(threshold, 
+                lw = 3, color = 'magenta',
+                label = f'{threshold} TECU/min')
+    
+    ax.axhline(flux / 100, lw = 3, color = 'g', 
+                label = f'{flux} sfu')
+    
+    ax.legend()
 
-args = dict(
-    marker = 'o', 
-    markersize = 1,
-    linestyle = 'none', 
-    color = 'k'
-    )
 
-dn = dt.datetime(2015, 2, 18, 3)
+dn = dt.datetime(2015, 2, 17, 21)
 
 
 df = pb.longitude_sector(
-    pb.concat_files(dn), -80
+    pb.concat_files(dn), -60
     )
 
-df = b.sel_times(df, dn, hours = 11)
+df = b.sel_times(df, dn, hours = 9)
 
-base = df['roti'].mean()
+ax = plot_get_thresholds_demo(df)
 
-ax.plot(df['roti'], **args)
+N = 60
+df['avg'] =  b.smooth2(b.running(df['roti'], N), N * 4)
+df['std'] =  b.smooth2(b.running_std(df['roti'], N), N * 4)
 
-ds = df.rolling('60min').agg('mean')
+ax.plot(df['avg'], lw = 3, color = 'r')
 
-ax.plot(ds, color = 'r', lw = 3)
+i = 2
 
-ax.axhline(base, lw = 3, color = 'b')
-
-
-flux = get_flux(dn)
-ax.axhline(flux / 100, lw = 3, color = 'g', 
-           label = f'{flux} sfu')
-
-b.format_time_axes(ax)
-
-title = 'Obtaining the threshold'
-
-threshold = pb.set_value(
-    ds['roti'].max(), flux, base.max())
-
-ax.axhline(threshold, 
-           lw = 3, color = 'magenta',
-           label = f'{threshold} TECU/min')
-
-ax.legend()
-
-ax.set(
-    title = title, 
-    yticks = np.arange(0, 4, 1), 
-    ylim = [0, 3], 
-    xlim = [df.index[0], df.index[-1]]
+ax.fill_between(
+    df.index, 
+    df['avg'] + i * df['std'], 
+    df['avg'] - i * df['std'], 
+    alpha = 0.3, 
+    color = 'r'
     )
 
 
-plt.show()
+# ds = df.rolling('60min').agg('mean')
+
+# ax.plot(ds['roti'], lw = 3, color = 'g')
+

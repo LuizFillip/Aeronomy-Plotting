@@ -77,7 +77,7 @@ def plot_site(ax, site):
     
     ds['gr'] = ds['ge'] / ds['nui']
     
-    #['F', 'E']
+    
     cols = ['gr', 'K', 'mer_parl', 'ratio']
     
     for i, ax in enumerate(ax.flat):
