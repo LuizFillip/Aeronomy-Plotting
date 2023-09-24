@@ -14,7 +14,8 @@ args = dict(
 
 b.config_labels()
 
-def sel_indexes(idx = ['f107a', 'kp', 'dst']):
+def sel_indexes(
+        dn, idx = ['f107a', 'kp', 'dst']):
     
     df = b.load(INDEX_PATH)
 
@@ -24,7 +25,7 @@ def sel_indexes(idx = ['f107a', 'kp', 'dst']):
 
 def get_infos(dn):
     
-    res = sel_indexes()
+    res = sel_indexes(dn)
     
     out = []
     for c in res.columns:
@@ -45,14 +46,14 @@ def plot_epbs_occurrences_roti(
         nrows = 2, 
         dpi = 300, 
         sharex = True, 
-        figsize = (10, 6)
+        figsize = (12, 6)
         )
     
     ds = ds[cols]
     
     plt.subplots_adjust(hspace = 0.1)
     
-    color = ['k', 'b', 'r']
+    color = ['k', 'b', 'r', 'g']
     
     dn = ds.index[0]
     
@@ -89,7 +90,7 @@ def plot_epbs_occurrences_roti(
         )
     
     ax[1].legend(
-        ncol = 5, 
+        ncol = 4, 
         title = 'Longitudinal zones and thresholds (TECU/min)',
         bbox_to_anchor = (.5, 2.6), 
         loc = "upper center"
@@ -140,13 +141,14 @@ def single_plot(dn, hours = 9):
    
     plot_epbs_occurrences_roti(
             ds, 
-            cols = ['-70', '-60', '-50']
+            cols = ['-70', '-60', '-50', '-40']
         )
     
-    return ds #pb.get_all_events(ds)
+    return ds #pb.get_all_e
 
-# dn = dt.datetime(2021, 7, 18, 21)
+dn = dt.datetime(2022, 11, 27, 21)
 
-# ds = single_plot(dn)
+ds = single_plot(dn, hours = 10)
 
+plt.show()
 
