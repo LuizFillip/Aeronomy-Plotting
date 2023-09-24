@@ -3,12 +3,18 @@ import os
 import matplotlib.pyplot as plt
 import digisonde as dg
 
+PATH_IONOGRAM = 'database/iono/20170328/'
 
 def crop_image(img, y = 50, x = 130, h = 900, w = 750):
     
     return img[y: y + h, x: x + w]
 
-def plot_ionogram(ax, infile, crop = True):
+def plot_ionogram(
+        ax, 
+        infile, 
+        crop = True, 
+        format_ = '%H:%M'
+        ):
 
     img = cv2.imread(infile)
 
@@ -21,53 +27,76 @@ def plot_ionogram(ax, infile, crop = True):
     dn = dg.ionosonde_fname(filename)
     
     
-    ax.set(title = dn.strftime("%d/%m %H:%M"))
+    ax.set(title = dn.strftime(format_))
     
     ax.axis("off")
     
-    return ax
+    return dn
         
+def labels(
+        fig, 
+        fontsize = 30, 
+        title = ''
+        ):
 
-def plot_sequence():
-        
+
+    fig.text(.07, 0.4, 
+             "Altitude (km)", 
+             rotation = "vertical", 
+             fontsize = fontsize)
+    
+    fig.text(.4, 0.07, 
+             "Frequência (MHz)",
+             fontsize = fontsize)
+    
+    fig.suptitle(title, y = 0.97, 
+                 fontsize = fontsize)
+    
+
+def plot_sequence_of_ionogram():
+    
     fig, ax = plt.subplots(
-         figsize = (12, 11), 
+         figsize = (12, 8), 
          dpi = 300, 
          ncols = 5, 
-         nrows = 3
+         nrows = 2
          )
     
     plt.subplots_adjust(wspace = 0)
     
-    site = "Sao Luis"
+    files = os.listdir(PATH_IONOGRAM)
     
-    if site == "Sao Luis":
-        folder = "saa"
-    else:
-        folder = "fza"
+    files = sorted([f for f in files if 'PNG' in f])
     
-    infile = f"D:\\iono\\ionograms_20130317\\{folder}\\"
+    files = files[2:]
+    for i, ax in enumerate(ax.flat):
+        
+        fname = files[i]
+        
+        infile = os.path.join(
+            PATH_IONOGRAM, 
+            fname
+            )
+        
+        dn = plot_ionogram(
+            ax, 
+            infile, 
+            crop = True
+            )
+        
+        
+        if 'SAA' in fname:
+            site = "Sao Luis"
+        else:
+            site = "Fortaleza"
+            
+    date = dn.strftime('%d/%m/%Y')
+    title = f'{site} - {date}'
     
-    files = ['FZA0M_20130316(075)220000.PNG', 'FZA0M_20130316(075)230000.PNG', 
-             'FZA0M_20130317(076)000000.PNG', 'FZA0M_20130317(076)010000.PNG', 
-             'FZA0M_20130317(076)020000.PNG', 'FZA0M_20130317(076)220000.PNG', 
-             'FZA0M_20130317(076)230000.PNG', 'FZA0M_20130318(077)000000.PNG', 
-             'FZA0M_20130318(077)010000.PNG', 'FZA0M_20130318(077)020000.PNG', 
-             'FZA0M_20130318(077)222000.PNG', 'FZA0M_20130318(077)230000.PNG', 
-             'FZA0M_20130319(078)000000.PNG', 'FZA0M_20130319(078)011000.PNG', 
-             'FZA0M_20130319(078)020000.PNG']
+    labels(
+        fig, 
+        fontsize = 30, 
+        title = title
+        )
     
-    
-    for num, ax in enumerate(ax.flat):
-        filename = files[num].replace("FZA0M", "SAA0K")
-    
-        plot_ionogram(ax, infile + filename)
-    fontsize = 30
-    fig.text(.07, 0.4, "Altitude (km)", rotation = "vertical", fontsize = fontsize)
-    fig.text(.4, 0.07, "Frequência (MHz)", fontsize = fontsize)
-    
-    fig.suptitle(site, y = 0.97, fontsize = fontsize)
-    fig.savefig(f"digisonde/src/figures/ionograms_{site.lower()}.png", dpi = 300)
-    plt.show()
-
-
+    return
