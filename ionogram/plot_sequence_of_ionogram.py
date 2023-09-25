@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import digisonde as dg
 
-PATH_IONOGRAM = 'database/iono/20170328/'
+PATH_IONOGRAM = 'database/iono/20160617/'
 
 def crop_image(img, y = 50, x = 130, h = 900, w = 750):
     
@@ -26,37 +26,43 @@ def plot_ionogram(
     filename = os.path.split(infile)[-1]
     dn = dg.ionosonde_fname(filename)
     
-    
     ax.set(title = dn.strftime(format_))
     
     ax.axis("off")
     
     return dn
         
-def labels(
+def fig_labels(
         fig, 
         fontsize = 30, 
         title = ''
         ):
 
 
-    fig.text(.07, 0.4, 
-             "Altitude (km)", 
-             rotation = "vertical", 
-             fontsize = fontsize)
+    fig.text(
+        .07, 0.4, 
+        "Altitude (km)", 
+        rotation = "vertical", 
+        fontsize = fontsize
+        )
     
-    fig.text(.4, 0.07, 
-             "Frequência (MHz)",
-             fontsize = fontsize)
+    fig.text(
+        .4, 0.07, 
+        "Frequência (MHz)",
+        fontsize = fontsize
+        )
     
-    fig.suptitle(title, y = 0.97, 
-                 fontsize = fontsize)
+    fig.suptitle(
+        title, 
+        y = 1.03, 
+        fontsize = fontsize
+        )
     
 
 def plot_sequence_of_ionogram():
     
     fig, ax = plt.subplots(
-         figsize = (12, 8), 
+         figsize = (12, 7), 
          dpi = 300, 
          ncols = 5, 
          nrows = 2
@@ -68,7 +74,7 @@ def plot_sequence_of_ionogram():
     
     files = sorted([f for f in files if 'PNG' in f])
     
-    files = files[2:]
+    # files = files[2:]
     for i, ax in enumerate(ax.flat):
         
         fname = files[i]
@@ -93,10 +99,12 @@ def plot_sequence_of_ionogram():
     date = dn.strftime('%d/%m/%Y')
     title = f'{site} - {date}'
     
-    labels(
+    fig_labels(
         fig, 
         fontsize = 30, 
         title = title
         )
     
     return
+
+plot_sequence_of_ionogram()

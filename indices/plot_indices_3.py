@@ -2,23 +2,15 @@ import matplotlib.pyplot as plt
 import base as s
 import datetime as dt
 import numpy as np
-
+import PlasmaBubbles as pb 
     
 s.config_labels()
 
 
-def plot_dst(ax):
+def plot_dst(ax, dst):
+
     
-    infile = 'database/indices/kyoto2000.txt'
-    dst = s.load(infile)
-    
-    dst = s.sel_dates(
-        s.load(infile), 
-        dt.datetime(2012, 12, 1), 
-        dt.datetime(2023, 1, 13)
-        )
-    
-    ax.plot(dst['dst'])
+    ax.plot(dst)
     
     ax.set(
         xlim = [dst.index[0], dst.index[-1]], 
@@ -33,9 +25,43 @@ def plot_dst(ax):
     
     return dst
 
+def plot_f107(ax, f107, f107a):
+    
+    ax.plot(f107)
+    ax.plot(
+        f107a, 
+        lw = 3, 
+        color = 'cornflowerblue'
+        )
+        
+    ax.set(
+        ylabel = '$F_{10.7}$ (sfu)', 
+        ylim = [50, 300],
+        yticks = np.arange(50, 350, 50),
+      
+        )
 
+    for limit in [100, 150]:
+        ax.axhline(
+            limit, 
+            lw = 2, 
+            color = 'r'
+            )
+        
+        
+def plot_kp(ax, kp):
+    
+    ax.bar(kp.index, kp)
+    ax.set(
+        ylabel = 'Kp', 
+        ylim = [0, 10], 
+        yticks = np.arange(0, 10, 2)
+              )
+    
+    ax.axhline(4, lw = 2, color = 'r')
+     
 
-def plot_long_term():
+def plot_long_term(s_year, e_year):
     
     fig, ax = plt.subplots(
         dpi = 300,
@@ -46,44 +72,22 @@ def plot_long_term():
     
     plt.subplots_adjust(hspace = 0.1)
     
-    
-    df = s.load('database/indices/indeces.txt')
+    df = s.load(pb.INDEX_PATH)
     
     df = s.sel_dates(
         df, 
-        dt.datetime(2012, 12, 1), 
-        dt.datetime(2023, 1, 13)
+        dt.datetime(s_year, 12, 1), 
+        dt.datetime(e_year, 1, 13)
         )
         
-    
-    ax[0].bar(df.index, df['kp_max'])
-    ax[0].set(ylabel = 'Kp', 
-              ylim = [0, 10], 
-              yticks = np.arange(0, 10, 2)
-              )
-    
-    
-    ax[0].axhline(4, lw = 2, color = 'r')
-    
-    plot_dst(ax[1])
-    
-    ax[2].plot(df['f107'])
-    ax[2].plot(df['f107a'], 
-               lw = 2, 
-               color = 'cornflowerblue'
-               )
-        
+    plot_kp(ax[0], df['kp'])
+    plot_dst(ax[1], df['dst'])
+    plot_f107(ax[2], df['f107'], df['f107a'])
+  
     ax[2].set(
-        ylabel = '$F_{10.7}$ (sfu)', 
-        ylim = [50, 300],
-        yticks = np.arange(50, 350, 50),
         xlabel = 'years',
         xlim = [df.index[0], df.index[-1]]
         )
-    
-    for limit in [100, 150]:
-        ax[2].axhline(limit, lw = 2, color = 'r')
-        
         
     c = s.chars()
     s.config_labels(fontsize = 20)
@@ -92,7 +96,9 @@ def plot_long_term():
         
         ax.text(0.02, 0.85, f'({c[i]})', 
                 transform = ax.transAxes)
+        
+    return fig
     
 
 
-# plot_long_term()
+f = plot_long_term(1968, 1989)

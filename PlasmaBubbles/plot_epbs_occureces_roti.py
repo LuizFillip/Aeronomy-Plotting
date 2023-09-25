@@ -15,7 +15,8 @@ args = dict(
 b.config_labels()
 
 def sel_indexes(
-        dn, idx = ['f107a', 'kp', 'dst']):
+        dn, idx = ['f107a', 'kp', 'dst']
+        ):
     
     df = b.load(INDEX_PATH)
 
@@ -141,12 +142,12 @@ def single_plot(dn, hours = 9):
    
     plot_epbs_occurrences_roti(
             ds, 
-            cols = ['-70', '-60', '-50', '-40']
+            cols = ['-70', '-60']
         )
     
     return ds #pb.get_all_e
 
-dn = dt.datetime(2022, 11, 27, 21)
+dn = dt.datetime(2013, 1, 12, 21)
 
 ds = single_plot(dn, hours = 10)
 
