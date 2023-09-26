@@ -3,8 +3,8 @@ import base as b
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
 import os
+from geophysical_indices import INDEX_PATH
 
-INDEX_PATH = 'database/indices/omni.txt'
 
 args = dict(
     marker = 'o', 
@@ -40,7 +40,7 @@ def get_infos(dn):
 
 def plot_epbs_occurrences_roti(
         ds,
-        cols = ['-70', '-60', '-50']
+        cols 
         ):
 
     fig, ax = plt.subplots(
@@ -50,7 +50,7 @@ def plot_epbs_occurrences_roti(
         figsize = (12, 6)
         )
     
-    ds = ds[cols]
+    ds = ds[[str(c * -10) for c in cols]]
     
     plt.subplots_adjust(hspace = 0.1)
     
@@ -58,7 +58,7 @@ def plot_epbs_occurrences_roti(
     
     dn = ds.index[0]
     
-    for i, col in enumerate(cols):
+    for i, col in enumerate(ds.columns):
         
         the = pb.threshold(dn, col)
         
@@ -129,8 +129,8 @@ def plot_epbs_occurrences_roti(
 def single_plot(dn, hours = 9):
         
     infile = os.path.join(
-        pb.PATH_LONG, 
-       f'{dn.year}.txt'
+            pb.PATH_LONG, 
+            f'{dn.year}.txt'
         )
      
     ds = b.sel_times(
@@ -142,14 +142,12 @@ def single_plot(dn, hours = 9):
    
     plot_epbs_occurrences_roti(
             ds, 
-            cols = ['-70', '-60']
+            cols = [6, 5, 4]
         )
     
-    return ds #pb.get_all_e
+    return ds 
 
-dn = dt.datetime(2013, 1, 12, 21)
+dn = dt.datetime(2022, 9, 29, 21)
 
 ds = single_plot(dn, hours = 10)
-
-plt.show()
 

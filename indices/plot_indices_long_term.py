@@ -36,12 +36,11 @@ def plot_f107(ax, f107, f107a):
         
     ax.set(
         ylabel = '$F_{10.7}$ (sfu)', 
-        ylim = [50, 300],
-        yticks = np.arange(50, 350, 50),
-      
+        ylim = [50, 250],
+        yticks = np.arange(50, 250, 50)
         )
 
-    for limit in [100, 150]:
+    for limit in [75, 110]:
         ax.axhline(
             limit, 
             lw = 2, 
@@ -52,11 +51,12 @@ def plot_f107(ax, f107, f107a):
 def plot_kp(ax, kp):
     
     ax.bar(kp.index, kp)
+    
     ax.set(
         ylabel = 'Kp', 
         ylim = [0, 10], 
         yticks = np.arange(0, 10, 2)
-              )
+        )
     
     ax.axhline(4, lw = 2, color = 'r')
      
@@ -94,11 +94,13 @@ def plot_long_term(s_year, e_year):
 
     for i, ax in enumerate(ax.flat):
         
-        ax.text(0.02, 0.85, f'({c[i]})', 
-                transform = ax.transAxes)
+        ax.text(
+            0.02, 0.85, f'({c[i]})', 
+            transform = ax.transAxes
+            )
         
     return fig
     
 
 
-f = plot_long_term(1968, 1989)
+# f = plot_long_term(2012, 2023)

@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from Digisonde.drift_utils import load_drift
 
-def plotHistogram(ax, arr, binwidth = 10):
+def plot_histogram(ax, arr, binwidth = 10):
 
     lmax = round(arr.max())
     lmin = round(arr.min())
@@ -92,4 +91,4 @@ def histogram_subplots(col = "vz", **args):
     fig.text(0.43, 0.05, "Velocidade (m/s)", fontsize = 30)
 
         
-histogram_subplots(**args)
+# histogram_subplots(**args)

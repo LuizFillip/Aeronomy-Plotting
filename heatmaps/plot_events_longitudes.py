@@ -3,24 +3,22 @@ import seaborn as sns
 import base as b
 import pandas as pd
 import datetime as dt
+import os 
+
+PATH_EVENT = 'D:\\database\\epbs\\events\\'
+
 
 def heat_map_for_events(
         df, 
-        values = 'roti',
         freq = '1h'
         ):
     
-    # df = pd.pivot_table(
-    #     ds, 
-    #     values = values,
-    #     index = , 
-    #     columns = ds.index
-    #     )
+   
     
-    df.columns = pd.to_numeric(df.columns)
+    # df.columns = pd.to_numeric(df.index)
     
     
-    df.index = pd.DatetimeIndex(
+    df.columns = pd.DatetimeIndex(
         df.columns).strftime('%H:00')
     
     fig, ax = plt.subplots(
@@ -41,12 +39,14 @@ def heat_map_for_events(
         cbar_kws = {
         'pad': .02, 
         'ticks': [0, 1],
-    },
-        xticklabels = xticks_spacing)
+        },
+        xticklabels = xticks_spacing
+        )
     
-    ax.set(ylabel = 'Longitudes', xlabel = 'Time (UT)')
-    
-    value_to_int = {j:i for i, j in
+    ax.set(ylabel = 'Longitudes', 
+            xlabel = 'Universal time')
+        
+    value_to_int = {j: i for i, j in
                     enumerate(['non EPB', 'EPB'])}
 
     n = len(value_to_int)     
@@ -57,11 +57,8 @@ def heat_map_for_events(
                         r * i for i in range(n)])
     colorbar.set_ticklabels(list(value_to_int.keys()))   
 
+    return 
 
-infile = 'D:\\database\\epbs\\events\\2021.txt'
-
-
-ds = b.load(infile)
 
  
 def get_date_range(ds):
@@ -71,13 +68,27 @@ def get_date_range(ds):
     
     return pd.date_range(s, e, freq = '1D')
 
+dn = dt.datetime(2022, 3, 8, 21)
 
-dn = get_date_range(ds)[0]
 
-df = b.sel_times(ds, dn)
+infile = os.path.join(
+        PATH_EVENT, 
+        f'{dn.year}.txt'
+    )
+ 
+ds = b.sel_times(
+        b.load(infile), 
+        dn, 
+        hours = 11
+    )
 
 
 heat_map_for_events(
-        df, 
+        ds.T, 
         freq = '1h'
         )
+
+
+from GEO import terminator 
+
+
