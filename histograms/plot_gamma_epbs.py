@@ -8,6 +8,13 @@ df = b.load('all_results.txt')
 
 b.config_labels()
 
+args = dict(
+     facecolor = 'lightgrey', 
+     edgecolor = 'black', 
+     hatch = '////', 
+     color = 'gray', 
+     linewidth = 1
+     )
 
 def plot_gamma_epbs_count(df, step = 0.2):
     
@@ -19,13 +26,7 @@ def plot_gamma_epbs_count(df, step = 0.2):
         col_epbs = '-40'
         )
     
-    args = dict(facecolor = 'lightgrey', 
-                edgecolor = 'black', 
-                hatch = '////', 
-                color = 'gray', 
-                linewidth = 1)
-    
-    
+   
     fig, ax = plt.subplots(
         figsize = (12, 6), 
         dpi = 300
@@ -44,4 +45,4 @@ def plot_gamma_epbs_count(df, step = 0.2):
         ylabel = 'EPBs count'
         )
     
-plot_gamma_epbs_count(df)
+# plot_gamma_epbs_count(df)

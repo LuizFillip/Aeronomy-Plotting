@@ -1,38 +1,84 @@
-import matplotlib.pyplot as plt
-import numpy as np
-
-species = ("Adelie", "Chinstrap", "Gentoo")
-penguin_means = {
-    'Bill Depth': (18.35, 18.43, 14.98),
-    'Bill Length': (38.79, 48.83, 47.50),
-    'Flipper Length': (189.95, 195.82, 217.19),
-}
+import PlasmaBubbles as pb 
+import events as ev 
+import matplotlib.pyplot as plt 
 
 
-
-
-def plot_events_with_solar_activities():
-    
-    
-    x = np.arange(len(species))  # the label locations
-    width = 0.25  # the width of the bars
-    multiplier = 0
+def plot_epbs_by_solar_cycle(
+        path = 'events.txt',
+        col_flux = 'f107a',
+        period = 'sunset'
+        ):
     
 
     fig, ax = plt.subplots(
-        figsize = (12, 6)
+        nrows = 3, 
+        dpi = 300, 
+        figsize = (12, 10), 
+        sharex = True, 
+        sharey = True
         )
     
-    for attribute, measurement in penguin_means.items():
-        offset = width * multiplier
-        rects = ax.bar(
-            x + offset, measurement, width, label=attribute)
-        ax.bar_label(rects, padding=3)
-        multiplier += 1
+    ds = load_data(
+        path,
+        period = period, 
+        col_flux = col_flux
+        )
+        
+    events = ev.solar_flux_cycles(
+            ds, 
+            flux_col = col_flux,
+            lower_level = 74, 
+            high_level = 107
+            )
     
-    ax.set_ylabel('Length (mm)')
-    ax.set_title('Penguin attributes by species')
-    ax.set_xticks(x + width, species)
-    ax.legend(loc='upper left', ncols=3)
-    ax.set_ylim(0, 250)
+    epb_col = ds.columns[:-1]
+    
+    all_total = ds[epb_col].values.sum()
+    
+    count = 0
+    for i, even in enumerate(events):
+        
+        total = int(even[epb_col].values.sum())
+        
+        count += total
+        days  = len(even)
+        
+        info = f'EPBs = {total}\n Days = {days}'
+        
+        ax[i].text(
+            0.4, 0.5, 
+            info, 
+            transform = ax[i].transAxes
+            )
+        
+        ds1 = percentual_occurrence(even)
+        
+            
+        for col in epb_col:
+        
+            ds1[col] = (ds1[col] / all_total) * 100
+    
+                
+        ds1.plot(
+            ax = ax[i], 
+            kind = 'bar', 
+            legend = False
+            )
+    
+    print(all_total, count)
+    ax[0].legend(
+        ncols = 5, 
+        bbox_to_anchor = (.5, 1.6), 
+        loc = "upper center", 
+        title = 'longitudinal sectors'
+        )
+    
+    return #events
 
+
+# percentual_occurrence(ds)
+
+plot_epbs_by_solar_cycle(
+    col_flux = 'f107', 
+        period = 'midnight'
+        )

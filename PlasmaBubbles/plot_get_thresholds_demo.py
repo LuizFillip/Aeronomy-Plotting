@@ -93,9 +93,12 @@ def load_data(dn, long, N = 60):
     
     df = b.sel_times(df, dn, hours = 11)
     
-    df['avg'] =  b.smooth2(b.running(df['roti'], N), N * 4)
-    df['std'] =  b.smooth2(b.running_std(df['roti'], N), N * 4)
-    
+    df['avg'] =  b.smooth2(
+        b.running(df['roti'], N), N * 4
+        )
+    df['std'] =  b.smooth2(
+        b.running_std(df['roti'], N), N * 4
+        )
 
     return df
 

@@ -4,6 +4,8 @@ import GEO as g
 import json 
 import numpy as np
 import os 
+import base as b 
+
 
 PATH_COORDS = 'database/GEO/coords/'
 
@@ -16,6 +18,8 @@ args = dict(
     transform = ccrs.PlateCarree()
     )
 
+
+b.config_labels()
 
 
 def distance_from_equator(
@@ -85,14 +89,14 @@ def plot_receivers(
     g.map_features(axs)
 
     lat = g.limits(min = -40.0, max = 10, stp = 10)
-    lon = g.limits(min = -90, max = -30, stp = 10)    
+    lon = g.limits(min = -90, max = -30, stp = 5)    
 
     g.map_boundaries(axs, lon, lat)
     
     plot_receivers_coords(axs, year, distance)
     
         
-    for long in np.arange(-80, -20, 10):
+    for long in np.arange(-80, -20, 5):
         axs.axvline(long)
         
         
