@@ -10,7 +10,8 @@ import base as b
 PATH_COORDS = 'database/GEO/coords/'
 
 
-names = ['ceeu', 'ceft', 'rnna', 'pbjp']
+names = ['ceeu', 'ceft', 
+         'rnna', 'pbjp']
 args = dict( 
     s = 40, 
     marker = '^',
@@ -69,8 +70,6 @@ def plot_receivers_coords(axs, year, distance = 7):
         
             out.append(name)
             
-            
-    
     return out
 
 def plot_receivers(
@@ -81,15 +80,23 @@ def plot_receivers(
     
     fig, axs = plt.subplots(
         dpi = 300,
-        figsize = (6, 6),
+        figsize = (8, 8),
         subplot_kw={
             'projection': ccrs.PlateCarree()}
         )
 
     g.map_features(axs)
 
-    lat = g.limits(min = -40.0, max = 10, stp = 10)
-    lon = g.limits(min = -90, max = -30, stp = 5)    
+    lat = g.limits(
+        min = -40.0, 
+        max = 10, 
+        stp = 10
+        )
+    lon = g.limits(
+        min = -90, 
+        max = -30, 
+        stp = 5
+        )    
 
     g.map_boundaries(axs, lon, lat)
     
