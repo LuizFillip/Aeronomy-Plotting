@@ -5,6 +5,7 @@ import json
 import numpy as np
 import os 
 import base as b 
+import datetime as dt
 
 
 PATH_COORDS = 'database/GEO/coords/'
@@ -34,10 +35,57 @@ def distance_from_equator(
     return min_d
 
 
-def plot_receivers_coords(axs, year, distance = 7):
+def plot_terminator_lines(
+        ax, 
+        long = None, 
+        angle = 18
+        ):
+ 
+      dn = dt.datetime(2022, 1, 1, 0)
+     
+      dusk = g.dawn_dusk(
+              dn,  
+              lat = 0, 
+              lon = long, 
+              twilightAngle = angle
+              )
+     
+      delta_day = dt.timedelta(days = 1)
+     
+      if dusk < dn:
+          dusk += delta_day
+          
+    
+      lon, lat = g.terminator(dusk, angle)
+    
+      line, = ax.plot(
+            lon, 
+            lat, 
+            lw = 2, 
+            linestyle = '--'
+            )
+      
+      time = dusk.strftime('%H:%M')
+      
+      ax.text(long, 11, time, 
+              transform = ax.transData,
+              color = line.get_color()
+              )
+      
+     
+    
+         
+
+
+def plot_receivers_coords(
+        axs, 
+        year, 
+        distance = 7
+        ):
     
     infile = os.path.join(
-        PATH_COORDS, f'{year}.json'
+        PATH_COORDS, 
+        f'{year}.json'
         )
     sites = json.load(open(infile))
     
@@ -94,8 +142,8 @@ def plot_receivers(
         )
     lon = g.limits(
         min = -90, 
-        max = -30, 
-        stp = 5
+        max = -20, 
+        stp = 10
         )    
 
     g.map_boundaries(axs, lon, lat)
@@ -103,9 +151,15 @@ def plot_receivers(
     plot_receivers_coords(axs, year, distance)
     
         
-    for long in np.arange(-80, -20, 5):
-        axs.axvline(long)
+    for long in np.arange(-80, -20, 10):
         
+        axs.axvline(long )
+        
+        lon = long - 10
+        
+        if lon != - 90:
+        
+            plot_terminator_lines(axs, lon)
         
     g.mag_equator(
             axs, 
@@ -113,8 +167,13 @@ def plot_receivers(
             degress = None
             )
     
+   
+    
+    
     return 
     
 
 d = plot_receivers(5.1)
+
+
 

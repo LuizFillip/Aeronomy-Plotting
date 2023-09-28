@@ -1,17 +1,26 @@
-from __future__ import (absolute_import, division, print_function)
+from __future__ import (
+    absolute_import, 
+    division, 
+    print_function
+    )
 
 import datetime
-
 import numpy as np
 import shapely.geometry as sgeom
-
 from cartopy.feature import ShapelyFeature
 from cartopy import crs as ccrs
 
 
 class Nightshade(ShapelyFeature):
-    def __init__(self, date=None, delta=0.1, refraction=-0.83,
-                 color="k", alpha=0.5, **kwargs):
+    def __init__(
+            self, 
+            date=None, 
+            delta =0.1, 
+            refraction = -0.83,
+            color = "k", 
+            alpha = 0.5, 
+            **kwargs
+            ):
         """
         Shade the darkside of the Earth, accounting for refraction.
 
@@ -205,33 +214,48 @@ def _solar_position(date):
 if you include an "import nightshade" line"""
 
 
-from GEO import quick_map
 from base import config_labels
-
+import GEO as g
+import matplotlib.pyplot as plt
 config_labels()
 
-lat_lims = dict(
-    min = -90, 
-    max = 90, 
-    stp = 30
+fig, ax = plt.subplots(
+    dpi = 300,
+    figsize = (8, 8),
+    subplot_kw={
+        'projection': ccrs.PlateCarree()}
     )
-
-lon_lims = dict(
-    min = -180, 
-    max = 180, 
-    stp = 40
+lat = g.limits(
+    min = -40.0, 
+    max = 10, 
+    stp = 10
+    )
+lon = g.limits(
+    min = -90, 
+    max = -20, 
+    stp = 10
     )    
 
-fig, ax = quick_map(
-    lat_lims = lat_lims, 
-    lon_lims = lon_lims, 
-    figsize = (8, 8)
+g.map_features(ax)
+
+lat = g.limits(
+    min = -40.0, 
+    max = 10, 
+    stp = 10
     )
-date = datetime.datetime(2014, 4, 1, 3)
+lon = g.limits(
+    min = -90, 
+    max = -20, 
+    stp = 10
+    )    
+
+g.map_boundaries(ax, lon, lat)
+
+date = datetime.datetime(2014, 4, 1, 21)
 
 
 ax.set_title(date.isoformat())
 
-ns = Nightshade(date, alpha=0.6)
+ns = Nightshade(date, alpha=0.2)
 
 ax.add_feature(ns)

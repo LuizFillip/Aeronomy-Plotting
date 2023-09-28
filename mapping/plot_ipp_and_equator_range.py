@@ -32,10 +32,11 @@ def map_attrs(ax, dn):
 
     g.map_boundaries(ax, lon, lat)
 
-    g.mag_equator(ax,
-                  year=2014,
-                  degress=None
-                  )
+    g.mag_equator(
+        ax,
+        year = 2014,
+        degress = None
+        )
     
     lon, lat = g.terminator(dn, 18)
     
@@ -152,12 +153,12 @@ def plot_ipp_and_equator_range(
     fig.suptitle(f'{s}-{e}/{m}/{y}')
 
 
-def main():
+# def main():
     
-    year = 2013
-    
-    df = concat_files(year)
-    
-    dn = dt.datetime(year, 1, 1, 23, 0)
-    
-    plot_ipp_and_equator_range(df, dn)
+# year = 2013
+
+# df = concat_files(year)
+
+# dn = dt.datetime(year, 1, 1, 23, 0)
+
+# plot_ipp_and_equator_range(df, dn)
