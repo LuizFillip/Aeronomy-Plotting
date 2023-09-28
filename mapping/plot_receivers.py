@@ -6,7 +6,7 @@ import numpy as np
 import os 
 import base as b 
 import datetime as dt
-
+import PlasmaBubbles as pb
 
 PATH_COORDS = 'database/GEO/coords/'
 
@@ -37,45 +37,42 @@ def distance_from_equator(
 
 def plot_terminator_lines(
         ax, 
-        long = None, 
-        angle = 18
+        dn,
+        angle = 18,
+        glat = -7
         ):
  
-      dn = dt.datetime(2022, 1, 1, 0)
-     
-      dusk = g.dawn_dusk(
-              dn,  
-              lat = 0, 
-              lon = long, 
-              twilightAngle = angle
-              )
-     
-      delta_day = dt.timedelta(days = 1)
-     
-      if dusk < dn:
-          dusk += delta_day
-          
-    
-      lon, lat = g.terminator(dusk, angle)
-    
-      line, = ax.plot(
-            lon, 
-            lat, 
-            lw = 2, 
-            linestyle = '--'
-            )
-      
-      time = dusk.strftime('%H:%M')
-      
-      ax.text(long, 11, time, 
-              transform = ax.transData,
-              color = line.get_color()
-              )
-      
-     
-    
+      for long in np.arange(-80, -30, 10):
+          long = long + 10
+                            
+          dusk = pb.dusk_time(dn, long)
          
-
+          lon, lat = g.terminator(dusk, angle)
+          
+          line, = ax.plot(
+              lon, 
+              lat, 
+              lw = 2, 
+              linestyle = '--'
+              )
+        
+          ax.axhline(glat, lw = 1.5, linestyle = '--')
+        
+          time = dusk.strftime('%H:%M')
+        
+          ax.text(long, 11, time, 
+                transform = ax.transData,
+                color = line.get_color()
+                )
+        
+          ax.axvline(
+              long,
+            color = line.get_color()
+            )
+          
+      return ax
+      
+     
 
 def plot_receivers_coords(
         axs, 
@@ -121,27 +118,28 @@ def plot_receivers_coords(
     return out
 
 def plot_receivers(
+        dn,
         distance = 7,
         year = 2022
         ):
     
-    
     fig, axs = plt.subplots(
         dpi = 300,
-        figsize = (8, 8),
+        figsize = (10, 10),
         subplot_kw={
-            'projection': ccrs.PlateCarree()}
+            'projection': ccrs.PlateCarree()
+            }
         )
 
     g.map_features(axs)
 
     lat = g.limits(
-        min = -40.0, 
+        min = -30.0, 
         max = 10, 
         stp = 10
         )
     lon = g.limits(
-        min = -90, 
+        min = -80, 
         max = -20, 
         stp = 10
         )    
@@ -150,16 +148,7 @@ def plot_receivers(
     
     plot_receivers_coords(axs, year, distance)
     
-        
-    for long in np.arange(-80, -20, 10):
-        
-        axs.axvline(long )
-        
-        lon = long - 10
-        
-        if lon != - 90:
-        
-            plot_terminator_lines(axs, lon)
+    plot_terminator_lines(axs, dn)
         
     g.mag_equator(
             axs, 
@@ -167,13 +156,15 @@ def plot_receivers(
             degress = None
             )
     
-   
-    
-    
+    fig.suptitle(
+        dn.strftime('%d/%m/%Y'), 
+        y = 0.85
+        )
+
     return 
     
-
-d = plot_receivers(5.1)
+dn = dt.datetime(2022, 1, 1, 0)
+d = plot_receivers(dn, 5.1)
 
 
 

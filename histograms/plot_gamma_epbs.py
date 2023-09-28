@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np 
 
 
-df = b.load('all_results.txt')
+df = b.load('interval.txt')
 
 b.config_labels()
 
@@ -16,33 +16,58 @@ args = dict(
      linewidth = 1
      )
 
-def plot_gamma_epbs_count(df, step = 0.2):
+def plot_hist(ax, arr, binwidth = 20):
+
+    lmax = round(np.nanmax(arr))
+    lmin = round(np.nanmin(arr))
+
+    bins = np.arange(lmin, 
+                     lmax + binwidth, 
+                     binwidth)
+    
+    ax.hist(arr, bins = bins, **args)
+
+    ax.set(
+           xlim = 
+           [lmin - binwidth, lmax + binwidth]
+           )
+    
+def plot_stats(ax, arr, unit = "min", fontsize = 15):
+    mean = round(np.nanmean(arr), 2)
+    std = round(np.nanstd(arr), 2)
+    
+    
+    info_mean = f"$\mu = {mean}$ {unit}\n"
+    info_std = f"$\sigma = {std}$ {unit}\n"
+  
+    ax.text(
+        0.85, 0.6, (info_mean + info_std), 
+            fontsize = fontsize, 
+            transform = ax.transAxes)
     
 
-    ds = ev.probability_distribuition(
-        df,
-        step = step, 
-        col_gamma = 'all',
-        col_epbs = '-40'
-        )
+def plot_gamma_epbs_count(
+        arr, 
+        binwidth = 20
+        ):
     
-   
     fig, ax = plt.subplots(
-        figsize = (12, 6), 
+        figsize = (8, 6), 
         dpi = 300
         )
     
     
-    ax.bar(
-        ds['start'],
-        ds['epbs'], 
-        width = step, 
-        **args)
+    plot_hist(ax, arr, binwidth =  binwidth)
+    
+    plot_stats(ax, arr)
     
     ax.set(
-        xticks = np.arange(0, 4.8, 0.4), 
-        xlabel = '$\\gamma_{FT}$ ($\\times 10^{-3} ~s^{-1}$)', 
-        ylabel = 'EPBs count'
+        xlabel = '$\\delta t$ (minutes)', 
+        ylabel = 'Frequency'
         )
     
-# plot_gamma_epbs_count(df)
+    return fig
+    
+arr = df.values.ravel()
+fig = plot_gamma_epbs_count(arr)
+

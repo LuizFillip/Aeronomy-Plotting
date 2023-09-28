@@ -3,16 +3,16 @@ import base as b
 import matplotlib.pyplot as plt
 from tqdm import tqdm  
 import os
-from plotting import plot_epbs_occurrences_roti
+from plotting import single_plot
 import PlasmaBubbles as pb 
 import pandas as pd
 
 
-def save_img(ds, func, save_in):
+def save_img(dn, func, save_in):
 
     plt.ioff()
         
-    fig = func(ds)
+    fig = func(dn)
     
     fig.savefig(
         save_in,
@@ -29,55 +29,54 @@ def save_year(year, root):
 
     b.make_dir(root)
     
-    infile = os.path.join(
-        pb.PATH_LONG, 
-        f'{year}.txt'
-        )
+    # infile = os.path.join(
+    #     pb.PATH_LONG, 
+    #     f'{year}.txt'
+    #     )
     
-    out = []
-    for day in tqdm(range(365), 
-                    desc = str(year)):
+    # out = []
+    for day in tqdm(range(250, 365),  str(year)):
         
         delta = dt.timedelta(days = day)
         
         dn = dt.datetime(year, 1, 1, 21) + delta
         
+        # ds = b.sel_times(
+        #     b.load(infile), 
+        #     dn, hours = 10
+        #     )
+        
+        # out.append(
+        #     pb.get_all_events(ds)
+        #     )
+        
+        
         try:
         
-            ds = b.sel_times(
-                b.load(infile), 
-                dn, hours = 10
-                )
-            
-            out.append(
-                pb.get_all_events(ds)
-                )
-            
             save_in = os.path.join(
                 root,  
                 dn.strftime('%j.png')
                 )
             
             save_img(
-                ds, 
-                plot_epbs_occurrences_roti, 
+                dn, 
+                single_plot, 
                 save_in
                 )
         except:
             continue
     
-    df = pd.concat(out)
+    # df = pd.concat(out)
     
-    save_in = infile.replace('longs', 'events')
+    # save_in = infile.replace('longs', 'events')
 
-    df.to_csv(save_in)
+    # df.to_csv(save_in)
     
 
         
-# for year in range(2013, 2021):
+for year in range(2015, 2023):
+    root = f'D:\\img\\{year}\\'
     
-#     root = f'D:\\img\\{year}\\'
-    
-#     save_year(year, root)
+    save_year(year, root)
     
     

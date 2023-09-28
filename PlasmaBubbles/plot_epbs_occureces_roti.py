@@ -47,14 +47,14 @@ def plot_epbs_occurrences_roti(
         nrows = 2, 
         dpi = 300, 
         sharex = True, 
-        figsize = (12, 6)
+        figsize = (14, 6)
         )
     
     ds = ds[[str(c * -10) for c in cols]]
     
     plt.subplots_adjust(hspace = 0.1)
     
-    color = ['k', 'b', 'r', 'g']
+    color = ['k', 'b', 'r', 'g', 'magenta']
     
     dn = ds.index[0]
     
@@ -85,16 +85,17 @@ def plot_epbs_occurrences_roti(
     
 
     ax[0].set(
-        ylim = [0, 4], 
-        yticks = list(range(5)),
+        ylim = [0, 5], 
+        yticks = list(range(6)),
         ylabel = 'ROTI (TECU/min)'
         )
     
     ax[1].legend(
-        ncol = 4, 
+        ncol = 5, 
         title = 'Longitudinal zones and thresholds (TECU/min)',
         bbox_to_anchor = (.5, 2.6), 
-        loc = "upper center"
+        loc = "upper center", 
+        columnspacing = 0.6
         )
     
    
@@ -109,7 +110,7 @@ def plot_epbs_occurrences_roti(
     b.format_time_axes(ax[1])
     
     ax[0].text(
-        0.77, 
+        0.82, 
         0.53, 
         get_infos(dn), 
         transform = ax[0].transAxes
@@ -140,14 +141,14 @@ def single_plot(dn, hours = 9):
         )
     
    
-    plot_epbs_occurrences_roti(
+    fig = plot_epbs_occurrences_roti(
             ds, 
-            cols = [6, 5, 4]
+            cols = [8, 7, 6, 5, 4]
         )
     
-    return ds 
+    return fig
 
-dn = dt.datetime(2014, 2, 21, 21)
+# dn = dt.datetime(2014, 2, 23, 21)
 
-ds = single_plot(dn, hours = 11)
+# ds = single_plot(dn, hours = 11)
 
