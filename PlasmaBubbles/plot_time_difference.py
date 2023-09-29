@@ -106,7 +106,7 @@ def plot_time_difference(dn):
     plt.show()
     
 
-dn = dt.datetime(2017, 4, 23, 20, 0)
+dn = dt.datetime(2014, 9, 21, 20, 0)
 
 plot_time_difference(dn)
 

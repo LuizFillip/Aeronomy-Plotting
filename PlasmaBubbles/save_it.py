@@ -35,7 +35,7 @@ def save_year(year, root):
     #     )
     
     # out = []
-    for day in tqdm(range(250, 365),  str(year)):
+    for day in tqdm(range(1, 365),  str(year)):
         
         delta = dt.timedelta(days = day)
         
@@ -51,20 +51,16 @@ def save_year(year, root):
         #     )
         
         
-        try:
+        save_in = os.path.join(
+            root,  
+            dn.strftime('%j.png')
+            )
         
-            save_in = os.path.join(
-                root,  
-                dn.strftime('%j.png')
-                )
-            
-            save_img(
-                dn, 
-                single_plot, 
-                save_in
-                )
-        except:
-            continue
+        save_img(
+            dn, 
+            single_plot, 
+            save_in
+            )
     
     # df = pd.concat(out)
     
@@ -74,7 +70,7 @@ def save_year(year, root):
     
 
         
-for year in range(2015, 2023):
+for year in range(2016, 2023):
     root = f'D:\\img\\{year}\\'
     
     save_year(year, root)

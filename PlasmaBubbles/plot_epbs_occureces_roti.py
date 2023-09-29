@@ -140,7 +140,6 @@ def single_plot(dn, hours = 9):
             hours = hours
         )
     
-   
     fig = plot_epbs_occurrences_roti(
             ds, 
             cols = [8, 7, 6, 5, 4]
@@ -148,7 +147,7 @@ def single_plot(dn, hours = 9):
     
     return fig
 
-# dn = dt.datetime(2014, 2, 23, 21)
+dn = dt.datetime(2014, 2, 9, 21)
 
-# ds = single_plot(dn, hours = 11)
+ds = single_plot(dn, hours = 11)
 
