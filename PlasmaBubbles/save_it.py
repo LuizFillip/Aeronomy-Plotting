@@ -29,28 +29,13 @@ def save_year(year, root):
 
     b.make_dir(root)
     
-    # infile = os.path.join(
-    #     pb.PATH_LONG, 
-    #     f'{year}.txt'
-    #     )
-    
-    # out = []
-    for day in tqdm(range(1, 365),  str(year)):
+    for day in tqdm(range(365), 
+                    str(year)):
         
         delta = dt.timedelta(days = day)
         
         dn = dt.datetime(year, 1, 1, 21) + delta
-        
-        # ds = b.sel_times(
-        #     b.load(infile), 
-        #     dn, hours = 10
-        #     )
-        
-        # out.append(
-        #     pb.get_all_events(ds)
-        #     )
-        
-        
+                
         save_in = os.path.join(
             root,  
             dn.strftime('%j.png')
@@ -62,15 +47,10 @@ def save_year(year, root):
             save_in
             )
     
-    # df = pd.concat(out)
-    
-    # save_in = infile.replace('longs', 'events')
-
-    # df.to_csv(save_in)
     
 
         
-for year in range(2016, 2023):
+for year in range(2013, 2023):
     root = f'D:\\img\\{year}\\'
     
     save_year(year, root)
