@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import base as b
 import pandas as pd 
+
+
+
 def plot_corr_EPB_FPI(fontsize = 20):
     
     df = b.load('roti_evo.txt')
