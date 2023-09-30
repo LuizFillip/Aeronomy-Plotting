@@ -4,8 +4,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm  
 import os
 from plotting import single_plot
-import PlasmaBubbles as pb 
-import pandas as pd
+
 
 
 def save_img(dn, func, save_in):
