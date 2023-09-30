@@ -1,46 +1,50 @@
 from GEO import quick_map, sites
-import json
-import numpy as np
+import PlasmaBubbles as pb 
 import base as s
 
-s.config_labels(fontsize = 10)
+s.config_labels()
 
+def plot_sites(ax):
+    
+    for site in ['saa', 'jic', 'boa',
+                 'car', 'for']:
+    
+        glat, glon = sites[site]['coords']
+        name =  sites[site]['name']
+        ax.scatter(
+            glon, glat,
+            s = 100, 
+            label = name)
+        
+        ax.legend()
 
-def plot_meridian(ax, year = 2017):
+def plot_sites_map():
     
-    infile = f'database/GEO/meridians/saa_{year}.json'
-    
-    dat = json.load(open(infile))
-    
-    x = np.array(dat['mx'])
-    y = np.array(dat['my'])
-    
-    ax.plot(x, y)
-    
-    ax.text(-47, 6, 'Magnetic\nmeridian')
-    ax.text(-75, -15, 'Geomagnetic\nequator', color = 'red')
-    
+    lat_lims = dict(
+        min = -40, 
+        max = 10, 
+        stp = 10
+        )
 
-
-
-def plot_sites_map(year = 2017):
-    
-    lat_lims = dict(min = -40, max = 10, stp = 10)
-
-    lon_lims = dict(min = -80, max = -30, stp = 10)    
+    lon_lims = dict(
+        min = -90,
+        max = -30, 
+        stp = 10
+        )    
 
     fig, ax = quick_map(
         lat_lims = lat_lims, 
         lon_lims = lon_lims, 
-        figsize = (5, 5), 
-        year = year, 
+        figsize = (8,8), 
+        year = 2013, 
         degress = None
         )
     
+    plot_sites(ax)
+        
+    for long in pb.longitudes():
+
+        ax.axvline(long)
     
-    plot_meridian(ax, year = year)
     
-    ax.set(title = year)
-    
-    
-# plot_sites_map(year = 2017)
+plot_sites_map()

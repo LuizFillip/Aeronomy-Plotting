@@ -1,14 +1,12 @@
 import base as b
 import numpy as np
-import GNSS as gs
-import pandas as pd
 import datetime as dt
 import cartopy.crs as ccrs
 import GEO as g
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb
 
-b.config_labels(fontsize = 15)
+b.config_labels()
 
 
 def map_attrs(ax, dn):
@@ -20,9 +18,9 @@ def map_attrs(ax, dn):
     )
 
     lon_lims = dict(
-        min=-90,
-        max=-30,
-        stp=15
+        min = -90,
+        max = -30,
+        stp = 15
     )
 
     g.map_features(ax)
@@ -45,21 +43,6 @@ def map_attrs(ax, dn):
             linestyle = '--', 
             lw = 2)
 
-
-
-def concat_files(year):
-     
-    out = []
-    for i in [1, 2]:
-        
-        path = gs.paths(year, i)
-        
-        out.append(
-            pb.load_filter(path.fn_roti)
-            )
-        
-        
-    return pd.concat(out)
 
 
 def sel_df(df, dn):
@@ -93,12 +76,11 @@ def plot_ipp_and_equator_range(
         wspace = 0.1
     )
     
-    lons = np.arange(-80, -20, 10)
     
 
     for i, ax in enumerate(ax.flat):
         
-        for long in lons:
+        for long in pb.longitudes():
     
             ax.axvline(long)
     
@@ -117,7 +99,6 @@ def plot_ipp_and_equator_range(
             vmin = 0,
             vmax = 5
         )        
-        # img = plot_ipp_(ax,)
     
         map_attrs(ax, time)
     
@@ -132,7 +113,7 @@ def plot_ipp_and_equator_range(
                    )
         
         else:
-            ax.set(xticks = lons)
+            ax.set(xticks = pb.longitudes())
             
     ticks = np.arange(0, 6, 1)
     
