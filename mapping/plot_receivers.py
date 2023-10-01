@@ -1,38 +1,18 @@
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 import GEO as g
-import json 
 import numpy as np
-import os 
 import base as b 
 import datetime as dt
 import PlasmaBubbles as pb
 
-PATH_COORDS = 'database/GEO/coords/'
 
-
-names = ['ceeu', 'ceft', 
-         'rnna', 'pbjp']
-args = dict( 
-    s = 40, 
-    marker = '^',
-    color = 'k', 
-    transform = ccrs.PlateCarree()
-    )
 
 
 b.config_labels()
 
 
-def distance_from_equator(
-        lon, lat, year = 2013
-        ):
-    eq = g.load_equator(year)
-    x, y = eq[:, 0], eq[:, 1]
-    min_x, min_y, min_d = g.compute_distance(
-        x, y, lon, lat
-        )
-    return min_d
+
 
 
 def plot_terminator_lines(
@@ -74,48 +54,7 @@ def plot_terminator_lines(
       
      
 
-def plot_receivers_coords(
-        axs, 
-        year, 
-        distance = 7
-        ):
-    
-    infile = os.path.join(
-        PATH_COORDS, 
-        f'{year}.json'
-        )
-    sites = json.load(open(infile))
-    
-    out = []
- 
-    
-    for name, key in sites.items():
-        lon, lat, alt = tuple(key)
-        
-        min_d = distance_from_equator(
-                lon, 
-                lat, 
-                year = year
-                )
-        
-        if min_d < distance:
-        
-            axs.scatter(
-                lon, lat, **args
-               
-                )
-        
-            out.append(name)
-        
-        elif any([name == c for c in names]):
-            
-            axs.scatter(
-                lon, lat, **args
-                )
-        
-            out.append(name)
-            
-    return out
+
 
 def plot_receivers(
         dn,
@@ -145,9 +84,7 @@ def plot_receivers(
         )    
 
     g.map_boundaries(axs, lon, lat)
-    
-    plot_receivers_coords(axs, year, distance)
-    
+
     plot_terminator_lines(axs, dn)
         
     g.mag_equator(

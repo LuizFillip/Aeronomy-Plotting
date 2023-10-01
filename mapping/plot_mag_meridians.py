@@ -23,6 +23,7 @@ def plot_sites_and_meridians(
         )
     
     color = ['blue', 'g']
+
     for i, site in enumerate(["jic", "saa"]):
         
         glat, glon = gg.sites[site]["coords"]
@@ -52,6 +53,7 @@ def plot_sites_and_meridians(
             c = color[i]
             )
         
+        
         x1, y1 = gg.limit_hemisphere(
                 x, y, nx, ny, rlat, 
                 hemisphere = 'both'
@@ -70,7 +72,7 @@ def plot_mag_meridians(
     
     fig, ax = plt.subplots(
         dpi = 300,
-        figsize = (8, 8),
+        figsize = (9, 9),
         subplot_kw = 
             {
             'projection': ccrs.PlateCarree()
@@ -80,12 +82,12 @@ def plot_mag_meridians(
     gg.map_features(ax)
 
     lat = gg.limits(
-        min = -25, 
-        max = 15, 
+        min = -40, 
+        max = 5, 
         stp = 10
         )
     lon = gg.limits(
-        min = -85, 
+        min = -90, 
         max = -30, 
         stp = 10
         )    
@@ -94,9 +96,13 @@ def plot_mag_meridians(
     
     plot_sites_and_meridians(ax, year)
     
-    ax.axhline(0, lw = 2, color = 'r', linestyle = '--')
-    ax.set(title = f"{year}")
-    ax.legend(ncol = 1, loc = "upper right")
+    # ax.axhline(0, lw = 2, color = 'r', linestyle = '--')
+    
+    ax.legend(
+        bbox_to_anchor = (.5, 1.1),
+        ncol = 2, 
+        loc = "upper center"
+        )
         
     return fig 
 
@@ -106,6 +112,5 @@ fig = plot_mag_meridians(
         )
 
 
-#save_plot(plot_mag_meridians)
 
  
