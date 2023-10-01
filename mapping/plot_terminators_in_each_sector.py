@@ -6,14 +6,7 @@ import base as b
 import datetime as dt
 import PlasmaBubbles as pb
 
-
-
-
 b.config_labels()
-
-
-
-
 
 def plot_terminator_lines(
         ax, 
@@ -53,13 +46,8 @@ def plot_terminator_lines(
       return ax
       
      
-
-
-
-def plot_receivers(
-        dn,
-        distance = 7,
-        year = 2022
+def plot_terminators_in_each_sector(
+        dn
         ):
     
     fig, axs = plt.subplots(
@@ -89,7 +77,7 @@ def plot_receivers(
         
     g.mag_equator(
             axs, 
-            year = year, 
+            year = dn.year, 
             degress = None
             )
     
@@ -101,7 +89,7 @@ def plot_receivers(
     return 
     
 dn = dt.datetime(2022, 1, 1, 0)
-d = plot_receivers(dn, 5.1)
+d = plot_terminators_in_each_sector(dn)
 
 
 
