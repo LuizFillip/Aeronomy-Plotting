@@ -54,8 +54,10 @@ def plot_local_maximus(df):
         
         info =  f'({c[i]}) {long}° to {long + 10}°'
             
-        ax[i].text(0.02, 0.7, info, 
-                transform = ax[i].transAxes)
+        ax[i].text(
+            0.02, 0.7, info, 
+            transform = ax[i].transAxes
+            )
         
     
         ax[i].set(ylim = [0, 5], 
@@ -72,8 +74,6 @@ def plot_local_maximus(df):
         rotation = "vertical", 
         fontsize = 20
         )
-    
-    
     
     fig.suptitle(
         'Maximus for each longitude sector',

@@ -1,54 +1,100 @@
 import matplotlib.pyplot as plt
 import base as b
-import pandas as pd 
+import PlasmaBubbles as pb
+from math import ceil 
 
-
-
-def plot_corr_EPB_FPI(fontsize = 20):
+def plot_month(
+        ax, 
+        ds, 
+        flux = 'f107a', 
+        roti = 'mean',
+        norm = True
+        ):
     
-    df = b.load('roti_evo.txt')
+    x = ds[flux].values
+    y = ds[roti].values
+    
+    if norm:
+        x /= 100
+    
+    ax.scatter(x, y, s = 5)
+    
+    fit = b.linear_fit(x, y)
+    
+    a1, b1 = fit.coeficients
+        
+    ax.plot(x, fit.y_pred, 
+            lw = 2, color = 'r')
+    
+    info = f'$R^2$ = {fit.r2_score}\n$a$ = {a1}\n$b$ = {b1}'
+    ax.text(
+        0.1, 0.6, 
+        info, 
+        transform = ax.transAxes
+        )
+    
+    return ax
 
-    ip = b.load('database/indices/indeces.txt')
 
+def plot_roti_vs_solar_flux(
+        flux = 'f107a',
+        roti = 'mean', 
+        lon = -40,
+        norm = True
+        ):
 
-    ip
-
-    df = df.loc[df['lon'] == -40]
-
-    # df['mean'].plot()
-
-    # df['base'].plot()
-
-    # ip = b.load('database/indices/solar_flux.txt')
-
-    # import numpy as np
-
-    # # ip = ip.replace((-1, 0), np.nan)
-    ds = pd.concat([df, ip], axis = 1).dropna()
-
-    ds = ds.loc[ds.index.day == 5]
-      
-    print(ds)
-
-
+    
+    ds = pb.join_dataset(lon)
+    
     fig, ax = plt.subplots(
         dpi = 300, 
         sharex = True, 
-        figsize = (10, 4)
+        sharey= True,  
+        ncols = 4, 
+        nrows = 3,
+        figsize = (14, 12)
         )
-
-    x, y = ds['f107'].values / 100, ds['mean'].values
-
-    ax.scatter(x, y)
-
-    r2, ypred = b.linear_fit(x, y)
-
-    ax.plot(x, ypred, lw = 2, color = 'r', label = r2)
-
-    ax.set(xlim = [0, 3], ylim = [0, 3])
-    ax.legend()
-
     
+    plt.subplots_adjust(wspace = 0.1)
+    
+    vmax = ceil(ds[roti].max())
+    fmax =  ceil(ds[flux].max())
+    fmin = 50
+    
+    if norm:
+        fmax /= 100
+        fmin /= 100
+    
+    for i, ax in enumerate(ax.flat):
+        ds1 = ds.loc[
+            ds.index.month == i + 1]
+        
+        plot_month(
+            ax, 
+            ds1, 
+            flux = flux, 
+            roti = roti, 
+            norm = norm
+            )
+        
+        name = ds1.index[0].strftime('%B')
+        ax.set(title = name)
+        
+        ax.set(xlim = [fmin, fmax], 
+               ylim = [0, vmax])
+        
+        
+    title = f'ROTI $ = a F10.7 + b$ (longitude = {lon}°)'
+    
+    
+    b.fig_labels(
+            fig, 
+            fontsize = 30, 
+            title = title,
+            ylabel = 'ROTI (TECU/min)', 
+            xlabel = "F10.7 (SFU)"
+            )
 
+    return fig
 
-plot_corr_EPB_FPI(fontsize = 20)
+fig = plot_roti_vs_solar_flux()

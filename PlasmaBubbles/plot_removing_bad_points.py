@@ -52,18 +52,20 @@ def plot_section(ax, df, dn, i = 1):
 from matplotlib.gridspec import GridSpec
 
 year = 2013
-
-df = pb.concat_files(year)
-
-dn = dt.datetime(year, 1, 1, 20)
-
-df = b.sel_times(df, dn, hours = 11)
-
-long = -60
-df = pb.longitude_sector(
-    df, 
-    long
-    )
+def set_data():
+        
+    dn = dt.datetime(year, 1, 1, 20)
+    
+    df = b.sel_times(
+        pb.concat_files(year), 
+        dn, 
+        hours = 11)
+    
+    long = -60
+    return pb.longitude_sector(
+        df, 
+        long
+        )
 
 
 def plot_removing_bad_points(df):

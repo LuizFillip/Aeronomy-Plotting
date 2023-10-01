@@ -7,7 +7,7 @@ s.config_labels()
 def plot_sites(ax):
     
     for site in ['saa', 'jic', 'boa',
-                 'car', 'for']:
+                 'car', 'for', 'str']:
     
         glat, glon = sites[site]['coords']
         name =  sites[site]['name']
@@ -16,7 +16,11 @@ def plot_sites(ax):
             s = 100, 
             label = name)
         
-        ax.legend()
+        ax.legend(
+            bbox_to_anchor = (.5, 1.2),
+            ncol = 3, 
+            loc = 'upper center'
+            )
 
 def plot_sites_map():
     
@@ -35,7 +39,7 @@ def plot_sites_map():
     fig, ax = quick_map(
         lat_lims = lat_lims, 
         lon_lims = lon_lims, 
-        figsize = (8,8), 
+        figsize = (9,9), 
         year = 2013, 
         degress = None
         )

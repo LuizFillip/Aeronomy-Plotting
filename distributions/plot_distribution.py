@@ -16,8 +16,6 @@ def plot_distribution(
         col_epbs = col_epbs
         )
     
-    
-
     args = dict(
         capsize = 3,
         marker = 's'
