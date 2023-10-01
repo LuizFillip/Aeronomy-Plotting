@@ -127,7 +127,7 @@ def plot_epbs_occurrences_roti(
     return fig
 
 
-def single_plot(dn, hours = 9):
+def single_plot(dn, hours = 11):
         
     infile = os.path.join(
             pb.PATH_LONG, 
@@ -142,12 +142,12 @@ def single_plot(dn, hours = 9):
     
     fig = plot_epbs_occurrences_roti(
             ds, 
-            cols = [8, 7, 6, 5, 4]
+            cols = [4]
         )
     
     return fig
 
-# dn = dt.datetime(2013, 1, 5, 21)
+dn = dt.datetime(2013, 2, 7, 21)
 
-# ds = single_plot(dn, hours = 11)
+ds = single_plot(dn, hours = 11)
 

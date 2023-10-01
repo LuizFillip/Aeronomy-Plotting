@@ -105,7 +105,7 @@ def load_data(dn, long, N = 60):
 
 
 
-def plot_get_thresholds_demo(dn, lon):
+def plot_demo_threshold_obtain(dn, lon):
     
     fig, ax = plt.subplots(
         dpi = 300,
