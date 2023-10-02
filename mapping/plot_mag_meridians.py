@@ -16,11 +16,7 @@ def plot_sites_and_meridians(
 
     rlat = np.degrees(mlat)
     
-    gg.mag_equator(
-        ax,
-        year,
-        degress = None
-        )
+   
     
     color = ['blue', 'g']
 
@@ -59,17 +55,19 @@ def plot_sites_and_meridians(
                 hemisphere = 'both'
                 )
         
-        ax.plot(x1, y1, linestyle = '--', lw = 3, 
-                color = line.get_color())
+        ax.plot(
+            x1, y1, 
+            linestyle = '--', 
+            lw = 3, 
+            color = line.get_color()
+            )
         
         
 
 def plot_mag_meridians(
         year = 2021
         ):
-    
- 
-    
+
     fig, ax = plt.subplots(
         dpi = 300,
         figsize = (9, 9),
@@ -96,7 +94,11 @@ def plot_mag_meridians(
     
     plot_sites_and_meridians(ax, year)
     
-    # ax.axhline(0, lw = 2, color = 'r', linestyle = '--')
+    gg.mag_equator(
+        ax,
+        year,
+        degress = None
+        )
     
     ax.legend(
         bbox_to_anchor = (.5, 1.1),

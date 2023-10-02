@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Aug 11 14:11:35 2023
-
-@author: Luiz
-"""
-
 
 def plot_instrumention(ax):
     markers = ['s', '^', 'o']

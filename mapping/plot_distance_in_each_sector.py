@@ -6,32 +6,44 @@ import datetime as dt
 import PlasmaBubbles as pb 
 
 def plot_arrows_distance(
-        ax, lat, s_lon, lon
+        ax, 
+        lat, 
+        s_lon, 
+        lon,
+        color = 'b'
         ):
         
     d = g.haversine_distance(
         lat, s_lon, lat, lon
         )
     
-    ax.annotate(
+    arrow =ax.annotate(
         '', 
         xy = (s_lon, lat ), 
         xytext = (lon, lat ), 
-        arrowprops = dict(arrowstyle='<->')
-        )
+        arrowprops = dict(
+            arrowstyle = '<->', 
+            color = color, 
+            lw = 2
+            ), 
+        
+        label = 'distance (km)')
     
     middle = lon + (s_lon - lon) / 2
     
     ax.annotate(
         f'{round(d, 2)}',
         xy = (middle, lat + 0.5), 
-        xycoords='data',
-        fontsize= 15.0,
-        textcoords='data', 
-        ha='center')
+        xycoords = 'data',
+        fontsize = 20.0,
+        textcoords = 'data', 
+        ha = 'center',
+        color = color
+        )
+    
+    return arrow
 
-def plot_distance_in_each_sector(
-        ):
+def plot_distance_in_each_sector():
     
     fig, ax = plt.subplots(
         dpi = 300,
@@ -50,35 +62,38 @@ def plot_distance_in_each_sector(
         )
     lon = g.limits(
         min = -80, 
-        max = -20, 
+        max = -30, 
         stp = 10
         )    
     
     g.map_boundaries(ax, lon, lat)
     
-    # dn = dt.datetime(2022, 1, 1, 0)
-    
-        
     # g.mag_equator(
-    #         ax, 
-    #         year = dn.year, 
-    #         degress = None
-    #         )
+    #     ax,
+    #     2013,
+    #     degress = None
+    #     )
     
-    for lon in pb.longitudes():
+    ref_lat = -7
+    
+    for i, lon in enumerate(pb.longitudes()):
         s_lon = lon + 10
        
         
         ax.axvline(s_lon)
         
         plot_arrows_distance(
-                ax, -7, s_lon, lon
+                ax, ref_lat, s_lon, lon
+                )
+        
+        arrow = plot_arrows_distance(
+                ax, ref_lat - i * 3, 
+                s_lon , lon - 10 * i
                 )
     
     
 
-    
+    plt.legend([arrow,], ['My label',])
 
-plot_distance_in_each_sector(
-        lat = -7
-        )
+
+plot_distance_in_each_sector()
