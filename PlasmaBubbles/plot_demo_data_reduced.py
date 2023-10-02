@@ -117,7 +117,8 @@ def plot_bad_receiver_example(
     
     b.format_time_axes(
         ax, 
-        hour_locator = 2)
+        hour_locator = 2
+        )
     
     ax.axhline(1, lw = 2, color = 'r')
     

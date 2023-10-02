@@ -3,18 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np 
 import base as b 
 import datetime as dt 
-from geophysical_indices import INDEX_PATH
-
-
-def get_flux(dn):
-    
-    ip = b.load(INDEX_PATH)
-    
-    flux = b.get_value_from_dn(ip['f107a'], dn)
-    return round(flux, 2)
 
 b.config_labels()
-
 
 args = dict(
     marker = 'o', 
@@ -23,26 +13,22 @@ args = dict(
     color = 'k'
     )
 
+
+
 def plot_roti_avg(ax, df):
     
-   
-    
-
+    vmax = round(df['avg'].max(), 2)
     ax.plot(df['roti'], **args)
     ax.plot(df['avg'], lw = 3, color = 'r')
-    b.format_time_axes(ax)
-    
-        
-    ax.set(
-        title = 'Obtaining the threshold', 
-        yticks = np.arange(0, 5, 1), 
-        ylabel = 'ROTI (TECU/min)',
-        ylim = [0, 4], 
-        xlim = [df.index[0], df.index[-1]]
+    ax.axhline(
+        vmax, 
+        lw = 2, 
+        linestyle = '--', 
+        color = 'r', 
+        label = f'{vmax} TEC/min'
         )
     
-    
-    return ax
+    return vmax
 
 
 def plot_std_shade(ax, df, i = 3):
@@ -57,31 +43,43 @@ def plot_std_shade(ax, df, i = 3):
     
 
 def plot_base(ax, df):
-    base = df['roti'].mean()
-    ax.axhline(base, lw = 3, color = 'b')
+    base = round(df['roti'].mean(), 2)
+    ax.axhline(
+        base, 
+        lw = 2, 
+        color = 'b', 
+        label = f'{base} TECU/min'
+        )
+    
+    return base
 
 
 def plot_threshold(ax, dn, lon = -60):
-
-    threshold = pb.threshold(dn, lon)
+    
+    if lon is not None:
+        threshold = pb.threshold(dn, lon)
+    else:
+        threshold = dn
     
     ax.axhline(
         threshold, 
-        lw = 3, 
+        lw = 2, 
         color = 'magenta',
         label = f'{threshold} TECU/min'
         )
 
 def plot_solar_flux(ax, dn):
     
-    flux = get_flux(dn)
+    flux = b.get_flux(dn) / 100
     
     ax.axhline(
-        flux / 100, 
-        lw = 3, 
+        flux, 
+        lw = 2, 
         color = 'g', 
         label = f'{flux} sfu'
         )
+    
+    return flux
 
 
 
@@ -99,13 +97,13 @@ def load_data(dn, long, N = 60):
     df['std'] =  b.smooth2(
         b.running_std(df['roti'], N), N * 4
         )
+    
+    cond = (df['roti'] > df['avg'] + df['std'] * 2)
+    
 
-    return df
+    return df.loc[~cond]
 
-
-
-
-def plot_demo_threshold_obtain(dn, lon):
+def plot_demo_get_threshold(dn, lon):
     
     fig, ax = plt.subplots(
         dpi = 300,
@@ -116,18 +114,33 @@ def plot_demo_threshold_obtain(dn, lon):
     
     df = load_data(dn, lon)
     
-    plot_roti_avg(ax, df)
-    plot_threshold(ax, dn, lon)
-    plot_solar_flux(ax, dn)
-    plot_base(ax, df)
+    plot_std_shade(ax, df, i = 2)
+    avg = plot_roti_avg(ax, df)
+    flux = plot_solar_flux(ax, dn)
+    base = plot_base(ax, df)
     
+    
+    the = round((avg + flux + base) / 3, 2)
+    
+    plot_threshold(ax, the, None)
+    
+    b.format_time_axes(ax)
+    
+    ax.set(
+        title = 'Obtaining the threshold', 
+        yticks = np.arange(0, 5, 1), 
+        ylabel = 'ROTI (TECU/min)',
+        ylim = [0, 4], 
+        xlim = [df.index[0], df.index[-1]]
+        )
     
     ax.legend()
 
     return fig
 
-dn = dt.datetime(2015, 2, 17, 21)
+dn = dt.datetime(2013, 2, 7, 21)
 
-lon = -60
+lon = -40
 
-f = plot_get_thresholds_demo(dn, lon)
+f = plot_demo_get_threshold(dn, lon)
+
