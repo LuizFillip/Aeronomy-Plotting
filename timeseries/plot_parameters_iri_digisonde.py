@@ -49,12 +49,6 @@ def plot_parameters_iri_digisonde(alt = 300):
               ylabel = "Ne ($m^{-3}$)",
               xlim = [df.index[0], df.index[-1]])
     
-    ax[1].plot(iri['hmF2'], label = "IRI - 2016")
-    ax[1].plot(df["hmF2"], label = "Measured (São Luis)")
-    
-    ax[1].set(ylim = [100, 600], 
-              ylabel = "hmF2 (km)",
-              xlim = [df.index[0], df.index[-1]])
     
     ax[2].plot(iri['foF2'], label = "IRI - 2016")
     ax[2].plot(df["foF2"], label = "Measured (São Luis)")
@@ -118,10 +112,8 @@ def plot_parameters_iri_digisonde(alt = 300):
         
     return fig
 
-fig = plot_parameters_iri_digisonde()
+# fig = plot_parameters_iri_digisonde()
 
-# fig.savefig("liken/src/figures/parameters_iri_digisonde.png", 
-#               dpi = 300)
 
 
     
