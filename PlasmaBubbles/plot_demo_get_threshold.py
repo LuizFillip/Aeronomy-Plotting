@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np 
 import base as b 
 import datetime as dt 
+import os
 
 b.config_labels()
 
@@ -99,9 +100,10 @@ def load_data(dn, long, N = 60):
         )
     
     cond = (df['roti'] > df['avg'] + df['std'] * 2)
-    
 
     return df.loc[~cond]
+    # return df
+
 
 def plot_demo_get_threshold(dn, lon):
     
@@ -112,9 +114,24 @@ def plot_demo_get_threshold(dn, lon):
         figsize = (12, 4)
         )
     
+    infile = os.path.join(
+            pb.PATH_LONG, 
+            f'{dn.year}.txt'
+        )
+     
+    ds = b.sel_times(
+            b.load(infile), 
+            dn, 
+            hours = 11
+        )
+    
+    # ax.plot(df[lon])
+    # ax.plot(ds[str(lon)], **args)
     df = load_data(dn, lon)
     
-    plot_std_shade(ax, df, i = 2)
+    # plot_std_shade(ax, df, i = 2)
+    
+    
     avg = plot_roti_avg(ax, df)
     flux = plot_solar_flux(ax, dn)
     base = plot_base(ax, df)
@@ -127,18 +144,22 @@ def plot_demo_get_threshold(dn, lon):
     b.format_time_axes(ax)
     
     ax.set(
-        title = 'Obtaining the threshold', 
         yticks = np.arange(0, 5, 1), 
         ylabel = 'ROTI (TECU/min)',
-        ylim = [0, 4], 
+        ylim = [0, 3], 
         xlim = [df.index[0], df.index[-1]]
         )
     
-    ax.legend()
+    ax.legend(
+        ncol = 4, 
+        bbox_to_anchor = (.5, 1.2), 
+        loc = "upper center", 
+        columnspacing = 0.6
+        )
 
     return fig
 
-dn = dt.datetime(2013, 2, 7, 21)
+dn = dt.datetime(2013, 3, 17, 21)
 
 lon = -40
 
