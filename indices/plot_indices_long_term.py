@@ -8,8 +8,6 @@ s.config_labels()
 
 
 def plot_dst(ax, dst):
-
-    
     ax.plot(dst)
     
     ax.set(
