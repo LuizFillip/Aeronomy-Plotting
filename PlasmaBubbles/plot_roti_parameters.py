@@ -32,19 +32,20 @@ def plot_roti_parameters(
     ax[0].plot(tec)
     ax[0].set(
         ylabel = "STEC (TECU)", 
-        title = f'{station} -{prn}')
+        title = f'{station} -{prn}'
+        )
     
-    ax[2].scatter(roti.index, 
-                  roti, s = 1)
+    ax[2].scatter(
+        roti.index, 
+        roti, s = 1
+        )
 
     ax[2].set(
-              ylim = [0, 6], 
-              ylabel = "ROTI")
+        ylim = [0, 6], 
+        ylabel = "ROTI")
 
     ax[2].axhline(1, color = 'r')
 
-    
-    
     time_out, rot = gs.rot(tec, tec.index)
     ax[1].plot(time_out, rot)
     ax[1].axhline(0, color = 'r')

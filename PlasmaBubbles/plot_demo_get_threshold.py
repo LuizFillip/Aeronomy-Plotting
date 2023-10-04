@@ -9,8 +9,9 @@ b.config_labels()
 
 args = dict(
     marker = 'o', 
-    markersize = 1,
+    markersize = 3,
     linestyle = 'none', 
+    alpha = 0.5,
     color = 'k'
     )
 
@@ -19,14 +20,15 @@ args = dict(
 def plot_roti_avg(ax, df):
     
     vmax = round(df['avg'].max(), 2)
-    ax.plot(df['roti'], **args)
+    ax.plot(df['roti'], **args, label = 'ROTI')
+    
     ax.plot(df['avg'], lw = 3, color = 'r')
     ax.axhline(
         vmax, 
         lw = 2, 
         linestyle = '--', 
         color = 'r', 
-        label = f'{vmax} TEC/min'
+        label = '$\mu_{max}$'
         )
     
     return vmax
@@ -44,12 +46,13 @@ def plot_std_shade(ax, df, i = 3):
     
 
 def plot_base(ax, df):
+    
     base = round(df['roti'].mean(), 2)
     ax.axhline(
         base, 
         lw = 2, 
         color = 'b', 
-        label = f'{base} TECU/min'
+        label = 'Base (mean)'
         )
     
     return base
@@ -62,11 +65,11 @@ def plot_threshold(ax, dn, lon = -60):
     else:
         threshold = dn
     
+    # value = f'{threshold} TECU/min'
     ax.axhline(
         threshold, 
         lw = 2, 
-        color = 'magenta',
-        label = f'{threshold} TECU/min'
+        color = 'magenta'
         )
 
 def plot_solar_flux(ax, dn):
@@ -77,7 +80,7 @@ def plot_solar_flux(ax, dn):
         flux, 
         lw = 2, 
         color = 'g', 
-        label = f'{flux} sfu'
+        label = '$F_{10.7} / 100$'
         )
     
     return flux
@@ -139,7 +142,7 @@ def plot_demo_get_threshold(dn, lon):
     
     the = round((avg + flux + base) / 3, 2)
     
-    plot_threshold(ax, the, None)
+    # plot_threshold(ax, the, None)
     
     b.format_time_axes(ax)
     
@@ -147,7 +150,6 @@ def plot_demo_get_threshold(dn, lon):
         yticks = np.arange(0, 5, 1), 
         ylabel = 'ROTI (TECU/min)',
         ylim = [0, 3], 
-        xlim = [df.index[0], df.index[-1]]
         )
     
     ax.legend(
@@ -159,9 +161,17 @@ def plot_demo_get_threshold(dn, lon):
 
     return fig
 
-dn = dt.datetime(2013, 3, 17, 21)
 
-lon = -40
+dn = dt.datetime(2013, 1, 1, 21)
+
+lon = -60
 
 f = plot_demo_get_threshold(dn, lon)
 
+def save_from_figure(FigureName = None):
+    func = plot_demo_get_threshold
+    if FigureName is None:
+        FigureName = func.__name__.replace("plot_", "") + ".png"
+    save_in = os.path.join(b.LATEX, FigureName)
+    
+    b.save_img(f, save_in)

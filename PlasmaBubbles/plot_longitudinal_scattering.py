@@ -6,7 +6,7 @@ import datetime as dt
 
 def plot_longitudinal_scattering(df):
     
-    longs = np.arange(-80, -30, 10)
+    longs = pb.longitudes()
     
     fig, ax = plt.subplots(
         dpi = 300,
