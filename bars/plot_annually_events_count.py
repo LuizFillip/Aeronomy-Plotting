@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import base as b 
 
 
-def plot_sunset_midnight_events(ds):
+def plot_annually_events_count(ds):
     
     
     fig, ax = plt.subplots(

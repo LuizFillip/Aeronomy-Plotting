@@ -1,3 +1,5 @@
+import GEO as gg 
+
 
 def plot_instrumention(ax):
     markers = ['s', '^', 'o']
@@ -11,7 +13,7 @@ def plot_instrumention(ax):
     
     
     for i, site in enumerate(["car", "saa", 'caj']):
-        s = sites[site]
+        s = gg.sites[site]
         clat, clon = s["coords"]
         ax.scatter(
             clon, clat, s = 50, 
@@ -20,7 +22,7 @@ def plot_instrumention(ax):
             )
        
             
-        circle_range(
+        gg.circle_range(
             ax, 
             clon, 
             clat, 

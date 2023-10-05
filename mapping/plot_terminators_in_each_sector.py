@@ -1,7 +1,6 @@
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 import GEO as g
-import numpy as np
 import base as b 
 import datetime as dt
 import PlasmaBubbles as pb
@@ -15,7 +14,7 @@ def plot_terminator_lines(
         glat = -7
         ):
  
-      for long in np.arange(-80, -30, 10):
+      for long in pb.longitudes():
           long = long + 10
                             
           dusk = pb.dusk_time(dn, long)
@@ -81,10 +80,10 @@ def plot_terminators_in_each_sector(
             degress = None
             )
     
-    fig.suptitle(
-        dn.strftime('%d/%m/%Y'), 
-        y = 0.85
-        )
+    # fig.suptitle(
+    #     dn.strftime('%d/%m/%Y'), 
+    #     y = 0.85
+    #     )
 
     return 
     
