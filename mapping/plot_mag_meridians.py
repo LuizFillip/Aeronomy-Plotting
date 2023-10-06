@@ -92,7 +92,7 @@ def plot_mag_meridians(
 
     gg.map_boundaries(ax, lon, lat)
     
-    # plot_sites_and_meridians(ax, year)
+    plot_sites_and_meridians(ax, year)
     
     gg.mag_equator(
         ax,

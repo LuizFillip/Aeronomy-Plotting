@@ -55,7 +55,7 @@ names = ['ceeu', 'ceft',
 def plot_receivers_coords(
         axs, 
         year, 
-        distance = 7
+        distance = 100
         ):
     
     infile = os.path.join(
@@ -96,7 +96,7 @@ def plot_receivers_coords(
     return out
 
 def plot_sites_and_intrumentation(
-        year = 2022
+        year = 2021
         ):
     
     lat_lims = dict(

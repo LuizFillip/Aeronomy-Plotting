@@ -76,37 +76,6 @@ def plot_tec_map():
     return ax
 
 
-import GNSS as gs 
-import PlasmaBubbles as pb 
-
-def joint_all_stations():
-
-    path = gs.paths(2021, 1).roti_doy
-    
-    dn = dt.datetime(2021, 1, 1, 2, 30)
-    
-    out = []
-    
-    for sts in os.listdir(path):
-    
-        infile = os.path.join(
-            path, sts
-            )
-    
-        df = pb.load_filter(
-            infile, 
-            prn_remove = None,
-            )
-        
-    
-        ds = b.sel_times(
-            pb.removing_noise(df, factor = 2), 
-            dn, 
-            hours = 0.2
-            )
-        
-        out.append(ds)
-    return pd.concat(out)
 
 
 
@@ -122,6 +91,18 @@ ax.scatter(x[0], y[0], s = 100, c = 'k')
 
 ax.scatter(x[1], y[1], s = 100, c = 'k')
 
-m = (x[1] - x[0]) / (y[1] - y[0])
+m = (y[1] - y[0]) / (x[1] - x[0]) 
 
-m
+ax.annotate(
+    '', 
+    xy = (x[0], y[0]), 
+    xytext = (x[1], y[1]), 
+    arrowprops = dict(arrowstyle='<->', lw = 2)
+    )
+
+
+ax.scatter(x[0], y[0], s = 100, c = 'k')
+
+ax.scatter(m*x[0], m*y[0], s = 100, c = 'k')
+
+m*x[0], m*y[0]
