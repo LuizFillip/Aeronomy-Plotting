@@ -6,8 +6,9 @@ import datetime as dt
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import GEO as g
-import settings as s
+import base as b 
 
+b.config_labels(fontsize = 25)
 def tec_fname(filename: str) -> dt.datetime:
     """Convert TEC filename (EMBRACE format) to dt"""
     args = filename.split('_')
@@ -117,7 +118,7 @@ def plot_tec_map(infile, fontsize = 40):
                 )
             )
     
-    s.config_labels(fontsize = 25)
+   
     plot_colorbar(
             fig
             )

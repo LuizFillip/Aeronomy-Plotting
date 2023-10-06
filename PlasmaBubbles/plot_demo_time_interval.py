@@ -38,7 +38,7 @@ def plot_arrow_range(ax, dusk, occur):
     dtime = (occur - dusk).total_seconds() / 3600
     dtime = round(dtime, 2)
     ax.annotate(
-        f'$\\delta t =$ {dtime} hours',
+        f'$\\delta t =$ {dtime}',
         xy = (middle, 0.55), 
         xycoords = 'data',
         fontsize = 20.0,
@@ -79,53 +79,57 @@ def plot_time_difference(dn):
         )
     
     plt.subplots_adjust(hspace = 0.2)
-                    
-    the = pb.threshold(dn, col)
-     
-    plot_dusk_ln(ax[1], dn, col)
     
-    line, = ax[0].plot(
-        ds[col], 
-        color = 'r', 
-        **args, 
-        label = f'Longitude = {col}°'
-        )
     
-    ax[0].axhline(
-        the, 
-        color = line.get_color(), 
-        label = f'Threshold = {the} TECU/min'
-        )
-    
-
-    ax[1].plot(
-         pb.get_events_series(ds[col]), 
-         marker = 'o',
-         markersize = 2,
-         color = line.get_color()
-        )
-    
-    ax[0].legend(loc = 'upper left')
-    
-    ax[0].set(
-        ylim = [0, 2], 
-        yticks = list(range(3)),
-        ylabel = 'ROTI (TECU/min)'
-        )
-    
-    ax[1].set(
-        ylabel = 'EPBs occurrence', 
-        xlim = [ds.index[0],  ds.index[-1]],
-        yticks = [0, 1], 
-        ylim = [-0.2, 1.2]
-        )
-    
-    for limit in [0, 1]:
-        ax[1].axhline(
-            limit, 
-            color = 'k', 
-            linestyle = '--'
+    for col in ['-40', '-70']:
+        the = pb.threshold(dn, col)
+         
+        plot_dusk_ln(ax[1], dn, col)
+        
+        line, = ax[0].plot(
+            ds[col], 
+            # color = 'r', 
+            **args, 
+            label = f'Longitude = {col}°'
             )
+        
+        ax[0].axhline(
+            the, 
+            color = line.get_color(), 
+            # label = f'Threshold = {the} TECU/min'
+            )
+        
+    
+        ax[1].plot(
+             pb.get_events_series(ds[col]), 
+             marker = 'o',
+             markersize = 2,
+             color = line.get_color()
+            )
+        
+        ax[0].legend(
+            loc = 'upper right', 
+            ncol = 2)
+        
+        ax[0].set(
+            ylim = [0, 5], 
+            yticks = list(range(6)),
+            ylabel = 'ROTI (TECU/min)'
+            )
+        
+        ax[1].set(
+            ylabel = 'EPBs occurrence', 
+            xlim = [ds.index[0],  ds.index[-1]],
+            yticks = [0, 1], 
+            ylim = [-0.2, 1.2]
+            )
+        
+        for limit in [0, 1]:
+            ax[1].axhline(
+                limit, 
+                color = 'k', 
+                linestyle = '--'
+                )
             
             
     b.format_time_axes(ax[1])
@@ -134,7 +138,7 @@ def plot_time_difference(dn):
     return fig
     
 
-dn = dt.datetime(2017, 4, 23, 20, 0)
+dn = dt.datetime(2013, 1, 12, 20, 0)
 
 fig = plot_time_difference(dn)
 

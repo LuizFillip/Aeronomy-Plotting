@@ -26,13 +26,12 @@ def plot_annually_events_count(ds):
     ylims = [350, 40]
     for i, value in enumerate([1, 3]):
         
-        df =  pb.month_occurrence(
+        df =  pb.year_occurrence(
             ds, value
             )
         
         total = int(df.values.sum())
     
-        
         df.plot(
             kind = 'bar', 
             ax = ax[i], 
@@ -52,7 +51,6 @@ def plot_annually_events_count(ds):
         
         ax[i].set(
             ylabel = 'Nigths with EPB',
-            xticklabels = b.number_to_months(), 
             ylim = [0, ylims[i]]
             )
         
@@ -60,19 +58,30 @@ def plot_annually_events_count(ds):
     ax[0].legend(
         [f'{c}°' for c in ds.columns],
         ncol = 5, 
-        title = 'Longitudinal sectors (2013-2022)',
+        title = 'Longitudinal sectors (2013 - 2022, $Kp > 3$)',
         bbox_to_anchor = (.5, 1.4), 
         loc = "upper center", 
         columnspacing = 0.6
         )
     
-    ax[1].set(xlabel = 'Months')
+    ax[1].set(xlabel = 'Years')
 
 path = 'database/epbs/events_types.txt'
 
-ds = b.load(path)
+ 
 
-plot_sunset_midnight_events(ds)
 
-# df =  pb.month_occurrence(ds, 3)
+# 
+from geophysical_indices import INDEX_PATH
+import pandas as pd
+ 
 
+df = pd.concat(
+    [b.load(path), 
+     b.load(INDEX_PATH)], 
+    axis = 1).dropna()
+
+
+ds = df.loc[df['kp'] > 3].iloc[:, :5]
+
+plot_annually_events_count(ds)

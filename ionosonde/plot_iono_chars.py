@@ -26,7 +26,7 @@ def plot_hmF2(ax, df, name):
     ax.set(
         ylim = [100, 600], 
         ylabel = "hmF2 (km)",
-        xlim = [df.index[0], df.index[-1]]
+        #xlim = [df.index[0], df.index[-1]]
         )
     
 def plot_hF2(ax, df, name):
@@ -36,7 +36,7 @@ def plot_hF2(ax, df, name):
     ax.set(
         ylim = [100, 600], 
         ylabel = "hF2 (km)",
-        xlim = [df.index[0], df.index[-1]]
+        #xlim = [df.index[0], df.index[-1]]
         )
     
 def plot_foF2(ax, df, name):
@@ -87,7 +87,7 @@ dn = '20161003(277)'
 dn = '20170423(113)'
 dn = '20170403(093)'
 dn = '20130327(086)'
-
+dn = '20150409(099)'
 
 def plot_iono_chars(dn):
     
@@ -102,7 +102,7 @@ def plot_iono_chars(dn):
     
     out = []
     
-    for site in ['FZA0M', 'SAA0K']: #'BVJ03', 
+    for site in [ 'BVJ03', 'FZA0M', 'SAA0K']: 
         
         fn  = f'{site}_{dn}.TXT'
         

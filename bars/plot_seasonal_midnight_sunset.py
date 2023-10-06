@@ -17,7 +17,7 @@ def plot_sunset_midnight_events(ds):
     
     plt.subplots_adjust(hspace = 0.1)
     ylims = [350, 40]
-    for i, value in enumerate([1, 3]):
+    for i, value in enumerate([2, 4]):
         
         df =  pb.month_occurrence(
             ds, value
@@ -49,23 +49,37 @@ def plot_sunset_midnight_events(ds):
             ylim = [0, ylims[i]]
             )
         
-   
+    period_type = '$Kp > 3$'
     ax[0].legend(
         [f'{c}°' for c in ds.columns],
         ncol = 5, 
-        title = 'Longitudinal sectors (2013-2022)',
+        title = f'Longitudinal sectors (2013 - 2022) {period_type}',
         bbox_to_anchor = (.5, 1.4), 
         loc = "upper center", 
         columnspacing = 0.6
         )
     
     ax[1].set(xlabel = 'Months')
+    
+    
 
-path = 'database/epbs/events_types.txt'
+# path = 'database/epbs/events_types.txt'
 
-ds = b.load(path)
+# ds = b.load(path)
 
-plot_sunset_midnight_events(ds)
+# from geophysical_indices import INDEX_PATH
+# import pandas as pd
+ 
 
-# df =  pb.month_occurrence(ds, 3)
+# df = pd.concat(
+#     [b.load(path), 
+#      b.load(INDEX_PATH)], 
+#     axis = 1).dropna()
+
+
+# ds = df.loc[df['kp'] > 3].iloc[:, :5]
+
+
+# plot_sunset_midnight_events(ds)
+
 

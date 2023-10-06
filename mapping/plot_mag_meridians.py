@@ -80,13 +80,13 @@ def plot_mag_meridians(
     gg.map_features(ax)
 
     lat = gg.limits(
-        min = -70, 
-        max = 40, 
+        min = -30, 
+        max = 10, 
         stp = 10
         )
     lon = gg.limits(
-        min = -120, 
-        max = -20, 
+        min = -80, 
+        max = -30, 
         stp = 10
         )    
 
@@ -97,7 +97,7 @@ def plot_mag_meridians(
     gg.mag_equator(
         ax,
         year,
-        degress = None
+        degress = 13
         )
     
     # ax.legend(
@@ -107,25 +107,8 @@ def plot_mag_meridians(
     #     )
     
 
-    import xarray as xr
-
-    ds = xr.open_dataset('S10635336_201704260800.nc')
-    temp = ds['Band1'].values
-    print(temp.min())
-    temp = (temp /1000) - 273.13
-    
-    
-    img = ax.contourf(
-        ds.lon[::-1], 
-        ds.lat[::-1], 
-         temp,
-        )
-    
-    plt.colorbar(img)
     return fig 
 
 
 
-fig = plot_mag_meridians(
-           year = 2013
-           )
+fig = plot_mag_meridians(year = 2013)

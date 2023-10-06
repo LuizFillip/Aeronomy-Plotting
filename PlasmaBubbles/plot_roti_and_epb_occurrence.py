@@ -40,7 +40,7 @@ def get_infos(dn):
 
 def plot_epbs_occurrences_roti(
         ds,
-        cols 
+        cols = None
         ):
 
     fig, ax = plt.subplots(
@@ -50,7 +50,9 @@ def plot_epbs_occurrences_roti(
         figsize = (14, 6)
         )
     
-    ds = ds[[str(c * -10) for c in cols]]
+    if cols is None:
+        ds = ds[[str(c * -10) for c in cols]]
+    # ds.columns
     
     plt.subplots_adjust(hspace = 0.1)
     
@@ -61,6 +63,7 @@ def plot_epbs_occurrences_roti(
     for i, col in enumerate(ds.columns):
         
         the = pb.threshold(dn, col)
+        print(the)
         
         line, = ax[0].plot(
             ds[col], 
@@ -85,8 +88,8 @@ def plot_epbs_occurrences_roti(
     
 
     ax[0].set(
-        ylim = [0, 5], 
-        yticks = list(range(6)),
+        ylim = [0, 0.5], 
+        # yticks = list(range(6)),
         ylabel = 'ROTI (TECU/min)'
         )
     
@@ -137,9 +140,16 @@ def single_plot(
             pb.PATH_LONG, 
             f'{dn.year}.txt'
         )
+    
+    import GNSS as gs
+    dn = dt.datetime(2013, 3, 30, 21)
+    
+    ds = pb.concat_files(
+        dn, pb.long_dataset)
+
      
     ds = b.sel_times(
-            b.load(infile), 
+            ds, #b.load(infile)
             dn, 
             hours = hours
         )
@@ -151,4 +161,9 @@ def single_plot(
     
     return fig
 
-
+dn = dt.datetime(2013, 3, 30, 21)
+fig = single_plot(
+        dn, 
+        cols = [8, 7, 6, 5, 4], 
+        hours = 11
+        )
