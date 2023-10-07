@@ -61,10 +61,10 @@ def plot_demo_data_reduced(
             )
     ax[2].plot(df['roti'], **args)
     
-    ax[2].set(ylim = [0, 10], 
-              yticks = np.arange(0, 10, 3))
+    ax[2].set(ylim = [0, 3], )
         
-    b.format_time_axes(ax[2])
+    b.format_time_axes(ax[2], 
+                       hour_locator = 4)
     
     c = b.chars()
     
@@ -83,10 +83,11 @@ def plot_demo_data_reduced(
         fontsize = fontsize)
     
 year = 2013
- 
-ds = pb.concat_files(year)
-dn = dt.datetime(year, 1, 2, 5)
+dn = dt.datetime(year, 10, 3, 12)
 
+ds = pb.concat_files(dn)
+
+# ds = b.sel_times(ds, )
 
 
 def plot_bad_receiver_example(
@@ -124,3 +125,9 @@ def plot_bad_receiver_example(
     
     
 # plot_bad_receiver_example(ds)
+
+
+plot_demo_data_reduced(
+        ds, 
+        fontsize = 20
+        )

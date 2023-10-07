@@ -142,17 +142,18 @@ def single_plot(
         )
     
     import GNSS as gs
-    dn = dt.datetime(2013, 3, 30, 21)
+    
+    dn = dt.datetime(2016, 10, 3, 0)
     
     ds = pb.concat_files(
         dn, pb.long_dataset)
 
      
-    ds = b.sel_times(
-            ds, #b.load(infile)
-            dn, 
-            hours = hours
-        )
+    # ds = b.sel_times(
+    #         ds, #b.load(infile)
+    #         dn, 
+    #         hours = hours
+    #     )
     
     fig = plot_epbs_occurrences_roti(
             ds, 

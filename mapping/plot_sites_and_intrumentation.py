@@ -76,7 +76,7 @@ def plot_receivers_coords(
                 year = year
                 )
         
-        if min_d < distance:
+        if lat > distance:
         
             axs.scatter(
                 lon, lat, **args
@@ -96,7 +96,8 @@ def plot_receivers_coords(
     return out
 
 def plot_sites_and_intrumentation(
-        year = 2021
+        year = 2021,
+        glat = -12
         ):
     
     lat_lims = dict(
@@ -121,11 +122,13 @@ def plot_sites_and_intrumentation(
     
     plot_sites(ax)
     
-    plot_receivers_coords(ax, year)
-        
+    receivers = plot_receivers_coords(
+        ax, year, distance = glat)
+    
+    ax.axhline(glat)
     for long in pb.longitudes():
 
         ax.axvline(long)
     
-    
+    return receivers
 plot_sites_and_intrumentation()

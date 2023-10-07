@@ -140,6 +140,6 @@ def plot_ipp_and_equator_range(
 
 # df = concat_files(year)
 
-# dn = dt.datetime(year, 1, 1, 23, 0)
+# 
 
 # plot_ipp_and_equator_range(df, dn)
