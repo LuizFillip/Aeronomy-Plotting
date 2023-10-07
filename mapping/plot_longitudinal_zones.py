@@ -5,25 +5,26 @@ import PlasmaBubbles as pb
 import datetime as dt
 import numpy as np
 import base as b 
-import pandas as pd
 
 b.config_labels()
 
-# def sel_df(df, dn):
-#     df = b.sel_times(df, dn)
+def sel_df(df, dn):
+    df = b.sel_times(df, dn)
 
-#     delta = dt.timedelta(minutes=9,
-#                          seconds=59)
-#     return df.loc[
-#         (df.index >= dn) &
-#         (df.index < dn + delta)].copy()
+    delta = dt.timedelta(
+        minutes = 9,
+        seconds = 59
+        )
+    return df.loc[
+        (df.index >= dn) &
+        (df.index < dn + delta)].copy()
 
 
-# dn = dt.datetime(2013, 1, 1, 23, 0)
+dn = dt.datetime(2013, 1, 1, 23, 0)
 
-# df = pb.concat_files(dn)
+df = pb.concat_files(dn)
 
-# df = sel_df(df, dn)
+df = sel_df(df, dn)
 
 
 
@@ -52,7 +53,6 @@ lon = gg.limits(
 
 gg.map_boundaries(ax, lon, lat)
 
-dn = dt.datetime(2016,9, 1, 21)
 
 gg.mag_equator(
     ax,
@@ -60,6 +60,10 @@ gg.mag_equator(
     degress = None
     )
 
+
+tlon, tlat = gg.terminator(dn, 18)
+
+ax.plot(tlon, tlat, lw = 2, linestyle = '--')
 
 
 def filter_latitudes(
@@ -83,56 +87,79 @@ def get_line_eq(x0, x1, y0, y1):
 def filter_between_curves(x, y, xx, yy, xx1, yy1):
 
     ar, br, cr = get_line_eq(
-        xx[0], xx[-1], yy[0], yy[-1])
+        xx[0], xx[-1], yy[0], yy[-1]
+        )
     
-    mask1 = ((x < xx[0]) | (x < xx[-1]) & 
-             (ar * x + br * y + cr <= 0))
-    
+    mask1 = (
+        (x < xx[0]) | (x < xx[-1]) & 
+        (ar * x + br * y + cr <= 0)
+        )
+   
     ar, br, cr = get_line_eq(
-        xx1[0], xx1[-1], yy1[0], yy1[-1])
+        xx1[0], xx1[-1], yy1[0], yy1[-1]
+        )
     
-    mask2  = ((x > xx1[-1]) | (x > xx1[0]) & 
-              (ar * x + br * y + cr >= 0))
+    mask2  = (
+        (x > xx1[-1]) | (x > xx1[0]) & 
+        (ar * x + br * y + cr >= 0)
+        )
     
     x = x[~(mask1 | mask2)]
     y = y[~(mask1 | mask2)]
 
     return x, y
 
-lon = -60
-xx, yy = gg.meridians(
-    dn,
-    max_lat = 60,
-    delta = 10
-    ).compute(lon)
 
 
+def get_limit_meridians(
+        lon = -50, 
+        delta = 10,
+        max_lat = 30, 
+        lat_min = -20
+        ):
+    xx, yy = gg.meridians(
+        dn,
+        max_lat,
+        delta = delta
+        ).compute(lon)
+    
+    
+    xx1, yy1 = gg.meridians(
+        dn,
+        max_lat,
+        delta = delta
+        ).compute(lon + delta)
+    
+    
+    xx, yy = filter_latitudes(
+        xx, yy, 
+        lat_min, 
+        lat_max = max_lat
+        )
+    
+    xx1, yy1 = filter_latitudes(
+        xx1, yy1, 
+        lat_min, 
+        lat_max = max_lat
+        )
+    
+    return xx, yy, xx1, yy1
 
-
-
-
-
-
-lon = -50
-xx1, yy1 = gg.meridians(
-    dn,
-    max_lat = 60,
-    delta = 10
-    ).compute(lon)
-
-
-xx, yy = filter_latitudes(xx, yy)
+xx, yy ,xx1, yy1 = get_limit_meridians(
+        lon = -60
+        )
 ax.plot(xx,  yy, lw = 3)
-xx1, yy1 = filter_latitudes(xx1, yy1)
 ax.plot(xx1,  yy1, lw = 3)
 
-
-N = 800
-x = np.random.uniform(-80, -20, N)
-y = np.random.uniform(-30, 20, N)
+x = df.lon
+y = df.lat
 
 
 
 x, y = filter_between_curves(x, y, xx, yy, xx1, yy1)
-ax.scatter(x, y, color = 'r')
+
+ds = df.loc[df['lon'].isin(x)]
+
+
+ax.scatter(ds.lon, ds.lat, c = ds.roti)
 
