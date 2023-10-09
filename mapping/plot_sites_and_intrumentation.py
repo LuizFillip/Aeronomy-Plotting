@@ -48,8 +48,6 @@ args = dict(
     )
 
 
-names = ['ceeu', 'ceft', 
-         'rnna', 'pbjp']
 
         
 def plot_receivers_coords(
@@ -84,26 +82,19 @@ def plot_receivers_coords(
                 )
         
             out.append(name)
-        
-        elif any([name == c for c in names]):
-            
-            axs.scatter(
-                lon, lat, **args
-                )
-        
-            out.append(name)
+
             
     return out
 
 def plot_sites_and_intrumentation(
         year = 2021,
-        glat = -12
+        glat = -15
         ):
     
     lat_lims = dict(
-        min = -40, 
-        max = 10, 
-        stp = 10
+        min = -20, 
+        max = 20, 
+        stp = 5
         )
 
     lon_lims = dict(
@@ -125,10 +116,15 @@ def plot_sites_and_intrumentation(
     receivers = plot_receivers_coords(
         ax, year, distance = glat)
     
-    ax.axhline(glat)
+    ax.axhline(glat, linestyle = '--')
+    ax.axhline(glat * -1, linestyle = '--')
+    
     for long in pb.longitudes():
 
-        ax.axvline(long)
+        ax.axvline(long, linestyle = '--')
     
     return receivers
-plot_sites_and_intrumentation()
+
+r = plot_sites_and_intrumentation()
+
+r

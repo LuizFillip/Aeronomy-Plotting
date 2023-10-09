@@ -34,15 +34,22 @@ ds1 = b.sel_times(
     hours = 8
     )
 
+ds1 = pb.longitude_sector(ds1, -70)
 fig, ax = plt.subplots()
 
 ax.plot(ds1['roti'])
+
+
 avg = ds1['roti'].mean()
 std = ds1['roti'].std()
+
+
 ax.axhline(avg , color = 'r')
 
-ax.axhline(avg + std, color = 'b ')
+ax.axhline(avg + std, color = 'b')
 
 ax.set(ylim = [0, 1])
 
 b.format_time_axes(ax)
+
+avg, std
