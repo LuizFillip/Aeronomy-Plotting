@@ -155,7 +155,10 @@ def plot_arrow_annotate(
 
 
             
-def plot_filter_meridians(ax):
+def plot_filter_meridians(
+        ax, 
+        year = 2021
+        ):
     
     lons =  [-81., -73, -64.1, -52.6, -40, -33]
     
@@ -174,7 +177,8 @@ def plot_filter_meridians(ax):
         
         ax.plot(xx, yy, lw = 1)
         
-        nx, ny = gg.intersec_with_equator(xx, yy, year = 2021)
+        nx, ny = gg.intersec_with_equator(
+            xx, yy, year)
         
         ax.scatter(nx, ny, s= 100)
         
@@ -186,7 +190,8 @@ def plot_filter_meridians(ax):
             lat_max = 30
             )
             
-        ex, ey = gg.intersec_with_equator(xx, yy, year = 2021)
+        ex, ey = gg.intersec_with_equator(
+            xx, yy, year)
         
         if lon != -40:
             
@@ -209,7 +214,7 @@ df = pb.load_filter(path.fn_roti)
 
 plot_filter_meridians(ax)
 
-df = b.sel_times(df, dn, hours = 1)
+df = b.sel_times(df, dn, hours = 0.5)
 
 x = df.lon
 y = df.lat

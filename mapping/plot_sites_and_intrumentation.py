@@ -1,9 +1,8 @@
-from GEO import quick_map, sites
 import PlasmaBubbles as pb 
 import base as s
 import os
 import json 
-import GEO as g
+import GEO as gg
 import cartopy.crs as ccrs
 
 PATH_COORDS = 'database/GEO/coords/'
@@ -16,8 +15,8 @@ def plot_sites(ax):
     for site in ['saa', 'jic', 'boa',
                  'car', 'for', 'str']:
     
-        glat, glon = sites[site]['coords']
-        name =  sites[site]['name']
+        glat, glon = gg.sites[site]['coords']
+        name =  gg.sites[site]['name']
         ax.scatter(
             glon, glat,
             s = 100, 
@@ -33,9 +32,9 @@ def plot_sites(ax):
 def distance_from_equator(
         lon, lat, year = 2013
         ):
-    eq = g.load_equator(year)
+    eq = gg.load_equator(year)
     x, y = eq[:, 0], eq[:, 1]
-    min_x, min_y, min_d = g.compute_distance(
+    min_x, min_y, min_d = gg.compute_distance(
         x, y, lon, lat
         )
     return min_d
@@ -88,12 +87,12 @@ def plot_receivers_coords(
 
 def plot_sites_and_intrumentation(
         year = 2021,
-        glat = -15
+        glat = -22
         ):
     
     lat_lims = dict(
-        min = -20, 
-        max = 20, 
+        min = -30, 
+        max = 5, 
         stp = 5
         )
 
@@ -103,7 +102,7 @@ def plot_sites_and_intrumentation(
         stp = 10
         )    
 
-    fig, ax = quick_map(
+    fig, ax = gg.quick_map(
         lat_lims = lat_lims, 
         lon_lims = lon_lims, 
         figsize = (9, 9), 
@@ -127,4 +126,3 @@ def plot_sites_and_intrumentation(
 
 r = plot_sites_and_intrumentation()
 
-r
