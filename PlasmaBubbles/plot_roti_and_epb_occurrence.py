@@ -15,7 +15,8 @@ args = dict(
 b.config_labels()
 
 def sel_indexes(
-        dn, idx = ['f107a', 'kp', 'dst']
+        dn, 
+        idx = ['f107a', 'kp', 'dst']
         ):
     
     df = b.load(INDEX_PATH)
@@ -50,20 +51,22 @@ def plot_epbs_occurrences_roti(
         figsize = (14, 6)
         )
     
-    if cols is None:
-        ds = ds[[str(c * -10) for c in cols]]
-    # ds.columns
+    # if cols is None:
+        
+    # cols = [5]
+    ds = ds[[str(c * -10) for c in cols]]
     
     plt.subplots_adjust(hspace = 0.1)
     
-    color = ['k', 'b', 'r', 'g', 'magenta']
+    color = ['k', 'b', 
+             'r', 'g', 
+             'magenta']
     
     dn = ds.index[0]
     
     for i, col in enumerate(ds.columns):
         
         the = pb.threshold(dn, col)
-        print(the)
         
         line, = ax[0].plot(
             ds[col], 
@@ -88,8 +91,8 @@ def plot_epbs_occurrences_roti(
     
 
     ax[0].set(
-        ylim = [0, 0.5], 
-        # yticks = list(range(6)),
+        ylim = [0, 4], 
+        yticks = list(range(5)),
         ylabel = 'ROTI (TECU/min)'
         )
     
@@ -141,19 +144,12 @@ def single_plot(
             f'{dn.year}.txt'
         )
     
-    import GNSS as gs
-    
-    dn = dt.datetime(2016, 10, 3, 0)
-    
-    ds = pb.concat_files(
-        dn, pb.long_dataset)
-
      
-    # ds = b.sel_times(
-    #         ds, #b.load(infile)
-    #         dn, 
-    #         hours = hours
-    #     )
+    ds = b.sel_times(
+            b.load(infile),
+            dn, 
+            hours = hours
+        )
     
     fig = plot_epbs_occurrences_roti(
             ds, 
@@ -162,7 +158,8 @@ def single_plot(
     
     return fig
 
-dn = dt.datetime(2013, 3, 30, 21)
+dn = dt.datetime(2013, 1, 27, 21)
+
 fig = single_plot(
         dn, 
         cols = [8, 7, 6, 5, 4], 

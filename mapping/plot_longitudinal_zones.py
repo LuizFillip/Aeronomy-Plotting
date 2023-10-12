@@ -68,21 +68,7 @@ def map_attrs(ax, year):
 
 
 
-def plot_longitudinal_zones(dn):
 
-    fig, ax = plt.subplots(
-        dpi = 300,
-        figsize = (9, 9),
-        subplot_kw = 
-            {
-            'projection': ccrs.PlateCarree()
-            }
-        )
-    
-  
-    map_attrs(ax, dn.year)
-
-    return ax
 
 
 
@@ -202,32 +188,116 @@ def plot_filter_meridians(
                     )
             
             
-path = gs.paths(2021, 3)
+def plot_longitudinal_zones(dn):
 
-dn = dt.datetime(2021, 1, 3, 0, 0)   
+    fig, ax = plt.subplots(
+        dpi = 300,
+        figsize = (9, 9),
+        subplot_kw = 
+            {
+            'projection': ccrs.PlateCarree()
+            }
+        )
+    
+  
+    map_attrs(ax, dn.year)
+
+    return ax
+            
+path = gs.paths(2021, 1)
+
+dn = dt.datetime(2021, 1, 1, 2, 1)   
+
 ax = plot_longitudinal_zones(dn)
 
-
-            
 df = pb.load_filter(path.fn_roti)
 
 
 plot_filter_meridians(ax)
 
-df = b.sel_times(df, dn, hours = 0.5)
+df = b.sel_times(df, dn, hours = .1)
 
 x = df.lon
 y = df.lat
 
-ax.scatter(
+img = ax.scatter(
     x, y, 
     c = df['roti'], 
     s = 20, 
-    cmap = 'jet',
+    cmap = 'rainbow',
     vmin = 0, 
     vmax = 3
     )
 
+b.colorbar_setting(
+       img, 
+       ax, 
+       ticks = np.arange(0, 3, 1),
+       width = '5%'
+       )
+
+#%%%
+
+lons =  [-81., -73, -64.1, -52.6, -40, -33]
+for i in range(len(lons) - 1):
+    
+    ax = plot_longitudinal_zones(dn)
+
+
+    xx, yy  = gg.get_limit_meridians(
+        dn,
+        lons[i], 
+        delta = 10,
+        lat_min = -30, 
+        lat_max = 30
+        )
+    
+    xx1, yy1  = gg.get_limit_meridians(
+        dn,
+        lons[i + 1], 
+        delta = 10,
+        lat_min = -30, 
+        lat_max = 30
+        )
+    
+    df = pb.load_filter(path.fn_roti)
+    
+    
+    plot_filter_meridians(ax)
+    
+    df = b.sel_times(df, dn, hours = .1)
+    
+    x = df.lon
+    y = df.lat
+    
+    x, y = gg.filter_between_curves(
+            x, y, xx, yy, xx1, yy1
+            )
+    
+    ds = df.loc[df['lon'].isin(x) &
+                df['lat'].isin(y)]
+    
+    x = ds.lon
+    y = ds.lat
+    
+    
+    img = ax.scatter(
+        x, y, 
+        c = ds['roti'], 
+        s = 20, 
+        cmap = 'rainbow',
+        vmin = 0, 
+        vmax = 3
+        )
+    
+    b.colorbar_setting(
+           img, 
+           ax, 
+           ticks = np.arange(0, 3, 1),
+           width = '5%'
+           )
+    
+    
 
 
 

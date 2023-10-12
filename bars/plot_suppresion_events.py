@@ -36,7 +36,7 @@ def remove_middle(arr):
     
 
 
-
+ds
 
 import PlasmaBubbles as pb 
 import matplotlib.pyplot as plt
@@ -137,5 +137,9 @@ df_filtered = df[df.apply(
     
 plot_sunset_midnight_events(df_filtered)
 
+'''
 
+teve EPB: 2013-01-26 
+
+'''
 df_filtered

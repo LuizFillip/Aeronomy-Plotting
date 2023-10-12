@@ -1,20 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Oct  7 13:19:08 2023
 
-@author: Luiz
-"""
-
-import GEO as gg
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
 import datetime as dt
-import pandas as pd
 import base as b 
-
-
-            
 import GNSS as gs
 
 dn = dt.datetime(2013, 1, 1, 12)

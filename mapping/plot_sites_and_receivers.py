@@ -52,7 +52,7 @@ args = dict(
 def plot_receivers_coords(
         axs, 
         year, 
-        distance = 100
+        distance = -20
         ):
     
     infile = os.path.join(
@@ -72,8 +72,8 @@ def plot_receivers_coords(
                 lat, 
                 year = year
                 )
-        
-        if lat > distance:
+                
+        if min_d < distance:
         
             axs.scatter(
                 lon, lat, **args
@@ -85,14 +85,14 @@ def plot_receivers_coords(
             
     return out
 
-def plot_sites_and_intrumentation(
+def plot_sites_and_receivers(
         year = 2021,
-        glat = -22
+        distance = 12
         ):
     
     lat_lims = dict(
         min = -30, 
-        max = 5, 
+        max = 10, 
         stp = 5
         )
 
@@ -107,22 +107,21 @@ def plot_sites_and_intrumentation(
         lon_lims = lon_lims, 
         figsize = (9, 9), 
         year = year, 
-        degress = None
+        degress = distance
         )
     
     plot_sites(ax)
     
     receivers = plot_receivers_coords(
-        ax, year, distance = glat)
+        ax, year, distance
+        )
     
-    ax.axhline(glat, linestyle = '--')
-    ax.axhline(glat * -1, linestyle = '--')
     
-    for long in pb.longitudes():
+    # for long in pb.longitudes():
 
-        ax.axvline(long, linestyle = '--')
+    #     ax.axvline(long, linestyle = '--')
     
     return receivers
 
-r = plot_sites_and_intrumentation()
+r = plot_sites_and_receivers()
 

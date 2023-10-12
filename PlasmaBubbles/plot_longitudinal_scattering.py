@@ -4,6 +4,10 @@ import numpy as np
 import base as b 
 import datetime as dt 
 
+
+b.config_labels()
+
+
 def plot_longitudinal_scattering(df):
     
     longs = pb.longitudes()
@@ -13,8 +17,10 @@ def plot_longitudinal_scattering(df):
         sharex = True, 
         sharey = True,
         nrows = 5, 
-        figsize = (12, 10)
+        figsize = (12, 8)
         )
+    
+    plt.subplots_adjust(hspace = 0.2)
     
     args = dict(
         marker = 'o', 
@@ -50,12 +56,13 @@ def plot_longitudinal_scattering(df):
     
     ax[0].set(
         title = title, 
+        xlim = [df.index[0], df.index[-1]],
         yticks = np.arange(0, 6, 1), 
         ylim = [0, 5]
         )
     
     fig.text(
-        0.06, 0.45, "ROTI (TECU/min)",
+        0.06, 0.35, "ROTI (TECU/min)",
         rotation = "vertical", 
         fontsize = 20
         )
@@ -63,14 +70,19 @@ def plot_longitudinal_scattering(df):
     return fig
 
     
-dn = dt.datetime(2015, 2, 17, 21)
+dn = dt.datetime(2013, 3, 20, 21)
+
+ds = pb.concat_files(dn)
+
+
+ds = ds.loc[~ds['sts'].isin(['lcuz', 'lpmo', 'lpuc'])]
 
 df = b.sel_times(
-        pb.concat_files(dn), 
+        ds, 
         dn, 
-        hours = 15
+        hours = 10
         )   
+
 
 f = plot_longitudinal_scattering(df)
 
-plt.show()
