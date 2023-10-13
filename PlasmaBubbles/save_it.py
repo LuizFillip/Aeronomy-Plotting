@@ -7,11 +7,26 @@ from plotting import single_plot
 
 
 
+
+    
+
+
+
+    
+
+dates = b.random_dates(100)
+
+#%%%
+
 def save_img(dn, func, save_in):
 
     plt.ioff()
         
-    fig = func(dn)
+    fig = func(dn, 
+            cols = [8, 7, 6, 5, 4], 
+            hours = 11,
+            factor = 5
+            )
     
     fig.savefig(
         save_in,
@@ -21,23 +36,14 @@ def save_img(dn, func, save_in):
     
     plt.clf()   
     plt.close()
+def run(dates):
+    root = 'D:\\img\\factor_5\\'
     
-    
-def save_year(year, root):
-    
-
-    b.make_dir(root)
-    
-    for day in tqdm(range(365), 
-                    str(year)):
+    for dn in tqdm(dates):
         
-        delta = dt.timedelta(days = day)
-        
-        dn = dt.datetime(year, 1, 1, 21) + delta
-                
         save_in = os.path.join(
             root,  
-            dn.strftime('%j.png')
+            dn.strftime('%Y%m%d.png')
             )
         
         save_img(
@@ -45,13 +51,4 @@ def save_year(year, root):
             single_plot, 
             save_in
             )
-    
-    
-
         
-# for year in range(2013, 2023):
-#     root = f'D:\\img\\{year}\\'
-    
-#     save_year(year, root)
-    
-    

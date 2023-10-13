@@ -41,6 +41,7 @@ def get_infos(dn):
 
 def plot_epbs_occurrences_roti(
         ds,
+        factor,
         cols = None
         ):
 
@@ -48,12 +49,9 @@ def plot_epbs_occurrences_roti(
         nrows = 2, 
         dpi = 300, 
         sharex = True, 
-        figsize = (14, 6)
+        figsize = (11, 6)
         )
     
-    # if cols is None:
-        
-    # cols = [5]
     ds = ds[[str(c * -10) for c in cols]]
     
     plt.subplots_adjust(hspace = 0.1)
@@ -63,14 +61,16 @@ def plot_epbs_occurrences_roti(
              'magenta']
     
     dn = ds.index[0]
+    the = pb.threshold(dn, 
+    factor)
+    
+    title = f'Longitudinal zones (threshold = {the} TECU/min)'
     
     for i, col in enumerate(ds.columns):
-        
-        the = pb.threshold(dn, col)
-        
+
         line, = ax[0].plot(
             ds[col], 
-            label = f'{col}° ({the})', 
+            label = f'{col}°', 
             color = color[i], 
             **args
             )
@@ -80,13 +80,14 @@ def plot_epbs_occurrences_roti(
             color = line.get_color()
             )
         
-    
         ax[1].plot(
-             pb.get_events_series(ds[col]), 
+             pb.get_events_series(
+                 ds[col], 
+                 factor), 
              marker = 'o',
              markersize = 3,
              color = line.get_color(), 
-             label = f'{col}° ({the})'
+             label = f'{col}°'
             )
     
 
@@ -98,7 +99,7 @@ def plot_epbs_occurrences_roti(
     
     ax[1].legend(
         ncol = 5, 
-        title = 'Longitudinal zones and thresholds (TECU/min)',
+        title = title,
         bbox_to_anchor = (.5, 2.6), 
         loc = "upper center", 
         columnspacing = 0.6
@@ -116,7 +117,7 @@ def plot_epbs_occurrences_roti(
     b.format_time_axes(ax[1])
     
     ax[0].text(
-        0.82, 
+        0.78, 
         0.53, 
         get_infos(dn), 
         transform = ax[0].transAxes
@@ -135,8 +136,9 @@ def plot_epbs_occurrences_roti(
 
 def single_plot(
         dn, 
-        cols = [7, 6, 5, 4], 
-        hours = 11
+        cols = [8, 7, 6, 5, 4], 
+        hours = 11, 
+        factor = 5
         ):
         
     infile = os.path.join(
@@ -153,15 +155,17 @@ def single_plot(
     
     fig = plot_epbs_occurrences_roti(
             ds, 
-            cols
+            factor,
+            cols = cols
         )
     
     return fig
 
-dn = dt.datetime(2013, 1, 27, 21)
+# dn = dt.datetime(2015, 6, 1, 21)
 
-fig = single_plot(
-        dn, 
-        cols = [8, 7, 6, 5, 4], 
-        hours = 11
-        )
+# fig = single_plot(
+#         dn, 
+#         cols = [8, 7, 6, 5, 4], 
+#         hours = 11,
+#         factor = 4
+#         )
