@@ -4,6 +4,8 @@ import os
 import json 
 import GEO as gg
 import cartopy.crs as ccrs
+import matplotlib.pyplot as plt 
+
 
 PATH_COORDS = 'database/GEO/coords/'
 
@@ -29,15 +31,7 @@ def plot_sites(ax):
             )
         
         
-def distance_from_equator(
-        lon, lat, year = 2013
-        ):
-    eq = gg.load_equator(year)
-    x, y = eq[:, 0], eq[:, 1]
-    min_x, min_y, min_d = gg.compute_distance(
-        x, y, lon, lat
-        )
-    return min_d
+
 
 args = dict( 
     s = 40, 
@@ -52,7 +46,7 @@ args = dict(
 def plot_receivers_coords(
         axs, 
         year, 
-        distance = -20
+        distance = None
         ):
     
     infile = os.path.join(
@@ -67,27 +61,33 @@ def plot_receivers_coords(
     for name, key in sites.items():
         lon, lat, alt = tuple(key)
         
-        min_d = distance_from_equator(
-                lon, 
-                lat, 
-                year = year
-                )
-                
-        if min_d < distance:
-        
+        if distance is not None:
+            min_d = gg.distance_from_equator(
+                    lon, 
+                    lat, 
+                    year = year
+                    )
+                    
+            if min_d < distance:
+            
+                axs.scatter(
+                    lon, lat, **args
+                   
+                    )
+            
+                out.append(name)
+        else:
             axs.scatter(
                 lon, lat, **args
                
                 )
-        
-            out.append(name)
 
             
     return out
 
 def plot_sites_and_receivers(
         year = 2021,
-        distance = 12
+        distance = 5
         ):
     
     lat_lims = dict(
@@ -110,18 +110,18 @@ def plot_sites_and_receivers(
         degress = distance
         )
     
-    plot_sites(ax)
+    # plot_sites(ax)
     
     receivers = plot_receivers_coords(
-        ax, year, distance
-        )
+        ax, year)
     
     
-    # for long in pb.longitudes():
+    for long in pb.longitudes():
 
-    #     ax.axvline(long, linestyle = '--')
+        ax.axvline(long, linestyle = '--')
     
     return receivers
 
 r = plot_sites_and_receivers()
 
+plt.show()
