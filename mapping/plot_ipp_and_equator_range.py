@@ -12,7 +12,7 @@ b.config_labels()
 def map_attrs(ax, dn):
 
     lat_lims = dict(
-        min = -20,
+        min = -30,
         max = 10,
         stp = 10
     )
@@ -48,7 +48,7 @@ def map_attrs(ax, dn):
 def sel_df(df, dn):
     df = b.sel_times(df, dn)
 
-    delta = dt.timedelta(minutes=9,
+    delta = dt.timedelta(minutes=20,
                          seconds=59)
     return df.loc[
         (df.index >= dn) &
@@ -76,19 +76,26 @@ def plot_ipp_and_equator_range(
         wspace = 0.1
     )
     
-    
 
     for i, ax in enumerate(ax.flat):
         
+     
         for long in pb.longitudes():
-    
-            ax.axvline(long)
+        
+            ax.axvline(long, 
+            linestyle = '--')
     
         delta = dt.timedelta(hours = i)
     
         time = dn + delta
         
-        ds =  sel_df(df, time)
+        # ds = pb.longitude_sector(
+        #         , 
+        #         long_start, 
+        #         long_delta = 10
+        #         )
+        
+        ds = sel_df(df, time)
         
         img = ax.scatter(
             ds['lon'],
@@ -136,10 +143,10 @@ def plot_ipp_and_equator_range(
 
 # def main():
     
-# year = 2013
+year = 2021
+dn = dt.datetime(year, 1, 1, 21)
 
-# df = concat_files(year)
+df = pb.concat_files(dn, pb.load_filter)
 
-# 
 
-# plot_ipp_and_equator_range(df, dn)
+plot_ipp_and_equator_range(df, dn)

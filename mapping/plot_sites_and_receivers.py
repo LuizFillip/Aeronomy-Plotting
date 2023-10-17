@@ -46,7 +46,7 @@ args = dict(
 def plot_receivers_coords(
         axs, 
         year, 
-        distance = None
+        distance = 5
         ):
     
     infile = os.path.join(
@@ -113,7 +113,7 @@ def plot_sites_and_receivers(
     # plot_sites(ax)
     
     receivers = plot_receivers_coords(
-        ax, year)
+        ax, year, distance = 4)
     
     
     for long in pb.longitudes():
@@ -124,4 +124,4 @@ def plot_sites_and_receivers(
 
 r = plot_sites_and_receivers()
 
-plt.show()
+r

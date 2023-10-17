@@ -60,7 +60,7 @@ def plot_terminators_in_each_sector(
     g.map_features(axs)
 
     lat = g.limits(
-        min = -30.0, 
+        min = -40.0, 
         max = 10, 
         stp = 10
         )

@@ -42,7 +42,10 @@ fig, ax = gg.quick_map(
 
 
 clon, clat = gg.plot_square_area(
-    ax, lon_min = -60, lat_min = -10, radius = 12)
+    ax, 
+    lon_min = -60, 
+    lat_min = -10, 
+    radius = 12)
 
 
 
