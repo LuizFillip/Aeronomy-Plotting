@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Oct  5 10:44:04 2023
-
-@author: Luiz
-"""
-
 import PlasmaBubbles as pb 
 import matplotlib.pyplot as plt
 import base as b 

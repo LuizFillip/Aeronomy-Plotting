@@ -63,9 +63,11 @@ def plot_sunset_midnight_events(ds):
     
     
 
-# path = 'database/epbs/events_types.txt'
+path = 'database/epbs/events_types.txt'
 
-# ds = b.load(path)
+ds = b.load(path)
+
+ds
 
 # from geophysical_indices import INDEX_PATH
 # import pandas as pd
