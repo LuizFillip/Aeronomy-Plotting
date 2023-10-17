@@ -12,11 +12,9 @@ b.config_labels()
 def plot_single_distribution(
         ax,
         df, 
-        geomag = 'quiet', 
         step = 0.2, 
-        gamma = 'all',
-        epbs = '-40', 
-        quiet_level = 4
+        gamma = 'night',
+        quiet_level = 3
         ):
     
 
@@ -30,7 +28,7 @@ def plot_single_distribution(
     
     datasets = ev.kp_levels(
         df, 
-        quiet_level = quiet_level
+        level = quiet_level
         )
     count = []
 
@@ -43,8 +41,8 @@ def plot_single_distribution(
             ds,
             label = f'({index}) {labels[i]}',
             step = step, 
-            col_gamma = gamma,
-            col_epbs = epbs
+            col_gamma = 'night',
+            col_epbs = 'epb'
             )
         
         count.append(f'({index}) {c} events')
@@ -53,50 +51,58 @@ def plot_single_distribution(
     infos = ('EPB occurrence\n' +
              '\n'.join(count))
         
-    ax.text(0.79, 0.3, infos, 
-            transform = ax.transAxes)
+    ax.text(
+        0.79, 0.2, infos, 
+        transform = ax.transAxes
+        )
         
     ax.set(
-            xlim = [vmin - step, vmax],
-            xticks = np.arange(vmin, vmax, step * 2),
-            ylim = [-0.2, 1.2],
-            yticks = np.arange(0, 1.25, 0.25),
-            )
+        xlim = [vmin - step, vmax],
+        xticks = np.arange(vmin, vmax, step * 2),
+        ylim = [-0.2, 1.3],
+        yticks = np.arange(0, 1.25, 0.25),
+        )
 
     return ax
 
 
 def plot_distributions_solar_flux(
         df, 
-        fontsize = 30 
+        fontsize = 25,
+        level = 100
         ):
     
-
+    
     fig, ax = plt.subplots(
         dpi = 300, 
-        nrows = 3,
+        nrows = 2,
         sharex = True,
         sharey = True,
-        figsize = (12, 12)
+        figsize = (12, 10)
         )
     
-    cycles = ['$F_{10.7} < 100$',
-             '$100 < F_{10.7} < 150$', 
-             '$F_{10.7} > 150$']
+    plt.subplots_adjust(hspace = 0.1)
+    titles = [
+        '$F_{10.7} < $' + f'{level}',
+        '$F_{10.7} > $' + f'{level}'
+        ]
     
+    solar_dfs =  ev.medium_solar_level(df, level)
     
-    for i, ds in enumerate(
-            ev.solar_flux_cycles(df)
-            ):
+    for i, ds in enumerate(solar_dfs):
         
         plot_single_distribution(ax[i], ds)
-         
-        ax[i].set(title = cycles[i])
-        
+                 
+        letter = b.chars()[i]
+        ax[i].text(
+            0.01, 0.85, 
+            f"({letter}) {titles[i]}", 
+            transform = ax[i].transAxes
+            )
         
     ax[0].legend(
             ncol = 3, 
-            bbox_to_anchor = (.5, 1.5),
+            bbox_to_anchor = (.5, 1.2),
             loc = "upper center"
             )
     
@@ -107,34 +113,16 @@ def plot_distributions_solar_flux(
         fontsize = fontsize
         )
     
-    fig.text(
-        0.4, 0.07, 
-        "$\\gamma_{FT}~$ ($\\times 10^{-3}~s^{-1}$)", 
-        rotation = "horizontal", 
-        fontsize = fontsize
-        )
+    xlabel = "$\\gamma_{FT}~$ ($\\times 10^{-3}~s^{-1}$)"
+   
     
+    ax[1].set(xlabel = xlabel)
+    
+    fig.suptitle(df.columns.name)
     
     return fig
  
  
-df = b.load('all_results.txt')
+df = ev.concat_results('saa')
 
 fig = plot_distributions_solar_flux(df)
-
-# df = df.loc[(df['f107'] < 100) &
-#             (df['kp_max'] <= 3)]
-
-# ds = ev.probability_distribuition(
-#     df,
-#     step = 0.2, 
-#     col_gamma = 'all',
-#     col_epbs = '-40'
-#     )
-
-# ds
-
-
-# df['drift'] = df['drift'] *1e3
-# df['gravity'] = df['gravity'] *1e3
-
