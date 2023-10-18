@@ -72,7 +72,7 @@ def plot_ipp_and_equator_range(
     )
     
     plt.subplots_adjust(
-        hspace = 0.0,
+        hspace = 0.2,
         wspace = 0.1
     )
     

@@ -13,22 +13,33 @@ PATH_COORDS = 'database/GEO/coords/'
 s.config_labels()
 
 def plot_sites(ax):
+    sites = ['saa', 'jic', 'boa',
+             'car', 'for', 'str']
     
-    for site in ['saa', 'jic', 'boa',
-                 'car', 'for', 'str']:
+    sites = ['saa',  'car', 'car', 'caj']
+    names = ['Digisonde', 
+             'Imager', 'FPI', 'FPI']
+    
+    for i, site in enumerate(sites):
     
         glat, glon = gg.sites[site]['coords']
-        name =  gg.sites[site]['name']
+        name =  names[i]
+        
+        if name == 'FPI':
+            marker = 's'
+        elif name == 'Imager':
+            marker = 'o'
+        elif name == 'Digisonde':
+            marker = '*'
+        
         ax.scatter(
             glon, glat,
-            s = 100, 
-            label = name)
-        
-        ax.legend(
-            bbox_to_anchor = (.5, 1.2),
-            ncol = 3, 
-            loc = 'upper center'
+            s = 200, 
+            label = name, 
+            marker = marker
             )
+        
+       
         
         
 
@@ -55,7 +66,8 @@ def plot_receivers_coords(
         )
     sites = json.load(open(infile))
     
-    out = []
+    x = []
+    y = []
  
     
     for name, key in sites.items():
@@ -71,19 +83,31 @@ def plot_receivers_coords(
             if min_d < distance:
             
                 axs.scatter(
-                    lon, lat, **args
-                   
+                    lon, lat, **args,
+                    label = 'GNSS receivers'
                     )
             
-                out.append(name)
+                # out.append(name)
         else:
-            axs.scatter(
-                lon, lat, **args
-               
-                )
+            x.append(lon)
+            y.append(lat)
+            
+           
+    
+    axs.scatter(
+        x, y, **args,
+        label = 'GNSS receivers'
+       
+        )
+    plot_sites(axs)
+    
+    axs.legend(
+        bbox_to_anchor = (.5, 1.15),
+        ncol = 3, 
+        loc = 'upper center'
+        )
 
             
-    return out
 
 def plot_sites_and_receivers(
         year = 2021,
@@ -91,13 +115,13 @@ def plot_sites_and_receivers(
         ):
     
     lat_lims = dict(
-        min = -30, 
+        min = -15, 
         max = 10, 
         stp = 5
         )
 
     lon_lims = dict(
-        min = -90,
+        min = -60,
         max = -30, 
         stp = 10
         )    
@@ -105,23 +129,24 @@ def plot_sites_and_receivers(
     fig, ax = gg.quick_map(
         lat_lims = lat_lims, 
         lon_lims = lon_lims, 
-        figsize = (9, 9), 
+        figsize = (9,9), 
         year = year, 
-        degress = distance
+        degress = None
         )
     
     # plot_sites(ax)
     
     receivers = plot_receivers_coords(
-        ax, year, distance = 4)
+        ax, year, distance = None)
     
+    glat, glon = gg.sites['saa']['coords']
+    gg.circle_range(ax, glon, glat, radius = 1000)
+    # for long in pb.longitudes():
+
+    #     ax.axvline(long, linestyle = '--')
     
-    for long in pb.longitudes():
+    return fig
 
-        ax.axvline(long, linestyle = '--')
-    
-    return receivers
+fig = plot_sites_and_receivers()
 
-r = plot_sites_and_receivers()
-
-r
+# len(r)
