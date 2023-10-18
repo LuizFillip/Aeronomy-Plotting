@@ -1,4 +1,3 @@
-
 import PlasmaBubbles as pb 
 import matplotlib.pyplot as plt
 import base as b 
@@ -11,10 +10,8 @@ def plot_seasonal_occurrence(ds):
         dpi = 300, 
         nrows = 1,
         sharex = True,
-        figsize = (12, 4)
+        figsize = (14, 6)
         )
-
-    period = ['sunset']
     
     plt.subplots_adjust(hspace = 0.1)
         
@@ -43,8 +40,8 @@ def plot_seasonal_occurrence(ds):
     ax.legend(
         [f'{c[i]}° ({t[i]})' for i in range(len(c))],
         ncol = 5, 
-        title = f'Longitudinal sectors (2013 - 2022)',
-        bbox_to_anchor = (.5, 1.4), 
+        title = f'Longitudinal sectors and EPBs events (2013 - 2022)',
+        bbox_to_anchor = (.5, 1.3), 
         loc = "upper center", 
         columnspacing = 0.6
         )

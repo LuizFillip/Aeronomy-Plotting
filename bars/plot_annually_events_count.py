@@ -1,7 +1,10 @@
 import PlasmaBubbles as pb 
 import matplotlib.pyplot as plt
 import base as b 
-
+from geophysical_indices import INDEX_PATH
+import pandas as pd
+ 
+b.config_labels()
 
 def plot_annually_events_count(ds):
     
@@ -65,16 +68,14 @@ path = 'database/epbs/events_types.txt'
 
 
 # 
-from geophysical_indices import INDEX_PATH
-import pandas as pd
- 
-
-df = pd.concat(
-    [b.load(path), 
-     b.load(INDEX_PATH)], 
-    axis = 1).dropna()
 
 
-ds = df.loc[df['kp'] > 3].iloc[:, :5]
+# ds = pd.concat(
+#     [b.load(path), 
+#      b.load(INDEX_PATH)], 
+#     axis = 1).dropna().iloc[:, :5]
 
-plot_annually_events_count(ds)
+
+# # ds = df.loc[df['kp'] > 3].iloc[:, :5]
+
+# plot_annually_events_count(ds)
