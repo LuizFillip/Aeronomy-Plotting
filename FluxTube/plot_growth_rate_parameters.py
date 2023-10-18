@@ -1,19 +1,17 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import base as b 
+import GEO as gg
+import os
+import datetime as dt 
 
 
-def plot_int_profiles():
-    
-    fig, ax = plt.subplots(
-        ncols = 2, 
-        figsize = (10, 8),
-        sharey = True,
-        dpi = 300
-        )
-    
-    plt.subplots_adjust(wspace = 0.1)
-    
+b.config_labels()
+
+PATH_FT = 'FluxTube/data/reduced/'
+
+def plot_growth_rate_parameters():
+
     
    
     ax[0].legend(   
@@ -32,18 +30,15 @@ def plot_int_profiles():
         xlabel = '$\gamma_{RT} ~(10^{-4}~s^{-1})$'
         )
     
-    integrated = rt.EquationsFT().complete()
-    
-    names = [integrated, local_l]
     for i, ax in enumerate(ax.flat):
         ax.axhline(300)
         ax.axvline(0)
         ax.set(ylim = [200, 550], 
                xlim = [-30, 30])
     
-        letter = s.chars()[i]
+        letter = b.chars()[i]
         ax.text(
-            0.04, 0.95, f"({letter}) {names[i]}", 
+            0.04, 0.95, f"({letter}) ", 
             transform = ax.transAxes
             )
     
@@ -54,7 +49,49 @@ def plot_int_profiles():
 
 # fig = plot_int_profiles()
 
-b.config_labels()
+
+
+
+
+def plot_single_parameters(ax, ds):
+    
+
+    cols = ['gr', 'K', 'mer_parl', 'ratio']
+    ylabel = ['$g / \\nu_{eff}$', '$K^F$',
+              '$U_L$', '$\Sigma_F$']
+    
+    
+    for i, ax in enumerate(ax.flat):
+        
+        ax.plot(ds[cols[i]])
+        
+        ax.set(ylabel = ylabel[i])
+        
+        if i >= 2:
+        
+            b.axes_month_format(ax)
+
+def set_dataset(
+        year, 
+        site, 
+        time = dt.time(0, 0)
+        ):
+
+    infile  = os.path.join(
+        PATH_FT,
+        f'{site}/{year}.txt'
+        )
+    
+    ds = b.load(infile)
+    
+    ds = ds.loc[ds.index.time == time]
+    
+    ds['gr'] = ds['ge'] / ds['nui']
+    
+    ds.column.name = gg.sites[site]['name']
+
+    return ds
+                             
 
 fig, ax = plt.subplots(
     ncols = 2, 
@@ -67,33 +104,16 @@ fig, ax = plt.subplots(
 plt.subplots_adjust(wspace = 0.2)
 
 
-site = 'saa'
 
-def plot_site(ax, site):
-    
-    infile  = f'database/tests/{site}.txt'
-    
-    ds = b.load(infile)
-    
-    ds['gr'] = ds['ge'] / ds['nui']
-    
-    
-    cols = ['gr', 'K', 'mer_parl', 'ratio']
-    
-    for i, ax in enumerate(ax.flat):
-        
-        ax.plot(ds[cols[i]], label = site)
-        
-        ax.set(ylabel = cols[i])
-        
-        if i >= 2:
-        
-            b.format_time_axes(ax)
+ds = set_dataset(2015, 'saa')
+
+plot_single_parameters(ax, ds)
+
+ds = set_dataset(2015, 'jic')
+
+plot_single_parameters(ax, ds)
 
 
-plot_site(ax, 'saa')
 
-plot_site(ax, 'jic')
-
-
-ax[0, 0].legend()
+ax[0, 0].legend(bbox_to_anchor = (.5, 1.2), 
+loc = "upper center", ncol = 2)
