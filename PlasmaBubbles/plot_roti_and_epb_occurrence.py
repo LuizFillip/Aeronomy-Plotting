@@ -3,7 +3,7 @@ import base as b
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
 from geophysical_indices import INDEX_PATH
-
+import GEO as gg 
 
 args = dict(
     marker = 'o', 
@@ -68,14 +68,15 @@ def plot_epbs_occurrences_roti(
 
         line, = ax[0].plot(
             ds[col], 
-            label = f'{col}°', 
+           # label = f'{col}°', 
             color = color[i], 
             **args
             )
         
         ax[0].axhline(
             the, 
-            color = line.get_color()
+            color = line.get_color(),
+            label = f'Threshold = {the} TECU/min)'
             )
         
         ax[1].plot(
@@ -90,19 +91,20 @@ def plot_epbs_occurrences_roti(
     
 
     ax[0].set(
-        ylim = [0, 4], 
-        yticks = list(range(5)),
+        ylim = [0, 5], 
+        yticks = list(range(6)),
         ylabel = 'ROTI (TECU/min)'
         )
     
-    ax[1].legend(
-        ncol = 5, 
-        title = title,
-        bbox_to_anchor = (.5, 2.6), 
-        loc = "upper center", 
-        columnspacing = 0.6
-        )
+    # ax[1].legend(
+    #     ncol = 5, 
+    #     title = title,
+    #     bbox_to_anchor = (.5, 2.6), 
+    #     loc = "upper center", 
+    #     columnspacing = 0.6
+    #     )
     
+    ax[0].legend(loc = 'upper right')
    
     ax[1].set(
         ylabel = 'EPBs occurrence', 
@@ -114,12 +116,12 @@ def plot_epbs_occurrences_roti(
      
     b.format_time_axes(ax[1])
     
-    ax[0].text(
-        0.78, 
-        0.53, 
-        get_infos(dn), 
-        transform = ax[0].transAxes
-        )
+    # ax[0].text(
+    #     0.78, 
+    #     0.53, 
+    #     get_infos(dn), 
+    #     transform = ax[0].transAxes
+    #     )
     
     
     for limit in [0, 1]:
@@ -139,7 +141,7 @@ def single_plot(
         factor = 5
         ):
         
-    infile = pb.epb_path(dn.year, 'long')
+    infile = pb.epb_path(dn.year, 'longs')
     
      
     ds = b.sel_times(
@@ -157,12 +159,12 @@ def single_plot(
     plt.show()
     return fig
 
-# dn = dt.datetime(2013, 6, 28, 21)
+dn = dt.datetime(2014, 6, 2, 20)
 
-# fig = single_plot(
-#         dn, 
-#         cols = [8, 7, 6, 5], 
-#         hours = 11,
-#         factor = 4
-#         )
+fig = single_plot(
+        dn, 
+        cols = [5], 
+        hours = 11,
+        factor = 4
+        )
 
