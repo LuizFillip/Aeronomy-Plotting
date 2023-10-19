@@ -138,5 +138,5 @@ df = ev.concat_results('saa')
 
 fig = plot_distributions_solar_flux(df, level = 100)
 
-# fig.savefig(b.LATEX + 'paper1//probability_distribution', dpi = 300)
+fig.savefig(b.LATEX + 'paper1//probability_distribution', dpi = 400)
 
