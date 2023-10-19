@@ -73,13 +73,13 @@ def plot_single_distribution(
 def plot_distributions_solar_flux(
         df, 
         fontsize = 25,
-        level = 100
+        level = 100, 
+        step = 0.2
         ):
     
     
     fig, ax = plt.subplots(
         dpi = 300, 
-        nrows = 2,
         sharex = True,
         sharey = True,
         figsize = (12, 8)
@@ -87,56 +87,62 @@ def plot_distributions_solar_flux(
     
     plt.subplots_adjust(hspace = 0.05)
     
-    titles = [
+    labels = [
         '$F_{10.7} < $' + f' {level}',
         '$F_{10.7} > $' + f' {level}'
         ]
     
-    solar_dfs =  ev.medium_solar_level(df, level)
+    vmin, vmax = df['gamma'].min(), df['gamma'].max()
     
+    vmin, vmax = floor(vmin), ceil(vmax)
+    
+    solar_dfs =  ev.medium_solar_level(df, level)
+      
+   
     for i, ds in enumerate(solar_dfs):
         
-        total = plot_single_distribution(ax[i], ds)
-        
-        letter = b.chars()[i]
-        
-        ax[i].text(
-            0.02, 0.87, 
-            f"({letter}) {titles[i]} ({total} events)", 
-            transform = ax[i].transAxes
+     
+
+        c = plot_distribution(
+            ax, 
+            ds,
+            label = f'{labels[i]}',
+            step = 0.2, 
+            col_gamma = 'gamma',
+            col_epbs = 'epb'
             )
         
-    ax[0].legend(
+   
+        ax.set(
+            xlim = [vmin - step, vmax],
+            xticks = np.arange(vmin, vmax, step * 2),
+            ylim = [-0.2, 1.3],
+            yticks = np.arange(0, 1.25, 0.25),
+            )
+            
+        
+    ax.legend(
             ncol = 3, 
-            bbox_to_anchor = (.5, 1.2),
             loc = "upper center"
             )
     
-    fig.text(
-        0.03, 0.32, 
-        'EPB occurrence probability',
-        rotation = "vertical", 
-        fontsize = fontsize
-        )
-    
     xlabel = "$\\gamma_{FT}~$ ($\\times 10^{-3}~s^{-1}$)"
    
-    
-    ax[1].set(xlabel = xlabel)
+    ylabel = 'EPB occurrence probability'
+    ax.set(xlabel = xlabel, ylabel = ylabel)
     
     fig.suptitle(df.columns.name)
     
     return fig
  
  
-df = ev.concat_results('saa')
+df = ev.concat_results('saa', col_g = 'd_f')
 
-# df = df.loc[~((df.index.year == 2017) |
-#               (df.index.year == 2018) |
-#               (df.index.year == 2022))]
+df = df.loc[df['kp'] < 3]
 
 
 fig = plot_distributions_solar_flux(df, level = 100)
 
-fig.savefig(b.LATEX + 'paper1//probability_distribution', dpi = 400)
+# fig.savefig(b.LATEX + 'paper1//probability_distribution', dpi = 400)
 
+df
