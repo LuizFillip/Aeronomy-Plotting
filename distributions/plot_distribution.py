@@ -16,6 +16,8 @@ def plot_distribution(
         col_epbs = col_epbs
         )
     
+    ds.drop(ds.tail(2).index, inplace=True)
+    
     args = dict(
         capsize = 3,
         marker = 's'

@@ -1,5 +1,4 @@
-import PlasmaBubbles as pb 
-import base as s
+import base as b
 import os
 import json 
 import GEO as gg
@@ -10,7 +9,7 @@ import matplotlib.pyplot as plt
 PATH_COORDS = 'database/GEO/coords/'
 
 
-s.config_labels()
+b.config_labels()
 
 def plot_sites(ax):
     sites = ['saa', 'jic', 'boa',
@@ -123,30 +122,26 @@ def plot_sites_and_receivers(
     lon_lims = dict(
         min = -60,
         max = -30, 
-        stp = 10
+        stp = 5
         )    
 
     fig, ax = gg.quick_map(
         lat_lims = lat_lims, 
         lon_lims = lon_lims, 
-        figsize = (9,9), 
+        figsize = (9, 9), 
         year = year, 
         degress = None
         )
     
-    # plot_sites(ax)
     
-    receivers = plot_receivers_coords(
+    plot_receivers_coords(
         ax, year, distance = None)
     
     glat, glon = gg.sites['saa']['coords']
     gg.circle_range(ax, glon, glat, radius = 1000)
-    # for long in pb.longitudes():
 
-    #     ax.axvline(long, linestyle = '--')
     
     return fig
 
 fig = plot_sites_and_receivers()
 
-# len(r)

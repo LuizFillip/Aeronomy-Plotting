@@ -14,7 +14,7 @@ def plot_single_distribution(
         df, 
         step = 0.2, 
         gamma = 'night',
-        quiet_level = 3
+        quiet_level = 4
         ):
     
 
@@ -30,10 +30,12 @@ def plot_single_distribution(
         df, 
         level = quiet_level
         )
+    
+    
     count = []
-
+    nums = []
     for i, ds in enumerate(datasets):
-        
+                
         index = i + 1
 
         c = plot_distribution(
@@ -45,9 +47,11 @@ def plot_single_distribution(
             col_epbs = 'epb'
             )
         
+        nums.append(c)
+        
         count.append(f'({index}) {c} events')
         
-
+    
     infos = ('EPB occurrence\n' +
              '\n'.join(count))
         
@@ -63,7 +67,7 @@ def plot_single_distribution(
         yticks = np.arange(0, 1.25, 0.25),
         )
 
-    return ax
+    return sum(nums)
 
 
 def plot_distributions_solar_flux(
@@ -78,25 +82,27 @@ def plot_distributions_solar_flux(
         nrows = 2,
         sharex = True,
         sharey = True,
-        figsize = (12, 10)
+        figsize = (12, 8)
         )
     
-    plt.subplots_adjust(hspace = 0.1)
+    plt.subplots_adjust(hspace = 0.05)
+    
     titles = [
-        '$F_{10.7} < $' + f'{level}',
-        '$F_{10.7} > $' + f'{level}'
+        '$F_{10.7} < $' + f' {level}',
+        '$F_{10.7} > $' + f' {level}'
         ]
     
     solar_dfs =  ev.medium_solar_level(df, level)
     
     for i, ds in enumerate(solar_dfs):
         
-        plot_single_distribution(ax[i], ds)
-                 
+        total = plot_single_distribution(ax[i], ds)
+        
         letter = b.chars()[i]
+        
         ax[i].text(
-            0.01, 0.85, 
-            f"({letter}) {titles[i]}", 
+            0.02, 0.87, 
+            f"({letter}) {titles[i]} ({total} events)", 
             transform = ax[i].transAxes
             )
         
@@ -125,4 +131,12 @@ def plot_distributions_solar_flux(
  
 df = ev.concat_results('saa')
 
-fig = plot_distributions_solar_flux(df)
+# df = df.loc[~((df.index.year == 2017) |
+#               (df.index.year == 2018) |
+#               (df.index.year == 2022))]
+
+
+fig = plot_distributions_solar_flux(df, level = 100)
+
+# fig.savefig(b.LATEX + 'paper1//probability_distribution', dpi = 300)
+

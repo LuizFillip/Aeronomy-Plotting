@@ -45,10 +45,10 @@ def plot_seasonal_occurrence(ds):
     return fig
     
 
-path = 'database/epbs/events_types.txt'
+# path = 'database/epbs/events_types.txt'
 
-ds = b.load(path)
+# ds = b.load(path)
 
-fig = plot_seasonal_occurrence(ds)
+# fig = plot_seasonal_occurrence(ds)
 
 # fig.savefig(b.LATEX + 'Paper1//seasonal_variation', dpi = 300)

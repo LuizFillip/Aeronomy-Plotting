@@ -2,7 +2,6 @@ import datetime as dt
 import base as b 
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
-import os
 from geophysical_indices import INDEX_PATH
 
 
@@ -61,8 +60,7 @@ def plot_epbs_occurrences_roti(
              'magenta']
     
     dn = ds.index[0]
-    the = pb.threshold(dn, 
-    factor)
+    the = pb.threshold(dn, factor)
     
     title = f'Longitudinal zones (threshold = {the} TECU/min)'
     
@@ -141,10 +139,7 @@ def single_plot(
         factor = 5
         ):
         
-    infile = os.path.join(
-            pb.PATH_LONG, 
-            f'{dn.year}.txt'
-        )
+    infile = pb.epb_path(dn.year, 'long')
     
      
     ds = b.sel_times(
@@ -159,13 +154,15 @@ def single_plot(
             cols = cols
         )
     
+    plt.show()
     return fig
 
-# dn = dt.datetime(2015, 6, 1, 21)
+# dn = dt.datetime(2013, 6, 28, 21)
 
 # fig = single_plot(
 #         dn, 
-#         cols = [8, 7, 6, 5, 4], 
+#         cols = [8, 7, 6, 5], 
 #         hours = 11,
 #         factor = 4
 #         )
+
