@@ -1,10 +1,13 @@
 import matplotlib.pyplot as plt
 import FabryPerot as fp
 import os
-import settings as s
-import pandas as pd
-import models as m
+import base as s
 import datetime as dt
+from astropy.timeseries import LombScargle
+from scipy.signal import find_peaks
+import numpy as np 
+import pandas as pd 
+from scipy import signal
 
 def get_dn(wd):
     return dt.datetime(
@@ -14,83 +17,171 @@ def get_dn(wd):
         21, 
         0)
 
+def fs(timestamps):
+
+    time_intervals = np.diff(timestamps)
+    
+    # Calculate the mean time interval to estimate fs
+    mean_time_interval = np.mean(time_intervals)
+    
+    # Calculate the sampling frequency (fs) as the inverse of the mean time interval
+    return 1 / mean_time_interval
+
+def dtrend(ds, fs):
+
+    avg = ds.rolling('1H').mean(center = True)
+    
+    ds['dtrend'] = ds - avg
+    
+    y = ds['dtrend'].values
+    
+    lowcut = 1 / 5
+    highcut = 1 / 1.5
 
 
+    nyquist = 0.5 * fs
+    lowcut_normalized = lowcut #/ nyquist
+    highcut_normalized = highcut #/ nyquist
+
+    # Design the filter using scipy.signal
+    b, a = signal.butter(
+        4, [lowcut_normalized, highcut_normalized], 
+        btype='band')
+
+    # Apply the filter to the data
+    filtered_data = signal.lfilter(b, a, y)
+    return filtered_data
+
+def lomb_scargle(ax, t, y):
+    
+    ls = LombScargle(t, y)
+    
+    frequency, power = ls.autopower(
+            minimum_frequency = 1 / 5,
+            maximum_frequency = 1 / 1.5,
+            samples_per_peak = 100
+            )
+        
+    period = 1 / frequency
+    
+    points = find_peaks(power, height = 0.01)
+    
+    ax.plot(period, power)
+    for i in points[0]:
+        
+        ax.scatter(period[i], power[i])
+ 
+    
 def plot_directions(
         ax, 
         path, 
-        site = 'car'):
+        site = 'car'
+        ):
     
     wd = fp.FPI(path).wind
     tp = fp.FPI(path).temp
-        
-    coords = {
-        "zon": ("east", "west"), 
-        "mer": ("north", "south")
-        }
+            
+    # coords = {
+    #     "zon": ("east", "west"), 
+    #     "mer": ("north", "south")
+    #     }
     
-
-    for row, coord in enumerate(coords.keys()):
-        
-
-        # ds = m.load_hwm(wd, alt = 300, site = site)
-        
-        # ax[row, 0].plot(ds[coord], lw = 2, label = "HWM-14")
-        
-        # df = m.timerange_msis(get_dn(wd), site = site)
-
-        # ax[row, 1].plot(df["Tn"], lw = 2, label = "MSIS-00")
-        
-        for direction in coords[coord]:
-            
-            ds = wd.loc[(wd["dir"] == direction)]
-            
-            ax[row, 0].errorbar(
-                ds.index, 
-                ds['vnu'], 
-                yerr = ds["dvnu"], 
-                label = direction, 
-                capsize = 5
-                )
-            
-            ds = tp.loc[(tp["dir"] == direction)]
-            
-            ax[row, 1].errorbar(
-                ds.index, 
-                ds['tn'], 
-                yerr = ds['dtn'], 
-                label = direction, 
-                capsize = 5
-                )
-            
-        ax[row, 0].legend(loc = "upper right", ncol = 1)
-        ax[row, 1].legend(loc = "upper right", ncol = 1)
-        
-        
-        ax[row, 0].set(
-            ylabel = "Velocidade (m/s)", 
-            ylim = [-100, 150])
-        
-        ax[row, 1].set(ylabel = "Temperatura (K)", 
-                  ylim = [600, 1200])
-
-        ax[row, 0].axhline(0, color = "k", linestyle = "--")
-
-        s.format_time_axes(
-                ax[1, row], hour_locator = 1, 
-                day_locator = 1, 
-                tz = "UTC"
-                )
+    coords = ["east", "west", "north", "south"]
     
-    names = ["zonal", "zonal", "meridional", "meridional"]
-
-    for i, ax in enumerate(ax.flat):
-        letter = s.chars()[i]
-        ax.text(
-            0.02, 0.85, f"({letter}) {names[i].title()}", 
-            transform = ax.transAxes
+    for coord in coords:
+    
+        ds = wd.loc[(wd["dir"] == coord)]
+        
+        ax[0, 0].errorbar(
+            ds.index, 
+            ds['vnu'], 
+            yerr = ds["dvnu"], 
+            label = coord, 
+            capsize = 5
             )
-    return None
+        
+        t = ds['time'].values
+        y = dtrend(ds['vnu'], fs(t))
+        
+        
+        ax[0, 1].plot(t, y)
+        
+        lomb_scargle(ax[0, 2], t, y)
+        
+        ds = tp.loc[(tp["dir"] == coord)]
+        
+        ax[1, 0].errorbar(
+            ds.index, 
+            ds['tn'], 
+            yerr = ds['dtn'], 
+            label = coord, 
+            capsize = 5
+            )
+        
+        t = ds['time'].values
+        y = dtrend(ds['tn'], fs(t))
+        
+        ax[1, 1].plot(t, y)
+        
+        
+        lomb_scargle(ax[1, 2], t, y)
+        
+       
+        
+    ax[0, 0].legend(
+        ncol = 4, 
+        loc = "upper center",
+        bbox_to_anchor = (1.3, 1.2)
+        )
+      
+        
+    ax[0, 0].set(
+        ylabel = "Velocidade (m/s)", 
+        ylim = [-100, 150]
+        )
+    
+    # ax[0, 1].set(
+    #     ylabel = "Velocidade (m/s)", 
+    #     ylim = [-60, 60]
+    #     )
+    
+    ax[1, 0].set(
+        ylabel = "Temperatura (K)", 
+        ylim = [600, 1200])
+    
+    # ax[1, 1].set(
+    #     xlabel = 'Universal time',
+    #     ylabel = "Temperatura (K)", 
+    #     ylim = [-60, 60]
+    #     )
+    
+    ax[1, 2].set(
+        xlabel = 'period',
+        ylabel = "PSD"
+        )
+
+    ax[0, 0].axhline(0, color = "k", linestyle = "--")
+    
+    ax[0, 1].axhline(0, color = "k", linestyle = "--")
+    ax[1, 1].axhline(0, color = "k", linestyle = "--")
+
+    
+    s.format_time_axes(
+            ax[1, 0], hour_locator = 1, 
+            day_locator = 1, 
+            tz = "UTC"
+            )
+    
+    dn = pd.to_datetime(wd.index.date[0])
+    
+    ds = fp.get_similar()
+ 
+    df = ds.loc[ds.index == dn]
+
+    for i, coord in enumerate(['vnu', 'tn']):
+        for vls in df[coord].values:
+            ax[i, 2].axvline(vls)
+    
 
 
 def plot_nighttime_observation(
@@ -99,9 +190,9 @@ def plot_nighttime_observation(
     
     fig, ax = plt.subplots(
         nrows = 2, 
-        ncols= 2,
-        figsize = (16, 10), 
-        sharex = True, 
+        ncols = 3,
+        figsize = (20, 10), 
+        sharex =  'col', 
         dpi = 300
         )
     
@@ -121,43 +212,30 @@ def plot_nighttime_observation(
     fig.suptitle(title)
     return fig
         
-def main():
-    
-    
-    path = 'database/FabryPerot/2012/minime01_car_20130318.cedar.005.txt'
-    
-    path = "database/FabryPerot/car/minime01_car_20130909.cedar.006.txt"
-   
-    fig = plot_nighttime_observation(path)
-    
-    
-def save_plots():
-    
-    infile = "database/FabryPerot/2012/"
 
-    files = os.listdir(infile)
-    save = 'D:\\plots\\car\\'
+    
+path = "database/FabryPerot/cariri/2013/"
+
+path = 'database/FabryPerot/cariri/2013/minime01_car_20130422.cedar.005.txt'
+
+# ds = fp.get_similar()
+# save_in = 'database/img_fpi/'
+# dates = np.unique(ds.index.date)
+# dates = [dn.strftime('%Y%m%d') for dn in dates]
 
 
-    def fn2dn(filename):
-        dn = filename.split('.')[0].split('_')[-1]
-        return dt.datetime.strptime(dn, '%Y%m%d')  
+# for dn in dates: #:
+    
+#     for f in os.listdir(path):
+#         if dn in f:
 
-    for filename in files:
-        dn = fn2dn(filename)
-        
-        # if (dn.year == 2013) and (dn.month == 3):
-            # print(filename)
+#             fig = plot_nighttime_observation(
+#                 os.path.join(path, f)
+#                 )
             
-        FigureName = dn.strftime('%Y%m%d.png')
-        
-        plt.ioff()
-        print(dn)
-        fig = plot_nighttime_observation(infile + filename)
-        
-        fig.savefig(save + FigureName, dpi = 300)
-        
-        plt.clf()   
-        plt.close()
-        
-# main()
+#             fig.savefig(save_in + dn, dpi = 400)
+
+
+
+
+d = plot_nighttime_observation(path)
