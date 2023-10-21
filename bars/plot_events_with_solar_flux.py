@@ -7,6 +7,12 @@ path = 'database/epbs/events_types.txt'
 
 b.config_labels()
 
+args = dict(facecolor = 'lightgrey', 
+             edgecolor = 'black', 
+             width = 0.9,
+             color = 'gray', 
+             linewidth = 1)
+
 def plot_epbs_by_solar_cycle():
     
 
@@ -18,40 +24,55 @@ def plot_epbs_by_solar_cycle():
     
     plt.subplots_adjust(hspace = 0.1)
      
-    df = b.load(path)
+    ep = b.load(path)
     
-    pb.year_occurrence(df, 1)['-50'].plot(
+    yep = pb.year_occurrence(ep, 1)['-50']
+    
+    yep.plot(
         kind = 'bar', 
         ax = ax[0], 
-        legend = False
+        legend = False, **args
         )
+ 
+    
+    ax[0].set(
+        ylabel = 'Nigths with EPB', 
+        title = 'Annually EPBs occcurrence', 
+        ylim = [0, 300]
+        )
+    
     
     ds = b.load(INDEX_PATH)
     
-    ds = b.sel_dates(ds, df.index[0], df.index[-1])
+    ds = b.sel_dates(ds, ep.index[0], ep.index[-1])
     
     ax[1].plot(ds['f107'])
     ax[1].plot(ds['f107a'], lw = 2)
     
-    ax[0].set(
-        ylabel = 'Nigths with EPB', 
-        title = 'Annually EPBs occcurrence'
+    
+    ax[1].set(
+        xlim = [ds.index[0], ds.index[-1]],
+        xlabel = 'Years', 
+        ylabel = '$F_{10.7}$ (sfu)'
         )
     
-    ax[1].set(xlabel = 'Years', ylabel = '$F_{10.7}$ sfu')
+    
     ax[1].axhline(100, color = 'r', lw = 2)
+    
+    
     fig.autofmt_xdate(rotation=0)
 
-    # ax[0].legend(
-    #     ['EPB events occurrence'],
-    #     ncols = 5, 
-    #     bbox_to_anchor = (.5, 1.5), 
-    #     loc = "upper center"
-    #     )
+    for i, ax in enumerate(ax.flat):
+       
+       l = b.chars()[i]
+       ax.text(
+           0.02, 0.8, f'({l})', 
+           transform = ax.transAxes
+           )
     
     return fig
 
 
-# fig = plot_epbs_by_solar_cycle()
+fig = plot_epbs_by_solar_cycle()
 
 # fig.savefig(b.LATEX + 'paper1/annual_variation')
