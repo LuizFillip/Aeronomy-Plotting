@@ -2,7 +2,6 @@ import RayleighTaylor as rt
 
 import numpy as np
 import matplotlib.pyplot as plt
-from math import floor, ceil
 import base as b
 import events as ev 
 from plotting import plot_distribution
@@ -11,14 +10,6 @@ from plotting import plot_distribution
 
 b.config_labels()
 
-df = b.load('all_results.txt')
-df['drift'] = df['drift'] * 1e3
-
-
-
-kp = 4
-
-df = df.loc[(df['kp_max'] >= kp) ]
 
 
 

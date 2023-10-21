@@ -28,12 +28,14 @@ def plot_vertical_drift_distribution(
                     markersize = 18, 
                     color = "red")
     
-    ax.set(ylim = (ymin - yset, ymax + yset), 
-           xlabel = "$V_{zp}$ (m/s)", 
-           ylabel = "Probabilidade de ocorrência (%)", 
-           xlim = [-10, 90], 
-           xticks = np.arange(-10, 100, 10), 
-           yticks = np.arange(ymin, ymax + yset, yset))
+    ax.set(
+        ylim = (ymin - yset, ymax + yset), 
+        xlabel = "$V_{zp}$ (m/s)", 
+        ylabel = "Probabilidade de ocorrência (%)", 
+        xlim = [-10, 90], 
+        xticks = np.arange(-10, 100, 10), 
+        yticks = np.arange(ymin, ymax + yset, yset)
+        )
     
     for bar in [ymin, ymax]:
         ax.axhline(bar, linestyle = ":", 

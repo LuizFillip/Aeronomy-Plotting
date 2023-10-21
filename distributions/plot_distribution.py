@@ -4,22 +4,18 @@ def plot_distribution(
         ax, 
         df, 
         label = '', 
-        step = 0.2, 
-        col_gamma = 'all',
-        col_epbs = '-40'
+        step = 0.2
         ):
 
     ds = ev.probability_distribuition(
         df,
-        step = step, 
-        col_gamma = col_gamma,
-        col_epbs = col_epbs
+        step = step
         )
     
-    ds.drop(
-        ds.tail(2).index, 
-        inplace = True
-        )
+    # ds.drop(
+    #     ds.tail(2).index, 
+    #     inplace = True
+    #     )
     
     args = dict(
         capsize = 3,
@@ -31,8 +27,8 @@ def plot_distribution(
         ds['rate'], 
         xerr = ds['std'],
         yerr = ds['epb_error'],
-        **args,
-        label = label
+        label = label,
+        **args
         )
     
 
