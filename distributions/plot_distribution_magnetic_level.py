@@ -1,28 +1,25 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import base as b
+import events as ev 
+from plotting import plot_distribution
 
-    
-     # letter = b.chars()[i]
-     
-     # ax[i].text(
-     #     0.02, 0.87, 
-     #     f"({letter}) {titles[i]} ({c} events)", 
-     #     transform = ax[i].transAxes
-     #     )
-     
 
-def plot_single_distribution(
-        ax,
+
+def plot_geomag_distribution(
         df, 
-        step = 0.2, 
-        gamma = 'night',
-        quiet_level = 4
+        quiet_level = 3 
         ):
     
-
-    vmin, vmax = df[gamma].min(), df[gamma].max()
+    fig, ax = plt.subplots(
+        dpi = 300, 
+        sharex = True,
+        sharey = True,
+        figsize = (12, 6)
+        )
     
-    vmin, vmax = floor(vmin), ceil(vmax)
+    vmin, vmax, step = 0, 3.2, 0.2
     
-        
     labels = [f'$Kp \\leq$ {quiet_level}', 
               f'$Kp >$ {quiet_level}']
     
@@ -31,34 +28,18 @@ def plot_single_distribution(
         level = quiet_level
         )
     
-    
-    count = []
-    nums = []
     for i, ds in enumerate(datasets):
                 
         index = i + 1
-
-        c = plot_distribution(
+       
+        plot_distribution(
             ax, 
             ds,
-            label = f'({index}) {labels[i]}',
-            step = step, 
-            col_gamma = 'night',
-            col_epbs = 'epb'
+            label = f'({index}) {labels[i]}'
             )
-        
-        nums.append(c)
-        
-        count.append(f'({index}) {c} events')
-        
+            
+    ax.legend(ncol = 2, loc = 'upper left')
     
-    infos = ('EPB occurrence\n' +
-             '\n'.join(count))
-        
-    ax.text(
-        0.79, 0.2, infos, 
-        transform = ax.transAxes
-        )
         
     ax.set(
         xlim = [vmin - step, vmax],
@@ -66,5 +47,19 @@ def plot_single_distribution(
         ylim = [-0.2, 1.3],
         yticks = np.arange(0, 1.25, 0.25),
         )
+    
+    ax.set(
+        title = df.columns.name, 
+        xlabel =  b.y_label('gamma'), 
+        ylabel = 'EPB occurrence probability'
+        )
+    
+    return fig
 
-    return sum(nums)
+
+df = ev.concat_results('saa', col_g = 'e_f')
+
+fig = plot_geomag_distribution(
+        df, 
+        quiet_level = 3 
+        )

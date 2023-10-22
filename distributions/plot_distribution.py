@@ -1,12 +1,20 @@
 import events as ev
 
+args = dict(
+    capsize = 3,
+    marker = 's'
+    )
+ 
 def plot_distribution(
         ax, 
         df, 
         label = '', 
-        step = 0.2
+        count = True
         ):
-
+    
+    step = 0.2
+    
+    
     ds = ev.probability_distribuition(
         df,
         step = step
@@ -17,17 +25,20 @@ def plot_distribution(
     #     inplace = True
     #     )
     
-    args = dict(
-        capsize = 3,
-        marker = 's'
-        )
+    epbs = ds['epbs'].sum()
+    
+    if count:
+        
+        LABEL = f'{label} ({epbs} events)'
+    else:
+        LABEL = label
     
     ax.errorbar(
         ds['mean'], 
         ds['rate'], 
         xerr = ds['std'],
         yerr = ds['epb_error'],
-        label = label,
+        label = LABEL,
         **args
         )
     
@@ -40,7 +51,7 @@ def plot_distribution(
             color = "k"
             )
         
-    return ds['epbs'].sum()
+    return 
 
 
 

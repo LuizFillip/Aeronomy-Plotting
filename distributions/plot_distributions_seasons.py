@@ -22,7 +22,6 @@ def plot_distributions_seasons(
         )
     
     ks = {
-         
          3:  'march equinox',
          6:  'june solstice',
          9:  'setember equinox',
@@ -119,11 +118,22 @@ def plot_distributions_seasons(
     
     return fig
     
-# def main():
-
 df = ev.concat_results('saa', col_g = 'e_f')
 
 df['doy'] = df.index.day_of_year.copy()
 
-fig = plot_distributions_seasons(df)
 
+for FigureName in ['seasonal_quiet', 
+                   'seasonal_disturbed']:
+
+    if 'quiet' in FigureName:
+        df1 = df.loc[df['kp'] <= 3]
+    else:
+        df1 = df.loc[df['kp'] > 3]
+    
+    fig = plot_distributions_seasons(df1)
+    
+    fig.savefig(
+        b.LATEX + FigureName,
+        dpi = 400
+        )
