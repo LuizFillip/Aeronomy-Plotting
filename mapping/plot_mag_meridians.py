@@ -18,16 +18,16 @@ def plot_sites_and_meridians(
     
    
     
-    color = ['blue', 'g']
+    color = ['k'] #'blue', 
 
-    for i, site in enumerate(["jic", "saa"]):
+    for i, site in enumerate([ "saa"]): #"jic",
         
         glat, glon = gg.sites[site]["coords"]
         name = gg.sites[site]["name"]
         
         ax.scatter(glon, glat,
-            marker = "o", 
-            s = 100,
+            marker = "*", 
+            s = 300,
             label = name,
             c = color[i]
             )
@@ -45,8 +45,9 @@ def plot_sites_and_meridians(
 
         ax.scatter(nx, ny,
             marker = "^", 
-            s = 100, 
-            c = color[i]
+            s = 300, 
+            c = color[i],
+            label = 'Equator intersection'
             )
         
         
@@ -62,32 +63,29 @@ def plot_sites_and_meridians(
             color = line.get_color()
             )
         
+        # ax.legend(ncol = 2)
+        
         
 
 def plot_mag_meridians(
+        ax,
         year = 2021
         ):
 
-    fig, ax = plt.subplots(
-        dpi = 300,
-        figsize = (9, 9),
-        subplot_kw = 
-            {
-            'projection': ccrs.PlateCarree()
-            }
-        )
+ 
+    # ax = plt.axes(projection =  ccrs.PlateCarree())
 
     gg.map_features(ax)
 
     lat = gg.limits(
-        min = -30, 
+        min = -15, 
         max = 10, 
-        stp = 10
+        stp = 5
         )
     lon = gg.limits(
-        min = -80, 
+        min = -60, 
         max = -30, 
-        stp = 10
+        stp = 5
         )    
 
     gg.map_boundaries(ax, lon, lat)
@@ -97,18 +95,25 @@ def plot_mag_meridians(
     gg.mag_equator(
         ax,
         year,
-        degress = 13
+        degress = None
         )
     
-    # ax.legend(
-    #     bbox_to_anchor = (.5, 1.1),
-    #     ncol = 2, 
-    #     loc = "upper center"
-    #     )
-    
+   
+    ax.legend(
+        bbox_to_anchor = (.5, 1.15),
+        ncol = 2, 
+        loc = "upper center"
+        )
 
-    return fig 
+    return ax
 
 
-
-fig = plot_mag_meridians(year = 2013)
+# fig, ax = plt.subplots(
+#     dpi = 400,
+#     figsize = (7,7),
+#     subplot_kw = 
+#         {
+#         'projection': ccrs.PlateCarree()
+#         }
+#     )
+# fig = plot_mag_meridians(ax, year = 2013)

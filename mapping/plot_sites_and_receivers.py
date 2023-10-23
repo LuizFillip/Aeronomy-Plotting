@@ -9,6 +9,14 @@ import matplotlib.pyplot as plt
 PATH_COORDS = 'database/GEO/coords/'
 
 
+args = dict( 
+    s = 40, 
+    marker = '^',
+    color = 'k', 
+    transform = ccrs.PlateCarree()
+    )
+
+
 b.config_labels()
 
 def plot_sites(ax):
@@ -38,20 +46,6 @@ def plot_sites(ax):
             marker = marker
             )
         
-       
-        
-        
-
-
-args = dict( 
-    s = 40, 
-    marker = '^',
-    color = 'k', 
-    transform = ccrs.PlateCarree()
-    )
-
-
-
         
 def plot_receivers_coords(
         axs, 
@@ -138,10 +132,11 @@ def plot_sites_and_receivers(
         ax, year, distance = None)
     
     glat, glon = gg.sites['saa']['coords']
-    gg.circle_range(ax, glon, glat, radius = 1000)
-
+    gg.circle_range(ax, glon, glat, radius = 500)
+    
     
     return fig
 
 fig = plot_sites_and_receivers()
 
+# fig.savefig(b.LATEX + 'paper1/sites_instrumentation', dpi = 400)

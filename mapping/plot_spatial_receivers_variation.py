@@ -1,63 +1,85 @@
-import PlasmaBubbles as pb 
 import base as b
-import os
-import json 
 import GEO as gg
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt 
 
-def load_coords(year = 2021):
-    infile = os.path.join(
-        gg.PATH_COORDS, 
-        f'{year}.json'
-        )
-    return json.load(open(infile))
+
 
 b.config_labels()
 
+def map_attrs(year = 2021):
 
-lat_lims = dict(
-    min = -30, 
-    max = 10, 
-    stp = 5
+    lat_lims = dict(
+        min = -15, 
+        max = 10, 
+        stp = 5
+        )
+    
+    lon_lims = dict(
+        min = -60,
+        max = -30, 
+        stp = 10
+        )    
+    
+    fig, ax = gg.quick_map(
+        lat_lims = lat_lims, 
+        lon_lims = lon_lims, 
+        figsize = (9, 9), 
+        year = year, 
+        grid = False,
+        degress = None
+        )
+    
+    return ax
+
+def plot_in_circle(
+        ax, 
+        lon, lat, 
+        center, radius = 8
+        ):
+    
+    circle = plt.Circle(
+        center, 
+        radius, 
+        color = 'gray', 
+        alpha = 0.2, 
+        label = 'Circle'
+        )
+    
+    plt.gca().add_patch(circle)
+    
+    in_x, in_y = gg.distance_circle(
+        lon, lat, 
+        center, 
+        radius
+        )
+    
+    ax.scatter(
+        in_x, 
+        in_y, 
+        marker = '^',
+        s = 50,
+        color = 'k'
+        )
+
+    return in_x, in_y
+
+
+
+    
+
+ax  = map_attrs()
+
+
+clon, clat, radius = -45, -5, 5
+
+names, lon, lat = gg.arr_coords(
+    year = 2021
     )
 
-lon_lims = dict(
-    min = -90,
-    max = -30, 
-    stp = 10
-    )    
-
-year = 2021
-
-fig, ax = gg.quick_map(
-    lat_lims = lat_lims, 
-    lon_lims = lon_lims, 
-    figsize = (9, 9), 
-    year = 2021, 
-    degress = None
+in_x, in_y = plot_in_circle(
+    ax, lon, lat, (clon, clat), 
+    radius
     )
 
 
 
-
-clon, clat = gg.plot_square_area(
-    ax, 
-    lon_min = -60, 
-    lat_min = -10, 
-    radius = 12)
-
-
-
-
-sites = load_coords()
-
-for name, key in sites.items():
-    lon, lat, alt = tuple(key)
-    if gg.find_range(lon, lat, clon, clat):
-        ax.scatter(
-            lon, lat, 
-            s = 50, 
-            marker = '^', 
-            color = 'k'
-            )
