@@ -3,11 +3,13 @@ import matplotlib.pyplot as plt
 import base as b 
 
 
-args = dict(facecolor = 'lightgrey', 
-             edgecolor = 'black', 
-             width = 0.9,
-             color = 'gray', 
-             linewidth = 1)
+args = dict(
+    facecolor = 'lightgrey', 
+    edgecolor = 'black', 
+    width = 0.9,
+    color = 'gray', 
+    linewidth = 1
+    )
 
 def plot_seasonal_occurrence(ds):
     

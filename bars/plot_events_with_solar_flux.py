@@ -75,4 +75,4 @@ def plot_epbs_by_solar_cycle():
 
 fig = plot_epbs_by_solar_cycle()
 
-# fig.savefig(b.LATEX + 'paper1/annual_variation')
+fig.savefig(b.LATEX + 'paper1/annual_variation')
