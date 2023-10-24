@@ -4,9 +4,16 @@ import events as ev
 from plotting import plot_distribution
 import numpy as np 
 
+ks = {
+      3:  'march equinox',
+      6:  'june solstice',
+      9:  'setember equinox',
+      12: 'december solstice'
+      }
 
 def plot_distributions_seasons(
         df, 
+        col = 'gamma',
         level = 100, 
         fontsize = 25
         ):
@@ -21,50 +28,66 @@ def plot_distributions_seasons(
         dpi = 300
         )
     
-    ks = {
-         3:  'march equinox',
-         6:  'june solstice',
-         9:  'setember equinox',
-         12: 'december solstice'
-         }
+   
     
     plt.subplots_adjust(
-        hspace = 0.05, wspace = 0.02)
+        hspace = 0.05, 
+        wspace = 0.05
+        )
     
-    epb_events = []
+    
+    
+    if col == 'gamma':
+        vmin, vmax, step = 0, 4, 0.2
+        
+    elif col == 'vp':
+        vmin, vmax, step = 0, 85, 5
+    else:
+        vmin, vmax, step = 0, 1, 0.05
+    
+    all_events = []
+    
+    name = [
+        '$F_{10.7} < $' + f' {level}',
+        '$F_{10.7} > $' + f' {level}'
+        ]
+    
+    solar_dfs =  ev.solar_levels(
+        df, 
+        level,
+        flux_col = 'f107a'
+        )
+    
+    total = []
     for j, ax in enumerate(ax.flat):
         
         month = (j + 1) * 3
         
         season_name = ks[month]
-        
-        
-        name = [
-            '$F_{10.7} < $' + f' {level}',
-            '$F_{10.7} > $' + f' {level}'
-            ]
-        
-        solar_dfs =  ev.medium_solar_level(df, level)
-        
+    
         c_event = []
-        total = []
-        
-        
+       
         for i, l in enumerate(solar_dfs):
             
             index = i + 1
+            
             ds = ev.seasons(l, month)
     
             c = plot_distribution(
                     ax, 
                     ds, 
-                    f'({index}) {name[i]}'
+                    limits = (vmin, vmax, step),
+                    col = col,
+                    count = False,
+                    label = f'({index}) {name[i]}'
                     )
             
+            # print(c)
             total.append(c)
             
             c_event.append(f'({index}) {c} events')
         
+        # print(total)
         infos = ('EPB occurrence\n' + 
                  '\n'.join(c_event))
             
@@ -76,7 +99,8 @@ def plot_distributions_seasons(
         
         l = b.chars()[j]
         
-        epb_events.extend(total)
+        all_events.extend(total)
+        
         ax.text(
             0.03, 0.85,
             f'({l}) {season_name} ({sum(total)} events)',
@@ -84,6 +108,7 @@ def plot_distributions_seasons(
             )
         
         ax.set(
+            xlim = [vmin, vmax],
             ylim = [-0.2, 1.4], 
             yticks = np.arange(0, 1.2, 0.25)
             )
@@ -112,28 +137,32 @@ def plot_distributions_seasons(
     
     fig.suptitle(
         df.columns.name +
-        f' ({sum(epb_events)} EPBs events)',
+        f' ({sum(all_events)} EPBs events)',
         y = 1.
         )
     
     return fig
     
-df = ev.concat_results('saa', col_g = 'e_f')
+df = ev.concat_results('saa')
 
 df['doy'] = df.index.day_of_year.copy()
 
+# df1 = df.loc[df['kp'] <= 3]
+col = 'gamma'
+fig = plot_distributions_seasons(df, col)
 
-for FigureName in ['seasonal_quiet', 
-                   'seasonal_disturbed']:
 
-    if 'quiet' in FigureName:
-        df1 = df.loc[df['kp'] <= 3]
-    else:
-        df1 = df.loc[df['kp'] > 3]
+# for FigureName in ['seasonal_quiet', 
+#                    'seasonal_disturbed']:
+
+#     if 'quiet' in FigureName:
+#         df1 = df.loc[df['kp'] <= 3]
+#     else:
+#         df1 = df.loc[df['kp'] > 3]
     
-    fig = plot_distributions_seasons(df1)
+#     fig = plot_distributions_seasons(df1, col  = '')
     
-    fig.savefig(
-        b.LATEX + FigureName,
-        dpi = 400
-        )
+#     # fig.savefig(
+#     #     b.LATEX + FigureName,
+#     #     dpi = 400
+#     #     )
