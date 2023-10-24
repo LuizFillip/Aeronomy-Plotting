@@ -101,6 +101,6 @@ def plot_gamma_forms(ax, df):
 
 # fig.suptitle(f'$Kp > ${kp}', y = 1.01)
 
-df = ev.concat_results('saa', col_g = 'e_f')
+# df = ev.concat_results('saa', col_g = 'e_f')
 
-df
+# df

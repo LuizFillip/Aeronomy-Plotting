@@ -8,27 +8,28 @@ args = dict(
 def plot_distribution(
         ax, 
         df, 
+        limits,
+        col = 'gamma',
         label = '', 
-        count = True
+        count = True,
+        drop = 2
         ):
-    
-    step = 0.2
-    
-    
+
     ds = ev.probability_distribuition(
         df,
-        step = step
+        limits,
+        col = col
         )
     
-    # ds.drop(
-    #     ds.tail(2).index, 
-    #     inplace = True
-    #     )
+    if drop is not None:
+        ds.drop(
+            ds.tail(drop).index, 
+            inplace = True
+            )
     
     epbs = ds['epbs'].sum()
     
     if count:
-        
         LABEL = f'{label} ({epbs} events)'
     else:
         LABEL = label
@@ -51,7 +52,7 @@ def plot_distribution(
             color = "k"
             )
         
-    return 
+    return epbs 
 
 
 
