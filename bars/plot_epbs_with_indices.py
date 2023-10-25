@@ -47,7 +47,7 @@ def plot_epbs_by_solar_cycle():
     ds = b.sel_dates(ds, ep.index[0], ep.index[-1])
     
     ax[1].plot(ds['f107'])
-    ax[1].plot(ds['f107a'], lw = 2)
+    # ax[1].plot(ds['f107a'], lw = 2)
     
     
     ax[1].set(
@@ -66,7 +66,7 @@ def plot_epbs_by_solar_cycle():
        
        l = b.chars()[i]
        ax.text(
-           0.02, 0.8, f'({l})', 
+           0.02, 0.83, f'({l})', 
            transform = ax.transAxes
            )
     
@@ -75,4 +75,4 @@ def plot_epbs_by_solar_cycle():
 
 fig = plot_epbs_by_solar_cycle()
 
-fig.savefig(b.LATEX + 'paper1/annual_variation')
+# fig.savefig(b.LATEX + 'paper1/annual_variation')
