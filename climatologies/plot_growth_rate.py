@@ -1,61 +1,190 @@
 import matplotlib.pyplot as plt
 import base as b 
-import os
-import datetime as dt 
-import events as ev 
+import RayleighTaylor as rt 
 
-PATH_GAMMA = 'database/Results/gamma/'
 
-def plot_annual_variation(df, integrated = True):
+b.config_labels()
+
+lbs = b.Labels().infos
+
+
+def plot_gamma(ax, df):
+    
+    df = df * 1e3
+    
+    ax.scatter(
+        df.index, df, 
+        s = 30,
+        alpha = 0.4, 
+        color = 'gray'
+        )
+    
+    avg = b.smooth2(df, 20)
+    ax.plot(
+        df.index, 
+        avg, 
+        lw = 2
+        )
+    
+    ax.set(
+        ylim = [-1, 4], 
+        ylabel = b.y_label('gamma'),
+        xlabel = 'years',
+        xlim = [df.index[0], df.index[-1]]
+        )
+    
+    ax.axhline(avg.max(), linestyle = '--')
+    ax.axhline(avg.min(), linestyle = '--')
+    
+    return df
+
+
+def plot_grad(ax, df):
+    
+    df = df * 1e5
+
+    ax.plot(
+        df, 
+        lw = 2
+        )
+
+    ax.set(
+        ylim = [-1, 7], 
+        ylabel = b.y_label('K')
+        )
+    
+    ax.axhline(df.max(), linestyle = '--')
+    ax.axhline(df.min(), linestyle = '--')
+    
+    
+def plot_ratio(ax, df):
+    
+    ax.plot(
+        df, 
+        lw = 2
+        )
+    
+    ax.axhline(1, linestyle = '--')
+    
+    ax.set(
+        ylim = [0.9, 1.05], 
+        ylabel = b.y_label('ratio')
+        )
+    
+def plot_gravity(ax, df):
+    
+    ax.scatter(
+        df.index, df, 
+        s = 30,
+        alpha = 0.4, 
+        color = 'gray'
+        )
+    
+    ax.plot(
+        df.index, 
+        b.smooth2(df, 20), 
+        lw = 2
+        )
+    
+    ax.set(
+        ylim = [0, 30], 
+        ylabel = b.y_label('gravity_L')
+        )
+     
+    
+def plot_vzp(ax, df):
+    
+    ax.scatter(
+        df.index, df, 
+        s = 30,
+        alpha = 0.4, 
+        color = 'gray'
+        )
+    
+    ax.plot(
+        df.index, 
+        b.smooth2(df, 20), 
+        lw = 2
+        )
+    
+    ax.set(
+        ylim = [-10, 90], 
+        ylabel = b.y_label('vp')
+        )
+    
+    ax.axhline(df.max(), linestyle = '--')
+    ax.axhline(df.min(), linestyle = '--')
+    
+def plot_wind(ax, df):
+    
+    ax.scatter(
+        df.index, df, 
+        s = 30,
+        alpha = 0.4, 
+        color = 'gray'
+        )
+    
+    ax.plot(
+        df.index, 
+        b.smooth2(df, 20), 
+        lw = 2
+        )
+    
+    ax.set(
+        ylim = [-10, 15], 
+        ylabel = b.y_label('mer_perp')
+        )
+    
+    
+    ax.axhline(df.max(), linestyle = '--')
+    ax.axhline(df.min(), linestyle = '--')
+
+
+def plot_annual_GRT(
+        site = 'saa', 
+        col = 'e_f'
+        ):
 
     fig, ax = plt.subplots(
         sharex = True,
         dpi = 300, 
-        nrows = 2, 
-        figsize = (14, 8), 
+        nrows = 6, 
+        figsize = (12, 16), 
         )
     
-    plt.subplots_adjust(hspace = 0.5)
-    
+    plt.subplots_adjust(hspace = 0.1)
+      
+    df = rt.load_grt(site)
 
+    plot_ratio(ax[0], df['ratio'])
+    plot_vzp(ax[1], df['vp'])
+    plot_wind(ax[2], df['mer_perp'])
+    plot_grad(ax[3], df['K'])
     
-    # ax[0].legend(loc = 'upper center',
-    #     bbox_to_anchor = (.5, 1.9),
-    #     title = title, ncol = 2)
-    # ax[1].legend(title = title, ncol = 2, 
-    #              loc = 'upper center',
-    #                  bbox_to_anchor = (.5, 1.5),)
+    plot_gravity(ax[4], df['ge'] / df['nui'])
+    
+    plot_gamma(ax[5], df['gamma'])
+    
+    ax[0].set(title = df.columns.name)
+    
+    for i, ax in enumerate(ax.flat):
         
+        l = b.chars()[i]
+        ax.text(
+            0.02, 0.8, f'({l})', 
+            transform = ax.transAxes
+            )
     
     return fig
 
-infile = 'FluxTube/data/reduced/jic/2015.txt'
+
+fig = plot_annual_GRT(site = 'saa')
 
 
-fig, ax = plt.subplots(
-    sharex = True,
-    dpi = 300, 
-    figsize = (14, 8), 
-    )
+FigureName = 'annual_grt_parameters'
 
-site = 'jic'
-path = os.path.join(
-   PATH_GAMMA,
-   f't_{site}.txt'
-   )
+fig.savefig(b.LATEX(FigureName), dpi = 400)
 
-df = b.load(path)
-df = df.loc[df.index.year == 2019]
+# df = rt.load_grt()
 
-df['night'].plot(ax = ax)
-
-site = 'saa'
-path = os.path.join(
-   PATH_GAMMA,
-   f't_{site}.txt'
-   )
-
-df = b.load(path)
-df = df.loc[df.index.year == 2019]
-
-df['night'].plot(ax = ax)
+# df.columns
