@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt 
 import base as b
-from geophysical_indices import INDEX_PATH
+from geophysical_indices import INDEX_DY
 import PlasmaBubbles as pb 
 
 path = 'database/epbs/events_types.txt'
@@ -13,13 +13,13 @@ args = dict(facecolor = 'lightgrey',
              color = 'gray', 
              linewidth = 1)
 
-def plot_epbs_by_solar_cycle():
+def plot_epbs_with_indices():
     
 
     fig, ax = plt.subplots(
-        nrows = 2, 
+        nrows = 3, 
         dpi = 300, 
-        figsize = (12, 8)
+        figsize = (12, 10)
         )
     
     plt.subplots_adjust(hspace = 0.1)
@@ -36,30 +36,40 @@ def plot_epbs_by_solar_cycle():
  
     
     ax[0].set(
-        ylabel = 'Nigths with EPB', 
-        title = 'Annually EPBs occcurrence', 
-        ylim = [0, 300]
+        ylabel = 'Nigths with EPB',
+        ylim = [0, 350]
         )
     
     
-    ds = b.load(INDEX_PATH)
+    ds = b.load(INDEX_DY)
     
     ds = b.sel_dates(ds, ep.index[0], ep.index[-1])
     
     ax[1].plot(ds['f107'])
-    # ax[1].plot(ds['f107a'], lw = 2)
+        
+    ax[1].plot(ds['f107a'])
+    
+    ax[2].bar(ds.index, ds['kp'], width = 1)
     
     
     ax[1].set(
         xlim = [ds.index[0], ds.index[-1]],
-        xlabel = 'Years', 
         ylabel = '$F_{10.7}$ (sfu)'
+        )
+    
+    ax[2].set(
+        xlim = [ds.index[0], ds.index[-1]],
+        ylabel = 'Kp index', 
+        xlabel = 'Years', 
+        ylim = [0, 9]
         )
     
     
     ax[1].axhline(100, color = 'r', lw = 2)
     
+    ax[2].axhline(3, color = 'r', lw = 2)
     
+
     fig.autofmt_xdate(rotation=0)
 
     for i, ax in enumerate(ax.flat):
@@ -73,6 +83,6 @@ def plot_epbs_by_solar_cycle():
     return fig
 
 
-fig = plot_epbs_by_solar_cycle()
+fig = plot_epbs_with_indices()
 
-# fig.savefig(b.LATEX + 'paper1/annual_variation')
+# fig.savefig(b.LATEX('annual_variation'))
