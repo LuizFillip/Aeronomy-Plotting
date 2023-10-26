@@ -20,9 +20,8 @@ def plot_sites(ax):
     sites = ['saa', 'jic', 'boa',
              'car', 'for', 'str']
     
-    sites = ['saa',  'car', ] #'car', 'caj'
-    names = ['Digisonde', 
-             'Imager']  #'FPI', 'FPI'
+    sites = ['saa', 'car'] 
+    names = ['Digisonde',  'Imager']  
     
     markers = ['o', 's']
     colors = ['g', 'b']
@@ -39,6 +38,8 @@ def plot_sites(ax):
             label = name, 
             marker = marker
             )
+        
+        
         
         
 def get_equator_distance(lon, lat, year):
@@ -80,6 +81,13 @@ def plot_receivers_coords(
                 **args,
                 )
             
+            ax.text(
+                lon - 1.5, lat - 1, 
+                name.upper(), 
+                transform = ax.transData,
+                fontsize = 15
+                )
+            
             out.append(name)
         
     
@@ -90,12 +98,12 @@ def plot_receivers_coords(
     ax.scatter(
         x, y, **args,
         label = 'GNSS receivers'
-       
+    
         )
     plot_sites(ax)
     
     ax.legend(
-        bbox_to_anchor = (.5, 1.12),
+        bbox_to_anchor = (.45, 1.11),
         ncol = 3, 
         loc = 'upper center'
         )
@@ -138,12 +146,12 @@ def plot_sites_and_receivers(
     gg.circle_range(ax, glon, glat, radius = 500)
     
     
-    return fig
+    return fig, out
 
-fig = plot_sites_and_receivers()
+fig, rec = plot_sites_and_receivers()
 
 FigureName = 'sites_instrumentation'
+
 fig.savefig(b.LATEX(FigureName), dpi = 400)
 
 
-# len(fig)
