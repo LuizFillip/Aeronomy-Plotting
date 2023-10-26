@@ -80,9 +80,7 @@ def plot_epbs_occurrences_roti(
             )
         
         ax[1].plot(
-             pb.get_events_series(
-                 ds[col], 
-                 factor), 
+             pb.get_events_series(ds[col], factor), 
              marker = 'o',
              markersize = 3,
              color = line.get_color(), 
@@ -138,7 +136,7 @@ def single_plot(
         dn, 
         cols = [8, 7, 6, 5, 4], 
         hours = 11, 
-        factor = 5
+        factor = 8
         ):
         
     infile = pb.epb_path(dn.year, 'longs')
@@ -159,11 +157,10 @@ def single_plot(
     plt.show()
     return fig
 
-dn = dt.datetime(2014, 6, 2, 20)
+dn = dt.datetime(2019, 1, 11, 20)
 
 fig = single_plot(
         dn, 
-        cols = [5], 
         hours = 11,
         factor = 4
         )
