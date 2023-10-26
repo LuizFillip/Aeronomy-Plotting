@@ -1,6 +1,7 @@
 import base as b
 import GEO as gg
 import matplotlib.pyplot as plt 
+import events as ev 
 
 
 
@@ -10,14 +11,14 @@ def map_attrs(year = 2021):
 
     lat_lims = dict(
         min = -15, 
-        max = 10, 
+        max = 5, 
         stp = 5
         )
     
     lon_lims = dict(
-        min = -60,
-        max = -30, 
-        stp = 10
+        min = -55,
+        max = -35, 
+        stp = 5
         )    
     
     fig, ax = gg.quick_map(
@@ -39,9 +40,9 @@ def plot_in_circle(
     
     circle = plt.Circle(
         center, 
-        radius, 
+        radius + 3, 
         color = 'gray', 
-        alpha = 0.2, 
+        alpha = 0.1, 
         label = 'Circle'
         )
     
@@ -60,15 +61,28 @@ def plot_in_circle(
         s = 50,
         color = 'k'
         )
+    
+    name = ev.get_filters_lists(
+            clon, 
+            clat, 
+            radius, 
+            year = 2021
+            )
+    
+    for x, y, n in zip(in_x, in_y, name):
+        ax.text(
+            x - 0.5, y + 0.2, 
+            n.upper(), 
+            transform = ax.transData
+            )
 
     return in_x, in_y
 
 
 
-    
+
 
 ax  = map_attrs()
-
 
 clon, clat, radius = -45, -5, 5
 
@@ -80,6 +94,7 @@ in_x, in_y = plot_in_circle(
     ax, lon, lat, (clon, clat), 
     radius
     )
+
 
 
 
