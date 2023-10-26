@@ -148,10 +148,10 @@ def plot_sites_and_receivers(
     
     return fig, out
 
-fig, rec = plot_sites_and_receivers()
+# fig, rec = plot_sites_and_receivers()
 
-FigureName = 'sites_instrumentation'
+# FigureName = 'sites_instrumentation'
 
-fig.savefig(b.LATEX(FigureName), dpi = 400)
+# fig.savefig(b.LATEX(FigureName), dpi = 400)
 
 
