@@ -1,6 +1,4 @@
 import base as b
-import os
-import json 
 import GEO as gg
 import cartopy.crs as ccrs
 
@@ -57,11 +55,6 @@ def plot_receivers_coords(
         distance = None
         ):
     
-    # infile = os.path.join(
-    #     PATH_COORDS, 
-    #     f'{year}.json'
-    #     )
-    # sites = json.load(open(infile))
     
     names, lons, lats = gg.arr_coords(
         year
@@ -112,7 +105,7 @@ def plot_receivers_coords(
             
 
 def plot_sites_and_receivers(
-        year = 2021,
+        year = 2013,
         distance = 5
         ):
     
@@ -145,11 +138,12 @@ def plot_sites_and_receivers(
     gg.circle_range(ax, glon, glat, radius = 500)
     
     
-    return out
+    return fig
 
 fig = plot_sites_and_receivers()
 
-# fig.savefig(b.LATEX + 'sites_instrumentation', dpi = 400)
+FigureName = 'sites_instrumentation'
+fig.savefig(b.LATEX(FigureName), dpi = 400)
 
 
-len(fig)
+# len(fig)
