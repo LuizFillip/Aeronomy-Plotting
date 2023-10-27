@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Oct 22 11:20:34 2023
-
-@author: Luiz
-"""
-
 import matplotlib.pyplot as plt
 import GNSS as gs 
 import PlasmaBubbles as pb  
