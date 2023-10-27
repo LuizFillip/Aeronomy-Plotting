@@ -61,7 +61,7 @@ receivers = [
      'crat',
      'topl',
      'maba',
-    # 'pitn',
+    'pitn',
      'picr',
      'brft',
      'ceft',

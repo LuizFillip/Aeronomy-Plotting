@@ -2,8 +2,7 @@ import datetime as dt
 import base as b 
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
-from geophysical_indices import INDEX_PATH
-import GEO as gg 
+from geophysical_indices import INDEX_DY2
 
 args = dict(
     marker = 'o', 
@@ -18,7 +17,7 @@ def sel_indexes(
         idx = ['f107a', 'kp', 'dst']
         ):
     
-    df = b.load(INDEX_PATH)
+    df = b.load(INDEX_DY2)
 
     match = df.index.date == dn.date()
     
@@ -157,11 +156,11 @@ def single_plot(
     plt.show()
     return fig
 
-dn = dt.datetime(2019, 1, 11, 20)
+# dn = dt.datetime(2019, 1, 11, 20)
 
-fig = single_plot(
-        dn, 
-        hours = 11,
-        factor = 4
-        )
+# fig = single_plot(
+#         dn, 
+#         hours = 11,
+#         factor = 4
+#         )
 

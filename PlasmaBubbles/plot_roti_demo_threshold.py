@@ -1,7 +1,6 @@
 import PlasmaBubbles as pb 
 import matplotlib.pyplot as plt 
 import base as b
-import datetime as dt 
 import GNSS as gs 
 import os 
 from scipy.stats import weibull_min
@@ -9,7 +8,7 @@ import numpy as np
 
 PATH_LIMIT = 'database/epbs/night_day.txt'
 
-
+b.config_labels()
      
 def plot_weibull(ax, day):
     
@@ -39,13 +38,16 @@ def plot_weibull(ax, day):
     
     ax.hist(data, bins = x, 
             density = True, 
-            color = 'gray')
+            color = 'gray', 
+            alpha = 0.3,
+            edgecolor = 'black'
+            )
     
     ax.plot(
         x, 
         fitted_pdf, 
         label = 'Weibull Fit', 
-        lw = 2
+        lw = 3
         )
     
     vmin, vmax = min(data), max(data)
@@ -59,14 +61,19 @@ def plot_weibull(ax, day):
         xticks = np.arange(vmin, vmax, 0.1)
         )
     
-    ax.legend()
+    ax.legend( 
+        ncol = 3, 
+        loc = 'upper center', 
+        bbox_to_anchor = (-.1, 1.15)
+        )
     
     
 args = dict(
      marker = 'o', 
      markersize = 3,
      linestyle = 'none', 
-     color = 'gray'
+     color = 'gray', 
+     alpha = 0.3, 
      )
     
 
@@ -101,7 +108,7 @@ def plot_data_roti(ax, df):
     
     b.format_time_axes(ax)
     
-    ax.legend()
+    # ax.legend()
     
 
 
@@ -119,13 +126,14 @@ def plot_roti_demo_threshold(ds):
     
     plot_weibull(ax[1], day)
     
-    names = ['Daytime ROTI', 'Distribution']
+    names = ['Daytime ROTI', 
+             'ROTI Distribution']
     
     for i, ax in enumerate(ax.flat):
         l = b.chars()[i]
         n = names[i]
         ax.text(
-            0.02, 0.9, f'({l}) {n}', 
+            0.05, 0.9, f'({l}) {n}', 
             transform = ax.transAxes
             )
     
@@ -148,7 +156,8 @@ receivers = [
      'ceft',
      'ceeu',
      'salu',
-     'impz']
+     'impz'
+     ]
     
 
 ds = df.loc[df['sts'].isin(receivers)]
@@ -160,3 +169,4 @@ day = ds.between_time(
 fig = plot_roti_demo_threshold(day)
 
 
+# fig.savefig(b.LATEX('daytime_distribution'), dpi = 400)
