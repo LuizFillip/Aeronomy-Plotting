@@ -7,11 +7,13 @@ path = 'database/epbs/events_types.txt'
 
 b.config_labels()
 
-args = dict(facecolor = 'lightgrey', 
-             edgecolor = 'black', 
-             width = 0.9,
-             color = 'gray', 
-             linewidth = 1)
+args = dict(
+   facecolor = 'lightgrey', 
+    edgecolor = 'black', 
+    width = 0.9,
+    color = 'gray', 
+    linewidth = 1
+    )
 
 def plot_epbs_with_indices():
     
@@ -30,14 +32,15 @@ def plot_epbs_with_indices():
     
     yep.plot(
         kind = 'bar', 
-        ax = ax[0], 
+        ax = ax[2], 
         legend = False, **args
         )
  
     
-    ax[0].set(
+    ax[2].set(
         ylabel = 'Nigths with EPB',
-        ylim = [0, 350]
+        ylim = [0, 350],
+        yticks = list(range(0, 350, 100))
         )
     
     
@@ -45,29 +48,31 @@ def plot_epbs_with_indices():
     
     ds = b.sel_dates(ds, ep.index[0], ep.index[-1])
     
-    ax[1].plot(ds['f107'])
+    ax[0].plot(ds['f107'])
         
-    ax[1].plot(ds['f107a'])
+    ax[0].plot(ds['f107a'], lw = 2)
     
-    ax[2].bar(ds.index, ds['kp'], width = 1)
+    ax[1].bar(ds.index, ds['kp'], width = 1)
     
+    
+    ax[0].set(
+        xlim = [ds.index[0], ds.index[-1]],
+        ylabel = '$F_{10.7}$ (sfu)', 
+        yticks = list(range(50, 300, 50))
+        )
     
     ax[1].set(
         xlim = [ds.index[0], ds.index[-1]],
-        ylabel = '$F_{10.7}$ (sfu)'
-        )
-    
-    ax[2].set(
-        xlim = [ds.index[0], ds.index[-1]],
         ylabel = 'Kp index', 
         xlabel = 'Years', 
+        yticks = list(range(0, 9, 2)),
         ylim = [0, 9]
         )
     
     
-    ax[1].axhline(100, color = 'r', lw = 2)
+    ax[0].axhline(100, color = 'r', lw = 2)
     
-    ax[2].axhline(3, color = 'r', lw = 2)
+    ax[1].axhline(3, color = 'r', lw = 2)
     
 
     fig.autofmt_xdate(rotation=0)
@@ -85,4 +90,4 @@ def plot_epbs_with_indices():
 
 fig = plot_epbs_with_indices()
 
-# fig.savefig(b.LATEX('annual_variation'))
+fig.savefig(b.LATEX('annual_variation'))

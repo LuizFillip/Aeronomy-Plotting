@@ -53,4 +53,4 @@ ds = b.load(path)
 
 fig = plot_seasonal_occurrence(ds)
 
-# fig.savefig(b.LATEX + 'Paper1//seasonal_variation', dpi = 300)
+fig.savefig(b.LATEX('seasonal_variation'), dpi = 400)
