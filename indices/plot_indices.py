@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from omni import postdamData, OMNI2Data
-import settings as s
+import base as b
 from datetime import datetime, timedelta
 from utils import compute_ticks
 
@@ -72,7 +72,7 @@ def plot_disturbance_indexes(
                yticks = np.arange(0, 10, 2)
                        )
     
-    s.format_axes_date(ax)
+    b.format_axes_date(ax)
     
     return ax
     
@@ -88,7 +88,7 @@ def plot_auroral_indexes(ax, df):
     
     p1, = ax1.plot(df["al"], **args)
     
-    s.change_axes_color(ax1, p1)
+    b.change_axes_color(ax1, p1)
     
     ax.axhline(0, linestyle = "--", 
                color = "k", **args)
@@ -106,14 +106,14 @@ def plot_auroral_indexes(ax, df):
                                 vmax + step, step))
     
     
-    s.format_axes_date(ax)
+    b.format_axes_date(ax)
         
 def plotIndices(year = 2013):
     
     
     fig = plt.figure(figsize = (10, 8))
     
-    s.config_labels()
+    b.config_labels()
     
     gs = fig.add_gridspec(1, bottom = 0.98, top = 1.2)
     
@@ -137,7 +137,7 @@ def plotIndices(year = 2013):
     
     ax4.set(xlabel = "Meses")
     
-    s.text_painels([ax1, ax2, ax3, ax4], 
+    b.text_painels([ax1, ax2, ax3, ax4], 
                    x = 0.01, y = 0.85)
 
     plt.show()
