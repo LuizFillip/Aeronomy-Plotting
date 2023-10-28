@@ -73,7 +73,9 @@ def plot_ionogram(ax2, fname, col):
             transform = ax2.transAxes
             )
         
-        ax2.set(ylabel = 'Virtual Height (km)')
+        ax2.set(
+            ylabel = 'Virtual Height (km)'
+            )
 
     return dn
 
@@ -108,9 +110,6 @@ def plot_roti(ax1, dn, times):
         transform = ax1.transAxes
         )
     
-
-
-
 def plot_multi_instrumentation(dn, fn_skys):
 
     fig = plt.figure(
