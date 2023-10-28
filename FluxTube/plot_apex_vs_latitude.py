@@ -1,68 +1,64 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from FluxTube import Apex
-import settings as s
+import base as b
 
-
+b.config_labels()
 
 def plot_apex_vs_latitude(
+        ax, 
         hmin = 200, 
         hmax = 700, 
         points = 100, 
         dz = 50, 
-        base = 150):
+        base = 150
+        ):
         
     heights = np.arange(hmin, hmax + dz, dz)
      
-    fig, ax = plt.subplots(
-        figsize = (6, 5), 
-        dpi = 300
-        )   
+   
+    # for h in heights:
+        
+    h = 300 
+    apx = Apex(h)
+    lats =  apx.latitude_range(
+        points = points, 
+        base = base
+        )
+    apex = apx.apex_range(
+        points = 100, 
+        base = 75
+        )
+        
+    ax.plot(np.degrees(lats), 
+            apex, color = "k", lw = 2)    
     
-    s.config_labels()
-
-        
-    for h in heights:
-        apx = Apex(h)
-        lats =  apx.latitude_range(
-            points = points, 
-            base = base
-            )
-        apex = apx.apex_range(
-            points = points, 
-            base = base
-            )
-        ax.plot(np.degrees(lats), apex, color = "w")    
-        
+    lim = 25
     ax.set(
-        ylabel = "Altura de apex (km)", 
-        xlabel = "Latitude geomagnética (°)",
-        ylim = [hmin, hmax]
-           )
+        xlim = [-lim, lim],
+        ylim = [75, 400],
+        ylabel = "Apex height (km)", 
+        xlabel = "Magnetic latitude (°)"
+        )
     
     ax.axvline(0, linestyle = "--")
 
         
     ax.axhline(150, color = "red", lw= 2,
-                linestyle = "--", 
-                label = "Região E")
+                linestyle = "--")
+    ax.text(12, 100, 'E region',
+            transform = ax.transData)
+    ax.text(12, 200, 'F region', 
+            transform = ax.transData)
     
     ax.axhline(300, color = "k", lw= 2,
-                linestyle = "-")
-    
-    ax.legend()
-    
-    return fig, ax
+                linestyle = "--")
+        
+    return ax
 
+# fig, ax = plt.subplots(
+#     figsize = (7,5), 
+#     dpi = 400
+#     )   
 
-fig, ax = plot_apex_vs_latitude(
-    hmin  = 0, hmax = 500, 
-    points = 100, dz = 200, 
-    base = None)
-
-
-
-
-# s.dark_background(fig, ax)
-
-# fig.savefig('temp.png', transparent=True)
+# plot_apex_vs_latitude(ax)

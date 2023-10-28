@@ -1,8 +1,7 @@
-from settings import format_time_axes
+
 import matplotlib.pyplot as plt
-from labels import Labels
 import pandas as pd
-import settings as s
+import base as b
 import numpy as np
 
 
@@ -71,14 +70,14 @@ def plot(
     vls = pt.values
     ticks = np.linspace(np.min(vls), np.max(vls), 5)
     
-    lbs  = Labels().infos[parameter]
+    lbs  = b.Labels().infos[parameter]
     
     if parameter == "ratio":
         label = lbs["symbol"] 
     else:
         label = f"{lbs['symbol']} ({lbs['units']})"
     
-    s.colorbar_setting(
+    b.colorbar_setting(
             img, ax, ticks, 
             label = label)
     
@@ -104,7 +103,7 @@ def plot_ionospheric_parameters(ds):
         ax.set(xlim = [ds.index[0], ds.index[-1]])
             
         if i == len(cols) - 1:
-            format_time_axes(ax)
+            b.format_time_axes(ax)
             
     fig.text(0.05, 0.45, "Altura de Apex (km)", 
              rotation = "vertical")
