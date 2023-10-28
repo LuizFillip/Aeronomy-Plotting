@@ -63,29 +63,25 @@ def plot_sites_and_meridians(
             color = line.get_color()
             )
         
-        # ax.legend(ncol = 2)
-        
-        
+
 
 def plot_mag_meridians(
         ax,
-        year = 2021
+        year = 2013
         ):
 
- 
-    # ax = plt.axes(projection =  ccrs.PlateCarree())
 
-    gg.map_features(ax)
+    gg.map_features(ax, grid = False)
 
     lat = gg.limits(
-        min = -15, 
-        max = 10, 
-        stp = 5
+        min = -20, 
+        max = 20, 
+        stp = 10
         )
     lon = gg.limits(
         min = -60, 
-        max = -30, 
-        stp = 5
+        max = -20, 
+        stp = 10
         )    
 
     gg.map_boundaries(ax, lon, lat)
@@ -100,9 +96,9 @@ def plot_mag_meridians(
     
    
     ax.legend(
-        bbox_to_anchor = (.5, 1.15),
-        ncol = 2, 
-        loc = "upper center"
+        # bbox_to_anchor = (.5, 1.15),
+        ncol = 1, 
+        loc = "upper right"
         )
 
     return ax

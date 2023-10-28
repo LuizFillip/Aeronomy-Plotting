@@ -8,8 +8,8 @@ import GEO as gg
 def mapping():
     
     lat_lims = dict(
-        min = -20, 
-        max = 10, 
+        min = -25, 
+        max = 15, 
         stp = 5
         )
     
@@ -29,21 +29,25 @@ def mapping():
     
     return ax
      
-radius = 5
+radius = 10
 
 year = 2013
 
 eq = gg.load_equator(year)
 
-df = pd.DataFrame(eq, columns = ['lon', 'lat'])
+df = pd.DataFrame(
+    eq, columns = ['lon', 'lat']
+    )
 
 
 ax = mapping()
 
-for slon in list(range(-85, -30, 5)):
+for slon in list(
+        range(-65, -30, radius)
+        ):
     
     coords = df.loc[
-        (df['lon'] > slon - 5) &
+        (df['lon'] > slon - radius) &
         (df['lon'] < slon)
         ].min()
     
@@ -61,7 +65,7 @@ for slon in list(range(-85, -30, 5)):
     #     year = year
     #     )
 
-    angle_degrees = -19
+    angle_degrees = -45
     angle_radians = np.deg2rad(angle_degrees)
     
     x_limits = []
@@ -69,7 +73,7 @@ for slon in list(range(-85, -30, 5)):
     
     for i in range(4):
         angle = angle_radians + i * np.pi / 2  
-        x = clon + radius * np.cos(angle)
+        x = clon + (radius - 3) * np.cos(angle)
         y = clat + (radius + 3) * np.sin(angle) 
         x_limits.append(x)
         y_limits.append(y)
