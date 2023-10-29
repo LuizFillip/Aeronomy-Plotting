@@ -1,7 +1,10 @@
 import PlasmaBubbles as pb 
 import matplotlib.pyplot as plt
 import base as b 
+import events as ev 
 
+
+b.config_labels()
 
 args = dict(
     facecolor = 'lightgrey', 
@@ -10,6 +13,7 @@ args = dict(
     color = 'gray', 
     linewidth = 1
     )
+
 
 def plot_seasonal_occurrence(ds):
     
@@ -33,7 +37,8 @@ def plot_seasonal_occurrence(ds):
     plt.xticks(rotation = 0)
     
     ax.set(
-        ylabel = 'Number of nights',
+        ylim = [0, 400],
+        ylabel = 'Nights with EPB',
         xlabel = 'Months',
         xticklabels = b.number_to_months()
         )
@@ -51,6 +56,12 @@ path = 'database/epbs/events_types.txt'
 
 ds = b.load(path)
 
-fig = plot_seasonal_occurrence(ds)
+ds = ds.replace(2, 1)
 
-fig.savefig(b.LATEX('seasonal_variation'), dpi = 400)
+df = ev.concat_results('saa')
+
+
+# fig = plot_seasonal_occurrence(ds)
+
+# fig.savefig(b.LATEX('seasonal_variation'), dpi = 400)
+
