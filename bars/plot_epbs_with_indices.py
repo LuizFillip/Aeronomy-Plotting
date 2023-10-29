@@ -21,7 +21,7 @@ def plot_epbs_with_indices(
     fig, ax = plt.subplots(
         nrows = 3, 
         dpi = 300, 
-        figsize = (12, 10)
+        figsize = (12, 12)
         )
     
     plt.subplots_adjust(hspace = 0.1)
