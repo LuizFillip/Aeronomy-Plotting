@@ -19,7 +19,7 @@ def plot_epbs_with_indices(
         ):
     
     fig, ax = plt.subplots(
-        nrows = 3, 
+        nrows = 2, 
         dpi = 300, 
         figsize = (12, 10)
         )

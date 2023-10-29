@@ -1,9 +1,8 @@
 import PlasmaBubbles as pb 
 import matplotlib.pyplot as plt
 import base as b 
-from geophysical_indices import INDEX_PATH
-import pandas as pd
- 
+
+
 b.config_labels()
 
 def plot_annually_events_count(ds):
@@ -19,7 +18,9 @@ def plot_annually_events_count(ds):
     period = ['sunset', 'midnight']
     
     plt.subplots_adjust(hspace = 0.1)
+    
     ylims = [350, 40]
+    
     for i, value in enumerate([1, 3]):
         
         df =  pb.year_occurrence(
@@ -78,4 +79,4 @@ path = 'database/epbs/events_types.txt'
 
 # # ds = df.loc[df['kp'] > 3].iloc[:, :5]
 
-# plot_annually_events_count(ds)
+plot_annually_events_count(ds)
