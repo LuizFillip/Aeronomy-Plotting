@@ -1,114 +1,78 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Oct 30 15:05:34 2023
-
-@author: Luiz
-"""
-
-import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt 
 import base as b
 import events as ev 
-from plotting import plot_distribution
-
-
 
 b.config_labels()
 
-
-
-def plot_distributions_solar_flux(
-        df, 
-        col = 'gamma',
-        level = 100
+def plot_epbs_with_indices(
+        df,
+        solar_level = 86,
+        kp_level = 3
         ):
     
-    
     fig, ax = plt.subplots(
+        nrows = 2, 
         dpi = 300, 
         sharex = True,
-        sharey = True,
-        figsize = (12, 6)
+        figsize = (12, 8)
         )
-        
-    labels = [
-        '$F_{10.7} < $' + f' {level}',
-        '$F_{10.7} > $' + f' {level}'
+    
+    plt.subplots_adjust(hspace = 0.1)
+    
+    levels = ev.kp_levels(
+            df, 
+            level =  kp_level, 
+            kp_col = 'kp'
+            )
+    
+    
+    names = [
+        f'$Kp \\leq$ {kp_level}', 
+        f'$Kp >$ {kp_level}'
         ]
     
-    if col == 'gamma':
-        vmin, vmax, step = 0, 4, 0.2
+    for i, ds in enumerate(levels):
         
-    elif col == 'vp':
-        vmin, vmax, step = 0, 85, 5
-    else:
-        vmin, vmax, step = 0, 1, 0.05
+        dataset = ev.monthly_occurences(ds)
+        
+        dataset.plot(
+            kind = 'bar',
+            ax = ax[i], 
+            color =  ['k', 'gray'],
+            stacked = True, 
+            legend = False
+            )
     
-    solar_dfs =  ev.solar_levels(
-        df, 
-        level,
-        flux_col = 'f107a'
-        )
-     
-    total = []
-    
-    for i, ds in enumerate(solar_dfs):
-    
-        c = plot_distribution(
-            ax, 
-            ds,
-            limits = (vmin, vmax, step),
-            col = col,
-            label = f'{labels[i]}'
+        ax[i].set(
+            ylim = [0, 300],
+            ylabel = 'Number of nights',
+            xlabel = 'Months',
+            xticklabels = b.number_to_months()
             )
         
-        total.append(c)
-    
-    if col == 'vp':
-        xlabel = b.y_label('vp')
-        vmax = 70
-    else:
-        xlabel = b.y_label('gamma')
+        epb_count = dataset['epb'].sum()
         
+        l = b.chars()[i]
+        n = names[i]
+        info = f'({l}) {n} ({epb_count} EPBs events)'
         
-    ax.set(
-        xlim = [vmin, vmax],
-        xticks = np.arange(vmin, vmax + step, step * 2),
-        ylim = [-0.2, 1.3],
-        yticks = np.arange(0, 1.25, 0.25),
-        )
+        ax[i].text(
+            0.02, 0.85, info, 
+            transform = ax[i].transAxes
+            )
         
-    ax.legend(ncol = 2, loc = 'upper center')
+    plt.xticks(rotation = 0)
     
-    info = f' ({sum(total)} EPBs events)'
-    
-    ax.set(
-        title = df.columns.name + info,
-        xlabel = xlabel, 
-        ylabel = 'EPB occurrence probability'
+    ax[0].legend(
+        ['With EPB', 'Without EPB'], 
+        ncol = 2, 
+        loc = 'upper center', 
+        bbox_to_anchor = (0.5, 1.2)
         )
     
     return fig
- 
 
 df = ev.concat_results('saa')
+fig = plot_epbs_with_indices(df)
 
-col = 'vp'
-
-
-fig = plot_distributions_solar_flux(
-    df, 
-    col, 
-    level = 86
-    )
-
-FigureName = f'PD_{col}_effects'
-
-fig.savefig(b.LATEX(FigureName), dpi = 400)
-
-# dfs =  ev.solar_levels(
-#     df, 
-#     level =  86,
-#     flux_col = 'f107a'
-#     )
-
+# fig.savefig(b.LATEX('Kp_seasonal_variation'))

@@ -2,11 +2,9 @@ import matplotlib.pyplot as plt
 import base as b
 import events as ev 
 
-path = 'database/epbs/events_types.txt'
-
 b.config_labels()
 
-def plot_epbs_with_indices(
+def plot_annualy_kp_level(
         df,
         solar_level = 86,
         kp_level = 3
@@ -15,6 +13,7 @@ def plot_epbs_with_indices(
     fig, ax = plt.subplots(
         nrows = 2, 
         dpi = 300, 
+        sharex = True,
         figsize = (12, 8)
         )
     
@@ -25,6 +24,8 @@ def plot_epbs_with_indices(
             level =  kp_level, 
             kp_col = 'kp'
             )
+    
+    
     names = [
         f'$Kp \\leq$ {kp_level}', 
         f'$Kp >$ {kp_level}'
@@ -32,22 +33,21 @@ def plot_epbs_with_indices(
     
     for i, ds in enumerate(levels):
         
-        dataset = ev.yearly_occcurrences(ds)
+        dataset = ev.yearly_occurrences(ds)
         
         dataset.plot(
-            kind = 'bar', 
+            kind = 'bar',
             ax = ax[i], 
-            legend = False,
             color =  ['k', 'gray'],
             stacked = True, 
+            legend = False
             )
-        
+    
         ax[i].set(
+            ylim = [0, 300],
             ylabel = 'Number of nights',
-            xlabel = 'Years', 
-            yticks = list(range(0, 400, 100))
+            xlabel = 'Years'
             )
-
         
         epb_count = dataset['epb'].sum()
         
@@ -56,26 +56,22 @@ def plot_epbs_with_indices(
         info = f'({l}) {n} ({epb_count} EPBs events)'
         
         ax[i].text(
-            0.02, 0.83, info, 
+            0.02, 0.85, info, 
             transform = ax[i].transAxes
             )
-         
-   
+        
+    plt.xticks(rotation = 0)
+    
     ax[0].legend(
         ['With EPB', 'Without EPB'], 
         ncol = 2, 
-        bbox_to_anchor = (0.5, 1.2),
-        loc = 'upper center'
+        loc = 'upper center', 
+        bbox_to_anchor = (0.5, 1.2)
         )
-    
-
-    fig.autofmt_xdate(
-        rotation = 0, ha = 'center')
-
     
     return fig
 
 df = ev.concat_results('saa')
-fig = plot_epbs_with_indices(df)
+fig = plot_annualy_kp_level(df)
 
-fig.savefig(b.LATEX('Kp_annual_variation'))
+fig.savefig(b.LATEX('kp_annual_variation'))

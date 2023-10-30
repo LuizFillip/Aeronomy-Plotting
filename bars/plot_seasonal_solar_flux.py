@@ -73,4 +73,4 @@ level = 86
 
 fig = plot_count_epbs_occurrences(df, level)
 
-# fig.savefig(b.LATEX('seasonal_variation'), dpi = 400)
+# fig.savefig(b.LATEX('solar_seasonal_variation'))
