@@ -1,33 +1,29 @@
 import matplotlib.pyplot as plt 
+import os
+import RayleighTaylor as rt 
+import base as b 
 
-def plot_compare_solar_activity():
+def plot_compare_solar_activity(site = 'saa'):
     
 
     fig, ax = plt.subplots(
-        sharex = True,
+        sharey = True,
         dpi = 300, 
+        nrows = 2,
         figsize = (14, 8), 
         )
     
     
-    site = 'jic'
-    path = os.path.join(
-       PATH_GAMMA,
-       f't_{site}.txt'
-       )
     
-    df = b.load(path)
-    df = df.loc[df.index.year == 2019]
+    df = rt.load_grt(site)
+
+   
+    ds = df.loc[df.index.year == 2014]
     
-    df['night'].plot(ax = ax)
+    ds['ratio'].plot(ax = ax[0])
+
+    ds = df.loc[df.index.year == 2019]
     
-    site = 'saa'
-    path = os.path.join(
-       PATH_GAMMA,
-       f't_{site}.txt'
-       )
+    ds['ratio'].plot(ax = ax[1])
     
-    df = b.load(path)
-    df = df.loc[df.index.year == 2019]
-    
-    df['night'].plot(ax = ax)
+plot_compare_solar_activity()
