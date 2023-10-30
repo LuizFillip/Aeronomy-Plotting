@@ -1,5 +1,4 @@
 import RayleighTaylor as rt
-
 import numpy as np
 import matplotlib.pyplot as plt
 import base as b
@@ -69,38 +68,3 @@ def plot_gamma_forms(ax, df):
            yticks = np.arange(0, 1.25, 0.25)
            )
     
-# for i, ds in enumerate(
-#         ev.solar_flux_cycles(df)
-#         ):
-    
-#     plot_gamma_forms(ax[i], ds)
-    
-#     ax[i].set(title = cycles[i])
-    
-
-# ax[0].legend(
-#         ncol = 3, 
-#         bbox_to_anchor = (.5, 1.5),
-#         loc = "upper center"
-#         )
-
-# fontsize = 25
-# fig.text(
-#     0.03, 0.35, 
-#     'EPB occurrence probability',
-#     rotation = "vertical", 
-#     fontsize = fontsize
-#     )
-
-# fig.text(
-#     0.4, 0.07, 
-#     "$\\gamma_{FT}~$ ($\\times 10^{-3}~s^{-1}$)", 
-#     rotation = "horizontal", 
-#     fontsize = fontsize
-#     )
-
-# fig.suptitle(f'$Kp > ${kp}', y = 1.01)
-
-# df = ev.concat_results('saa', col_g = 'e_f')
-
-# df

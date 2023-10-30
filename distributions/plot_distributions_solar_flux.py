@@ -83,19 +83,25 @@ def plot_distributions_solar_flux(
     
     return fig
  
- 
+
 df = ev.concat_results('saa')
 
-col = 'gravity'
- 
+col = 'vp'
+
+
 fig = plot_distributions_solar_flux(
     df, 
-    col
+    col, 
+    level = 86
     )
 
 FigureName = f'PD_{col}_effects'
 
-# fig.savefig(b.LATEX + FigureName, dpi = 400)
+fig.savefig(b.LATEX(FigureName), dpi = 400)
 
-
+# dfs =  ev.solar_levels(
+#     df, 
+#     level =  86,
+#     flux_col = 'f107a'
+#     )
 

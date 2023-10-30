@@ -28,8 +28,6 @@ def plot_distributions_seasons(
         dpi = 300
         )
     
-   
-    
     plt.subplots_adjust(
         hspace = 0.05, 
         wspace = 0.05
@@ -58,7 +56,7 @@ def plot_distributions_seasons(
         flux_col = 'f107a'
         )
     
-    total = []
+    
     for j, ax in enumerate(ax.flat):
         
         month = (j + 1) * 3
@@ -66,7 +64,7 @@ def plot_distributions_seasons(
         season_name = ks[month]
     
         c_event = []
-       
+        total = []
         for i, l in enumerate(solar_dfs):
             
             index = i + 1
@@ -147,22 +145,23 @@ df = ev.concat_results('saa')
 
 df['doy'] = df.index.day_of_year.copy()
 
-# df1 = df.loc[df['kp'] <= 3]
 col = 'gamma'
-fig = plot_distributions_seasons(df, col)
+# fig = plot_distributions_seasons(df, col)
 
 
-# for FigureName in ['seasonal_quiet', 
-#                    'seasonal_disturbed']:
-
-#     if 'quiet' in FigureName:
-#         df1 = df.loc[df['kp'] <= 3]
-#     else:
-#         df1 = df.loc[df['kp'] > 3]
+def save_figs():
     
-#     fig = plot_distributions_seasons(df1, col  = '')
+    for FigureName in ['seasonal_quiet', 
+                        'seasonal_disturbed']:
     
-#     # fig.savefig(
-#     #     b.LATEX + FigureName,
-#     #     dpi = 400
-#     #     )
+        if 'quiet' in FigureName:
+            df1 = df.loc[df['kp'] <= 3]
+        else:
+            df1 = df.loc[df['kp'] > 3]
+        
+        fig = plot_distributions_seasons(df1, col)
+        
+        fig.savefig(
+        b.LATEX(FigureName),
+        dpi = 400
+        )
