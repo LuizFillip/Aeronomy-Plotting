@@ -66,11 +66,11 @@ def plot_count_epbs_occurrences(df, level):
     return fig 
 
 
-# df = ev.concat_results('saa')
+df = ev.concat_results('saa')
 
  
-# level = 86
+level = 86
 
-# fig = plot_count_epbs_occurrences(df, level)
+fig = plot_count_epbs_occurrences(df, level)
 
 # fig.savefig(b.LATEX('seasonal_variation'), dpi = 400)

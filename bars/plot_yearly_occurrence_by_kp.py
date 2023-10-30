@@ -6,12 +6,6 @@ path = 'database/epbs/events_types.txt'
 
 b.config_labels()
 
-args = dict(
-    edgecolor = 'black', 
-    color = 'gray', 
-    linewidth = 1
-    )
-
 def plot_epbs_with_indices(
         df,
         solar_level = 86,
@@ -28,11 +22,13 @@ def plot_epbs_with_indices(
     
     levels = ev.kp_levels(
             df, 
-            level = 3, 
+            level =  kp_level, 
             kp_col = 'kp'
             )
-    names = [f'$Kp \\leq$ {kp_level}', 
-              f'$Kp >$ {kp_level}']
+    names = [
+        f'$Kp \\leq$ {kp_level}', 
+        f'$Kp >$ {kp_level}'
+        ]
     
     for i, ds in enumerate(levels):
         
