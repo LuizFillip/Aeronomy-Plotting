@@ -5,20 +5,72 @@ from plotting import plot_distribution
 import numpy as np 
 
 ks = {
-      3:  'march equinox',
-      6:  'june solstice',
-      9:  'setember equinox',
-      12: 'december solstice'
+      3:  'March equinox',
+      6:  'June solstice',
+      9:  'Setember equinox',
+      12: 'December solstice'
       }
+
+
+def plot_single_season(
+        ax, 
+        solar_dfs,
+        month,
+        limits,
+        name
+        
+        ):
+    
+    c_event = []
+    total = []
+    
+    
+    for i, l in enumerate(solar_dfs):
+        
+        index = i + 1
+        
+        ds = ev.seasons(l, month)
+
+        c = plot_distribution(
+                ax, 
+                ds, 
+                limits = limits,
+                col = col,
+                count = False,
+                label = f'({index}) {name[i]}'
+                )
+        
+        total.append(c)
+        
+        c_event.append(f'({index}) {c} events')
+    
+
+
+    infos = ('EPB occurrence\n' + 
+              '\n'.join(c_event))
+        
+    ax.text(
+            0.65, 0.15, 
+            infos, 
+            transform = ax.transAxes
+            )
+    
+    
+    ax.set(
+        xlim = [limits[0], limits[1]],
+        ylim = [-0.2, 1.4], 
+        yticks = np.arange(0, 1.2, 0.25)
+        )
+ 
+    return ax, total
 
 def plot_distributions_seasons(
         df, 
         col = 'gamma',
-        level = 100, 
+        level = 86, 
         fontsize = 25
         ):
     
-
     fig, ax = plt.subplots(
         ncols = 2,
         nrows = 2, 
@@ -34,7 +86,6 @@ def plot_distributions_seasons(
         )
     
     
-    
     if col == 'gamma':
         vmin, vmax, step = 0, 4, 0.2
         
@@ -42,8 +93,9 @@ def plot_distributions_seasons(
         vmin, vmax, step = 0, 85, 5
     else:
         vmin, vmax, step = 0, 1, 0.05
+        
+    limits = (vmin, vmax, step)
     
-    all_events = []
     
     name = [
         '$F_{10.7} < $' + f' {level}',
@@ -56,43 +108,20 @@ def plot_distributions_seasons(
         flux_col = 'f107a'
         )
     
+    all_events = []
     
     for j, ax in enumerate(ax.flat):
         
         month = (j + 1) * 3
         
         season_name = ks[month]
-    
-        c_event = []
-        total = []
-        for i, l in enumerate(solar_dfs):
-            
-            index = i + 1
-            
-            ds = ev.seasons(l, month)
-    
-            c = plot_distribution(
-                    ax, 
-                    ds, 
-                    limits = (vmin, vmax, step),
-                    col = col,
-                    count = False,
-                    label = f'({index}) {name[i]}'
-                    )
-            
-            # print(c)
-            total.append(c)
-            
-            c_event.append(f'({index}) {c} events')
         
-        # print(total)
-        infos = ('EPB occurrence\n' + 
-                 '\n'.join(c_event))
-            
-        ax.text(
-                0.65, 0.15, 
-                infos, 
-                transform = ax.transAxes
+        ax, total = plot_single_season(
+                ax, 
+                solar_dfs,
+                month,
+                limits,
+                name
                 )
         
         l = b.chars()[j]
@@ -105,13 +134,6 @@ def plot_distributions_seasons(
             transform = ax.transAxes
             )
         
-        ax.set(
-            xlim = [vmin, vmax],
-            ylim = [-0.2, 1.4], 
-            yticks = np.arange(0, 1.2, 0.25)
-            )
- 
-    
     ax.legend(
         ncol = 2, 
         bbox_to_anchor = (-.01, 2.3),
@@ -133,35 +155,39 @@ def plot_distributions_seasons(
         )
     
     
-    fig.suptitle(
-        df.columns.name +
-        f' ({sum(all_events)} EPBs events)',
-        y = 1.
-        )
+    # fig.suptitle(
+    #     df.columns.name +
+    #     f' ({sum(all_events)} EPBs events)',
+    #     y = 1.
+    #     )
     
     return fig
+    
+    
+
+
     
 df = ev.concat_results('saa')
 
 df['doy'] = df.index.day_of_year.copy()
 
 col = 'gamma'
-# fig = plot_distributions_seasons(df, col)
+fig = plot_distributions_seasons(df, col)
 
 
-def save_figs():
+# def save_figs():
     
-    for FigureName in ['seasonal_quiet', 
-                        'seasonal_disturbed']:
+#     for FigureName in ['seasonal_quiet', 
+#                         'seasonal_disturbed']:
     
-        if 'quiet' in FigureName:
-            df1 = df.loc[df['kp'] <= 3]
-        else:
-            df1 = df.loc[df['kp'] > 3]
+#         if 'quiet' in FigureName:
+#             df1 = df.loc[df['kp'] <= 3]
+#         else:
+#             df1 = df.loc[df['kp'] > 3]
         
-        fig = plot_distributions_seasons(df1, col)
+#         fig = plot_distributions_seasons(df1, col)
         
-        fig.savefig(
-        b.LATEX(FigureName),
-        dpi = 400
-        )
+#         fig.savefig(
+#         b.LATEX(FigureName),
+#         dpi = 400
+#         )
