@@ -40,11 +40,24 @@ def equator_coords(year = 2013):
         )
 
 
+def plot_corners(
+        ax,
+        x_limits, y_limits
+        ):
+    
 
+    ax.plot(
+        x_limits,
+        y_limits,
+        color = 'black', 
+        linewidth = 2, 
+        transform = ccrs.PlateCarree() 
+        )
+        
 def corner_coords(
         year = 2013, 
-        radius = 10,  
-        angle_degrees = -45
+        radius = 5,  
+        angle = -45
         ):
     
     df = equator_coords(year)
@@ -52,9 +65,9 @@ def corner_coords(
     x_coords = []
     y_coords = []
     
-    for slon in list(
-            range(-65, -30, radius)
-            ):
+    longitudes = np.arange(-70, -45, radius)
+            
+    for slon in longitudes:
         
         coords = df.loc[
             (df['lon'] > slon - radius) &
@@ -64,16 +77,19 @@ def corner_coords(
         
         clon = coords['lon']
         clat = coords['lat']
-        
-        angle_radians = np.radians(angle_degrees)
-        
+                
         x_limits = []
         y_limits = []
         
+        if radius == 10:
+            delta = 3
+        elif radius == 5:
+            delta = 1.5
+        
         for i in range(4):
-            angle = angle_radians + i * np.pi / 2  
-            x = clon + (radius - 3) * np.cos(angle)
-            y = clat + (radius + 3) * np.sin(angle) 
+            angle_corner = np.radians(angle) + i * np.pi / 2  
+            x = clon + (radius - delta) * np.cos(angle_corner)
+            y = clat + (10) * np.sin(angle_corner) 
             
             x_limits.append(round(x, 4))
             y_limits.append(round(y, 4))
@@ -84,6 +100,13 @@ def corner_coords(
         
         x_coords.append(x_limits)
         y_coords.append(y_limits)
+        
+        ax.scatter(clon, clat, c = 'k') 
+        plot_corners(
+                ax,
+                x_limits, 
+                y_limits
+                )
     
     return x_coords, y_coords
             
@@ -91,17 +114,7 @@ def corner_coords(
 
 
 
-def plot_corners(ax, clon, clat):
-    ax.scatter(clon, clat, c = 'k') 
 
-    for x_limits, y_limits in zip(x_coords, y_coords):
-        ax.plot(
-            x_limits,
-            y_limits,
-            color = 'black', 
-            linewidth = 2, 
-            transform = ccrs.PlateCarree() 
-            )
 
 def set_coords(
         x_coords, 
@@ -110,7 +123,7 @@ def set_coords(
 
     coords = {}
     
-    for i in range(4):
+    for i in range(len(x_coords)):
         
         lon_set = sorted(tuple(set(x_coords[i])))
         lat_set = sorted(tuple(set(y_coords[i])))
@@ -129,13 +142,16 @@ doy = 1
 path  = gs.paths(year, doy, root = os.getcwd())
 df = pb.load_filter(path.fn_roti)
 
-x_coords, y_coords = corner_coords(year)
+
+ax = mapping(year)
+
+x_coords, y_coords = corner_coords(year, angle = 45)
 
 
-ax = mapping()
 coords = set_coords(x_coords, y_coords)
 
-(x0, x1), (y0, y1) = coords[1]
+(x0, x1), (y0, y1) = coords[3]
+
 
 
 ds  = df.loc[
@@ -146,4 +162,5 @@ ds  = df.loc[
 
 ax.scatter(ds.lon, ds.lat, c = ds.roti, s = 3)
 
-ds
+
+
