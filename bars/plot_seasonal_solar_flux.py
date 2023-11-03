@@ -3,31 +3,43 @@ import base as b
 import matplotlib.pyplot as plt
 
 
-def plot_count_epbs_occurrences(df, level):
+def plot_count_epbs_occurrences(df, parts = 2):
+    
+    limits = ev.limits_on_parts(df['f107a'], parts)
     
     solar_dfs =  ev.solar_levels(
         df, 
-        level,
+        limits,
         flux_col = 'f107a'
         )
     
     fig, ax = plt.subplots(
         dpi = 300, 
-        nrows = 2,
+        nrows = parts,
         sharex = True,
-        figsize = (12, 8)
+        figsize = (12, 6 + parts)
         )
             
     plt.subplots_adjust(hspace = 0.1)
     
-    names = [
-        '$F_{10.7} < $' + f' {level}',
-        '$F_{10.7} > $' + f' {level}'
-        ]
+    if len(limits) == 1:
+    
+        names = [
+            '$F_{10.7} < $' + f' {limits[0]}',
+            '$F_{10.7} > $' + f' {limits[0]}'
+            ]
+        
+    else:
+        names = [
+            '$F_{10.7} < $' + f' {limits[0]}',
+            f' {limits[0]}' + '$< F_{10.7} < $' +  f' {limits[1]}',
+            '$F_{10.7} > $' + f' {limits[1]}'
+            ]
+        
     
     for i, ds in enumerate(solar_dfs):
     
-        dataset = ev.monthly_occurences(ds)
+        dataset = ev.monthly_occurrences(ds)
         
         dataset.plot(
             kind = 'bar',
@@ -61,16 +73,14 @@ def plot_count_epbs_occurrences(df, level):
         ['With EPB', 'Without EPB'], 
         ncol = 2, 
         loc = 'upper center', 
-        bbox_to_anchor = (0.5, 1.2)
+        bbox_to_anchor = (0.5, 1.3)
         )
     return fig 
 
 
 df = ev.concat_results('saa')
 
- 
-level = 86
-
-fig = plot_count_epbs_occurrences(df, level)
+    
+fig = plot_count_epbs_occurrences(df, parts = 3)
 
 # fig.savefig(b.LATEX('solar_seasonal_variation'))
