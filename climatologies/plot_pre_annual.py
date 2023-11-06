@@ -61,27 +61,5 @@ def plot_pre_annual():
     ax[1].set(xlabel = 'years')
     
     
-plot_pre_annual()
+# plot_pre_annual()
 
-# import numpy as np 
-# from scipy.optimize import curve_fit
-
-
-# df = set_data(site = 'jic')
-# df = df.loc[df.index.year == 2015]
-# # df = df.loc[~((df['vz'] > 30) | 
-# #               (df['vz'] < 0))]
-
-
-
-
-
-# N = 20
-# df['avg'] = b.running(df['vz'], N)
-
-# fig, ax = plt.subplots()
-
-# ax.scatter(df.index, df['vz'])
-# ax.plot(df['avg'], color = 'r')
-
-# ax.set(ylim  = [-10, 50])

@@ -183,7 +183,7 @@ fig = plot_annual_GRT(site = 'saa')
 
 FigureName = 'annual_grt_parameters'
 
-fig.savefig(b.LATEX(FigureName), dpi = 400)
+# fig.savefig(b.LATEX(FigureName), dpi = 400)
 
 # df = rt.load_grt()
 
