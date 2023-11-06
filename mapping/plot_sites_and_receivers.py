@@ -1,7 +1,7 @@
 import base as b
 import GEO as gg
 import cartopy.crs as ccrs
-
+from plotting  import plot_meridian
 
 PATH_COORDS = 'database/GEO/coords/'
 
@@ -104,9 +104,9 @@ def plot_receivers_coords(
     plot_sites(ax)
     
     ax.legend(
-        bbox_to_anchor = (1.85, 0.5),
+        # bbox_to_anchor = (0.7, 1.2),
         ncol = 1, 
-        loc = 'right'
+        loc = 'upper right'
         )
     
     return out
@@ -146,10 +146,11 @@ def plot_sites_and_receivers(
     
     gg.circle_range(ax, glon, glat, radius = 500)
     
-    
+    ax.text(0.05, 0.93, '(a)', transform = ax.transAxes)
+    plot_meridian(ax, year)
     return fig, out
 
-# fig, rec = plot_sites_and_receivers()
+fig, rec = plot_sites_and_receivers()
 
 # FigureName = 'sites_instrumentation'
 
