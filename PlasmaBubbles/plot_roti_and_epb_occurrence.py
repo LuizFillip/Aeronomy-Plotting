@@ -2,7 +2,6 @@ import datetime as dt
 import base as b 
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
-from geophysical_indices import INDEX_DY2
 
 args = dict(
     marker = 'o', 
@@ -12,29 +11,6 @@ args = dict(
 
 b.config_labels()
 
-def sel_indexes(
-        dn, 
-        idx = ['f107a', 'kp', 'dst']
-        ):
-    
-    df = b.load(INDEX_DY2)
-
-    match = df.index.date == dn.date()
-    
-    return df.loc[match, idx]
-
-def get_infos(dn):
-    
-    res = sel_indexes(dn)
-    
-    out = []
-    for c in res.columns:
-        
-        item = round(res[c].item(), 2)
-        name = c.title()
-        out.append(f'{name} = {item}')
-    
-    return '\n'.join(out)
 
 
 def plot_epbs_occurrences_roti(
@@ -67,19 +43,17 @@ def plot_epbs_occurrences_roti(
 
         line, = ax[0].plot(
             ds[col], 
-           # label = f'{col}°', 
             color = color[i], 
             **args
             )
         
         ax[0].axhline(
             the, 
-            color = line.get_color(),
-            label = f'Threshold = {the} TECU/min)'
+            color = line.get_color()
             )
         
         ax[1].plot(
-             pb.get_events_series(ds[col], factor), 
+             pb.events_by_longitude(ds[col], factor), 
              marker = 'o',
              markersize = 3,
              color = line.get_color(), 
@@ -93,15 +67,15 @@ def plot_epbs_occurrences_roti(
         ylabel = 'ROTI (TECU/min)'
         )
     
-    # ax[1].legend(
-    #     ncol = 5, 
-    #     title = title,
-    #     bbox_to_anchor = (.5, 2.6), 
-    #     loc = "upper center", 
-    #     columnspacing = 0.6
-    #     )
+    ax[1].legend(
+        ncol = 5, 
+        title = title,
+        bbox_to_anchor = (.5, 2.6), 
+        loc = "upper center", 
+        columnspacing = 0.6
+        )
     
-    ax[0].legend(loc = 'upper right')
+    # ax[0].legend(loc = 'upper right')
    
     ax[1].set(
         ylabel = 'EPBs occurrence', 
@@ -113,12 +87,12 @@ def plot_epbs_occurrences_roti(
      
     b.format_time_axes(ax[1])
     
-    # ax[0].text(
-    #     0.78, 
-    #     0.53, 
-    #     get_infos(dn), 
-    #     transform = ax[0].transAxes
-    #     )
+    ax[0].text(
+        0.78, 
+        0.53, 
+        b.get_infos(dn), 
+        transform = ax[0].transAxes
+        )
     
     
     for limit in [0, 1]:
@@ -133,14 +107,13 @@ def plot_epbs_occurrences_roti(
 
 def single_plot(
         dn, 
-        cols = [8, 7, 6, 5, 4], 
+        cols = [8, 7, 6, 5], 
         hours = 11, 
         factor = 8
         ):
         
-    infile = pb.epb_path(dn.year, 'longs')
-    
-     
+    infile = 'database/epbs/longs2/2013.txt'
+
     ds = b.sel_times(
             b.load(infile),
             dn, 
@@ -156,11 +129,11 @@ def single_plot(
     plt.show()
     return fig
 
-# dn = dt.datetime(2019, 1, 11, 20)
+# dn = dt.datetime(2013, 6, 1, 20)
 
 # fig = single_plot(
 #         dn, 
 #         hours = 11,
-#         factor = 4
+#         factor = 5
 #         )
 
