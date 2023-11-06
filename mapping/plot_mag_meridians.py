@@ -74,12 +74,12 @@ def plot_mag_meridians(
     gg.map_features(ax, grid = False)
 
     lat = gg.limits(
-        min = -20, 
+        min = -30, 
         max = 20, 
         stp = 10
         )
     lon = gg.limits(
-        min = -60, 
+        min = -70, 
         max = -20, 
         stp = 10
         )    
@@ -96,7 +96,7 @@ def plot_mag_meridians(
     
    
     ax.legend(
-        # bbox_to_anchor = (.5, 1.15),
+        bbox_to_anchor = (.5, 1.2),
         ncol = 1, 
         loc = "upper right"
         )

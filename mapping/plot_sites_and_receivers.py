@@ -21,9 +21,9 @@ def plot_sites(ax):
              'car', 'for', 'str']
     
     sites = ['saa', 'car'] 
-    names = ['Digisonde',  'Imager']  
+    names = ['Digisonde (São Luis)',  'Imager (Cariri)']  
     
-    markers = ['o', 's']
+    markers = ['*', 's']
     colors = ['g', 'b']
     for i, site in enumerate(sites):
     
@@ -53,7 +53,8 @@ def get_equator_distance(lon, lat, year):
 def plot_receivers_coords(
         ax, 
         year, 
-        distance = None
+        distance = None, 
+        text = True
         ):
     
     
@@ -80,13 +81,13 @@ def plot_receivers_coords(
                 lat, 
                 **args,
                 )
-            
-            ax.text(
-                lon - 1.5, lat - 1, 
-                name.upper(), 
-                transform = ax.transData,
-                fontsize = 15
-                )
+            if text:
+                ax.text(
+                    lon - 1.5, lat - 1, 
+                    name.upper(), 
+                    transform = ax.transData,
+                    fontsize = 15
+                    )
             
             out.append(name)
         
@@ -103,9 +104,9 @@ def plot_receivers_coords(
     plot_sites(ax)
     
     ax.legend(
-        bbox_to_anchor = (.45, 1.11),
-        ncol = 3, 
-        loc = 'upper center'
+        bbox_to_anchor = (1.85, 0.5),
+        ncol = 1, 
+        loc = 'right'
         )
     
     return out
