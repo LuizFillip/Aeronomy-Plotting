@@ -85,17 +85,21 @@ def plot_ionogram(ax2, fname, col):
 def plot_roti(ax1, dn, times):
     
     delta = dt.timedelta(minutes = 10)
+    
+   
                 
     plot_roti_curves(ax1, dn)
     
     b.format_time_axes(ax1)
     
+    
+    
     for i, n in enumerate(times):
         
-        ax1.text(
-            n, 4, i + 1, 
-            transform = ax1.transData
-            )
+        # ax1.text(
+        #     n, 4, i + 1, 
+        #     transform = ax1.transData
+        #     )
         
         ax1.axvspan(
             n, n + delta,
@@ -106,7 +110,7 @@ def plot_roti(ax1, dn, times):
         )
     
     ax1.text(
-        0.02, 0.85, '(c)', 
+        0.02, 0.85, '(b)', 
         transform = ax1.transAxes
         )
     
@@ -114,17 +118,17 @@ def plot_multi_instrumentation(dn, fn_skys):
 
     fig = plt.figure(
         dpi = 400,
-        figsize = (10, 10),
+        figsize = (12, 8),
         layout = "constrained"
         )
     
     PATH_IMAG = f'imager/img/{im.folder_from_dn(dn)}/'
     PATH_IONO = f'digisonde/data/ionogram/{folder_date(dn)}S/'
 
-    gs2 = GridSpec(3, len(fn_skys))
+    gs2 = GridSpec(2, len(fn_skys))
     
     gs2.update(
-        hspace = 0.2,  
+        hspace = 0,  
         wspace = 0
         )
     
@@ -141,17 +145,18 @@ def plot_multi_instrumentation(dn, fn_skys):
         
         plot_imager(ax1, imag, col)
         
-        fn_iono = ev.get_closest_iono(fn_sky, PATH_IONO)
+
+        # fn_iono = ev.get_closest_iono(fn_sky, PATH_IONO)
         
-        iono = os.path.join(
-            PATH_IONO,
-            fn_iono
-            )
+        # iono = os.path.join(
+        #     PATH_IONO,
+        #     fn_iono
+        #     )
         
-        ax2 = plt.subplot(gs2[1, col])
+        # ax2 = plt.subplot(gs2[1, col])
         
-        out.append(plot_ionogram(ax2, iono, col))
-           
+        # out.append(plot_ionogram(ax2, iono, col))
+        out.append( im.fn2datetime(fn_sky))
     
     ax3 = plt.subplot(gs2[-1, :])
     
@@ -170,8 +175,16 @@ fn_skys = [
     'O6_CA_20130611_014955.png'
     ]
 
+dn = dt.datetime(2013, 1, 14, 20)
+
+fn_skys = [
+    'O6_CA_20130114_224619.png', 
+    'O6_CA_20130114_231829.png',
+    'O6_CA_20130114_234329.png', 
+    'O6_CA_20130115_020958.png']
+
 fig = plot_multi_instrumentation(dn, fn_skys)
 
-fig.savefig(b.LATEX('non_EPB_occurrence'), dpi = 400)
-
+# fig.savefig(b.LATEX('non_EPB_occurrence'), dpi = 400)
+# 
 
