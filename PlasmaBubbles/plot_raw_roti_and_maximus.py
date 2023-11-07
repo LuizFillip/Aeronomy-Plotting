@@ -54,6 +54,9 @@ def plot_roti_curves(ax, dn):
     
     times = pb.time_range(ds)
     
+    ax.axhline(0.25, color = 'red', lw = 2, 
+                label = '0.25 TECU/min')
+    
     df1 = pb.time_dataset(
         ds, 
         'max', 
@@ -67,7 +70,7 @@ def plot_roti_curves(ax, dn):
             linestyle = 'none',
             label = 'Maximum value')
     
-    ax.set(yticks = list(range(0, 6)), 
+    ax.set(yticks = list(range(0, 4)), 
            ylabel = 'ROTI (TECU/min)')
     ax.legend(loc = 'upper right')
     

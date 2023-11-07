@@ -5,15 +5,7 @@ import digisonde as dg
 
 PATH_IONOGRAM = 'database/iono/20170329/'
 
-def crop_image(
-        img, 
-        y = 50, 
-        x = 130, 
-        h = 900, 
-        w = 750
-        ):
-    
-    return img[y: y + h, x: x + w]
+
 
 def plot_ionogram(
         ax, 
@@ -25,7 +17,7 @@ def plot_ionogram(
     img = cv2.imread(infile)
 
     if crop:
-        img = crop_image(img) 
+        img = dg.crop_image(img) 
 
     ax.imshow(img)
     

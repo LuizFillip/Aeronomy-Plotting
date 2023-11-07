@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import base as b
 from FluxTube import Apex
 import numpy as np
-from plotting import (
-    plot_receivers_coords
-    )
+# from plotting import (
+#     plot_receivers_coords
+#     )
 b.config_labels()
 
 def plot_meridian(
@@ -49,8 +49,11 @@ def plot_meridian(
             x1, y1, 
             linestyle = '--', 
             lw = 3, 
-            color = line.get_color()
+            color = line.get_color(), 
+            label = 'Magnetic meridian'
             )
+        
+    ax.legend()
         
 
 

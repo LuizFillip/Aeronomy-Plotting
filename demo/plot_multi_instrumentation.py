@@ -96,10 +96,10 @@ def plot_roti(ax1, dn, times):
     
     for i, n in enumerate(times):
         
-        # ax1.text(
-        #     n, 4, i + 1, 
-        #     transform = ax1.transData
-        #     )
+        ax1.text(
+            n, 3.5, i + 1, 
+            transform = ax1.transData
+            )
         
         ax1.axvspan(
             n, n + delta,
