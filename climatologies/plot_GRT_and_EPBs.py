@@ -40,8 +40,8 @@ lbs = b.Labels().infos
 fig, ax = plt.subplots(
     sharex = True,
     dpi = 400, 
-    nrows = 2, 
-    figsize = (24, 8), 
+    nrows = 3, 
+    figsize = (14, 8), 
     )
 
 plt.subplots_adjust(hspace = 0.1)
@@ -49,34 +49,30 @@ plt.subplots_adjust(hspace = 0.1)
 df = ev.concat_results('saa', class_epb = 'sunset')
 
 
-plot_gamma(ax[0], df['gamma'])
+plot_gamma(ax[1], df['gamma'])
 
 df = ev.epbs(geo = True)
-
-# df = df.loc[df['kp'] > 3]
-
+ax[0].plot(df['f107'])
+ax[0].plot(df['f107a'], lw = 2)
+ax[0].set(ylabel = 'F10.7 (sfu)')
+ax[0].axhline(86, lw = 2, color = 'r')
 ds = ev.month_to_month_occurrence(
         df, 
         col = 'epb'
         )
 
-
-
-# ds = ev.yearly_occurrences(df)
-
-
 args = dict(
     facecolor = 'lightgrey', 
     edgecolor = 'black', 
     # width = 0.5,
-    width = 15,
+    width = 20,
     color = 'gray', 
     linewidth = 1
     )
 
 
-ax[1].bar(ds.index, ds['epb'].ravel(), **args)
-ax[1].set(ylabel = 'Nights with EPBs',
+ax[2].bar(ds.index, ds['epb'].ravel(), **args)
+ax[2].set(ylabel = 'Nights with EPBs',
            ylim = [0, 40],
            xlabel = 'Years'
           )
