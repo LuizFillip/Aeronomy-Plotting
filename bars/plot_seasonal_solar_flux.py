@@ -63,7 +63,8 @@ def plot_count_epbs_occurrences(df, parts = 2):
         info = f'({l}) {n} ({epb_count} EPBs events)'
         
         ax[i].text(
-            0.02, 0.85, info, 
+            0.02, 0.85, 
+            info, 
             transform = ax[i].transAxes
             )
         

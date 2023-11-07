@@ -74,4 +74,4 @@ def plot_annualy_kp_level(
 df = ev.concat_results('saa')
 fig = plot_annualy_kp_level(df)
 
-fig.savefig(b.LATEX('kp_annual_variation'))
+# fig.savefig(b.LATEX('kp_annual_variation'))

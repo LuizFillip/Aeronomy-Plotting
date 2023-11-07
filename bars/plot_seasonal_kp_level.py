@@ -4,7 +4,7 @@ import events as ev
 
 b.config_labels()
 
-def plot_epbs_with_indices(
+def plot_seasonal_kp_level(
         df,
         solar_level = 86,
         kp_level = 3
@@ -73,6 +73,6 @@ def plot_epbs_with_indices(
     return fig
 
 df = ev.concat_results('saa')
-fig = plot_epbs_with_indices(df)
+fig = plot_seasonal_kp_level(df)
 
 # fig.savefig(b.LATEX('Kp_seasonal_variation'))

@@ -68,15 +68,5 @@ path = 'database/epbs/events_types.txt'
  
 
 
-# 
 
-
-# ds = pd.concat(
-#     [b.load(path), 
-#      b.load(INDEX_PATH)], 
-#     axis = 1).dropna().iloc[:, :5]
-
-
-# # ds = df.loc[df['kp'] > 3].iloc[:, :5]
-
-plot_annually_events_count(ds)
+# plot_annually_events_count(ds)
