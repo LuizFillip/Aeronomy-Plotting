@@ -12,18 +12,11 @@ b.config_labels()
 
 def plot_distributions_solar_flux(
         df, 
+        ax,
         col = 'gamma',
         level = 100
         ):
     
-    
-    fig, ax = plt.subplots(
-        dpi = 300, 
-        sharex = True,
-        sharey = True,
-        figsize = (12, 6)
-        )
-        
     labels = [
         '$F_{10.7} < $' + f' {level}',
         '$F_{10.7} > $' + f' {level}'
@@ -66,42 +59,70 @@ def plot_distributions_solar_flux(
         
     ax.set(
         xlim = [vmin, vmax],
-        xticks = np.arange(vmin, vmax + step, step * 2),
-        ylim = [-0.2, 1.3],
+        xticks = np.arange(
+            vmin, vmax + step, step * 2
+            ),
+        ylim = [-0.2, 1.2],
         yticks = np.arange(0, 1.25, 0.25),
         )
         
-    ax.legend(ncol = 2, loc = 'upper center')
-    
-    info = f' ({sum(total)} EPBs events)'
-    
+    ax.legend( loc = 'lower right')
+        
     ax.set(
-        title = df.columns.name + info,
         xlabel = xlabel, 
-        ylabel = 'EPB occurrence probability'
+        )
+    return ax
+ 
+
+
+
+def plot_double_distributions(df):
+
+    fig, ax = plt.subplots(
+         dpi = 300, 
+         ncols = 2,
+         sharey = True,
+         figsize = (14, 6)
+         )
+    
+    plt.subplots_adjust(wspace = 0.05)
+    
+    plot_distributions_solar_flux(
+        df, 
+        ax[0],
+        col = 'vp', 
+        level = 86
         )
     
+    plot_distributions_solar_flux(
+        df, 
+        ax[1],
+        col = 'gravity', 
+        level = 86
+        )
+    
+    ax[0].set(ylabel = 'EPB occurrence probability')
+    names = ['Only $V_p$ effects', 
+             '$\gamma_{RT}$ with $V_P = 0$']
+    
+    for i, ax in enumerate(ax.flat):
+        
+      l = b.chars()[i]
+      n = names[i]
+      info = f'({l}) {n}'
+      
+      ax.text(
+          0.02, 0.9, info, 
+          transform = ax.transAxes
+          )
+      
     return fig
- 
 
 df = ev.concat_results('saa')
 
-col = 'vp'
 
+fig = plot_double_distributions(df)
 
-fig = plot_distributions_solar_flux(
-    df, 
-    col, 
-    level = 86
-    )
-
-FigureName = f'PD_{col}_effects'
+FigureName = 'PD_double_effects'
 
 # fig.savefig(b.LATEX(FigureName), dpi = 400)
-
-# dfs =  ev.solar_levels(
-#     df, 
-#     level =  86,
-#     flux_col = 'f107a'
-#     )
-

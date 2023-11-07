@@ -17,7 +17,8 @@ def plot_single_season(
         solar_dfs,
         month,
         limits,
-        name
+        name,
+        col
         
         ):
     
@@ -59,7 +60,9 @@ def plot_single_season(
     ax.set(
         xlim = [limits[0], limits[1]],
         ylim = [-0.2, 1.4], 
-        yticks = np.arange(0, 1.2, 0.25)
+        yticks = np.arange(0, 1.2, 0.25),
+        xticks = np.arange(
+            limits[0], limits[1] + 0.5, 0.5)
         )
  
     return ax, total
@@ -82,7 +85,7 @@ def plot_distributions_seasons(
     
     plt.subplots_adjust(
         hspace = 0.05, 
-        wspace = 0.05
+        wspace = 0.1
         )
     
     
@@ -121,7 +124,8 @@ def plot_distributions_seasons(
                 solar_dfs,
                 month,
                 limits,
-                name
+                name,
+                col = col
                 )
         
         l = b.chars()[j]
@@ -154,40 +158,45 @@ def plot_distributions_seasons(
         fontsize = fontsize
         )
     
-    
-    # fig.suptitle(
-    #     df.columns.name +
-    #     f' ({sum(all_events)} EPBs events)',
-    #     y = 1.
-    #     )
-    
     return fig
     
     
 
 
     
-df = ev.concat_results('saa')
-
-df['doy'] = df.index.day_of_year.copy()
-
-col = 'gamma'
-fig = plot_distributions_seasons(df, col)
+# df = ev.concat_results('saa')
 
 
-# def save_figs():
+# col = 'gamma'
+# fig = plot_distributions_seasons(df, col)
+# FigureName = 'seasonal_all_periods'
+
+# fig.savefig(
+#     b.LATEX(FigureName),
+#     dpi = 400
+#     )
+
+def save_figs(df, col = 'gamma'):
     
-#     for FigureName in ['seasonal_quiet', 
-#                         'seasonal_disturbed']:
+    names = ['seasonal_quiet', 
+             'seasonal_disturbed']
     
-#         if 'quiet' in FigureName:
-#             df1 = df.loc[df['kp'] <= 3]
-#         else:
-#             df1 = df.loc[df['kp'] > 3]
+    title = ['$Kp \\leq 3$',  '$Kp > 3$']
+
+    for i, FigureName in enumerate(names):
+    
+        if 'quiet' in FigureName:
+            df1 = df.loc[df['kp'] <= 3]
+        else:
+            df1 = df.loc[df['kp'] > 3]
         
-#         fig = plot_distributions_seasons(df1, col)
+        fig = plot_distributions_seasons(df1, col)
+        fig.suptitle(title[i], y  = 1.)
         
-#         fig.savefig(
-#         b.LATEX(FigureName),
-#         dpi = 400
-#         )
+        fig.savefig(
+            b.LATEX(FigureName),
+            dpi = 400
+            )
+        
+        
+# save_figs(df, col = 'gamma')
