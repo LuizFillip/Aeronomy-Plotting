@@ -8,6 +8,8 @@ import os
 import GEO as g
 import datetime as dt
 
+from matplotlib.colors import BoundaryNorm
+from matplotlib.ticker import MaxNLocator
 
 
 b.config_labels()
@@ -53,7 +55,7 @@ def plot_apex_vs_latitude(
     lim = 20
     ax.set(
         xlim = [-lim, lim],
-        ylim = [base, max_height],
+        ylim = [100, max_height],
         ylabel = "Apex height (km)", 
         xlabel = "Magnetic latitude (°)"
         )
@@ -70,63 +72,77 @@ def plot_apex_vs_latitude(
     
     x = -18
     fontsize = 35
-    ax.text(x, 100, 'E region',
-            transform = ax.transData, 
-            fontsize = fontsize,
-            color = 'w'
-            )
-    ax.text(x, 200, 'F region', 
-            transform = ax.transData, 
-            fontsize = fontsize,
-            color = 'k'
-            )
+    ax.text(
+        x, 100, 
+        'E region',
+        transform = ax.transData, 
+        fontsize = fontsize,
+        color = 'w'
+        )
+    ax.text(
+        x, 200, 'F region', 
+        transform = ax.transData, 
+        fontsize = fontsize,
+        color = 'w'
+        )
     
-    ax.axhline(300, color = "k", lw= 2,
-                linestyle = "--")
+    ax.axhline(
+        300, 
+        color = "k", 
+        lw= 2,
+        linestyle = "--"
+        )
     
-    ax.text(0.03, 0.91, '(b)', 
-            transform = ax.transAxes, 
-            fontsize = fontsize)
+    ax.text(
+        0.03, 0.91, '(b)', 
+        transform = ax.transAxes, 
+        fontsize = fontsize
+        )
         
     return ax
 
 
 
+def shade_interval(ax, dn):
+    delta = dt.timedelta(minutes = 10)
+    
+    n = pd.to_datetime(dn)
+    
+    ax.axvspan(
+        n, n + delta,
+        alpha = 0.7, 
+        color = 'gray',
+        edgecolor = 'k', 
+        lw = 2
+    )
+    
+    ax.text(
+        0.01, 0.9, '(a)', 
+        fontsize = 35,
+        transform = ax.transAxes
+        )
 
-def plot_contour(ax, dn, color, vmin, vmax):
-    ax = plot_apex_vs_latitude(
-        ax, color)
+def plot_contour(ax, ds1, vmin, vmax, color =  'k'):
+    ax = plot_apex_vs_latitude(ax, color)
     
+    levels = MaxNLocator(nbins = 100).tick_values(vmin, vmax)
+    cmap = plt.get_cmap('rainbow')
+    norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
     
-    ds1 = pd.pivot_table(
-        df.loc[df['dn'] == dn] , 
-        values = 'ne', 
-        columns = 'glat', 
-        index = 'alt_km'
-        ) 
-    
-    levels = np.linspace(vmin, round(vmax), 20)
-    img = ax.contourf(
+    img = ax.pcolormesh(
         ds1.columns,
         ds1.index, 
-        ds1.values, levels, 
-        cmap = 'rainbow'
+        ds1.values, 
+        norm  = norm,
+        cmap = cmap
         )
     
-    ticks = np.linspace(vmin, vmax, 5)
-    
-    b.colorbar_setting(
-            img, 
-            ax, 
-            ticks, label = '$N_0 ~(cm^{-3})$'
-            )
+    plt.colorbar(img)
     
     
-def plot_timeseries_GRT(ax):
+def plot_timeseries_GRT(ax, site = 'saa', year = 2013):
     PATH_FLUXTUBE = "FluxTube/data/reduced/"
     
-    year = 2013
-    site = 'saa'
     infile = os.path.join(
         PATH_FLUXTUBE, 
         site, 
@@ -136,7 +152,7 @@ def plot_timeseries_GRT(ax):
     
     dn = dt.datetime(2013, 1, 1, 20)
         
-    df = rt.gammas_integrated(b.sel_times(ds, dn))
+    df = rt.gammas_integrated(b.sel_times(ds, dn, hours = 11))
     
     df['gamma'] =  df['gamma'] * 1e3
     ax.plot(
@@ -152,23 +168,27 @@ def plot_timeseries_GRT(ax):
         )
     
     F = g.dusk_from_site(dn, site, twilight_angle=18)
-    
+    E = g.dusk_from_site(dn, site, twilight_angle=0)
     ax.axvline(F, lw = 2)
+    ax.axvline(E, lw = 2)
     
     ax.text(F, 3.1, 'Terminator in 300 km', 
             transform = ax.transData)
     
     b.format_time_axes(ax)
     
-
-
-def plot_iono(df, dn, color):
+def set_data(df, dn):
     
-    df['ne'] = df['ne'] *1e-6
-
+    return pd.pivot_table(
+        df.loc[df['dn'] == dn] , 
+        values = 'ne', 
+        columns = 'glat', 
+        index = 'alt_km'
+        ) 
     
-    vmax = df['ne'].max()
-    vmin = df['ne'].min()
+
+
+def plot_contour_field_lines(df, dn, color = 'k'):
 
     fig, ax = plt.subplots(
         figsize = (18, 6), 
@@ -177,38 +197,30 @@ def plot_iono(df, dn, color):
         )   
         
     plot_timeseries_GRT(ax[0])
-    delta = dt.timedelta(minutes = 10)
-    
+
+    shade_interval(ax[0], dn)
+
+    plot_contour(
+        ax[1], set_data(df, dn),
+        vmin, vmax, color = color)
+
     n = pd.to_datetime(dn)
-    ax[0].axvspan(
-        n, n + delta,
-        alpha = 0.7, 
-        color = 'gray',
-        edgecolor = 'k', 
-        lw = 2
-    )
-    
-    ax[0].text(0.01, 0.9, '(a)', fontsize = 35,
-               transform = ax[0].transAxes)
-    
-    
-    plot_contour(ax[1], dn, color, vmin, vmax)
-    
-    
     fig.suptitle(n.strftime('%H:%M (UT)'))
-    
-   
-    
-    return fig
+        
+    return fig, n.strftime('%Y%m%d%H%M')
 
-
-def run_save(df):
+def run():  
+    df = pd.read_csv('models/temp/iri.txt')
     
-    times = df['dn'].unique()
+    df = df.replace(-1, np.nan)
     
-    plt.ioff()
+    df['ne'] = df['ne'] *1e-6
     
-    for i, dn in enumerate(times):
+    vmin = df['ne'].min()
+    vmax = df['ne'].max()
+    
+    
+    for i, dn in enumerate(df['dn'].unique()):
         
         print(dn)
         
@@ -217,25 +229,6 @@ def run_save(df):
         else:
             color = 'k'
             
-        fig = plot_iono(df, dn, color)
+        fig, name = plot_contour_field_lines(df, dn, color)
         
-        dn = pd.to_datetime(dn)
-        Figurename  = dn.strftime('%Y%m%d%H%M')
-        fig.savefig(f'models/temp/img/{Figurename}')
-    
-    plt.clf()   
-    plt.close()
-    
-    
-p = 'models/temp/iri.txt'
-
-df = pd.read_csv(p)
-
-# dn = df['dn'].unique()[12]
-
-
-
-# fig = plot_iono(df, dn, color = 'k')
-
-run_save(df)
-
+        fig.savefig(f'models/temp/img/{name}')
