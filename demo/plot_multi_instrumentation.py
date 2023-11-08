@@ -85,14 +85,10 @@ def plot_ionogram(ax2, fname, col):
 def plot_roti(ax1, dn, times):
     
     delta = dt.timedelta(minutes = 10)
-    
-   
                 
     plot_roti_curves(ax1, dn)
     
     b.format_time_axes(ax1)
-    
-    
     
     for i, n in enumerate(times):
         
