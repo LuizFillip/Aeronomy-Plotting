@@ -5,7 +5,6 @@ import digisonde as dg
 import events as ev 
 import os 
 import imager as im
-import base as b 
 import datetime as dt 
 from plotting import plot_roti_curves
 
@@ -59,8 +58,8 @@ def plot_ionogram(ax2, fname):
     ax2.set(title = title)
      
     ax2.set(
-        ylabel = 'Virtual Height (km)'
-        )
+        ylabel = 'Virtual Height (km)',
+        xlabel = 'Frequency (MHz)')
 
     return dn
 
@@ -78,16 +77,12 @@ def shade(ax1, n):
     )
 
 
-dn = dt.datetime(2013, 1, 14, 20)
 
 
 
-PATH_IMAG = f'imager/img/{im.folder_from_dn(dn)}/'
-PATH_IONO = f'digisonde/data/ionogram/{folder_date(dn)}/'
-
-
-def plot_multianim(fname):
-
+def plot_multianim(fname, PATH_IMAG, PATH_IONO):
+    
+    plt.ioff()
     fig = plt.figure(
         dpi = 400,
         figsize = (12, 8),
@@ -130,11 +125,25 @@ def plot_multianim(fname):
     
     return fig
 
+dn = dt.datetime(2013, 6, 10, 20)
 
-files  = os.listdir(PATH_IMAG)
+from tqdm import tqdm 
 
-for fname in files:
+PATH_IMAG = f'imager/img/{im.folder_from_dn(dn)}/'
+PATH_IONO = f'digisonde/data/ionogram/{folder_date(dn)}/'
 
-    fig = plot_multianim(fname)
+def run_process():
     
-    fig.savefig(f'database/temp/{fname}')
+    files  = os.listdir(PATH_IMAG)
+    
+    for fname in tqdm(files):
+        
+        try:
+            fig = plot_multianim(fname, PATH_IMAG, PATH_IONO)
+            
+            fig.savefig(f'database/temp2/{fname}')
+        except:
+            continue
+        
+    plt.clf()   
+    plt.close()
