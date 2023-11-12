@@ -11,6 +11,7 @@ ks = {
       12: 'December solstice'
       }
 
+b.config_labels(fontsize = 25)
 
 def plot_single_season(
         ax, 
@@ -19,7 +20,6 @@ def plot_single_season(
         limits,
         name,
         col
-        
         ):
     
     c_event = []
@@ -51,7 +51,7 @@ def plot_single_season(
               '\n'.join(c_event))
         
     ax.text(
-            0.65, 0.15, 
+            0.6, 0.15, 
             infos, 
             transform = ax.transAxes
             )
@@ -62,7 +62,7 @@ def plot_single_season(
         ylim = [-0.2, 1.4], 
         yticks = np.arange(0, 1.2, 0.25),
         xticks = np.arange(
-            limits[0], limits[1] + 0.5, 0.5)
+            limits[0], limits[1] + limits[-1], 0.5)
         )
  
     return ax, total
@@ -71,13 +71,13 @@ def plot_distributions_seasons(
         df, 
         col = 'gamma',
         level = 86, 
-        fontsize = 25
+        fontsize = 38
         ):
     
     fig, ax = plt.subplots(
         ncols = 2,
         nrows = 2, 
-        figsize = (15, 8), 
+        figsize = (16, 10), 
         sharex = True, 
         sharey = True, 
         dpi = 300
@@ -90,7 +90,7 @@ def plot_distributions_seasons(
     
     
     if col == 'gamma':
-        vmin, vmax, step = 0, 4, 0.2
+        vmin, vmax, step = 0, 3.5, 0.2
         
     elif col == 'vp':
         vmin, vmax, step = 0, 85, 5
@@ -133,7 +133,7 @@ def plot_distributions_seasons(
         all_events.extend(total)
         
         ax.text(
-            0.03, 0.85,
+            0.02, 0.85,
             f'({l}) {season_name} ({sum(total)} events)',
             transform = ax.transAxes
             )
@@ -146,14 +146,14 @@ def plot_distributions_seasons(
     
     
     fig.text(
-        0.05, 0.3, 
+        0.05, 0.21, 
         "EPB occurrence probability", 
         fontsize = fontsize, 
         rotation = 'vertical'
         )
     
     fig.text(
-        0.45, 0.05, 
+        0.42, 0.04, 
         b.y_label('gamma'), 
         fontsize = fontsize
         )
