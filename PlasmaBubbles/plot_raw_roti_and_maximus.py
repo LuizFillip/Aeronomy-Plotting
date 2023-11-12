@@ -5,7 +5,6 @@ import os
 import PlasmaBubbles as pb 
 
 
-dn = dt.datetime(2013, 1, 14, 20)
 
 def load_receivers(dn):
     
@@ -45,9 +44,9 @@ args = dict(
     
 
 
-def plot_roti_curves(ax, dn):
+def plot_roti_curves(ax):
     
-    ds = load_receivers(dn)
+    ds = b.load('roti2.txt')
     
     ax.plot(ds['roti'], **args, 
             label = 'ROTI points')
@@ -86,12 +85,18 @@ def plot_roti_curves(ax, dn):
 # avg * 1.4 + std * 4
 
 
-def plot_raw_roti_and_maximus():
+# def plot_raw_roti_and_maximus():
     
-    fig, ax = plt.subplots(
-        dpi = 300, 
-        figsize = (10, 4)
-        )
+# fig, ax = plt.subplots(
+#     dpi = 300, 
+#     figsize = (10, 4)
+#     )
 
-    
-    plot_roti_curves(ax, dn)
+dn = dt.datetime(2013, 6, 10, 20)
+
+
+
+# plot_raw_roti_and_maximus()
+# ds = load_receivers(dn)
+
+# ds.to_csv('roti2.txt')

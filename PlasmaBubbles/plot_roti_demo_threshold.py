@@ -9,6 +9,15 @@ import numpy as np
 PATH_LIMIT = 'database/epbs/night_day.txt'
 
 b.config_labels()
+
+args = dict(
+     marker = 'o', 
+     markersize = 3,
+     linestyle = 'none', 
+     color = 'gray', 
+     alpha = 0.3, 
+     )
+    
      
 def plot_weibull(ax, day):
     
@@ -16,9 +25,10 @@ def plot_weibull(ax, day):
     
     std = data.std()
     avg = data.mean()
+    threshold = avg + 4 * std
     
     ax.axvline(
-        avg + 4 * std, lw = 2,
+        threshold, lw = 2,
         color = 'r', 
         label = '$\mu + 4 \sigma$')
     ax.axvline(
@@ -36,8 +46,10 @@ def plot_weibull(ax, day):
     
     fitted_pdf = weibull_dist.pdf(x) 
     
-    ax.hist(data, bins = x, 
-            density = True, 
+    ax.hist(
+        data, 
+        bins = x, 
+            density = False, 
             color = 'gray', 
             alpha = 0.3,
             edgecolor = 'black'
@@ -45,7 +57,7 @@ def plot_weibull(ax, day):
     
     ax.plot(
         x, 
-        fitted_pdf, 
+        55 * fitted_pdf, 
         label = 'Weibull Fit', 
         lw = 3
         )
@@ -54,9 +66,9 @@ def plot_weibull(ax, day):
 
     
     ax.set(
-        ylabel = 'Probability density', 
+        ylabel = 'Frequency of occurrence', 
         xlabel = 'ROTI (TECU/min)',
-        ylim = [0, 22],
+        # ylim = [0, 22],
         xlim = [-0.05, 0.3],
         xticks = np.arange(vmin, vmax, 0.1)
         )
@@ -67,15 +79,10 @@ def plot_weibull(ax, day):
         bbox_to_anchor = (-.1, 1.15)
         )
     
+    return ax
     
-args = dict(
-     marker = 'o', 
-     markersize = 3,
-     linestyle = 'none', 
-     color = 'gray', 
-     alpha = 0.3, 
-     )
     
+
 
 def plot_data_roti(ax, df):
     
@@ -86,8 +93,10 @@ def plot_data_roti(ax, df):
     std = df.std()
     avg = df.mean()
     
+    threshold = avg + 4 * std
+    # print(threshold)
     ax.axhline(
-        avg + 4 * std, 
+        threshold, 
         color = 'r', 
         lw = 2, 
         label = '$\mu + 4 \sigma$'
@@ -108,7 +117,7 @@ def plot_data_roti(ax, df):
     
     b.format_time_axes(ax)
     
-    # ax.legend()
+    return ax
     
 
 
@@ -139,30 +148,30 @@ def plot_roti_demo_threshold(ds):
     
     return fig
 
-path = gs.paths(2013, 76, root = os.getcwd())
+path = gs.paths(2013, 14, root = os.getcwd())
 
 df = pb.load_filter(path.fn_roti)
 
 receivers = [
     'pepe',
-     'mabb',
-     'mabs',
-     'crat',
-     'topl',
-     'maba',
-     'pitn',
-     'picr',
-     'brft',
-     'ceft',
-     'ceeu',
-     'salu',
-     'impz'
-     ]
+      'mabb',
+      'mabs',
+      'crat',
+      'topl',
+      'maba',
+      'pitn',
+      'picr',
+      'brft',
+      'ceft',
+      'ceeu',
+      'salu',
+      'impz'
+      ]
     
 
-ds = df.loc[df['sts'].isin(receivers)]
+df = df.loc[df['sts'].isin(receivers)]
 
-day = ds.between_time(
+day = df.between_time(
     '12:00', '20:00'
     )
 

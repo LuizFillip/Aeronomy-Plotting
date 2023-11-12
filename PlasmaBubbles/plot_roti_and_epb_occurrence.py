@@ -2,6 +2,8 @@ import datetime as dt
 import base as b 
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
+import GEO as gg 
+
 
 args = dict(
     marker = 'o', 
@@ -35,7 +37,7 @@ def plot_epbs_occurrences_roti(
              'magenta']
     
     dn = ds.index[0]
-    the = pb.threshold(dn, factor)
+    the = 0.25 #pb.threshold(dn, factor)
     
     title = f'Longitudinal zones (threshold = {the} TECU/min)'
     
@@ -49,7 +51,7 @@ def plot_epbs_occurrences_roti(
         
         ax[0].axhline(
             the, 
-            color = line.get_color()
+            color = 'k', lw = 3, linestyle = '--'
             )
         
         ax[1].plot(
@@ -59,12 +61,30 @@ def plot_epbs_occurrences_roti(
              color = line.get_color(), 
              label = f'{col}°'
             )
+        
+        dusk = gg.dusk_time(
+                dn,  
+                lat = 2, 
+                lon = int(col), 
+                twilight = 12
+                )
+        
+        ax[1].axvline(
+            dusk, 
+            color = line.get_color(), 
+            )
     
 
     ax[0].set(
-        ylim = [0, 5], 
-        yticks = list(range(6)),
+        yticks = list(range(4)),
         ylabel = 'ROTI (TECU/min)'
+        )
+    delta = dt.timedelta(hours = 2.1)
+    ax[1].text(
+        dusk + delta, 
+        1.15,
+        'Terminators',
+        transform = ax[1].transData
         )
     
     ax[1].legend(
@@ -74,15 +94,13 @@ def plot_epbs_occurrences_roti(
         loc = "upper center", 
         columnspacing = 0.6
         )
-    
-    # ax[0].legend(loc = 'upper right')
-   
+       
     ax[1].set(
         ylabel = 'EPBs occurrence', 
         yticks = [0, 1], 
         xlim = [ds.index[0], 
                 ds.index[-1]],
-        ylim = [-0.2, 1.2]
+        ylim = [-0.2, 1.4]
         )
      
     b.format_time_axes(ax[1])
@@ -112,7 +130,7 @@ def single_plot(
         factor = 8
         ):
         
-    infile = 'database/epbs/longs2/2013.txt'
+    infile = f'database/epbs/longs/{dn.year}.txt'
 
     ds = b.sel_times(
             b.load(infile),
@@ -129,11 +147,11 @@ def single_plot(
     plt.show()
     return fig
 
-# dn = dt.datetime(2013, 6, 1, 20)
+dn = dt.datetime(2013, 1, 17, 20)
 
-# fig = single_plot(
-#         dn, 
-#         hours = 11,
-#         factor = 5
-#         )
+fig = single_plot(
+        dn, 
+        hours = 13,
+        factor = 5
+        )
 
