@@ -21,7 +21,7 @@ def plot_distributions_solar_flux(
         dpi = 300, 
         sharex = True,
         sharey = True,
-        figsize = (12, 6)
+        figsize = (13, 6)
         )
         
     labels = [
@@ -68,13 +68,16 @@ def plot_distributions_solar_flux(
         xlim = [vmin, vmax],
         xticks = np.arange(
             vmin, vmax + step, step * 2),
-        ylim = [-0.2, 1.3],
+        ylim = [-0.1, 1.1],
         yticks = np.arange(0, 1.25, 0.25),
         )
         
     ax.legend(
         bbox_to_anchor = (0.5, 1.2),
-        ncol = 2, loc = 'upper center')
+        ncol = 2, 
+        loc = 'upper center',
+        columnspacing = 0.2
+        )
     
     info = f' ({sum(total)} EPBs events)'
     
@@ -100,7 +103,7 @@ fig = plot_distributions_solar_flux(
 
 FigureName = f'PD_{col}_effects'
 
-# fig.savefig(b.LATEX(FigureName), dpi = 400)
+fig.savefig(b.LATEX(FigureName), dpi = 400)
 
 # dfs =  ev.solar_levels(
 #     df, 

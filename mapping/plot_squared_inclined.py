@@ -56,3 +56,4 @@ def plot_corners(
 # ax.scatter(ds.lon, ds.lat, c = ds.roti, s = 3)
 
 
+# mapping(year = 2013)

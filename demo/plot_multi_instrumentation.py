@@ -119,7 +119,7 @@ def plot_multi_instrumentation(dn, fn_skys):
         )
     
     PATH_IMAG = f'imager/img/{im.folder_from_dn(dn)}/'
-    PATH_IONO = f'digisonde/data/ionogram/{folder_date(dn)}S/'
+    PATH_IONO = f'digisonde/data/ionogram/{folder_date(dn)}/'
 
     gs2 = GridSpec(2, len(fn_skys))
     
@@ -142,16 +142,17 @@ def plot_multi_instrumentation(dn, fn_skys):
         plot_imager(ax1, imag, col)
         
 
-        # fn_iono = ev.get_closest_iono(fn_sky, PATH_IONO)
+        fn_iono = ev.get_closest_iono(
+            fn_sky, PATH_IONO)
         
-        # iono = os.path.join(
-        #     PATH_IONO,
-        #     fn_iono
-        #     )
+        iono = os.path.join(
+            PATH_IONO,
+            fn_iono
+            )
         
-        # ax2 = plt.subplot(gs2[1, col])
+        ax2 = plt.subplot(gs2[1, col])
         
-        # out.append(plot_ionogram(ax2, iono, col))
+        out.append(plot_ionogram(ax2, iono, col))
         out.append( im.fn2datetime(fn_sky))
     
     ax3 = plt.subplot(gs2[-1, :])
