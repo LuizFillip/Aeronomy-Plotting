@@ -11,7 +11,7 @@ ks = {
       12: 'December solstice'
       }
 
-b.config_labels(fontsize = 25)
+b.config_labels(fontsize = 30)
 
 def plot_single_season(
         ax, 
@@ -51,7 +51,7 @@ def plot_single_season(
               '\n'.join(c_event))
         
     ax.text(
-            0.6, 0.15, 
+            0.58, 0.15, 
             infos, 
             transform = ax.transAxes
             )
@@ -77,7 +77,7 @@ def plot_distributions_seasons(
     fig, ax = plt.subplots(
         ncols = 2,
         nrows = 2, 
-        figsize = (16, 10), 
+        figsize = (18, 10), 
         sharex = True, 
         sharey = True, 
         dpi = 300
@@ -160,8 +160,6 @@ def plot_distributions_seasons(
     
     return fig
     
-    
-
 
     
 df = ev.concat_results('saa')
@@ -169,12 +167,13 @@ df = ev.concat_results('saa')
 
 col = 'gamma'
 fig = plot_distributions_seasons(df, col)
-# FigureName = 'seasonal_all_periods'
 
-# fig.savefig(
-#     b.LATEX(FigureName),
-#     dpi = 400
-#     )
+FigureName = 'seasonal_all_periods'
+
+fig.savefig(
+    b.LATEX(FigureName),
+    dpi = 400
+    )
 
 def save_figs(df, col = 'gamma'):
     
@@ -190,7 +189,8 @@ def save_figs(df, col = 'gamma'):
         else:
             df1 = df.loc[df['kp'] > 3]
         
-        fig = plot_distributions_seasons(df1, col)
+        fig = plot_distributions_seasons(
+            df1, col)
         fig.suptitle(title[i], y  = 1.)
         
         fig.savefig(
@@ -199,4 +199,4 @@ def save_figs(df, col = 'gamma'):
             )
         
         
-# save_figs(df, col = 'gamma')
+save_figs(df, col = 'gamma')

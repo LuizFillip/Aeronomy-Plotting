@@ -92,7 +92,7 @@ def plot_distributions_solar_flux(
 
 df = ev.concat_results('saa')
 
-col = 'gamma'
+col = 'vp'
 
 
 fig = plot_distributions_solar_flux(
@@ -103,7 +103,7 @@ fig = plot_distributions_solar_flux(
 
 FigureName = f'PD_{col}_effects'
 
-fig.savefig(b.LATEX(FigureName), dpi = 400)
+# fig.savefig(b.LATEX(FigureName), dpi = 400)
 
 # dfs =  ev.solar_levels(
 #     df, 
