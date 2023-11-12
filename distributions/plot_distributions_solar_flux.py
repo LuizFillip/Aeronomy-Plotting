@@ -6,14 +6,14 @@ from plotting import plot_distribution
 
 
 
-b.config_labels()
+b.config_labels(fontsize = 28)
 
 
 
 def plot_distributions_solar_flux(
         df, 
         col = 'gamma',
-        level = 100
+        level = 86
         ):
     
     
@@ -66,17 +66,20 @@ def plot_distributions_solar_flux(
         
     ax.set(
         xlim = [vmin, vmax],
-        xticks = np.arange(vmin, vmax + step, step * 2),
+        xticks = np.arange(
+            vmin, vmax + step, step * 2),
         ylim = [-0.2, 1.3],
         yticks = np.arange(0, 1.25, 0.25),
         )
         
-    ax.legend(ncol = 2, loc = 'upper center')
+    ax.legend(
+        bbox_to_anchor = (0.5, 1.2),
+        ncol = 2, loc = 'upper center')
     
     info = f' ({sum(total)} EPBs events)'
     
     ax.set(
-        title = df.columns.name + info,
+        # title = df.columns.name + info,
         xlabel = xlabel, 
         ylabel = 'EPB occurrence probability'
         )
@@ -86,7 +89,7 @@ def plot_distributions_solar_flux(
 
 df = ev.concat_results('saa')
 
-col = 'vp'
+col = 'gamma'
 
 
 fig = plot_distributions_solar_flux(

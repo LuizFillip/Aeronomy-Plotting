@@ -164,11 +164,11 @@ def plot_distributions_seasons(
 
 
     
-# df = ev.concat_results('saa')
+df = ev.concat_results('saa')
 
 
-# col = 'gamma'
-# fig = plot_distributions_seasons(df, col)
+col = 'gamma'
+fig = plot_distributions_seasons(df, col)
 # FigureName = 'seasonal_all_periods'
 
 # fig.savefig(
