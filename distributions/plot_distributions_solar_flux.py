@@ -92,7 +92,7 @@ def plot_distributions_solar_flux(
 
 df = ev.concat_results('saa')
 
-col = 'vp'
+col = 'gravity'
 
 
 fig = plot_distributions_solar_flux(

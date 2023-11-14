@@ -7,7 +7,7 @@ import numpy as np
 ks = {
       3:  'March equinox',
       6:  'June solstice',
-      9:  'Setember equinox',
+      9:  'September equinox',
       12: 'December solstice'
       }
 
@@ -170,10 +170,10 @@ fig = plot_distributions_seasons(df, col)
 
 FigureName = 'seasonal_all_periods'
 
-fig.savefig(
-    b.LATEX(FigureName),
-    dpi = 400
-    )
+# fig.savefig(
+#     b.LATEX(FigureName),
+#     dpi = 400
+#     )
 
 def save_figs(df, col = 'gamma'):
     
