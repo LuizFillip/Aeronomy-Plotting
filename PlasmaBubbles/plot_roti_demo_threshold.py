@@ -148,34 +148,36 @@ def plot_roti_demo_threshold(ds):
     
     return fig
 
-path = gs.paths(2013, 14, root = os.getcwd())
+def set_data():
 
-df = pb.load_filter(path.fn_roti)
-
-receivers = [
-    'pepe',
-      'mabb',
-      'mabs',
-      'crat',
-      'topl',
-      'maba',
-      'pitn',
-      'picr',
-      'brft',
-      'ceft',
-      'ceeu',
-      'salu',
-      'impz'
-      ]
+    path = gs.paths(2013, 14, root = os.getcwd())
     
+    df = pb.load_filter(path.fn_roti)
+    
+    receivers = [
+        'pepe',
+          'mabb',
+          'mabs',
+          'crat',
+          'topl',
+          'maba',
+          'pitn',
+          'picr',
+          'brft',
+          'ceft',
+          'ceeu',
+          'salu',
+          'impz'
+          ]
+        
+    
+    df = df.loc[df['sts'].isin(receivers)]
+    
+    return df.between_time(
+        '12:00', '20:00'
+        )
+ds = set_data()
+fig = plot_roti_demo_threshold(ds)
 
-df = df.loc[df['sts'].isin(receivers)]
 
-day = df.between_time(
-    '12:00', '20:00'
-    )
-
-fig = plot_roti_demo_threshold(day)
-
-
-# fig.savefig(b.LATEX('daytime_distribution'), dpi = 400)
+fig.savefig(b.LATEX('daytime_distribution'), dpi = 400)
