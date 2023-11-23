@@ -5,6 +5,10 @@ args = dict(
     marker = 's'
     )
  
+def plot_hist(ax):
+    
+    return ax
+    
 def plot_distribution(
         ax, 
         df, 
@@ -28,6 +32,15 @@ def plot_distribution(
         (ds['epbs'] == 1))
         ]
         
+    ax1 = ax.twinx()
+    
+    ds['mean'].plot(
+        kind = 'hist', 
+        bins = np.arange(0, 3.2, 0.2),
+        ax  = ax1, 
+        color = 'gray',
+        alpha = 0.3
+        )
     if drop is not None:
         ds.drop(
             ds.tail(drop).index, 
