@@ -139,13 +139,17 @@ def plot_hist_distr(ds):
     from mpl_toolkits.axes_grid1 import make_axes_locatable
 
     
-    fig, ax = plt.subplots(figsize=(10, 10))
+    fig, ax = plt.subplots(
+        dpi = 300, 
+        figsize=(10, 10))
     
     divider = make_axes_locatable(ax)
     
     xhax = divider.append_axes(
         "top", 
-        size=2, pad=0.1, sharex=ax)
+        size = 2, 
+        pad = 0.1, 
+        sharex=ax)
     
     yhax = divider.append_axes(
         "right", 
