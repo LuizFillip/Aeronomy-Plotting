@@ -1,8 +1,5 @@
 import matplotlib.pyplot as plt
-import PlasmaBubbles as pb 
-import datetime as dt
 import base as b 
-import GNSS as gs
 
 args = dict(
     marker = 'o', 
@@ -48,4 +45,6 @@ def plot_receivers_amount_vad(df, receivers):
         ax[i].legend(loc = 'upper right')
         ax[i].set(ylim = [0, 3])
     
-    b.format_time_axes(ax[num - 1], hour_locator = 3)
+    b.format_time_axes(
+        ax[num - 1], 
+        hour_locator = 3)

@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 
 def plot_count_epbs_occurrences(df, parts = 2):
     
-    limits = ev.limits_on_parts(df['f107a'], parts)
+    limits = ev.limits_on_parts(
+        df['f107a'], parts)
     
     solar_dfs =  ev.solar_levels(
         df, 

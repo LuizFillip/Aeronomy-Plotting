@@ -30,7 +30,7 @@ def plot_distributions_solar_flux(
         ]
     
     if col == 'gamma':
-        vmin, vmax, step = 0, 4, 0.2
+        vmin, vmax, step = 0, 3.2, 0.2
         
     elif col == 'vp':
         vmin, vmax, step = 0, 85, 5
@@ -92,16 +92,31 @@ def plot_distributions_solar_flux(
 
 df = ev.concat_results('saa')
 
-col = 'gravity'
+col = 'gamma'
 
 
-fig = plot_distributions_solar_flux(
-    df, 
-    col, 
-    level = 86
+# fig = plot_distributions_solar_flux(
+#     df, 
+#     col, 
+#     level = 86
+#     )
+
+# FigureName = f'PD_{col}_effects'
+vmin, vmax, step = 0, 3.2, 0.2
+limits = (vmin, vmax, step)
+ds = ev.probability_distribuition(
+    df,
+    limits,
+    col = col
     )
 
-FigureName = f'PD_{col}_effects'
+ds.set_index('start', inplace = True)
+
+# def plot_frequency(ax, ds):
+    
+    
+    
+    
 
 # fig.savefig(b.LATEX(FigureName), dpi = 400)
 
@@ -110,4 +125,56 @@ FigureName = f'PD_{col}_effects'
 #     level =  86,
 #     flux_col = 'f107a'
 #     )
+import pandas as pd
 
+
+
+# ax.set(xticks = ds.index[::2])
+
+ds.index = pd.to_numeric(ds.index)
+
+
+def plot_hist_distr(ds):
+    
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+    
+    fig, ax = plt.subplots(figsize=(10, 10))
+    
+    divider = make_axes_locatable(ax)
+    
+    xhax = divider.append_axes(
+        "top", 
+        size=2, pad=0.1, sharex=ax)
+    
+    yhax = divider.append_axes(
+        "right", 
+        size = 2, 
+        pad = 0.1, 
+        
+        sharey=ax)
+    
+    
+    args = dict(color = 'gray', 
+                edgecolor = 'k')
+    xhax.bar(
+           ds.index, 
+           ds['days'], 
+           width = 0.2,
+           **args)
+
+    yhax.barh(
+        ds.index, 
+        ds['epbs'], 
+        height = 0.2,
+        **args)
+    
+    ##turning off duplicate ticks:
+    plt.setp(xhax.get_xticklabels(), visible=False)
+    plt.setp(yhax.get_yticklabels(), visible=False)
+    
+    
+plt.show()
+
+
+plot_hist_distr(ds)

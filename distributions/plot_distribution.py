@@ -1,4 +1,6 @@
 import events as ev
+import numpy as np
+
 
 args = dict(
     capsize = 3,
@@ -35,12 +37,12 @@ def plot_distribution(
     ax1 = ax.twinx()
     
     ds['mean'].plot(
-        kind = 'hist', 
-        bins = np.arange(0, 3.2, 0.2),
+        kind = 'bar', 
         ax  = ax1, 
         color = 'gray',
         alpha = 0.3
         )
+    
     if drop is not None:
         ds.drop(
             ds.tail(drop).index, 
