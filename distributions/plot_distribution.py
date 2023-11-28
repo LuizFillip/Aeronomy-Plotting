@@ -1,5 +1,4 @@
 import events as ev
-import numpy as np
 
 
 args = dict(
@@ -7,9 +6,6 @@ args = dict(
     marker = 's'
     )
  
-def plot_hist(ax):
-    
-    return ax
     
 def plot_distribution(
         ax, 
