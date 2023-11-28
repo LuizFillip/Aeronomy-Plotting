@@ -39,21 +39,35 @@ def mapping(year = 2013):
 
 def plot_corners(
         ax,
-        x_limits, y_limits
+        year
         ):
     
+    coords = gg.corner_coords(
+            year, 
+            radius = 5, 
+            angle = 45
+            )
 
-    ax.plot(
-        x_limits,
-        y_limits,
-        color = 'black', 
-        linewidth = 2, 
-        transform = ccrs.PlateCarree() 
+    x_limits, y_limits = coords[0], coords[1]
+
+    for i in range(len(x_limits)):
+        xlim, ylim = x_limits[i], y_limits[i]
+            
+
+        ax.plot(
+            xlim, ylim,
+            color = 'black', 
+            linewidth = 2, 
+            transform = ccrs.PlateCarree() 
+            )
+        
+
+
+year = 2013
+ax = mapping(year)
+
+
+plot_corners(
+        ax,
+        year
         )
-    
-
-
-# ax.scatter(ds.lon, ds.lat, c = ds.roti, s = 3)
-
-
-# mapping(year = 2013)
