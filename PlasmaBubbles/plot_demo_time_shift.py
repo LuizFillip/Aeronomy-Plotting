@@ -115,7 +115,7 @@ def plot_arrow_and_note(ax, sel):
         )
     
 
-col = '-50'
-dn = dt.datetime(2013, 1, 17, 20)
+col = '-70'
+dn = dt.datetime(2022, 12, 20, 20)
 plot_demo_time_shift(dn, col)
 
