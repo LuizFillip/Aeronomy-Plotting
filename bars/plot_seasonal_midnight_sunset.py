@@ -1,7 +1,9 @@
 import PlasmaBubbles as pb 
 import matplotlib.pyplot as plt
 import base as b 
+import events as ev 
 
+b.config_labels()
 
 def plot_sunset_midnight_events(ds):
     
@@ -18,6 +20,8 @@ def plot_sunset_midnight_events(ds):
     plt.subplots_adjust(hspace = 0.1)
     ylims = [350, 40]
     for i, value in enumerate([2, 4]):
+        
+      
         
         df =  pb.month_occurrence(
             ds, value
@@ -61,27 +65,69 @@ def plot_sunset_midnight_events(ds):
     
     ax[1].set(xlabel = 'Months')
     
+
+def plot_seasonal(ax, ds):
+
+    df = ev.monthly_occurrences(ds)
+        
+    df['epb'].plot(
+        kind = 'bar', 
+        ax = ax, 
+        legend = False
+        )
+        
+    ax.set(
+        ylabel = 'Nigths with EPB',
+        xlabel = 'Months',
+        ylim = [0, 100]
+        )
     
+    ax.set_xticklabels(b.number_to_months(), rotation=0)
+    
+    
+    
+def plot_annually(ax, ds):
 
-path = 'database/epbs/events_types.txt'
-
-ds = b.load(path)
-
-ds
-
-# from geophysical_indices import INDEX_PATH
-# import pandas as pd
- 
-
-# df = pd.concat(
-#     [b.load(path), 
-#      b.load(INDEX_PATH)], 
-#     axis = 1).dropna()
-
-
-# ds = df.loc[df['kp'] > 3].iloc[:, :5]
+    df = ev.yearly_occurrences(ds)
+        
+    df['epb'].plot(
+        kind = 'bar', 
+        ax = ax, 
+        legend = False
+        )
+        
+    ax.set(
+        ylabel = 'Nigths with EPB',
+        xlabel = 'Years',
+        ylim = [0, 100]
+        )
+    
+    plt.xticks(rotation = 0)
 
 
-# plot_sunset_midnight_events(ds)
 
 
+
+def plot_annual_seasonal(ds):
+    
+    fig, ax = plt.subplots(
+        dpi = 300, 
+        nrows = 2,
+        figsize = (12, 8)
+        )
+    
+    plt.subplots_adjust(hspace = 0.3)
+    
+    
+    plot_seasonal(ax[0], ds)
+    plot_annually(ax[1], ds)
+    
+   
+
+ds = ev.epbs(
+        col = -70, 
+        class_epb = 'midnight',
+        geo = False
+        )
+
+plot_annual_seasonal(ds)
