@@ -26,8 +26,6 @@ def data_sigmoid(ax, ds):
         fillstyle = 'none'
         )
     
-    
-    
     ax.errorbar(
         ds['mean'], 
         ds['rate'], 
@@ -119,11 +117,12 @@ def plot_hist_distr(ds):
             )
     
     xlabel = b.y_label('gamma')
-    ax.set(ylim = [-0.1, 1.1],
-    xlabel = xlabel, 
-    ylabel = 'EPB occurrence probability',
-    yticks = np.arange(0, 1.2, 0.2)
-    )
+    ax.set(
+        ylim = [-0.1, 1.1],
+        xlabel = xlabel, 
+        ylabel = 'EPB occurrence probability',
+        yticks = np.arange(0, 1.2, 0.2)
+        )
     
   
     vmax = max(ds['days'])
@@ -132,11 +131,13 @@ def plot_hist_distr(ds):
     
     plt.setp(xhax.get_xticklabels(), visible=False)
     
+    return fig
+    
     
 
 df = ev.concat_results('saa')
 
-vmin, vmax, step = 0, 3.8, 0.1
+vmin, vmax, step = 0, 3.8, 0.2
 
 
 ds = ev.probability_distribuition(
@@ -145,5 +146,5 @@ ds = ev.probability_distribuition(
     col = 'gamma'
     )
 
-plot_hist_distr(ds)
+fig = plot_hist_distr(ds)
 

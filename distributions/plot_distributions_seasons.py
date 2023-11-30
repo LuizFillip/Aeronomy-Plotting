@@ -128,9 +128,11 @@ def plot_distributions_seasons(
                 col = col
                 )
         
-        l = b.chars()[j]
+       
         
         all_events.extend(total)
+        
+        l = b.chars()[j]
         
         ax.text(
             0.02, 0.85,
