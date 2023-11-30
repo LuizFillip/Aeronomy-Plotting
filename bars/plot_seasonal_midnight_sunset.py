@@ -65,6 +65,11 @@ def plot_sunset_midnight_events(ds):
     
     ax[1].set(xlabel = 'Months')
     
+args = dict(
+    edgecolor = 'black', 
+    color = 'gray', 
+    linewidth = 1
+    )
 
 def plot_seasonal(ax, ds):
 
@@ -73,7 +78,7 @@ def plot_seasonal(ax, ds):
     df['epb'].plot(
         kind = 'bar', 
         ax = ax, 
-        legend = False
+        legend = False, **args
         )
         
     ax.set(
@@ -93,7 +98,7 @@ def plot_annually(ax, ds):
     df['epb'].plot(
         kind = 'bar', 
         ax = ax, 
-        legend = False
+        legend = False, **args
         )
         
     ax.set(
