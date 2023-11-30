@@ -1,16 +1,11 @@
-import numpy as np
 import cartopy.crs as ccrs
-import pandas as pd
 import GEO as gg
-import GNSS as gs 
-import os 
-import PlasmaBubbles as pb 
 import base as b 
 
 b.config_labels()
+
+
 def mapping(year = 2013):
-    
-    
     
     lat_lims = dict(
         min = -25, 
@@ -39,21 +34,22 @@ def mapping(year = 2013):
 
 def plot_corners(
         ax,
-        year
+        year,
+        radius = 10
         ):
     
     coords = gg.corner_coords(
             year, 
-            radius = 5, 
+            radius, 
             angle = 45
             )
 
     x_limits, y_limits = coords[0], coords[1]
 
     for i in range(len(x_limits)):
+        
         xlim, ylim = x_limits[i], y_limits[i]
-            
-
+        
         ax.plot(
             xlim, ylim,
             color = 'black', 
@@ -61,13 +57,14 @@ def plot_corners(
             transform = ccrs.PlateCarree() 
             )
         
+        clat = sum(list(set(ylim))) / 2
+        clon = sum(list(set(xlim))) / 2
+        
+        ax.scatter(clon, clat, s = 50, color = 'k')
 
 
 year = 2013
 ax = mapping(year)
 
 
-plot_corners(
-        ax,
-        year
-        )
+plot_corners(ax, year, radius = 5)
