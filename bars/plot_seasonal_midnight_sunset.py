@@ -130,7 +130,7 @@ def plot_annual_seasonal(ds):
    
 
 ds = ev.epbs(
-        col = -70, 
+        col = -50, 
         class_epb = 'midnight',
         geo = False
         )

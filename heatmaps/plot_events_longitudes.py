@@ -12,17 +12,12 @@ def heat_map_for_events(
         df, 
         freq = '1h'
         ):
-    
-   
-    
-    # df.columns = pd.to_numeric(df.index)
-    
-    
+        
     df.columns = pd.DatetimeIndex(
         df.columns).strftime('%H:00')
     
     fig, ax = plt.subplots(
-        figsize = (12, 4), 
+        figsize = (12, 8), 
         dpi = 300
         )
     
@@ -68,19 +63,20 @@ def get_date_range(ds):
     
     return pd.date_range(s, e, freq = '1D')
 
-dn = dt.datetime(2022, 3, 8, 21)
+import PlasmaBubbles as pb 
 
 
-infile = os.path.join(
-        PATH_EVENT, 
-        f'{dn.year}.txt'
+dn = dt.datetime(2014, 1, 1, 20)
+
+
+ds = b.load(
+    pb.epb_path(
+        dn.year, 
+        path = 'events'
+        )
     )
- 
-ds = b.sel_times(
-        b.load(infile), 
-        dn, 
-        hours = 11
-    )
+
+ds = b.sel_times(ds, dn)
 
 
 heat_map_for_events(
@@ -89,6 +85,5 @@ heat_map_for_events(
         )
 
 
-from GEO import terminator 
 
 
