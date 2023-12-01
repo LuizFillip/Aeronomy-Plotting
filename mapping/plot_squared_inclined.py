@@ -5,33 +5,9 @@ from shapely.geometry import Polygon
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
 import datetime as dt 
+
 b.config_labels()
 
-
-def mapping(year = 2013):
-    
-    lat_lims = dict(
-        min = -25, 
-        max = 15, 
-        stp = 5
-        )
-    
-    lon_lims = dict(
-        min = -90,
-        max = -30, 
-        stp = 10
-        )    
-    
-    fig, ax = gg.quick_map(
-        lat_lims = lat_lims, 
-        lon_lims = lon_lims, 
-        figsize = (9, 9), 
-        year = year, 
-        degress = None
-        )
-    
-    
-    return ax
      
 
 def plot_rectangle(ax, longitudes, latitudes):
@@ -45,11 +21,19 @@ def plot_rectangle(ax, longitudes, latitudes):
         list(zip(x, y)),
         transform=ccrs.PlateCarree(), 
         color='red', alpha=0.5))
+    
+    
+def middle_point(xlim, ylim):
+     clat = sum(list(set(ylim))) / 2
+     clon = sum(list(set(xlim))) / 2
+     
+     return clon, clat
+
+    
 
 def plot_corners(
         ax,
         year,
-        ilon, 
         radius = 10
         ):
     
@@ -60,6 +44,8 @@ def plot_corners(
             )
 
     x_limits, y_limits = coords[0], coords[1]
+    
+    out = {}
 
     for i in range(len(x_limits)):
         
@@ -72,83 +58,101 @@ def plot_corners(
             transform = ccrs.PlateCarree() 
             )
         
+        clon, clat = middle_point(xlim, ylim)
         
+        out[clon] = (xlim, ylim)
+    
+    return out
         
-        clat = sum(list(set(ylim))) / 2
-        clon = sum(list(set(xlim))) / 2
-        
-        ax.scatter(clon, clat, s = 50, color = 'k')
-        if clon > ilon:
-            plot_rectangle(ax, xlim, ylim)
-        
-        
+def find_closest(arr, val):
+   return arr[np.abs(arr - val).argmin()]
+
+
+def intersect_point( eq_lon, eq_lat, term_lon, term_lat):
+    inter_lon, inter_lat = gg.intersection(
+        eq_lon, eq_lat, term_lon, term_lat)
+    
+    # inter_lon = inter_lon[(inter_lon >= -90) & (inter_lon <= -30)]
+    # inter_lat = inter_lat[-1]
+    
+    return inter_lon, inter_lat
 
 
 
 
-def map_attrs(ax, year):
-    
-    gg.map_features(ax)
-    
-    lat = gg.limits(
-        min = -30, 
-        max = 20, 
-        stp = 10
-        )
-    
-    lon = gg.limits(
-        min = -90, 
-        max = -20, 
-        stp = 10
-        )    
-    
-    gg.map_boundaries(ax, lon, lat)
-    
-    
-    x, y = gg.mag_equator(
-        ax,
-        year,
-        degress = None
-        )
-    
-    return x, y
+
+# df = b.load(
+#     pb.epb_path(
+#         year, path = 'events'
+#         )
+#     )
+
+# ds = b.sel_times(df, dn)
 
 
-def plot_terminator(ax, dn, elon, elat):    
-    lon, lat = gg.terminator(dn, 18)
-    
-    ilon, ilat = gg.intersection(elon, elat, lon, lat)
-    
-    ax.plot(lon, lat, lw = 2, linestyle = '--')
-    
-    return ilon
 
-fig, ax = plt.subplots(
-    dpi = 300,
-    figsize = (9, 9),
-    subplot_kw = 
-        {
-        'projection': ccrs.PlateCarree()
+
+def mappping(year):
+    fig, ax = plt.subplots(
+        dpi=300,
+        figsize=(12,12),
+        subplot_kw={
+            'projection': ccrs.PlateCarree()
         }
     )
+    
+    
+    coords = plot_corners(ax, year, radius=5)
+    gg.map_attrs(ax, year)
+    
+    return ax, coords
+
+import numpy as np 
+
+year = 2014
+
+dn = dt.datetime(year, 1, 1, 7)
+twilight = 18
 
 
 
-dn = dt.datetime(2014, 1, 1, 23)
+ax, coords = mappping(year)
+ 
+eq_lon, eq_lat  = gg.load_equator(year, values = True)
+
+term_lon, term_lat = gg.terminator(dn, twilight)
 
 
-df = b.load(
-    pb.epb_path(
-        dn.year, 
-        path = 'events'
+inter_lon, inter_lat = intersect_point(
+    eq_lon, eq_lat, term_lon, term_lat)
+
+ax.plot(term_lon, term_lat, lw = 2, linestyle = '--')
+
+dusk = gg.dusk_time(
+        dn,  
+        lat = inter_lat[0], 
+        lon = inter_lon[0], 
+        twilight = twilight
         )
-    )
-
-ds = b.sel_times(df, dn)
-
-elon, elat = map_attrs(ax, dn.year)
 
 
-ilon = plot_terminator(ax, dn, elon, elat)
+ax.scatter(inter_lon, inter_lat, s = 80)
 
-plot_corners(ax, dn.year, ilon[0], radius = 5)
+
+# clon = find_closest(list(coords.keys()), inter_lon)
+
+is_night = gg.is_night(inter_lon, inter_lat, dusk)
+
+ax.set(title = dusk.strftime("%H:%M:%S (UT)"))
+
+
+# if is_night:
+#     for lon in list(coords.keys()):
+            
+#         longitudes, latitudes = coords[lon]
+        
+#         clon, clat = middle_point(longitudes, latitudes)
+        
+#         if clon >= inter_lon:
+#             plot_rectangle(ax, longitudes, latitudes)
+            
