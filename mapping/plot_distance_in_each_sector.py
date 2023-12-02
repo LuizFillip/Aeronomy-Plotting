@@ -47,13 +47,13 @@ def plot_distance_in_each_sector():
     
     fig, ax = plt.subplots(
         dpi = 300,
-        figsize = (10, 10),
+        figsize = (12,12),
         subplot_kw={
             'projection': ccrs.PlateCarree()
             }
         )
     
-    g.map_features(ax)
+    g.map_features(ax, grid = False)
     
     lat = g.limits(
         min = -30.0, 
@@ -61,34 +61,36 @@ def plot_distance_in_each_sector():
         stp = 10
         )
     lon = g.limits(
-        min = -80, 
+        min = -90, 
         max = -30, 
         stp = 10
         )    
     
     g.map_boundaries(ax, lon, lat)
     
-    # g.mag_equator(
-    #     ax,
-    #     2013,
-    #     degress = None
-    #     )
+    g.mag_equator(
+        ax,
+        2013,
+        degress = None
+        )
     
-    ref_lat = -7
-    
-    for i, lon in enumerate(pb.longitudes()):
-        s_lon = lon + 10
+    ref_lat = 5
+    step = 5
+    for i, lon in enumerate(g.longitudes(
+            start = -90, 
+     end = -30, step = step)):
+        s_lon = lon + step
        
         
         ax.axvline(s_lon)
         
-        plot_arrows_distance(
-                ax, ref_lat, s_lon, lon
-                )
+        # plot_arrows_distance(
+        #         ax, ref_lat, s_lon, lon
+        #         )
         
         arrow = plot_arrows_distance(
                 ax, ref_lat - i * 3, 
-                s_lon , lon - 10 * i
+                s_lon , lon -step * i
                 )
     
     

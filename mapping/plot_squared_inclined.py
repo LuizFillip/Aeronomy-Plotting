@@ -71,9 +71,7 @@ def find_closest(arr, val):
 def intersect_point( eq_lon, eq_lat, term_lon, term_lat):
     inter_lon, inter_lat = gg.intersection(
         eq_lon, eq_lat, term_lon, term_lat)
-    
-    # inter_lon = inter_lon[(inter_lon >= -90) & (inter_lon <= -30)]
-    # inter_lat = inter_lat[-1]
+  
     
     return inter_lon, inter_lat
 
@@ -121,19 +119,22 @@ ax, coords = mappping(year)
 eq_lon, eq_lat  = gg.load_equator(year, values = True)
 
 term_lon, term_lat = gg.terminator(dn, twilight)
-
+ax.plot(term_lon, term_lat, lw = 2, linestyle = '--')
 
 inter_lon, inter_lat = intersect_point(
     eq_lon, eq_lat, term_lon, term_lat)
 
-ax.plot(term_lon, term_lat, lw = 2, linestyle = '--')
 
-dusk = gg.dusk_time(
-        dn,  
-        lat = inter_lat[0], 
-        lon = inter_lon[0], 
-        twilight = twilight
-        )
+
+inter_lat = inter_lat[:2]
+inter_lon = inter_lon[:2]
+
+# dusk = gg.dusk_time(
+#         dn,  
+#         lat = inter_lat[0], 
+#         lon = inter_lon[0], 
+#         twilight = twilight
+#         )
 
 
 ax.scatter(inter_lon, inter_lat, s = 80)
@@ -141,9 +142,9 @@ ax.scatter(inter_lon, inter_lat, s = 80)
 
 # clon = find_closest(list(coords.keys()), inter_lon)
 
-is_night = gg.is_night(inter_lon, inter_lat, dusk)
+# is_night = gg.is_night(inter_lon, inter_lat, dusk)
 
-ax.set(title = dusk.strftime("%H:%M:%S (UT)"))
+# ax.set(title = dusk.strftime("%H:%M:%S (UT)"))
 
 
 # if is_night:
@@ -156,3 +157,4 @@ ax.set(title = dusk.strftime("%H:%M:%S (UT)"))
 #         if clon >= inter_lon:
 #             plot_rectangle(ax, longitudes, latitudes)
             
+# inter_lon

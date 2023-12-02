@@ -7,7 +7,7 @@ import base as b
 import datetime as dt 
 import GEO as gg
 
-
+b.config_labels(fontsize = 35)
 def plot_roti(ax, dn, glon = -50):
     
     infile = f'database/epbs/longs/{dn.year}.txt'
@@ -45,7 +45,7 @@ def plot_roti(ax, dn, glon = -50):
         ylabel = 'ROTI (TECU/min)'
         )
     
-    b.format_time_axes(ax, hour_locator = 1)
+    b.format_time_axes(ax,pad = 70, hour_locator = 2)
     
     return None
     
@@ -126,12 +126,12 @@ def plot_image_in_sequence(gs2, path_images):
 def plot_roti_and_images(
         dn,
         path_images, 
-        fontsize = 30
+        fontsize = 35
         ):
 
     fig = plt.figure(
         dpi = 300,
-        figsize = (16, 8),
+        figsize = (18, 8),
         layout = 'compressed'
         )
         
@@ -147,11 +147,11 @@ def plot_roti_and_images(
     
     plot_shade_bars(ax2, times, ytext = 0.85)
     
-    ax2.text(0, 1, '(a)', 
+    ax2.text(0, 1.04, '(a)', 
              fontsize = fontsize,
              transform = ax2.transAxes)
     
-    ax2.text(1.0, 1, '(b)', 
+    ax2.text(1.0, 1.04, '(b)', 
              fontsize = fontsize,
              transform = ax2.transAxes)
    
@@ -170,4 +170,4 @@ fig = plot_roti_and_images(dn, path_images)
 
 save_in = 'G:\\Meu Drive\\Doutorado\Travels\\O6_CA_20170404'
 
-fig.savefig(save_in, dpi = 300)
+fig.savefig(save_in, dpi = 600)
