@@ -3,24 +3,26 @@ import GEO as gg
 import base as b 
 from shapely.geometry import Polygon
 import matplotlib.pyplot as plt
-import PlasmaBubbles as pb 
 import datetime as dt 
+import numpy as np 
+import PlasmaBubbles as pb 
 
 b.config_labels()
 
      
 
-def plot_rectangle(ax, longitudes, latitudes):
+def rectangle(ax, longitudes, latitudes):
     
     square = Polygon(zip(longitudes, latitudes))
     
     x, y = square.exterior.xy
     
-    # Plot the square on the map
     ax.add_patch(plt.Polygon(
         list(zip(x, y)),
         transform=ccrs.PlateCarree(), 
-        color='red', alpha=0.5))
+        color = 'red', 
+        alpha = 0.5)
+        )
     
     
 def middle_point(xlim, ylim):
@@ -29,7 +31,6 @@ def middle_point(xlim, ylim):
      
      return clon, clat
 
-    
 
 def plot_corners(
         ax,
@@ -57,104 +58,138 @@ def plot_corners(
             linewidth = 2, 
             transform = ccrs.PlateCarree() 
             )
-        
-        clon, clat = middle_point(xlim, ylim)
+                
+        clon = round(min(xlim))
         
         out[clon] = (xlim, ylim)
     
     return out
         
 def find_closest(arr, val):
-   return arr[np.abs(arr - val).argmin()]
+   return np.abs(arr - val).argmin()
 
 
-def intersect_point( eq_lon, eq_lat, term_lon, term_lat):
-    inter_lon, inter_lat = gg.intersection(
-        eq_lon, eq_lat, term_lon, term_lat)
-  
+def ellipse(
+        center, 
+        angle = 95, 
+        semi_major = 10.0, 
+        semi_minor = 1.0
+        ):
+     
     
-    return inter_lon, inter_lat
+    angle_rad = np.deg2rad(angle)
+    
+    t = np.linspace(0, 2 * np.pi, 100)
+ 
+    x = (center[0] + semi_major * np.cos(t) * 
+         np.cos(angle_rad) - semi_minor * np.sin(t) * 
+         np.sin(angle_rad))
+    y = (center[1] + semi_major * np.cos(t) * 
+         np.sin(angle_rad) + semi_minor * 
+         np.sin(t) * np.cos(angle_rad))
+    
+    return x, y
 
 
-
-
-
-# df = b.load(
-#     pb.epb_path(
-#         year, path = 'events'
-#         )
-#     )
-
-# ds = b.sel_times(df, dn)
-
-
-
+def plot_ellipse(ax, year = 2014, lon = -60):
+    
+    eq_lon, eq_lat  = gg.load_equator(year, values = True)
+    
+    i = find_closest(eq_lon, lon)
+    
+    x, y = ellipse((eq_lon[i], eq_lat[i]))
+    
+    ax.plot(x, y)
+    
+    ax.fill(x, y, color = 'gray', alpha = 0.5)
 
 def mappping(year):
     fig, ax = plt.subplots(
         dpi=300,
-        figsize=(12,12),
+        figsize=(10, 10),
         subplot_kw={
             'projection': ccrs.PlateCarree()
         }
     )
-    
-    
-    coords = plot_corners(ax, year, radius=5)
+
     gg.map_attrs(ax, year)
     
-    return ax, coords
+    return fig, ax
 
-import numpy as np 
 
 year = 2014
 
-dn = dt.datetime(year, 1, 1, 7)
+dn = dt.datetime(year, 1, 1, 5)
 twilight = 18
 
 
+df = b.load(
+    pb.epb_path(
+        year, path = 'events3'
+        )
+    )
 
-ax, coords = mappping(year)
+ds = b.sel_times(df, dn, hours = 12)
+
+
+
+
+
+
+def plot_terminator_and_equator(ax, dn):
  
-eq_lon, eq_lat  = gg.load_equator(year, values = True)
-
-term_lon, term_lat = gg.terminator(dn, twilight)
-ax.plot(term_lon, term_lat, lw = 2, linestyle = '--')
-
-inter_lon, inter_lat = intersect_point(
-    eq_lon, eq_lat, term_lon, term_lat)
-
-
-
-inter_lat = inter_lat[:2]
-inter_lon = inter_lon[:2]
-
-# dusk = gg.dusk_time(
-#         dn,  
-#         lat = inter_lat[0], 
-#         lon = inter_lon[0], 
-#         twilight = twilight
-#         )
+    eq_lon, eq_lat  = gg.load_equator(dn.year, values = True)
+    
+    term_lon, term_lat = gg.terminator2(dn, twilight)
+    
+    ax.scatter(term_lon, term_lat, s = 10)
+    
+    inter_lon, inter_lat = gg.intersection(
+        eq_lon, eq_lat, term_lon, term_lat)
+    
+    
+    ax.scatter(inter_lon, inter_lat, s = 150, color = 'k')
 
 
-ax.scatter(inter_lon, inter_lat, s = 80)
+v0 = 100 #m/s
+x0 = -60
+
+def velocity(v):
+    return v * 3.6
+def displacement(x0, v0, dt):
+    return x0 + v0 * dt / 111
+
+# for Dt in np.arange(0, 2, 0.1):
+    # print(Dt)
+
+    # plt.ioff()
+Dt = 0
+fig, ax = mappping(year)
+
+delta = dt.timedelta(hours = Dt)
+
+epb_dn = dt.datetime(year, 1, 1, 0) + delta
+
+epb_lon = displacement(x0, velocity(v0), Dt)
 
 
-# clon = find_closest(list(coords.keys()), inter_lon)
-
-# is_night = gg.is_night(inter_lon, inter_lat, dusk)
-
-# ax.set(title = dusk.strftime("%H:%M:%S (UT)"))
+plot_terminator_and_equator(ax, epb_dn)
+coords = plot_corners(ax, year, radius = 10)
 
 
-# if is_night:
-#     for lon in list(coords.keys()):
-            
-#         longitudes, latitudes = coords[lon]
-        
-#         clon, clat = middle_point(longitudes, latitudes)
-        
-#         if clon >= inter_lon:
-#             plot_rectangle(ax, longitudes, latitudes)
-            
-# inter_lon
+plot_ellipse(ax, lon = epb_lon)
+
+
+ax.set(title = epb_dn.strftime("%H:%M:%S (UT)"))
+
+name = epb_dn.strftime('%Y%m%d%H%M')
+
+ax.text(0, 1.02, f'EPB drift = {v0} m/s', 
+        transform = ax.transAxes)
+plt.show()
+    # fig.savefig(f'temp/{name}.png')
+    
+    
+    
+    # plt.clf()   
+    # plt.close()
