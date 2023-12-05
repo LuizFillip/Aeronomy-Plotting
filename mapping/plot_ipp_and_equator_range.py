@@ -45,14 +45,7 @@ def map_attrs(ax, dn):
 
 
 
-def sel_df(df, dn):
-    df = b.sel_times(df, dn)
 
-    delta = dt.timedelta(minutes=20,
-                         seconds=59)
-    return df.loc[
-        (df.index >= dn) &
-        (df.index < dn + delta)].copy()
 
 
 
@@ -95,7 +88,7 @@ def plot_ipp_and_equator_range(
         #         long_delta = 10
         #         )
         
-        ds = sel_df(df, time)
+        ds = b.sel_df(df, time)
         
         img = ax.scatter(
             ds['lon'],

@@ -1,2 +1,2 @@
 from .plot_mag_meridians import plot_mag_meridians, plot_meridian
-# from .plot_sites_and_receivers import plot_receivers_coords
+from .plot_squared_inclined import plot_corners, plot_terminator_and_equator
