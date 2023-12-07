@@ -1,11 +1,18 @@
-# Plotting with aeronomy parameters
+# Space weather and aeronomy plotting
 
-Plotting and comparation analysis data from atmospheric and ionospheric models, intrumentation data. 
+In this repository, you can find:
 
-- Correlations:
-  - FPI and models
+- Regression analysis:
+  - Fabry-Perot and models
   - Digisonde and model
-  - FPI and Digisonde
+  - Fabry-Perot and Digisonde
+
+- GNSS subproducts
+  - ROTI for observed Plasma Bubbles 
+  - ROTI timeseries 
+
+- Bars
+  - seasonal and annual variations like a bar plot
 
 - Probability distributions:
   - Rayleigh Taylor Growth rate ($\gamma_{RT}$) with Plasma Bubbles occurrence
