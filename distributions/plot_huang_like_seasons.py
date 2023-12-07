@@ -16,3 +16,13 @@ We now separate the data into three subsets for three seasons:
 
 
 b.config_labels()
+
+fig, ax = plt.subplots(
+    ncols = 2, 
+    nrows = 4,
+    figsize = (12, 14), 
+    dpi = 300, 
+    sharex = 'col'
+    )
+
+

@@ -1,26 +1,29 @@
-import events as ev
+import core as c
+import numpy as np
 
 
 args = dict(
     capsize = 3,
     marker = 's'
     )
+
+
  
-    
+
+
+
 def plot_distribution(
         ax, 
         df, 
-        limits,
         col = 'gamma',
         label = '', 
         count = True,
         drop = 2
         ):
 
-    ds = ev.probability_distribuition(
+    ds = c.probability_distribuition(
         df,
-        limits,
-        col = col
+        col
         )
     
     epbs = ds['epbs'].sum()
@@ -30,15 +33,7 @@ def plot_distribution(
         (ds['epbs'] == 1))
         ]
         
-    ax1 = ax.twinx()
-    
-    ds['mean'].plot(
-        kind = 'bar', 
-        ax  = ax1, 
-        color = 'gray',
-        alpha = 0.3
-        )
-    
+ 
     if drop is not None:
         ds.drop(
             ds.tail(drop).index, 
@@ -57,6 +52,16 @@ def plot_distribution(
         yerr = ds['epb_error'],
         label = LABEL,
         **args
+        )
+    
+    vmin, vmax, step = c.limits(col)
+    
+    ax.set(
+        xlim = [vmin, vmax],
+        ylim = [-0.2, 1.4], 
+        yticks = np.arange(0, 1.2, 0.25),
+        xticks = np.arange(
+            vmin, vmax + step, step*2)
         )
     
 

@@ -1,71 +1,92 @@
 import base as b 
 import matplotlib.pyplot as plt 
-import events as ev
+import core as c
 from plotting import plot_distribution
-import numpy as np 
 
 ks = {
-      3:  'March equinox',
-      6:  'June solstice',
-      9:  'September equinox',
-      12: 'December solstice'
+      0:  'March equinox',
+      1:  'June solstice',
+      2:  'September equinox',
+      3: 'December solstice'
       }
 
-b.config_labels(fontsize = 30)
+
+
+b.config_labels(fontsize = 20)
+
+def plot_histogram(ax, df ,col):
+    
+    ds = c.probability_distribuition(
+        df,
+        col
+        )
+    
+    ds.set_index('start', inplace = True)
+    
+    ds['days'].plot(
+        kind = 'bar', 
+        ax  = ax, 
+        color = 'gray',
+        alpha = 0.3
+        )
+    
+    
+    
+    return 
+
+def plot_single_histogram(
+        ax, 
+        solar_dfs,
+        month,
+        col ='gamma'
+        ):
+    
+    
+    for index, dataset in enumerate(solar_dfs):
+        
+        ds = c.seasons(dataset, month)
+        
+        plot_histogram(ax, ds, col)
 
 def plot_single_season(
         ax, 
         solar_dfs,
         month,
-        limits,
         name,
-        col
         ):
     
     c_event = []
     total = []
     
     
-    for i, l in enumerate(solar_dfs):
-        
-        index = i + 1
-        
-        ds = ev.seasons(l, month)
+    for index, dataset in enumerate(solar_dfs):
+                
+        ds = c.seasons(dataset, month)
 
-        c = plot_distribution(
+        count = plot_distribution(
                 ax, 
                 ds, 
-                limits = limits,
-                col = col,
+                col,
                 count = False,
-                label = f'({index}) {name[i]}'
+                label = f'({index + 1}) {name[index]}'
                 )
         
-        total.append(c)
+        total.append(count)
         
         c_event.append(f'({index}) {c} events')
+        
+        
     
-
-
     infos = ('EPB occurrence\n' + 
               '\n'.join(c_event))
         
-    ax.text(
-            0.58, 0.15, 
-            infos, 
-            transform = ax.transAxes
-            )
+    # ax.text(
+    #         0.58, 0.15, 
+    #         infos, 
+    #         transform = ax.transAxes
+    #         )
     
-    
-    ax.set(
-        xlim = [limits[0], limits[1]],
-        ylim = [-0.2, 1.4], 
-        yticks = np.arange(0, 1.2, 0.25),
-        xticks = np.arange(
-            limits[0], limits[1] + limits[-1], 0.5)
-        )
- 
-    return ax, total
+    return total
 
 def plot_distributions_seasons(
         df, 
@@ -75,37 +96,24 @@ def plot_distributions_seasons(
         ):
     
     fig, ax = plt.subplots(
-        ncols = 2,
-        nrows = 2, 
-        figsize = (18, 10), 
-        sharex = True, 
-        sharey = True, 
-        dpi = 300
+      ncols = 2, 
+      nrows = 4,
+      figsize = (14, 12), 
+      dpi = 300, 
+      sharex = 'col'
         )
     
     plt.subplots_adjust(
-        hspace = 0.05, 
-        wspace = 0.1
+        hspace = 0.1, 
+        wspace = 0.2
         )
     
-    
-    if col == 'gamma':
-        vmin, vmax, step = 0, 3.5, 0.2
-        
-    elif col == 'vp':
-        vmin, vmax, step = 0, 85, 5
-    else:
-        vmin, vmax, step = 0, 1, 0.05
-        
-    limits = (vmin, vmax, step)
-    
-    
-    name = [
+    solar_name = [
         '$F_{10.7} < $' + f' {level}',
         '$F_{10.7} > $' + f' {level}'
         ]
     
-    solar_dfs =  ev.solar_levels(
+    solar_dfs = c.solar_levels(
         df, 
         level,
         flux_col = 'f107a'
@@ -113,36 +121,38 @@ def plot_distributions_seasons(
     
     all_events = []
     
-    for j, ax in enumerate(ax.flat):
+    for j in range(4):
         
-        month = (j + 1) * 3
+        season_name = ks[j]
         
-        season_name = ks[month]
-        
-        ax, total = plot_single_season(
-                ax, 
+        total = plot_single_season(
+                ax[j, 0], 
                 solar_dfs,
-                month,
-                limits,
-                name,
-                col = col
+                season_name,
+                solar_name
                 )
         
-       
-        
+      
         all_events.extend(total)
         
         l = b.chars()[j]
         
-        ax.text(
+        ax[j, 0].text(
             0.02, 0.85,
             f'({l}) {season_name} ({sum(total)} events)',
-            transform = ax.transAxes
+            transform = ax[j, 0].transAxes
             )
         
-    ax.legend(
+        plot_single_histogram(
+                ax[j, 1], 
+                solar_dfs,
+                season_name,
+                col ='gamma'
+                )
+        
+    ax[0, 0].legend(
         ncol = 2, 
-        bbox_to_anchor = (-.01, 2.3),
+        bbox_to_anchor = (0.5, 1.3),
         loc = "upper center"
         )
     
@@ -162,21 +172,6 @@ def plot_distributions_seasons(
     
     return fig
     
-
-    
-df = ev.concat_results('saa')
-
-
-col = 'gamma'
-fig = plot_distributions_seasons(df, col)
-
-FigureName = 'seasonal_all_periods'
-
-# fig.savefig(
-#     b.LATEX(FigureName),
-#     dpi = 400
-#     )
-
 def save_figs(df, col = 'gamma'):
     
     names = ['seasonal_quiet', 
@@ -199,6 +194,16 @@ def save_figs(df, col = 'gamma'):
             b.LATEX(FigureName),
             dpi = 400
             )
-        
-        
-save_figs(df, col = 'gamma')
+
+df = c.concat_results('saa')
+
+col = 'gamma'
+fig = plot_distributions_seasons(df, col)
+
+FigureName = 'seasonal_all_periods'
+
+# fig.savefig(
+#     b.LATEX(FigureName),
+#     dpi = 400
+#     )
+# save_figs(df, col = 'gamma')
