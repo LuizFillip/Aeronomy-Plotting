@@ -7,7 +7,9 @@ import base as b
 import datetime as dt 
 import GEO as gg
 
-b.config_labels(fontsize = 35)
+b.config_labels(fontsize = 20)
+
+
 def plot_roti(ax, dn, glon = -50):
     
     infile = f'database/epbs/longs/{dn.year}.txt'
@@ -45,7 +47,7 @@ def plot_roti(ax, dn, glon = -50):
         ylabel = 'ROTI (TECU/min)'
         )
     
-    b.format_time_axes(ax,pad = 70, hour_locator = 2)
+    b.format_time_axes(ax,pad = 50, hour_locator = 2)
     
     return None
     
@@ -101,24 +103,27 @@ def plot_image_in_sequence(gs2, path_images):
         
         
         if col <= 1:
-            ax1 = plt.subplot(gs2[0, col + 2])
-            x, y = (.3, 1.05)
-            
-        elif col == 3:
-            ax1 = plt.subplot(gs2[1, 2])
-            x, y = (.3, -0.12)
-
-        else:
-            ax1 = plt.subplot(gs2[1, 3])
-            x, y = (.3, -0.12)
+            ax1 = plt.subplot(gs2[0, col])
+            x, y = (.1, 1.05)
         
-       
+        else:
+            ax1 = plt.subplot(gs2[1, col - 2])
+            x, y = (.1, -0.16)
+
         ax = plot_imager(ax1, file)
         
         ax.text(
-            x, y, title, 
+            x, y, 
+            title, 
             transform = ax.transAxes
-                       )
+            )
+        
+        if col == 0:
+            ax.text(
+                0, 1.4, '(a)', 
+                fontsize = 25,
+                transform = ax.transAxes
+                )
     return times
 
 
@@ -126,48 +131,60 @@ def plot_image_in_sequence(gs2, path_images):
 def plot_roti_and_images(
         dn,
         path_images, 
-        fontsize = 35
+        fontsize = 25
         ):
 
     fig = plt.figure(
         dpi = 300,
-        figsize = (18, 8),
-        layout = 'compressed'
+        figsize = (12, 4),
+        layout = 'constrained'
         )
         
-    gs2 = GridSpec(2, 4)
+    gs2 = GridSpec(2, 5)
     
-    gs2.update(hspace = 0, wspace = 0.0)
+    gs2.update(hspace = 0, wspace = 0)
         
     times = plot_image_in_sequence(gs2, path_images)
     
-    ax2 = plt.subplot(gs2[:2, :2])
+    ax2 = plt.subplot(gs2[:, 2:])
     
     plot_roti(ax2, dn)
     
     plot_shade_bars(ax2, times, ytext = 0.85)
     
-    ax2.text(0, 1.04, '(a)', 
-             fontsize = fontsize,
-             transform = ax2.transAxes)
     
-    ax2.text(1.0, 1.04, '(b)', 
-             fontsize = fontsize,
-             transform = ax2.transAxes)
+    ax2.text(
+        0.01, 1.2, '(b)', 
+        fontsize = fontsize,
+        transform = ax2.transAxes
+        )
+    
+    ax2.tick_params(
+        axis='y', 
+        labelright = True, 
+        labelleft = False, 
+        right = True, 
+        left = False)
+    
+    ax2.yaxis.set_label_position("right")
    
     return fig 
 
-path_images = [ 
-    'database/CA_2017_0403P/O6_CA_20170404_022551.png',
-    'database/CA_2017_0403P/O6_CA_20170404_030245.png',
-    'database/CA_2017_0403P/O6_CA_20170404_061121.png',
-    'database/CA_2017_0403P/O6_CA_20170404_040009.png'
+
+def main():
     
-    ]
-
-dn = dt.datetime(2017, 4, 3, 20)
-fig = plot_roti_and_images(dn, path_images)
-
-save_in = 'G:\\Meu Drive\\Doutorado\Travels\\O6_CA_20170404'
-
-fig.savefig(save_in, dpi = 600)
+    path_images = [ 
+        'database/CA_2017_0403P/O6_CA_20170404_022551.png',
+        'database/CA_2017_0403P/O6_CA_20170404_030245.png',
+        'database/CA_2017_0403P/O6_CA_20170404_061121.png',
+        'database/CA_2017_0403P/O6_CA_20170404_040009.png'
+        
+        ]
+    
+    dn = dt.datetime(2017, 4, 3, 20)
+    
+    fig = plot_roti_and_images(dn, path_images)
+    
+    save_in = 'G:\\Meu Drive\\Doutorado\Travels\\O6_CA_20170404'
+    
+    fig.savefig(save_in, dpi = 300)

@@ -19,7 +19,9 @@ def figure(year = 2014):
     plt.subplots_adjust(wspace= 0.1)
     
     for i in range(3):
-        gg.map_attrs(ax[i], year)
+        gg.map_attrs(ax[i], year, grid = False)
+        if i != 0:
+            
     
 
     return fig, ax

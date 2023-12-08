@@ -21,7 +21,7 @@ def multi_layout(nrows = 4, year = 2014):
     
     ax_map = fig.add_subplot(
         gs[:, :nrows], 
-        projection=ccrs.PlateCarree()
+        projection = ccrs.PlateCarree()
         )
     
     gg.map_attrs(ax_map, year, grid = False)
@@ -161,31 +161,34 @@ def plot_roti_timeseries(
         
     b.format_time_axes(axes[-1])
 
-def first_entrance_of_terminator(
+def first_of_terminator(
         ax_map, 
         corners, 
         eq_lon, 
         eq_lat
         ):
+    
     out = {}
     for key in corners.keys():
         xlim, ylim = corners[key]
         ilon, ilat = gg.intersection(
-            eq_lon, eq_lat, [xlim[1], xlim[1]], ylim
+            eq_lon, eq_lat, 
+            [xlim[1], xlim[1]], 
+            ylim
             )
         out[key] = (ilon, ilat) 
-        ax_map.scatter(ilon, ilat)
+        ax_map.scatter(ilon, ilat, color = 'k')
         
     return out
 
-def plot_ipp_variation(df, start, dn):
+def plot_ipp_variation(df, start, dn, twilight = 18):
     
     fig, ax_map, axes = multi_layout(
         nrows = 4, year = dn.year)
     
    
     eq_lon, eq_lat = plot_terminator_and_equator(
-            ax_map, dn, twilight = 18)
+            ax_map, dn, twilight)
     
     corners = plot_corners(
             ax_map,
@@ -194,7 +197,7 @@ def plot_ipp_variation(df, start, dn):
             label = True
             )
     
-    local_term = first_entrance_of_terminator(
+    local_term = first_of_terminator(
             ax_map, 
             corners, 
             eq_lon, 
@@ -214,7 +217,7 @@ def plot_ipp_variation(df, start, dn):
     plot_ipp_on_map(ax_map, df, dn, corners)
         
     fig.suptitle(dn.strftime('%H:%M (UT)'),
-                 y = 1.05)
+                 y = 1.01)
     
     return fig
     

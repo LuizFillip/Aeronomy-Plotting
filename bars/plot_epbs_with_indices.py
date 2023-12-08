@@ -87,8 +87,8 @@ def plot_epbs_with_indices(
     
     return fig
 
-df = ev.concat_results('saa')
-df = ev.epbs(geo = True)
-fig = plot_epbs_with_indices(df)
+# df = ev.concat_results('saa')
+# df = ev.epbs(geo = True)
+# fig = plot_epbs_with_indices(df)
 
-fig.savefig(b.LATEX('annual_variation'))
+# fig.savefig(b.LATEX('annual_variation'))
