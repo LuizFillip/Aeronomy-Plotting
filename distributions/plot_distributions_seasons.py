@@ -2,7 +2,7 @@ import base as b
 import matplotlib.pyplot as plt 
 import core as c
 from plotting import plot_distribution
-import pandas as pd 
+import numpy as np
 
 ks = {
       0:  'March equinox',
@@ -15,22 +15,15 @@ ks = {
 
 b.config_labels(fontsize = 20)
 
-def plot_histogram(ax, df ,col):
-    
-    
-    # ax.set(xticks = ds.index)
-    
-    
-    return 
 
 def plot_single_histogram(
         ax, 
         solar_dfs,
         month,
+        solar_name,
         col ='gamma'
         ):
     
-    multiplier = 0
     width = 0.05
     
     for index, dataset in enumerate(solar_dfs):
@@ -45,12 +38,18 @@ def plot_single_histogram(
             ds['start'] + offset,
             ds['days'], 
             width = width, 
-    
+            label = solar_name[index]
             )
-        # multiplier =+ 1
         plt.xticks(rotation = 0)
         
-    ax.set()
+    vmin, vmax, step = c.limits(col)
+    
+    ax.set(
+        xlim = [vmin, vmax],
+        xticks = np.arange(
+            vmin, vmax + step, step*2
+            )
+        )
         
 
 def plot_single_season(
@@ -97,7 +96,7 @@ def plot_distributions_seasons(
         df, 
         col = 'gamma',
         level = 86, 
-        fontsize = 38
+        fontsize = 30
         ):
     
     fig, ax = plt.subplots(
@@ -105,7 +104,8 @@ def plot_distributions_seasons(
       nrows = 4,
       figsize = (14, 12), 
       dpi = 300, 
-      sharex = 'col'
+      sharex = 'col', 
+      sharey = 'col'
         )
     
     plt.subplots_adjust(
@@ -141,6 +141,7 @@ def plot_distributions_seasons(
                 ax[j, 1], 
                 solar_dfs,
                 season_name,
+                solar_name,
                 col ='gamma'
                 )
         
@@ -163,10 +164,23 @@ def plot_distributions_seasons(
         loc = "upper center"
         )
     
+    ax[0, 1].legend(
+        ncol = 2, 
+        bbox_to_anchor = (0.5, 1.3),
+        loc = "upper center"
+        )
+    
     
     fig.text(
-        0.05, 0.21, 
+        0.05, 0.35, 
         "EPB occurrence probability", 
+        fontsize = fontsize, 
+        rotation = 'vertical'
+        )
+    
+    fig.text(
+        0.49, 0.35, 
+        "Frequency of occurrence", 
         fontsize = fontsize, 
         rotation = 'vertical'
         )
