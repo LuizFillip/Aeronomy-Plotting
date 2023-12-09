@@ -8,10 +8,6 @@ args = dict(
     )
 
 
- 
-
-
-
 def plot_distribution(
         ax, 
         df, 
@@ -28,17 +24,17 @@ def plot_distribution(
     
     epbs = ds['epbs'].sum()
     
-    ds = ds.loc[~(
-        (ds['days'] == 1) & 
-        (ds['epbs'] == 1))
-        ]
+    # ds = ds.loc[~(
+    #     (ds['days'] == 1) & 
+    #     (ds['epbs'] == 1))
+    #     ]
         
  
-    if drop is not None:
-        ds.drop(
-            ds.tail(drop).index, 
-            inplace = True
-            )
+    # if drop is not None:
+    #     ds.drop(
+    #         ds.tail(drop).index, 
+    #         inplace = True
+    #         )
     
     if count:
         LABEL = f'{label} ({epbs} events)'
@@ -61,7 +57,8 @@ def plot_distribution(
         ylim = [-0.2, 1.4], 
         yticks = np.arange(0, 1.2, 0.25),
         xticks = np.arange(
-            vmin, vmax + step, step*2)
+            vmin, vmax + step, step*2
+            )
         )
     
 

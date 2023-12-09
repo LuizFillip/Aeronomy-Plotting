@@ -2,6 +2,7 @@ import base as b
 import matplotlib.pyplot as plt 
 import core as c
 from plotting import plot_distribution
+import pandas as pd 
 
 ks = {
       0:  'March equinox',
@@ -16,20 +17,8 @@ b.config_labels(fontsize = 20)
 
 def plot_histogram(ax, df ,col):
     
-    ds = c.probability_distribuition(
-        df,
-        col
-        )
     
-    ds.set_index('start', inplace = True)
-    
-    ds['days'].plot(
-        kind = 'bar', 
-        ax  = ax, 
-        color = 'gray',
-        alpha = 0.3
-        )
-    
+    # ax.set(xticks = ds.index)
     
     
     return 
@@ -41,12 +30,28 @@ def plot_single_histogram(
         col ='gamma'
         ):
     
+    multiplier = 0
+    width = 0.05
     
     for index, dataset in enumerate(solar_dfs):
         
-        ds = c.seasons(dataset, month)
+        offset = width * index
+        ds = c.probability_distribuition(
+            c.seasons(dataset, month),
+            col
+            )
         
-        plot_histogram(ax, ds, col)
+        ax.bar(
+            ds['start'] + offset,
+            ds['days'], 
+            width = width, 
+    
+            )
+        # multiplier =+ 1
+        plt.xticks(rotation = 0)
+        
+    ax.set()
+        
 
 def plot_single_season(
         ax, 
@@ -132,6 +137,13 @@ def plot_distributions_seasons(
                 solar_name
                 )
         
+        plot_single_histogram(
+                ax[j, 1], 
+                solar_dfs,
+                season_name,
+                col ='gamma'
+                )
+        
       
         all_events.extend(total)
         
@@ -143,12 +155,7 @@ def plot_distributions_seasons(
             transform = ax[j, 0].transAxes
             )
         
-        plot_single_histogram(
-                ax[j, 1], 
-                solar_dfs,
-                season_name,
-                col ='gamma'
-                )
+       
         
     ax[0, 0].legend(
         ncol = 2, 
