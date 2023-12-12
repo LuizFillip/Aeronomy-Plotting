@@ -2,28 +2,30 @@ import matplotlib.pyplot as plt
 import base as s
 import datetime as dt
 import numpy as np
-import PlasmaBubbles as pb 
-    
+
+PATH_INDEX =  'database/indices/omni_pro.txt'
+
 s.config_labels()
 
 
-def plot_dst(ax, dst):
+def plot_dst(ax, dst, limit = -100 ):
+    
     ax.plot(dst)
     
     ax.set(
         xlim = [dst.index[0], dst.index[-1]], 
         ylim = [-300, 100],
-        yticks = np.arange(-300, 100, 100),
+        yticks = np.arange(-200, 100, 100),
         ylabel = "Dst (nT)"
         )
     
-    for limit in [-50, -100]:
-        ax.axhline(limit, lw = 2, color = 'r')
+    # for limit in [-50, -100]:
+    ax.axhline(limit, lw = 2, color = 'r')
     
     
     return dst
 
-def plot_f107(ax, f107, f107a):
+def plot_f107(ax, f107, f107a, limit = 86):
     
     ax.plot(f107)
     ax.plot(
@@ -38,17 +40,26 @@ def plot_f107(ax, f107, f107a):
         yticks = np.arange(50, 250, 50)
         )
 
-    for limit in [75, 110]:
-        ax.axhline(
-            limit, 
-            lw = 2, 
-            color = 'r'
-            )
+    # for limit in [75, 110]:
+    ax.axhline(
+        limit, 
+        lw = 2, 
+        color = 'r'
+        )
         
         
-def plot_kp(ax, kp):
+def plot_kp(ax, kp, me = 30):
     
-    ax.bar(kp.index, kp)
+    args = dict(alpha = 0.3)
+    
+    ax.bar(kp.index, kp, **args)
+    
+    mean = kp.resample(f'{me}D').mean()
+    
+    ax.bar(mean.index, mean, 
+           color = 'k', 
+           width = 10, 
+           label = f'{me} days average')
     
     ax.set(
         ylabel = 'Kp', 
@@ -56,7 +67,9 @@ def plot_kp(ax, kp):
         yticks = np.arange(0, 10, 2)
         )
     
-    ax.axhline(4, lw = 2, color = 'r')
+    ax.axhline(3, lw = 2, color = 'r')
+    
+    ax.legend()
      
 
 def plot_long_term(s_year, e_year):
@@ -70,7 +83,7 @@ def plot_long_term(s_year, e_year):
     
     plt.subplots_adjust(hspace = 0.1)
     
-    df = s.load(pb.INDEX_PATH)
+    df = s.load(PATH_INDEX)
     
     df = s.sel_dates(
         df, 
@@ -82,7 +95,7 @@ def plot_long_term(s_year, e_year):
     plot_dst(ax[1], df['dst'])
     plot_f107(ax[2], df['f107'], df['f107a'])
   
-    ax[2].set(
+    ax[2].set( 
         xlabel = 'years',
         xlim = [df.index[0], df.index[-1]]
         )
@@ -101,4 +114,4 @@ def plot_long_term(s_year, e_year):
     
 
 
-# f = plot_long_term(2012, 2023)
+f = plot_long_term(2012, 2023)
