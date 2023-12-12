@@ -24,10 +24,10 @@ def plot_distribution(
     
     epbs = ds['epbs'].sum()
     
-    # ds = ds.loc[~(
-    #     (ds['days'] == 1) & 
-    #     (ds['epbs'] == 1))
-    #     ]
+    ds = ds.loc[~(
+        (ds['days'] == 1) & 
+        (ds['epbs'] == 1))
+        ]
         
  
     # if drop is not None:

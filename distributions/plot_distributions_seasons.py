@@ -25,6 +25,7 @@ def plot_single_histogram(
         ):
     
     width = 0.05
+    count = []
     
     for index, dataset in enumerate(solar_dfs):
         
@@ -34,11 +35,17 @@ def plot_single_histogram(
             col
             )
         
+        days = int(ds['days'].sum())
+        
+        name = solar_name[index]
+        
+        count.append(f'({index}) {days} events')
+        
         ax.bar(
             ds['start'] + offset,
             ds['days'], 
             width = width, 
-            label = solar_name[index]
+            label = f'({index + 1}) {name}'
             )
         plt.xticks(rotation = 0)
         
@@ -50,6 +57,13 @@ def plot_single_histogram(
             vmin, vmax + step, step*2
             )
         )
+    
+    ax.text(
+            0.65, 0.7, 
+            '\n'.join(count), 
+            transform = ax.transAxes
+            )
+    
         
 
 def plot_single_season(
@@ -81,8 +95,8 @@ def plot_single_season(
         
         
     
-    infos = ('EPB occurrence\n' + 
-              '\n'.join(c_event))
+    # infos = ('EPB occurrence\n' + 
+    #           '\n'.join(c_event))
         
     # ax.text(
     #         0.58, 0.15, 
@@ -100,12 +114,12 @@ def plot_distributions_seasons(
         ):
     
     fig, ax = plt.subplots(
-      ncols = 2, 
-      nrows = 4,
-      figsize = (14, 12), 
-      dpi = 300, 
-      sharex = 'col', 
-      sharey = 'col'
+          ncols = 2, 
+          nrows = 4,
+          figsize = (14, 12), 
+          dpi = 300, 
+          sharex = 'col', 
+          sharey = 'col'
         )
     
     plt.subplots_adjust(
@@ -219,6 +233,8 @@ def save_figs(df, col = 'gamma'):
 df = c.concat_results('saa')
 
 col = 'gamma'
+
+# df = df.loc[df['kp'] <= 3]
 fig = plot_distributions_seasons(df, col)
 
 FigureName = 'seasonal_all_periods'
