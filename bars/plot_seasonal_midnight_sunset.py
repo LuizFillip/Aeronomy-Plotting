@@ -1,7 +1,7 @@
 import PlasmaBubbles as pb 
 import matplotlib.pyplot as plt
 import base as b 
-import events as ev 
+import core as c
 
 b.config_labels()
 

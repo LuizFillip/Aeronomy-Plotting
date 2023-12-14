@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt 
 import base as b
-import events as ev 
+import core as c
 
 path = 'database/epbs/events_types.txt'
 
@@ -26,14 +26,16 @@ def plot_epbs_with_indices(
     
     plt.subplots_adjust(hspace = 0.1)
         
-    ds = ev.yearly_occurrences(df)
+    ds = c.year_occurrence(df)
     
-    ds.plot(
+    # print(ds)
+    
+    ds['epb'].plot(
         kind = 'bar', 
         ax = ax[2], 
         legend = False,
-        color =  ['k', 'gray'],
-        stacked = True, 
+        color = 'gray',
+        # stacked = True, 
         )
      
     ax[0].plot(df['f107'])
@@ -42,12 +44,6 @@ def plot_epbs_with_indices(
     
     ax[1].bar(df.index, df['kp'], width = 1)
     
-    ax[2].legend(
-        ['With EPB', 'Without EPB'], 
-        ncol = 2, 
-        loc = 'upper center', 
-        # bbox_to_anchor = (0.5, 1.2)
-        )
     
     ax[0].set(
         xlim = [df.index[0], df.index[-1]],
@@ -66,7 +62,7 @@ def plot_epbs_with_indices(
         ylabel = 'Number of nights',
         xlabel = 'Years', 
         # yticks = list(range(0, 500, 100)), 
-        ylim = [0, 700]
+        ylim = [0, 370]
         )
     
     ax[0].axhline(solar_level, color = 'r', lw = 2)
@@ -87,8 +83,8 @@ def plot_epbs_with_indices(
     
     return fig
 
-# df = ev.concat_results('saa')
-# df = ev.epbs(geo = True)
-# fig = plot_epbs_with_indices(df)
+df = c.concat_results('saa')
+# df = c.epbs(geo = True)
+fig = plot_epbs_with_indices(df)
 
 # fig.savefig(b.LATEX('annual_variation'))

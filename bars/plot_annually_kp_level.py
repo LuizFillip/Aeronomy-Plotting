@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt 
 import base as b
-import events as ev 
+import core as c
 
 b.config_labels()
 
@@ -19,7 +19,7 @@ def plot_annualy_kp_level(
     
     plt.subplots_adjust(hspace = 0.1)
     
-    levels = ev.kp_levels(
+    levels = c.kp_levels(
             df, 
             level =  kp_level, 
             kp_col = 'kp'
@@ -33,7 +33,7 @@ def plot_annualy_kp_level(
     
     for i, ds in enumerate(levels):
         
-        dataset = ev.yearly_occurrences(ds)
+        dataset = c.yearly_occurrences(ds)
         
         dataset.plot(
             kind = 'bar',
