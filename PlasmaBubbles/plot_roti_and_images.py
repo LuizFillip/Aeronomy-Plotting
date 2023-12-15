@@ -14,10 +14,7 @@ def plot_roti(ax, dn, glon = -50):
     
     infile = f'database/epbs/longs/{dn.year}.txt'
 
-    ds = b.sel_times(
-            b.load(infile),
-            dn
-        )
+    ds = b.sel_times(b.load(infile), dn)
     
     args = dict(
         marker = 'o', 
@@ -32,14 +29,9 @@ def plot_roti(ax, dn, glon = -50):
             twilight = 18
             )
     
-    
     ax.axvline(dusk, lw = 2.5, linestyle = '--')
-    ax.text(
-        dusk, 
-        1.02, 
-        'Terminator', 
-        transform = ax.transData
-        )
+    ax.text(dusk, 1.02, 'Terminator', transform = ax.transData)
+    
     ax.plot(ds[str(glon)], **args)
     
     ax.set(
@@ -47,7 +39,7 @@ def plot_roti(ax, dn, glon = -50):
         ylabel = 'ROTI (TECU/min)'
         )
     
-    b.format_time_axes(ax,pad = 50, hour_locator = 2)
+    b.format_time_axes(ax, pad = 50, hour_locator = 2)
     
     return None
     
@@ -188,3 +180,5 @@ def main():
     save_in = 'G:\\Meu Drive\\Doutorado\Travels\\O6_CA_20170404'
     
     fig.savefig(save_in, dpi = 300)
+    
+    

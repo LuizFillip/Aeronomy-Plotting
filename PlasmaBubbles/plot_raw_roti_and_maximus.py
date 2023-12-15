@@ -75,24 +75,7 @@ def plot_roti_curves(ax):
     
     b.format_time_axes(ax)
 
-# day = df.between_time(
-#     '12:00', '20:00'
-#     )
-
-# avg = day['roti'].mean()
-# std = day['roti'].std()
-
-# avg * 1.4 + std * 4
-
-
-# def plot_raw_roti_and_maximus():
-    
-# fig, ax = plt.subplots(
-#     dpi = 300, 
-#     figsize = (10, 4)
-#     )
-
-dn = dt.datetime(2013, 6, 10, 20)
+# dn = dt.datetime(2013, 6, 10, 20)
 
 
 
