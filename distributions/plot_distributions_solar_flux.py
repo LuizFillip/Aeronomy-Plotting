@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import base as b
-import events as ev 
+import core as c 
 from plotting import plot_distribution
 
 
@@ -29,15 +29,8 @@ def plot_distributions_solar_flux(
         '$F_{10.7} > $' + f' {level}'
         ]
     
-    if col == 'gamma':
-        vmin, vmax, step = 0, 3.2, 0.2
-        
-    elif col == 'vp':
-        vmin, vmax, step = 0, 85, 5
-    else:
-        vmin, vmax, step = 0, 1, 0.05
-    
-    solar_dfs =  ev.solar_levels(
+  
+    solar_dfs =  c.solar_levels(
         df, 
         level,
         flux_col = 'f107a'
@@ -47,15 +40,14 @@ def plot_distributions_solar_flux(
     
     for i, ds in enumerate(solar_dfs):
     
-        c = plot_distribution(
+        count = plot_distribution(
             ax, 
             ds,
-            limits = (vmin, vmax, step),
             col = col,
             label = f'{labels[i]}'
             )
         
-        total.append(c)
+        total.append(count)
     
     if col == 'vp':
         xlabel = b.y_label('vp')
@@ -63,7 +55,7 @@ def plot_distributions_solar_flux(
     else:
         xlabel = b.y_label('gamma')
         
-        
+    vmin, vmax, step = c.limits(col)    
     ax.set(
         xlim = [vmin, vmax],
         xticks = np.arange(
@@ -82,7 +74,6 @@ def plot_distributions_solar_flux(
     info = f' ({sum(total)} EPBs events)'
     
     ax.set(
-        # title = df.columns.name + info,
         xlabel = xlabel, 
         ylabel = 'EPB occurrence probability'
         )
@@ -90,13 +81,3 @@ def plot_distributions_solar_flux(
     return fig
  
 
-df = ev.concat_results('saa')
-
-col = 'gamma'
-
-
-# fig = plot_distributions_solar_flux(
-#     df, 
-#     col, 
-#     level = 86
-#     )

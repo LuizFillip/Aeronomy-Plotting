@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt 
 import base as b
-import events as ev 
+import core as c
 
 b.config_labels()
 
@@ -19,7 +19,7 @@ def plot_seasonal_kp_level(
     
     plt.subplots_adjust(hspace = 0.1)
     
-    levels = ev.kp_levels(
+    levels = c.kp_levels(
             df, 
             level =  kp_level, 
             kp_col = 'kp'
@@ -33,7 +33,7 @@ def plot_seasonal_kp_level(
     
     for i, ds in enumerate(levels):
         
-        dataset = ev.monthly_occurences(ds)
+        dataset = c.monthly_occurences(ds)
         
         dataset.plot(
             kind = 'bar',
@@ -72,7 +72,7 @@ def plot_seasonal_kp_level(
     
     return fig
 
-df = ev.concat_results('saa')
+df = c.concat_results('saa')
 fig = plot_seasonal_kp_level(df)
 
 # fig.savefig(b.LATEX('Kp_seasonal_variation'))

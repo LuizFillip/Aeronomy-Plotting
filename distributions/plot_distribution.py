@@ -24,18 +24,6 @@ def plot_distribution(
     
     epbs = ds['epbs'].sum()
     
-    ds = ds.loc[~(
-        (ds['days'] == 1) & 
-        (ds['epbs'] == 1))
-        ]
-        
- 
-    # if drop is not None:
-    #     ds.drop(
-    #         ds.tail(drop).index, 
-    #         inplace = True
-    #         )
-    
     if count:
         LABEL = f'{label} ({epbs} events)'
     else:

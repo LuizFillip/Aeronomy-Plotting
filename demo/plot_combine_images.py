@@ -20,7 +20,7 @@ def figure(year = 2014):
     
     for i in range(3):
         gg.map_attrs(ax[i], year, grid = False)
-        if i != 0:
+        # if i != 0:
             
     
 
@@ -35,6 +35,6 @@ def run():
         plt.clf()   
         plt.close()
     
-fig, ax = figure(year = 2014)
+# fig, ax = figure(year = 2014)
 
-plt.show()
+# plt.show()
