@@ -6,8 +6,36 @@ from plotting import plot_distribution
 
 
 
-b.config_labels(fontsize = 28)
+b.config_labels(fontsize = 25)
 
+def plot_histogram(ax, dataset, index, name):
+    
+    width = 0.07
+
+    ds = c.probability_distribuition(
+        dataset,
+        col
+        )
+    
+    days = int(ds['days'].sum())
+    
+    offset = width * index
+    
+    ax.bar(
+        ds['start'] + offset,
+        ds['days'], 
+        width = width, 
+        label = name
+        )
+    
+    ax.set(ylabel = 'Frequency of occurrence')
+    
+    ax.legend(loc = 'upper center', 
+              ncol = 2)
+    
+    plt.xticks(rotation = 0)
+    
+    return days
 
 
 def plot_distributions_solar_flux(
@@ -19,10 +47,12 @@ def plot_distributions_solar_flux(
     
     fig, ax = plt.subplots(
         dpi = 300, 
+        nrows = 2,
         sharex = True,
-        sharey = True,
-        figsize = (13, 6)
+        figsize = (12, 12)
         )
+    
+    plt.subplots_adjust(hspace = 0.1)
         
     labels = [
         '$F_{10.7} < $' + f' {level}',
@@ -36,48 +66,44 @@ def plot_distributions_solar_flux(
         flux_col = 'f107a'
         )
      
-    total = []
+    total_epb = []
+    total_day = []
     
     for i, ds in enumerate(solar_dfs):
+        
+        name = f'({i + 1}) {labels[i]}'
     
-        count = plot_distribution(
-            ax, 
+        epbs = plot_distribution(
+            ax[1], 
             ds,
             col = col,
-            label = f'{labels[i]}'
+            label = name
             )
         
-        total.append(count)
-    
-    if col == 'vp':
-        xlabel = b.y_label('vp')
-        vmax = 70
-    else:
-        xlabel = b.y_label('gamma')
+        days = plot_histogram(ax[0], ds, i, name)
         
-    vmin, vmax, step = c.limits(col)    
-    ax.set(
-        xlim = [vmin, vmax],
-        xticks = np.arange(
-            vmin, vmax + step, step * 2),
-        ylim = [-0.1, 1.1],
-        yticks = np.arange(0, 1.25, 0.25),
-        )
+        total_epb.append(epbs)
+        total_day.append(days)
         
-    ax.legend(
-        bbox_to_anchor = (0.5, 1.2),
-        ncol = 2, 
-        loc = 'upper center',
-        columnspacing = 0.2
-        )
     
-    info = f' ({sum(total)} EPBs events)'
+   
     
-    ax.set(
-        xlabel = xlabel, 
-        ylabel = 'EPB occurrence probability'
-        )
+    print(total_epb, total_day)
+  
+    ax[1].legend(ncol = 2,  loc = 'upper center')
+        
     
     return fig
  
+
+df = c.concat_results('saa')
+
+col = 'gamma'
+
+fig = plot_distributions_solar_flux(
+        df, 
+        col,
+        level = 86
+        )
+
 

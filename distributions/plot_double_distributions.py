@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import base as b
-import events as ev 
+import core as c 
 from plotting import plot_distribution
 
 
@@ -30,17 +30,17 @@ def plot_distributions_solar_flux(
     else:
         vmin, vmax, step = 0, 1, 0.05
     
-    solar_dfs =  ev.solar_levels(
-        df, 
-        level,
-        flux_col = 'f107a'
-        )
+    solar_dfs =  c.solar_levels(
+                df, 
+                level,
+                flux_col = 'f107a'
+                )
      
     total = []
     
     for i, ds in enumerate(solar_dfs):
     
-        c = plot_distribution(
+        count = plot_distribution(
             ax, 
             ds,
             limits = (vmin, vmax, step),
@@ -48,7 +48,7 @@ def plot_distributions_solar_flux(
             label = f'{labels[i]}'
             )
         
-        total.append(c)
+        total.append(count)
     
     if col == 'vp':
         xlabel = b.y_label('vp')
@@ -56,15 +56,6 @@ def plot_distributions_solar_flux(
     else:
         xlabel = b.y_label('gamma')
         
-        
-    ax.set(
-        xlim = [vmin, vmax],
-        xticks = np.arange(
-            vmin, vmax + step, step * 2
-            ),
-        ylim = [-0.2, 1.2],
-        yticks = np.arange(0, 1.25, 0.25),
-        )
         
     ax.legend( loc = 'lower right')
         
@@ -118,7 +109,7 @@ def plot_double_distributions(df):
       
     return fig
 
-df = ev.concat_results('saa')
+df = c.concat_results('saa')
 
 
 fig = plot_double_distributions(df)
