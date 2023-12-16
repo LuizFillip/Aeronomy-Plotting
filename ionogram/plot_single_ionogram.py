@@ -2,15 +2,6 @@ import matplotlib.pyplot as plt
 from skimage import io
 import numpy as np
 
-def crop_image(
-        img, 
-        y = 50, 
-        x = 130, 
-        h = 900, 
-        w = 750
-        ):
-    
-    return img[y: y + h, x: x + w]
 
 def redefine_ticks(img):
     
@@ -18,10 +9,12 @@ def redefine_ticks(img):
     yticks = np.arange(150, 1350, 150)
 
     x_positions = np.linspace(
-        0, img.shape[1] - 1, len(xticks)
+        0, img.shape[1] - 1, 
+        len(xticks)
         )
     y_positions = np.linspace(
-        0, img.shape[0] - 1, len(yticks)
+        0, img.shape[0] - 1, 
+        len(yticks)
         )
     
     plt.xticks(x_positions, xticks)
@@ -37,15 +30,15 @@ def crop_region_E(img):
     
     return img[y: y + h, x: x + w]
 
+
+
+fig, ax = plt.subplots(
+    figsize = (10, 8),
+    dpi = 300)
+
 fname = 'digisonde/data/ionogram/20130114/FZA0M_20130114(014)200000.PNG'
 
 img = io.imread(fname)
-
-fig, ax = plt.subplots(
-    figsize = (12, 12),
-    dpi = 300)
-
-
 img = crop_region_E(img)
 ax.imshow(img)
 
@@ -54,7 +47,7 @@ plt.gca().invert_yaxis()
 
 redefine_ticks(img)
 
-ax.set(ylabel = 'Altitude (Km)', 
+ax.set(ylabel = 'Altitude (km)', 
        xlabel = 'Frequency (MHz)')
 
 plt.show()

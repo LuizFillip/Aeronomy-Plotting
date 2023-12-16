@@ -22,14 +22,7 @@ def plot_imager(ax2, fname, col):
     dn = im.imager_fname(fname).datetime
     title = dn.strftime(f'({col + 1}) %H:%M')
     ax2.set(title = title)
-    
-    # if col == 0:
-    #     ax2.text(
-    #         0.03, 0.85, '(a)',
-    #         color = 'white',
-    #         transform = ax2.transAxes
-    #         )
-    
+
     return ax2
 
 def plot_ionogram(ax2, fname, col):
@@ -63,25 +56,63 @@ def plot_ionogram(ax2, fname, col):
         )
     
     if col == 0:
-    #     ax2.text(
-    #         0.03, 0.85, '(b)',
-    #         color = 'white',
-    #         transform = ax2.transAxes
-    #         )
-        
         ax2.set(ylabel = 'Virtual Height (km)')
 
     return dn
 
 
 
+args = dict(
+     marker = 'o', 
+     markersize = 1,
+     linestyle = 'none', 
+     color = 'gray', 
+     alpha = 0.3, 
+     )
 
+
+
+def plot_roti_curves(ax, dn):
+    
+    ds = pb.concat_files(dn, root = os.getcwd())
+
+    ds = b.sel_times(ds, dn)
+    
+    ds = ds.loc[(ds['lon'] > -50) & 
+                (ds['lon'] < -40) &
+                (ds['lat'] > -5) & 
+                (ds['lat'] < -1 )]
+    
+    ds = ds[~ds['prn'].str.contains('R')]
+        
+    ax.plot(ds['roti'], **args, 
+            label = 'ROTI points')
+    
+    times = pb.time_range(ds)
+    
+    ax.axhline(0.25, color = 'red', lw = 2, 
+                label = '0.25 TECU/min')
+    
+    df1 = pb.time_dataset(ds, 'max', times)
+    
+    ax.plot(df1, 
+            color = 'k',
+            marker = 'o', 
+            markersize = 3, 
+            linestyle = 'none',
+            label = 'Maximum value')
+    
+    ax.set(yticks = list(range(0, 5)), 
+           ylabel = 'ROTI (TECU/min)')
+    ax.legend(loc = 'upper right')
+    
+    b.format_time_axes(ax)
+    
+    
 def plot_shades(ax1, dn, times):
     
     delta = dt.timedelta(minutes = 10)
                 
-   
-    
     b.format_time_axes(ax1)
     
     for i, n in enumerate(times):
@@ -98,11 +129,7 @@ def plot_shades(ax1, dn, times):
             edgecolor = 'k', 
             lw = 2
         )
-    
-    # ax1.text(
-    #     0.02, 0.85, '(b)', 
-    #     transform = ax1.transAxes
-    #     )
+  
     
 def plot_multi_instrumentation(dn, fn_skys):
 
@@ -179,53 +206,7 @@ fn_skys = [
 # fig.savefig(b.LATEX('non_EPB_occurrence'), dpi = 400)
 # 
 
-args = dict(
-     marker = 'o', 
-     markersize = 1,
-     linestyle = 'none', 
-     color = 'gray', 
-     alpha = 0.3, 
-     )
 
-
-
-def plot_roti_curves(ax, dn):
-    
-    ds = pb.concat_files(dn, root = os.getcwd())
-
-    ds = b.sel_times(ds, dn)
-    
-    ds = ds.loc[(ds['lon'] > -50) & 
-                (ds['lon'] < -40) &
-                (ds['lat'] > -5) & 
-                (ds['lat'] < -1 )]
-    
-    ds = ds[~ds['prn'].str.contains('R')]
-    
-    # print(ds.max(), ds['roti'].idxmax())
-    
-    ax.plot(ds['roti'], **args, 
-            label = 'ROTI points')
-    
-    times = pb.time_range(ds)
-    
-    ax.axhline(0.25, color = 'red', lw = 2, 
-                label = '0.25 TECU/min')
-    
-    df1 = pb.time_dataset(ds, 'max', times)
-    
-    ax.plot(df1, 
-            color = 'k',
-            marker = 'o', 
-            markersize = 3, 
-            linestyle = 'none',
-            label = 'Maximum value')
-    
-    ax.set(yticks = list(range(0, 5)), 
-           ylabel = 'ROTI (TECU/min)')
-    ax.legend(loc = 'upper right')
-    
-    b.format_time_axes(ax)
 
 # fig, ax  = plt.subplots()
 
