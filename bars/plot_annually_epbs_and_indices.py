@@ -26,7 +26,9 @@ def plot_annually_epbs_and_indices(
         
     ds = c.year_occurrence(df)
     
-    ds['epb'].plot(kind = 'bar', ax = ax[2], 
+    ds['epb'].plot(
+        kind = 'bar', 
+        ax = ax[2], 
         legend = False,
         **args
         )

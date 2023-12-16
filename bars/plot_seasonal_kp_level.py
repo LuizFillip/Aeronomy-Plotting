@@ -33,18 +33,18 @@ def plot_seasonal_kp_level(
     
     for i, ds in enumerate(levels):
         
-        dataset = c.monthly_occurences(ds)
+        dataset = c.month_occurrence(ds)
         
         dataset.plot(
             kind = 'bar',
             ax = ax[i], 
-            color =  ['k', 'gray'],
-            stacked = True, 
-            legend = False
+            color =  'gray',
+            legend = False,
+            edgecolor = 'k'
             )
     
         ax[i].set(
-            ylim = [0, 300],
+            ylim = [0, 200],
             ylabel = 'Number of nights',
             xlabel = 'Months',
             xticklabels = b.number_to_months()
@@ -63,12 +63,6 @@ def plot_seasonal_kp_level(
         
     plt.xticks(rotation = 0)
     
-    ax[0].legend(
-        ['With EPB', 'Without EPB'], 
-        ncol = 2, 
-        loc = 'upper center', 
-        bbox_to_anchor = (0.5, 1.2)
-        )
     
     return fig
 

@@ -31,25 +31,25 @@ def plot_annualy_kp_level(
         f'$Kp >$ {kp_level}'
         ]
     
-    for i, ds in enumerate(levels):
+    for i, dataset in enumerate(levels):
         
-        dataset = c.yearly_occurrences(ds)
-        
-        dataset.plot(
+        ds = c.year_occurrence(dataset)
+     
+        ds['epb'].plot(
             kind = 'bar',
             ax = ax[i], 
-            color =  ['k', 'gray'],
-            stacked = True, 
-            legend = False
+            color = 'gray',
+            legend = False, 
+            edgecolor = 'k'
             )
     
         ax[i].set(
-            ylim = [0, 300],
+            ylim = [0, 200],
             ylabel = 'Number of nights',
             xlabel = 'Years'
             )
         
-        epb_count = dataset['epb'].sum()
+        epb_count = int(dataset['epb'].sum())
         
         l = b.chars()[i]
         n = names[i]
@@ -61,17 +61,10 @@ def plot_annualy_kp_level(
             )
         
     plt.xticks(rotation = 0)
-    
-    ax[0].legend(
-        ['With EPB', 'Without EPB'], 
-        ncol = 2, 
-        loc = 'upper center', 
-        bbox_to_anchor = (0.5, 1.2)
-        )
-    
+#
     return fig
 
 df = c.concat_results('saa')
 fig = plot_annualy_kp_level(df)
 
-# fig.savefig(b.LATEX('kp_annual_variation'))
+fig.savefig(b.LATEX('kp_annual_variation'))
