@@ -1,13 +1,10 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-
-from skimage import data
 from skimage.util.dtype import dtype_range
 from skimage.util import img_as_ubyte
 from skimage import exposure
 from skimage.morphology import disk
-from skimage.morphology import ball
 from skimage.filters import rank
 from skimage import io
 
@@ -16,7 +13,9 @@ matplotlib.rcParams['font.size'] = 9
 
 
 def plot_img_and_hist(image, axes, bins=256):
-    """Plot an image along with its histogram and cumulative histogram.
+    """
+    Plot an image along with 
+    its histogram and cumulative histogram.
 
     """
     ax_img, ax_hist = axes
@@ -29,7 +28,9 @@ def plot_img_and_hist(image, axes, bins=256):
     # Display histogram
     ax_hist.hist(image.ravel(), bins=bins)
     ax_hist.ticklabel_format(
-        axis='y', style='scientific', scilimits=(0, 0))
+        axis='y', 
+        style='scientific', 
+        scilimits=(0, 0))
     ax_hist.set_xlabel('Pixel intensity')
 
     xmin, xmax = dtype_range[image.dtype.type]
@@ -43,9 +44,9 @@ def plot_img_and_hist(image, axes, bins=256):
 
 
 # Load an example image
-fname = 'imager/img/O6_STR_20230213_015619.tif'
+fname = 'imager/img/O6_CA_20160211_232747.tif'
 file = io.imread(fname, as_gray = True)
-img = img_as_ubyte(np.asarray(file)) #data.moon())
+img = img_as_ubyte(np.asarray(file)) 
 
 # Global equalize
 img_rescale = exposure.equalize_hist(img)
@@ -61,15 +62,21 @@ fig = plt.figure(
     dpi = 300, 
     )
 axes = np.zeros((2, 3), dtype=object)
+
 axes[0, 0] = plt.subplot(2, 3, 1)
 axes[0, 1] = plt.subplot(2, 3, 2, 
-                         sharex=axes[0, 0], sharey=axes[0, 0])
-axes[0, 2] = plt.subplot(2, 3, 3, sharex=axes[0, 0], sharey=axes[0, 0])
+                         sharex=axes[0, 0],
+                         sharey=axes[0, 0])
+
+axes[0, 2] = plt.subplot(2, 3, 3,
+                         sharex=axes[0, 0],
+                         sharey=axes[0, 0])
 axes[1, 0] = plt.subplot(2, 3, 4)
 axes[1, 1] = plt.subplot(2, 3, 5)
 axes[1, 2] = plt.subplot(2, 3, 6)
 
-ax_img, ax_hist, ax_cdf = plot_img_and_hist(img, axes[:, 0])
+ax_img, ax_hist, ax_cdf = plot_img_and_hist(
+    img, axes[:, 0])
 ax_img.set_title('Low contrast image')
 ax_hist.set_ylabel('Number of pixels')
 
@@ -77,7 +84,8 @@ ax_img, ax_hist, ax_cdf = plot_img_and_hist(
     img_rescale, axes[:, 1])
 ax_img.set_title('Global equalise')
 
-ax_img, ax_hist, ax_cdf = plot_img_and_hist(img_eq, axes[:, 2])
+ax_img, ax_hist, ax_cdf = plot_img_and_hist(
+    img_eq, axes[:, 2])
 ax_img.set_title('Local equalize')
 ax_cdf.set_ylabel('Fraction of total intensity')
 

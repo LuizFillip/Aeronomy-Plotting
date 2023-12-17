@@ -24,8 +24,7 @@ def plot_annualy_kp_level(
             level =  kp_level, 
             kp_col = 'kp'
             )
-    
-    
+
     names = [
         f'$Kp \\leq$ {kp_level}', 
         f'$Kp >$ {kp_level}'

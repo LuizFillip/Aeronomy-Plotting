@@ -5,7 +5,7 @@ import numpy as np
 
 def redefine_ticks(img):
     
-    xticks = np.arange(0, 17, 1)
+    xticks = np.arange(0, 17, 2)
     yticks = np.arange(150, 1350, 150)
 
     x_positions = np.linspace(
@@ -30,24 +30,26 @@ def crop_region_E(img):
     
     return img[y: y + h, x: x + w]
 
+def plot_single_ionogram(fname):
+    
+    fig, ax = plt.subplots(
+        figsize = (10, 8),
+        dpi = 300)
+    
+    img = io.imread(fname)
+    img = crop_region_E(img)
+    ax.imshow(img)
+    
+    plt.gca().invert_yaxis()
+    
+    redefine_ticks(img)
+    
+    ax.set(ylabel = 'Altitude (km)', 
+           xlabel = 'Frequency (MHz)')
+    
+    return fig
 
 
-fig, ax = plt.subplots(
-    figsize = (10, 8),
-    dpi = 300)
+
 
 fname = 'digisonde/data/ionogram/20130114/FZA0M_20130114(014)200000.PNG'
-
-img = io.imread(fname)
-img = crop_region_E(img)
-ax.imshow(img)
-
-plt.gca().invert_yaxis()
-
-
-redefine_ticks(img)
-
-ax.set(ylabel = 'Altitude (km)', 
-       xlabel = 'Frequency (MHz)')
-
-plt.show()

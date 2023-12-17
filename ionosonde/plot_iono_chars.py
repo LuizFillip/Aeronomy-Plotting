@@ -83,11 +83,7 @@ def plot_terminators(
             color = color
             )
         
-dn = '20161003(277)'
-dn = '20170423(113)'
-dn = '20170403(093)'
-dn = '20130327(086)'
-dn = '20150409(099)'
+
 
 def plot_iono_chars(dn):
     
@@ -134,6 +130,13 @@ def plot_iono_chars(dn):
     for i, site in enumerate(out):
         plot_terminators(
             ax, df, site, color[i])
+
+
+dn = '20161003(277)'
+dn = '20170423(113)'
+dn = '20170403(093)'
+dn = '20130327(086)'
+dn = '20150409(099)'
 
 
 plot_iono_chars(dn)

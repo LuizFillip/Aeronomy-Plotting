@@ -3,7 +3,7 @@ import seaborn as sns
 import base as b
 import pandas as pd
 import datetime as dt
-import os 
+import PlasmaBubbles as pb 
 
 PATH_EVENT = 'D:\\database\\epbs\\events\\'
 
@@ -63,27 +63,26 @@ def get_date_range(ds):
     
     return pd.date_range(s, e, freq = '1D')
 
-import PlasmaBubbles as pb 
 
-
-dn = dt.datetime(2014, 1, 1, 20)
-
-
-ds = b.load(
-    pb.epb_path(
-        dn.year, 
-        path = 'events'
+def main():
+    
+    dn = dt.datetime(2014, 1, 1, 20)
+    
+    ds = b.load(
+        pb.epb_path(
+            dn.year, 
+            path = 'events'
+            )
         )
-    )
-
-ds = b.sel_times(ds, dn)
-
-
-heat_map_for_events(
-        ds.T, 
-        freq = '1h'
-        )
-
-
+    
+    ds = b.sel_times(ds, dn)
+    
+    
+    heat_map_for_events(
+            ds.T, 
+            freq = '1h'
+            )
+    
+    
 
 
