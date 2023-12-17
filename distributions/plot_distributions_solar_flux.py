@@ -1,41 +1,10 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import base as b
 import core as c 
-from plotting import plot_distribution
-
-
+import plotting as pl 
+ 
 
 b.config_labels(fontsize = 25)
-
-def plot_histogram(ax, dataset, index, name):
-    
-    width = 0.07
-
-    ds = c.probability_distribuition(
-        dataset,
-        col
-        )
-    
-    days = int(ds['days'].sum())
-    
-    offset = width * index
-    
-    ax.bar(
-        ds['start'] + offset,
-        ds['days'], 
-        width = width, 
-        label = name
-        )
-    
-    ax.set(ylabel = 'Frequency of occurrence')
-    
-    ax.legend(loc = 'upper center', 
-              ncol = 2)
-    
-    plt.xticks(rotation = 0)
-    
-    return days
 
 
 def plot_distributions_solar_flux(
@@ -49,7 +18,7 @@ def plot_distributions_solar_flux(
         dpi = 300, 
         nrows = 2,
         sharex = True,
-        figsize = (12, 12)
+        figsize = (12, 10)
         )
     
     plt.subplots_adjust(hspace = 0.1)
@@ -70,40 +39,39 @@ def plot_distributions_solar_flux(
     total_day = []
     
     for i, ds in enumerate(solar_dfs):
-        
-        name = f'({i + 1}) {labels[i]}'
+        index = i + 1
+        name = f'({index}) {labels[i]}'
     
-        epbs = plot_distribution(
-            ax[1], 
-            ds,
-            col = col,
-            label = name
+        epbs = pl.plot_distribution(
+                ax[1], 
+                ds,
+                col = col,
+                label = name
             )
         
-        days = plot_histogram(ax[0], ds, i, name)
+        days = pl.plot_histogram(ax[0], ds, i, name)
         
-        total_epb.append(epbs)
-        total_day.append(days)
-        
-    
-   
-    
-    print(total_epb, total_day)
-  
+        total_epb.append(pl.fmt(index, epbs))
+        total_day.append(pl.fmt(index, days))
+          
     ax[1].legend(ncol = 2,  loc = 'upper center')
-        
+    
+    pl.plot_infos(ax[1], total_epb)
+    pl.plot_infos(ax[0], total_day,
+               title = '$\gamma_{RT}$ total')
     
     return fig
- 
 
+    
 df = c.concat_results('saa')
 
 col = 'gamma'
 
-fig = plot_distributions_solar_flux(
-        df, 
-        col,
-        level = 86
-        )
+# fig = plot_distributions_solar_flux(
+#         df, 
+#         col,
+#         level = 86
+#         )
 
+df = df.dropna()
 
