@@ -5,9 +5,9 @@ import plotting as pl
 
 
 ks = {
-      0:  'March equinox',
-      1:  'June solstice',
-      2:  'September equinox',
+      0: 'March equinox',
+      1: 'June solstice',
+      2: 'September equinox',
       3: 'December solstice'
       }
 
@@ -27,7 +27,6 @@ def plot_single_season(
     total_epb = []
     total_day = []
     
-    total = []
     for i, dataset in enumerate(solar_dfs):
                 
         ds = c.seasons(dataset, month)
@@ -80,7 +79,7 @@ def plot_distributions_seasons(
         )
     
     solar_name = [
-        '$F_{10.7} < $' + f' {level}',
+        '$F_{10.7} \\leq $' + f' {level}',
         '$F_{10.7} > $' + f' {level}'
         ]
     
@@ -105,9 +104,13 @@ def plot_distributions_seasons(
         
         total.extend(day)
         
-        pl.plot_infos(ax[row, 0], epb, x = 0.6)
-        pl.plot_infos(ax[row, 1], day,
-                   title = '$\gamma_{RT}$ total')
+        pl.plot_infos(
+            ax[row, 0], epb, x = 0.65
+            )
+        pl.plot_infos(
+            ax[row, 1], day, x = 0.65,
+            title = '$\gamma_{RT}$ total'
+            )
     
     
         l = b.chars()[row]
@@ -117,10 +120,13 @@ def plot_distributions_seasons(
             f'({l}) {season_name}',
             transform = ax[row, 0].transAxes
             )
-    
-    # print(sum(total))
-       
         
+        ax[row, 1].text(
+            0.02, 0.85,
+            f'{season_name}',
+            transform = ax[row, 1].transAxes
+            )
+    
     ax[0, 0].legend(
         ncol = 2, 
         columnspacing = 0.3,
@@ -151,10 +157,12 @@ def plot_distributions_seasons(
         )
     
     fig.text(
-        0.42, 0.04, 
+        0.42, 0.07, 
         b.y_label('gamma'), 
         fontsize = fontsize
         )
+    
+    ax[0, 1].set(ylim = [0, 300])
     
     return fig
     
@@ -172,9 +180,9 @@ def save_figs(df, col = 'gamma'):
         else:
             df1 = df.loc[df['kp'] > 3]
         
-        fig = plot_distributions_seasons(
-            df1, col)
-        fig.suptitle(title[i], y  = 1.)
+        fig = plot_distributions_seasons(df1, col)
+        
+        fig.suptitle(title[i], y = 1.)
         
         fig.savefig(
             b.LATEX(FigureName),
@@ -185,18 +193,20 @@ df = c.concat_results('saa')
 
 col = 'gamma'
 
-# df = df.loc[df['kp'] <= 3]
+limit = c.limits_on_parts(
+    df['f107a'], parts = 2)
 
-
-fig = plot_distributions_seasons(df, col)
+fig = plot_distributions_seasons(
+    df, col, level = 83.66)
 
 FigureName = 'seasonal_all_periods'
 
-# fig.savefig(
-#     b.LATEX(FigureName),
-#     dpi = 400
-#     )
-# save_figs(df, col = 'gamma')
+fig.savefig(
+    b.LATEX(FigureName),
+    dpi = 400
+    )
+
+save_figs(df, col = 'gamma')
 
 
 

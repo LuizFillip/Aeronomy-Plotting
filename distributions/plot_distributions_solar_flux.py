@@ -40,25 +40,38 @@ def plot_distributions_solar_flux(
     
     for i, ds in enumerate(solar_dfs):
         index = i + 1
-        name = f'({index}) {labels[i]}'
+        label = f'({index}) {labels[i]}'
     
         epbs = pl.plot_distribution(
                 ax[1], 
                 ds,
                 col = col,
-                label = name
+                label = label,
+                axis_label = True
             )
         
-        days = pl.plot_histogram(ax[0], ds, i, name)
+        days = pl.plot_histogram(
+                ax[0], 
+                ds, 
+                index, 
+                label, 
+                col = col,
+                axis_label = True
+            )
         
-        total_epb.append(pl.fmt(index, epbs))
-        total_day.append(pl.fmt(index, days))
+        ax[0].set(xlabel = '')
+        
+        total_epb.append(epbs)
+        total_day.append(days)
+        
+    print(sum(total_day))
           
     ax[1].legend(ncol = 2,  loc = 'upper center')
+    ax[0].legend(ncol = 2,  loc = 'upper center')
     
     pl.plot_infos(ax[1], total_epb)
     pl.plot_infos(ax[0], total_day,
-               title = '$\gamma_{RT}$ total')
+                title = '$\gamma_{RT}$ total')
     
     return fig
 
@@ -67,11 +80,17 @@ df = c.concat_results('saa')
 
 col = 'gamma'
 
-# fig = plot_distributions_solar_flux(
-#         df, 
-#         col,
-#         level = 86
-#         )
+fig = plot_distributions_solar_flux(
+        df, 
+        col,
+        level = 83.66
+        )
 
-df = df.dropna()
+FigureName = 'PD_gamma_effects'
 
+# fig.savefig(
+#     b.LATEX(FigureName),
+#     dpi = 400
+#     )
+
+# df

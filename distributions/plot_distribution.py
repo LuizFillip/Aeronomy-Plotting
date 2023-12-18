@@ -15,6 +15,18 @@ def plot_histogram(
         axis_label = False
         ):
     
+    if col == 'vp':
+        xlabel = b.y_label('vp')
+        width = 3
+    elif col == 'gravity':
+        xlabel = b.y_label('gamma')
+        width = 0.02
+    else:
+        xlabel = b.y_label('gamma')
+        width = 0.07
+        
+    
+    
     ds = c.probability_distribuition(
         dataset,
         col
@@ -32,11 +44,7 @@ def plot_histogram(
         )
     
     if axis_label:
-        if col == 'vp':
-            xlabel = b.y_label('vp')
-        else:
-            xlabel = b.y_label('gamma')
-            
+
         ax.set(xlabel = xlabel, 
                ylabel = 'Frequency of occurrence')
     
@@ -44,14 +52,9 @@ def plot_histogram(
     
     vmin, vmax, step = c.limits(col)
     
-    
-    
     ax.set(
         xlim = [vmin, vmax],
-        xticks = np.arange(
-            vmin, vmax + step, step*2
-            ),
-       
+        xticks = np.arange(vmin, vmax + step, step*2)
         )
     
     return days
