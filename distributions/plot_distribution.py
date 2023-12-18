@@ -20,14 +20,12 @@ def plot_histogram(
         width = 1.7
     elif col == 'gravity':
         xlabel = b.y_label('gamma')
-        width = 0.02
+        width = 0.015
     else:
         xlabel = b.y_label('gamma')
         width = 0.07
         
-    
-    
-    ds = c.probability_distribuition(
+    ds = c.probability_distribution(
         dataset,
         col
         )
@@ -54,7 +52,9 @@ def plot_histogram(
     
     ax.set(
         xlim = [vmin, vmax],
-        xticks = np.arange(vmin, vmax + step, step*2)
+        xticks = np.arange(
+            vmin, vmax + step, step*2
+            )
         )
     
     return days
@@ -68,7 +68,7 @@ def plot_distribution(
         axis_label = False
         ):
 
-    ds = c.probability_distribuition(df, col)
+    ds = c.probability_distribution(df, col)
     
     epbs = ds['epbs'].sum()
     

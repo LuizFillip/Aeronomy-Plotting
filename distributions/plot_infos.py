@@ -6,8 +6,8 @@ def plot_infos(
         ax, 
         values, 
         title = 'EPB occurrence',
-        x = 0.71, 
-        y = 0.15
+        x = 0.75, 
+        y = 0.25
         ):
     
     out = []

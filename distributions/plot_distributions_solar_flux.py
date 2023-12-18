@@ -20,7 +20,7 @@ def plot_distributions_solar_flux(
         figsize = (12, 10)
         )
     
-    plt.subplots_adjust(hspace = 0.1)
+    plt.subplots_adjust(hspace = 0.05)
         
     labels = [
         '$F_{10.7} < $' + f' {level}',
@@ -58,16 +58,16 @@ def plot_distributions_solar_flux(
                 axis_label = True
             )
         
-        ax[0].set(xlabel = '')
+        ax[0].set(xlabel = '', ylim = [0, 400])
         
         total_epb.append(epbs)
         total_day.append(days)
         
-    print('days', sum(total_day))
-    print('epbs', sum(total_epb))
+    # print('days', sum(total_day))
+    # print('epbs', sum(total_epb))
     
-    ax[1].legend(ncol = 2,  loc = 'upper center')
-    ax[0].legend(ncol = 2,  loc = 'upper center')
+    ax[1].legend(ncol = 2, loc = 'upper center')
+    ax[0].legend(ncol = 2, loc = 'upper center')
     
     pl.plot_infos(ax[1], total_epb)
     pl.plot_infos(ax[0], total_day,
@@ -76,6 +76,27 @@ def plot_distributions_solar_flux(
     return fig
 
     
+
+
+def save_figures(df):
+    
+    for col in ['gamma', 'vp', 'gravity']:
+
+        FigureName = f'PD_{col}_effects'
+        
+        fig = plot_distributions_solar_flux(
+                df, 
+                col,
+                level = 83.66
+                )
+        
+        fig.savefig(
+            b.LATEX(FigureName),
+            dpi = 400
+            )
+
+# df
+
 df = c.concat_results('saa')
 
 col = 'gravity'
@@ -85,12 +106,3 @@ fig = plot_distributions_solar_flux(
         col,
         level = 83.66
         )
-
-FigureName = f'PD_{col}_effects'
-
-# fig.savefig(
-#     b.LATEX(FigureName),
-#     dpi = 400
-#     )
-
-# df
