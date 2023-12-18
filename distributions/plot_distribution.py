@@ -17,7 +17,7 @@ def plot_histogram(
     
     if col == 'vp':
         xlabel = b.y_label('vp')
-        width = 3
+        width = 1.7
     elif col == 'gravity':
         xlabel = b.y_label('gamma')
         width = 0.02

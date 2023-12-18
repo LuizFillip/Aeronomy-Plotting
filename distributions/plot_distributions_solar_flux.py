@@ -13,7 +13,6 @@ def plot_distributions_solar_flux(
         level = 86
         ):
     
-    
     fig, ax = plt.subplots(
         dpi = 300, 
         nrows = 2,
@@ -29,7 +28,7 @@ def plot_distributions_solar_flux(
         ]
     
   
-    solar_dfs =  c.solar_levels(
+    solar_dfs = c.solar_levels(
         df, 
         level,
         flux_col = 'f107a'
@@ -64,8 +63,9 @@ def plot_distributions_solar_flux(
         total_epb.append(epbs)
         total_day.append(days)
         
-    print(sum(total_day))
-          
+    print('days', sum(total_day))
+    print('epbs', sum(total_epb))
+    
     ax[1].legend(ncol = 2,  loc = 'upper center')
     ax[0].legend(ncol = 2,  loc = 'upper center')
     
@@ -78,7 +78,7 @@ def plot_distributions_solar_flux(
     
 df = c.concat_results('saa')
 
-col = 'gamma'
+col = 'gravity'
 
 fig = plot_distributions_solar_flux(
         df, 
@@ -86,7 +86,7 @@ fig = plot_distributions_solar_flux(
         level = 83.66
         )
 
-FigureName = 'PD_gamma_effects'
+FigureName = f'PD_{col}_effects'
 
 # fig.savefig(
 #     b.LATEX(FigureName),
