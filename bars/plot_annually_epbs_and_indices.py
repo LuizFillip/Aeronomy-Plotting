@@ -12,7 +12,7 @@ args = dict(
 
 def plot_annually_epbs_and_indices(
         df,
-        solar_level = 86,
+        solar_level = 83.62,
         kp_level = 3
         ):
     
@@ -35,7 +35,8 @@ def plot_annually_epbs_and_indices(
      
     ax[0].plot(df['f107'])
         
-    ax[0].plot(df['f107a'], lw = 2)
+    ax[0].plot(df['f107a'], lw = 2, 
+               label = '81 years average')
     
     ax[1].bar(df.index, df['kp'], 
               width = 1,
@@ -49,6 +50,7 @@ def plot_annually_epbs_and_indices(
         lw = 3, color = 'k')
     
     ax[1].legend()
+    ax[0].legend()
     
     ax[0].set(
         xlim = [df.index[0], df.index[-1]],
@@ -69,7 +71,10 @@ def plot_annually_epbs_and_indices(
         yticks = list(range(0, 350, 100))
         )
     
-    ax[0].axhline(solar_level, color = 'r', lw = 2)
+    ax[0].axhline(
+        solar_level, 
+        color = 'r', lw = 2, 
+        label = f'{solar_level} sfu')
     
     ax[1].axhline(kp_level, color = 'r', lw = 2)
     
