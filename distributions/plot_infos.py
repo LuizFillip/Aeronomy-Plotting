@@ -2,6 +2,7 @@
     
 def fmt(index, value):
     return f'({index}) {value} events'
+
 def plot_infos(
         ax, 
         values, 
@@ -21,7 +22,3 @@ def plot_infos(
             infos, 
             transform = ax.transAxes
             )
-
-
-def streval(index, values):
-    return [fmt(index, value) for value in values]

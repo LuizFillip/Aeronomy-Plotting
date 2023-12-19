@@ -162,7 +162,7 @@ def plot_distributions_seasons(
         fontsize = fontsize
         )
     
-    ax[0, 1].set(ylim = [0, 300])
+    ax[0, 1].set(ylim = [0, 200])
     
     return fig
     
@@ -182,7 +182,7 @@ def save_figs(df, col = 'gamma'):
         
         fig = plot_distributions_seasons(df1, col)
         
-        fig.suptitle(title[i], y = 1.)
+        fig.suptitle(title[i], y = 0.95)
         
         fig.savefig(
             b.LATEX(FigureName),
@@ -196,15 +196,15 @@ col = 'gamma'
 limit = c.limits_on_parts(
     df['f107a'], parts = 2)
 
-fig = plot_distributions_seasons(
-    df, col, level = 83.66)
+# fig = plot_distributions_seasons(
+#     df, col, level = 83.66)
 
-FigureName = 'seasonal_all_periods'
+# FigureName = 'seasonal_all_periods'
 
-fig.savefig(
-    b.LATEX(FigureName),
-    dpi = 400
-    )
+# fig.savefig(
+#     b.LATEX(FigureName),
+#     dpi = 400
+#     )
 
 save_figs(df, col = 'gamma')
 

@@ -34,12 +34,26 @@ def plot_histogram(
     
     offset = width * index
     
-    ax.bar(
+    bars = ax.bar(
         ds['start'] + offset,
         ds['days'], 
         width = width, 
         label = label
         )
+    
+    # ax1 = ax.twinx()
+
+    # color = bars[-1].get_facecolor() 
+    
+    # ax1.plot(ds['start'], 
+    #          np.cumsum(ds['days']) / days,
+    #          lw = 2,
+    #          color = color
+    #          )
+    
+    # ax1.set(ylim = [0, 1.2], 
+    #         yticks = np.arange(0, 1.2, 0.25), 
+    #         ylabel = 'Cumulated frequency')
     
     if axis_label:
 
@@ -57,6 +71,7 @@ def plot_histogram(
             )
         )
     
+    
     return days
 
 def plot_distribution(
@@ -69,6 +84,8 @@ def plot_distribution(
         ):
 
     ds = c.probability_distribution(df, col)
+    
+    # print(ds)
     
     epbs = ds['epbs'].sum()
     
