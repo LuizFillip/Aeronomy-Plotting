@@ -112,9 +112,10 @@ def plot_image_in_sequence(gs2, path_images):
         
         if col == 0:
             ax.text(
-                0, 1.4, '(a)', 
+                -0.3, 0.75, '(a)', 
                 fontsize = 25,
-                transform = ax.transAxes
+                transform = ax.transAxes,
+                # color = 'white'
                 )
     return times
 
@@ -127,14 +128,14 @@ def plot_roti_and_images(
         ):
 
     fig = plt.figure(
-        dpi = 300,
-        figsize = (12, 4),
+        dpi = 500,
+        figsize = (16, 5),
         layout = 'constrained'
         )
         
     gs2 = GridSpec(2, 5)
     
-    gs2.update(hspace = 0, wspace = 0)
+    gs2.update(hspace = 0, wspace = 0.5)
         
     times = plot_image_in_sequence(gs2, path_images)
     
@@ -146,19 +147,19 @@ def plot_roti_and_images(
     
     
     ax2.text(
-        0.01, 1.2, '(b)', 
+        0.05, 0.85, '(b)', 
         fontsize = fontsize,
         transform = ax2.transAxes
         )
     
-    ax2.tick_params(
-        axis='y', 
-        labelright = True, 
-        labelleft = False, 
-        right = True, 
-        left = False)
+    # ax2.tick_params(
+    #     axis='y', 
+    #     labelright = True, 
+    #     labelleft = False, 
+    #     right = True, 
+    #     left = False)
     
-    ax2.yaxis.set_label_position("right")
+    # ax2.yaxis.set_label_position("right")
    
     return fig 
 
@@ -179,6 +180,7 @@ def main():
     
     save_in = 'G:\\Meu Drive\\Doutorado\Travels\\O6_CA_20170404'
     
-    fig.savefig(save_in, dpi = 300)
+    # fig.savefig(save_in, dpi = 300)
     
     
+main()
