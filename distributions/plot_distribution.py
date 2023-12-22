@@ -5,6 +5,21 @@ import matplotlib.pyplot as plt
 
 args = dict(capsize = 3, marker = 's')
 
+def plot_cumullative(ax, ds, color):
+     
+     ax1 = ax.twinx()
+
+     ax1.plot(ds['start'], 
+               np.cumsum(ds['days']),
+               lw = 2,
+               color = color
+               )
+     
+     ax1.set(ylim = [0, 1.2], 
+             yticks = np.arange(0, 1.2, 0.25), 
+             ylabel = 'Cumulated frequency')
+     
+     
 def plot_histogram(
         ax, 
         dataset, 
@@ -34,27 +49,13 @@ def plot_histogram(
     
     offset = width * index
     
-    bars = ax.bar(
+    ax.bar(
         ds['start'] + offset,
         ds['days'], 
         width = width, 
         label = label
         )
-    
-    # ax1 = ax.twinx()
-
-    # color = bars[-1].get_facecolor() 
-    
-    # ax1.plot(ds['start'], 
-    #          np.cumsum(ds['days']) / days,
-    #          lw = 2,
-    #          color = color
-    #          )
-    
-    # ax1.set(ylim = [0, 1.2], 
-    #         yticks = np.arange(0, 1.2, 0.25), 
-    #         ylabel = 'Cumulated frequency')
-    
+     
     if axis_label:
 
         ax.set(xlabel = xlabel, 
@@ -83,10 +84,7 @@ def plot_distribution(
         axis_label = False
         ):
 
-    ds = c.probability_distribution(df, col)
-    
-    # print(ds)
-    
+    ds = c.probability_distribution(df, col)    
     epbs = ds['epbs'].sum()
     
     if count:

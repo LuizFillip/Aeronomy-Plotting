@@ -49,8 +49,7 @@ def plot_annually_epbs_and_indices(
         mean, label = 'Monthly average',
         lw = 3, color = 'k')
     
-    ax[1].legend()
-    ax[0].legend()
+    
     
     ax[0].set(
         xlim = [df.index[0], df.index[-1]],
@@ -77,6 +76,9 @@ def plot_annually_epbs_and_indices(
         label = f'{solar_level} sfu')
     
     ax[1].axhline(kp_level, color = 'r', lw = 2)
+    
+    ax[1].legend()
+    ax[0].legend(loc = 'upper right', ncol = 2)
     
     fig.autofmt_xdate(rotation = 0, ha = 'center')
 

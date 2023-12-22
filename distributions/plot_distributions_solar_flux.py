@@ -121,7 +121,7 @@ def main(df, col = 'gamma'):
     #     dpi = 400
     #     )
 
-save_figures(df)
+# save_figures(df)
 
 
-main(df)
+# main(df)
