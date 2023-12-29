@@ -1,32 +1,29 @@
 import matplotlib.pyplot as plt
 import digisonde as dg
-import settings as s
-from common import plot_terminators
-from utils import smooth2
-
+import base as s
+import datetime as dt 
     
-def plot_vz_and_frequencies():
+def plot_vz_and_frequencies(dn):
     
-    infile = "database/Digisonde/SAA0K_20130316(075)_freq"
-
-    df = dg.fixed_frequencies(infile)
-
-    vz = dg.drift(df)
+    infile = "digisonde/data/chars/midnight/BVJ03_20150409(099).TXT"
+    infile = 'digisonde/data/chars/freqs/SAA0K_20130103(003).TXT'
+    infile = 'digisonde/data/fixed_frequencies/SL_2014-2015/SAA0K_201401.txt'
+    df = dg.freq_fixed(infile).interpolate()
+   
+    df = s.sel_times(df, dn, hours = 10)
+    vz = dg.vertical_drift(df)
+    # vz = vz.iloc[-1:]
     freqs = [5, 6, 7]
 
-    for col in freqs:
-        df[col] = smooth2(df[col], 5)
-        vz[col] = smooth2(vz[col], 5)
-        
         
     fig, ax = plt.subplots(
-        figsize = (12, 7), 
+        figsize = (10, 7), 
         nrows = 2, 
         sharex = True, 
         dpi = 300
         )
 
-    plt.subplots_adjust(hspace = 0.3)
+    plt.subplots_adjust(hspace = 0.05)
 
 
     for num, col in enumerate(freqs):
@@ -41,21 +38,11 @@ def plot_vz_and_frequencies():
     ax[1].set(
               ylabel = r"Deriva vertical (m/s)", 
               ylim = [-50, 50], 
-              xlim = [df.index[0], df.index[-1]]
+               xlim = [df.index[0], df.index[-1]]
               )
      
     s.format_time_axes(ax[1])
-
-
-    infile = "database/Drift/SSA/PRO_2013.txt"
-
-    dig = dg.load_drift(infile)
-
-    dig = dig[(dig.index > df.index[0]) & 
-         (dig.index < df.index[-1]) ]
-
-    ax[1].plot(dig["vz"], label = "DRIFT-X")
-
+    
     ax[0].legend(
         bbox_to_anchor = (.3, 1.), 
         ncol = 3, 
@@ -69,16 +56,15 @@ def plot_vz_and_frequencies():
 
     for i, ax in enumerate(ax.flat):
         
-        plot_terminators(ax, df)
-        ax.text(0.01, 1.1, f'({c[i]})', 
+        ax.text(0.01, 0.85, f'({c[i]})', 
                 transform = ax.transAxes)
         
       
     return fig
 
+dn = dt.datetime(2014, 1, 1, 16)
+fig = plot_vz_and_frequencies(dn)
 
-#fig = plot_vz_and_frequencies()
 
-
-
-# fig.savefig("digisonde/src/figures/vz_drift_heights.png", dpi = 300)
+fig.savefig(s.LATEX('frequencies_and_drift', 
+                    folder = 'timeseries'))
