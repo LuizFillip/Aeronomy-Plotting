@@ -5,8 +5,6 @@ import datetime as dt
     
 def plot_vz_and_frequencies(dn):
     
-    infile = "digisonde/data/chars/midnight/BVJ03_20150409(099).TXT"
-    infile = 'digisonde/data/chars/freqs/SAA0K_20130103(003).TXT'
     infile = 'digisonde/data/fixed_frequencies/SL_2014-2015/SAA0K_201401.txt'
     df = dg.freq_fixed(infile).interpolate()
    
@@ -24,8 +22,7 @@ def plot_vz_and_frequencies(dn):
         )
 
     plt.subplots_adjust(hspace = 0.05)
-
-
+    
     for num, col in enumerate(freqs):
         ax[1].plot(vz[col])
         ax[0].plot(df[col], label = f'{col}')
