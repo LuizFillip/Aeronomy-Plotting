@@ -1,9 +1,8 @@
 import matplotlib.pyplot as plt 
 import base as b
 import datetime as dt  
-import os 
 import PlasmaBubbles as pb 
-
+import GEO as gg 
 
 
 
@@ -19,8 +18,7 @@ args = dict(
 
 def plot_roti_points(ax, ds, threshold = 0.25):
         
-    ax.plot(ds['roti'], **args, 
-            label = 'ROTI points')
+    ax.plot(ds['roti'], **args, label = 'ROTI points')
     
     times = pb.time_range(ds)
     
@@ -40,8 +38,6 @@ def plot_roti_points(ax, ds, threshold = 0.25):
            ylabel = 'ROTI (TECU/min)')
     
     ax.legend(loc = 'upper right')
-    
-   
     
     return df1['max']
 
@@ -70,33 +66,48 @@ def plot_occurrence_events(ax, ds):
             linestyle = '--'
             )
         
+def load_and_filter(dn, sector = -50, root = 'D:\\'):
+    
+    df = pb.concat_files(dn, root)
+    
+    df = b.sel_times(df, dn)
+    
+    coords = gg.set_coords(dn.year, radius = 10)
+    
+    return pb.filter_coords(df, sector, coords)
         
-import GEO as gg 
-
-dn = dt.datetime(2013, 3, 31, 20)
 
 
-df = pb.concat_files(
-        dn, 
-        root  = 'D:\\'
+def plot_raw_roti_maximus_events(dn):
+    
+    fig, ax = plt.subplots(
+        dpi = 300, 
+        nrows = 2,
+        sharex= True,
+        figsize = (12, 6)
         )
+    
+    plt.subplots_adjust(hspace= 0.1)
+    
+    dusk = gg.dusk_time(
+            dn,  
+            lat = -2.53, 
+            lon = -44.296, 
+            twilight = 12
+            )
+    
+    ax[1].axvline(dusk, label = 'Region E terminator')
+    
+    ax[1].legend(loc = 'upper right')
+    
+    df = load_and_filter(dn)
+    
+    df1 = plot_roti_points(ax[0], df, threshold = 0.25)
+    
+    plot_occurrence_events(ax[1], df1)
+    
+    return fig
 
-fig, ax = plt.subplots(
-    dpi = 300, 
-    nrows = 2,
-    sharex= True,
-    figsize = (12, 8)
-    )
+dn = dt.datetime(2013, 1, 14, 20)
 
-df = b.sel_times(df, dn)
-
-coords = gg.set_coords(dn.year, radius = 10)
-
-df = pb.filter_coords(df, -50, coords)
-
-df1 = plot_roti_points(ax[0], df, threshold = 0.25)
-
-
-        
-plot_occurrence_events(ax[1], df1)
-
+fig = plot_raw_roti_maximus_events(dn)

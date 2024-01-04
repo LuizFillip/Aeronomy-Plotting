@@ -66,6 +66,29 @@ def plot_long(ax, dn, col):
     
     ax.legend(loc = 'upper right')
     
+def plot_arrow_and_note(ax, sel):
+    
+    middle = pb.middle_time(sel)
+    
+    shift = round(sel['duration'], 2)
+    
+    ax.annotate(
+        '', 
+        xy = (sel['start'], 0.5), 
+        xytext = (sel['end'], 0.5), 
+        arrowprops = dict(arrowstyle='<->')
+        )
+    
+    ax.annotate(
+        f'{shift} hrs',
+        xy = (middle, 0.55), 
+        xycoords = 'data',
+        fontsize = 20.0,
+        textcoords = 'data', 
+        ha = 'center'
+        )
+    
+    
 def plot_demo_time_shift(dn, col):
     
     fig, ax = plt.subplots(
@@ -92,30 +115,9 @@ def plot_demo_time_shift(dn, col):
 
 
 
-def plot_arrow_and_note(ax, sel):
-    
-    middle = pb.middle_time(sel)
-    
-    shift = round(sel['duration'], 2)
-    
-    ax.annotate(
-        '', 
-        xy = (sel['start'], 0.5), 
-        xytext = (sel['end'], 0.5), 
-        arrowprops = dict(arrowstyle='<->')
-        )
-    
-    ax.annotate(
-        f'{shift} hrs',
-        xy = (middle, 0.55), 
-        xycoords = 'data',
-        fontsize = 20.0,
-        textcoords = 'data', 
-        ha = 'center'
-        )
-    
+def main():
 
-col = '-70'
-dn = dt.datetime(2022, 12, 20, 20)
-plot_demo_time_shift(dn, col)
-
+    col = '-70'
+    dn = dt.datetime(2022, 12, 20, 20)
+    plot_demo_time_shift(dn, col)
+    
