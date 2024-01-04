@@ -51,7 +51,7 @@ def plot_epbs_occurrences_roti(
         
         ax[0].axhline(
             the, 
-            color = 'k', lw = 3, linestyle = '--'
+            color = 'k', lw = 2, linestyle = '--'
             )
         
         ax[1].plot(
@@ -71,6 +71,7 @@ def plot_epbs_occurrences_roti(
         
         ax[1].axvline(
             dusk, 
+            linestyle = '--',
             color = line.get_color(), 
             )
     
@@ -98,8 +99,7 @@ def plot_epbs_occurrences_roti(
     ax[1].set(
         ylabel = 'EPBs occurrence', 
         yticks = [0, 1], 
-        xlim = [ds.index[0], 
-                ds.index[-1]],
+        xlim = [ds.index[0], ds.index[-1]],
         ylim = [-0.2, 1.4]
         )
      
@@ -147,11 +147,11 @@ def single_plot(
     plt.show()
     return fig
 
-# dn = dt.datetime(2013, 1, 17, 20)
+dn = dt.datetime(2013, 4, 5, 20)
 
-# fig = single_plot(
-#         dn, 
-#         hours = 13,
-#         factor = 5
-#         )
+fig = single_plot(
+        dn, 
+        hours = 13,
+        factor = 5
+        )
 
