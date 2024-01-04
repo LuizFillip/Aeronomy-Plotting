@@ -3,7 +3,9 @@ import core as c
 import base as b 
 
 
-
+def plot_roti():
+    
+    return 
 
 def plot_gamma_and_roti(ax, ds):
     
@@ -13,16 +15,16 @@ def plot_gamma_and_roti(ax, ds):
     
     df['-50'].plot(ax = ax)
     
-    df2 = c.load_base_gamma(ds)
+    # df2 = c.load_base_gamma(ds)
     
-    ax1 = ax.twinx()
+    # ax1 = ax.twinx()
     
-    df2['gamma'].plot(
-        ax = ax1, 
-        color = 'b', 
-        lw = 2, 
-        ylim = [0, 3]
-        )
+    # df2['gamma'].plot(
+    #     ax = ax1, 
+    #     color = 'b', 
+    #     lw = 2, 
+    #     ylim = [0, 3]
+    #     )
     
     dn = ds.index[0].strftime('%B, %Y')
     
@@ -49,8 +51,12 @@ fig, ax = plt.subplots(
 b.config_labels()
 
 
-ds = c.atypical_occurrences(df, days = 4)
-
-for i in range(3):
+for ds in c.atypical_occurrences(df, days = 4):
+    start = ds.index[0]
     
-    plot_gamma_and_roti(ax[i], ds[i]) 
+    df = c.load_raw_roti(start)
+    
+
+# for i in range(3):
+    
+#     plot_gamma_and_roti(ax[i], ds[i]) 
