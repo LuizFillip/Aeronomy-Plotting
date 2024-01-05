@@ -181,7 +181,7 @@ def first_of_terminator(
         
     return out
 
-def plot_ipp_variation(df, start, dn, twilight = 18):
+def plot_ipp_variation(df, start, dn, twilight = 12):
     
     fig, ax_map, axes = multi_layout(
         nrows = 4, year = dn.year)
@@ -216,46 +216,24 @@ def plot_ipp_variation(df, start, dn, twilight = 18):
     
     plot_ipp_on_map(ax_map, df, dn, corners)
         
-    fig.suptitle(dn.strftime('%H:%M (UT)'),
-                 y = 1.01)
+    fig.suptitle(
+        dn.strftime('%H:%M (UT)'),
+        y = 1.01
+        )
     
     return fig
     
 def range_time(start, mi):
-    
-    delta = dt.timedelta(minutes = mi)
-    
-    return start + delta
+        
+    return start + dt.timedelta(minutes = mi)
 
-def save_intervals(df, start):
-    
-    folder = start.strftime('%Y%m%d')
-    b.make_dir(folder)
-    
-    for minute in range(0, 721):
-        
-        plt.ioff()
-        dn = range_time(start, minute)
-        
-        fig = plot_ipp_variation(
-            df, start, dn
-            )
-        name = dn.strftime('%Y%m%d%H%M')
-        
-        print(minute, name)
-        
-        fig.savefig(f'{folder}/{name}')
-            
-        plt.clf()   
-        plt.close()
-        
+
 def single_view():
     
     start = dt.datetime(2014, 1, 1, 21)
     
     df =  pb.concat_files(
         start, 
-        pb.load_filter, 
         root = os.getcwd()
         )
     
@@ -263,33 +241,12 @@ def single_view():
             
     dn = range_time(start, 10)
     
-    fig = plot_ipp_variation(df, dn)
+    fig = plot_ipp_variation(df, start, dn)
     
     plt.show()
     
     return fig
 
-def main():
-        
-    start = dt.datetime(2013, 12, 24, 21)
-    # start = dt.datetime(2014, 1, 1, 21)
-     
-    df =  pb.concat_files(
-        start, 
-        pb.load_filter, 
-        root = 'D:\\'#os.getcwd() 
-        )
-    
-    df = b.sel_times(df, start)
-    
-    save_intervals(df, start)
-    
-    
-    # df = b.sel_times(df, start)
-            
-    # dn = range_time(start, 10)
-    
-    # fig = plot_ipp_variation(df, dn)
-    
-    # plt.show()
-# main()
+
+
+fig = single_view()

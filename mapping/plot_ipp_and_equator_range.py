@@ -82,11 +82,6 @@ def plot_ipp_and_equator_range(
     
         time = dn + delta
         
-        # ds = pb.longitude_sector(
-        #         , 
-        #         long_start, 
-        #         long_delta = 10
-        #         )
         
         ds = b.sel_df(df, time)
         
@@ -127,19 +122,17 @@ def plot_ipp_and_equator_range(
     
     s, e = df.index[0], df.index[-1]
     
-    m = s.strftime('%m')
-    y = s.strftime('%Y')
+  
     s = s.strftime('%d')
-    e = e.strftime('%d')
-    fig.suptitle(f'{s}-{e}/{m}/{y}')
+    e = e.strftime('%d/%m/%Y')
+    fig.suptitle(f'{s}-{e}')
+    
+    return fig
 
 
 # def main():
     
-year = 2021
-dn = dt.datetime(year, 1, 1, 21)
-
-df = pb.concat_files(dn, pb.load_filter)
 
 
-plot_ipp_and_equator_range(df, dn)
+# fig = plot_ipp_and_equator_range(df, dn)
+

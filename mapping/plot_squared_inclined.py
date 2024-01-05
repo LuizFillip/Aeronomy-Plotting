@@ -3,7 +3,8 @@ import GEO as gg
 import base as b 
 from shapely.geometry import Polygon
 import matplotlib.pyplot as plt
-
+import PlasmaBubbles as pb
+import datetime as dt
 
 b.config_labels()
 
@@ -69,7 +70,7 @@ def plot_corners(
 def mappping(year = 2014):
     fig, ax = plt.subplots(
         dpi = 300,
-        figsize=(16, 12),
+        figsize=(8, 8),
         subplot_kw={
             'projection': ccrs.PlateCarree()
         }
@@ -102,10 +103,32 @@ def plot_terminator_and_equator(
     
     return eq_lon, eq_lat
 
-# mappping(year = 2014)
+
+year = 2014
+
+fig, ax = mappping(year = 2014)
 
 
+plot_corners(
+        ax,
+        year,
+        radius = 10,
+        label = False
+        )
 
 
+dn = dt.datetime(2013, 1, 14, 23)
 
+df = pb.concat_files(dn, root = 'D:\\')
 
+ds = b.sel_times(df, dn, hours = 1)
+
+img = ax.scatter(
+    ds['lon'],
+    ds['lat'],
+    c = ds['roti'],
+    s = 10,
+    cmap = 'jet',
+    vmin = 0,
+    vmax = 3
+)    

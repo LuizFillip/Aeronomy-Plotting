@@ -1,26 +1,36 @@
+import base as b 
+import matplotlib.pyplot as plt 
+import plotting as pl 
+import datetime as dt 
 
 
+def range_time(start, mi):
+        
+    return start + dt.timedelta(minutes = mi)
 
-# ds = ds.resample('10min').asfreq()
-
-
-
-# for i, dn in enumerate(ds.index):
+def save_maps_with_ipp(df, start):
     
-#     print(dn)
-#     plt.ioff()
-
-x = divmod(5, 2)
-x# for col in ds.columns:
-#     longitudes, latitudes = coords[int(col)]
+    '''
+    See 'plot_ipp_variation_with_terminator'
+    '''
     
-#     value = ds.loc[dn, col]
+    folder = start.strftime('%Y%m%d')
+    b.make_dir(folder)
     
-#     if value == 1:        
-#         rectangle(ax, longitudes, latitudes)
-    
-    # plt.savefig(f'temp/frame_{i}.png')
-    # plt.clf()   
-    # plt.close() 
-    
-# plt.show()
+    for minute in range(0, 721):
+        
+        plt.ioff()
+        dn = range_time(start, minute)
+        
+        fig = pl.plot_ipp_variation(
+            df, start, dn
+            )
+        name = dn.strftime('%Y%m%d%H%M')
+        
+        print(minute, name)
+        
+        fig.savefig(f'{folder}/{name}')
+            
+        plt.clf()   
+        plt.close()
+        

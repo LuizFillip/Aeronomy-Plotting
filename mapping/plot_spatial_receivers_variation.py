@@ -1,7 +1,6 @@
 import base as b
 import GEO as gg
 import matplotlib.pyplot as plt 
-import events as ev 
 
 
 
@@ -66,7 +65,7 @@ def plot_in_circle(
             clon, 
             clat, 
             radius, 
-            year = 2021
+            year = 2013
             )
     
     for x, y, n in zip(in_x, in_y, name):
