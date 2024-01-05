@@ -1,37 +1,19 @@
 import matplotlib.pyplot as plt
-import core as c 
 import base as b 
+from indices import INDEX_HR
+import os
+import datetime as dt 
 
-
-def plot_roti():
+def plot_roti(ax, ds):
     
-    return 
-
-def plot_gamma_and_roti(ax, ds):
-    
-    start = ds.index[0]
-    
-    df = c.load_raw_roti(start)
-    
-    df['-50'].plot(ax = ax)
-    
-    # df2 = c.load_base_gamma(ds)
-    
-    # ax1 = ax.twinx()
-    
-    # df2['gamma'].plot(
-    #     ax = ax1, 
-    #     color = 'b', 
-    #     lw = 2, 
-    #     ylim = [0, 3]
-    #     )
+    ax.plot(ds['-50'])
     
     dn = ds.index[0].strftime('%B, %Y')
     
     ax.text(0.01, 0.8, dn,
             transform = ax.transAxes)
     
-    ax.set(ylim = [0, 3])
+    ax.set(ylim = [0, 5])
     
     b.format_days_axes(ax)
     
@@ -39,24 +21,70 @@ def plot_gamma_and_roti(ax, ds):
     # ax1.set(ylabel = '$\\gamma_{RT} ~(s^{-1})$')
 
 
-df = c.concat_results('saa')
-
- 
-fig, ax = plt.subplots(
-    dpi = 300, 
-    nrows = 3, 
-    figsize = (12, 8), 
-    sharey = True)
-
-b.config_labels()
+# df = c.concat_results('saa')
 
 
-for ds in c.atypical_occurrences(df, days = 4):
-    start = ds.index[0]
+
+def plot_index(ax, df, col = 'dst'):
+    xmin, xmax = df.index[0], df.index[-1]
     
-    df = c.load_raw_roti(start)
-    
+    ds = b.load(INDEX_HR)
 
-# for i in range(3):
+    ds = b.sel_dates(ds, xmin, xmax)
     
-#     plot_gamma_and_roti(ax[i], ds[i]) 
+    ax1 = ax.twinx()
+    
+    ax1.plot(ds[col], color = 'r')
+    if col == 'bz':
+        ylim = [-30, 30]
+    elif col == 'dst':
+        ylim = [-150, 20]
+        
+    ax1.set(
+        ylim = ylim, 
+        xlabel = 'days',
+        ylabel = f'{col} (nT)', 
+        xlim = [xmin, xmax]
+            )
+
+def plot_event(ax, event):
+
+    ax.arrow(
+        x= event, y=2, 
+        dx=0, dy=-1, width=.08, 
+        facecolor='red') 
+
+def plot_roti_and_index(nrows = 2):
+    
+    fig, ax = plt.subplots(
+        dpi = 300, 
+        nrows = nrows, 
+        figsize = (10, 8), 
+        sharey = True
+        )
+    
+    plt.subplots_adjust(hspace = 0.4)
+    
+    b.config_labels()
+    
+    path = 'temp2/'
+    files = os.listdir(path)[:nrows]
+    
+    delta = dt.timedelta(days = 1)
+    
+    for i, ax in enumerate(ax.flat):
+        
+        file = files[i]
+        
+        df = b.load(path + file)
+        
+        plot_roti(ax, df)
+        
+        plot_index(ax, df)
+        
+        event = b.Filename2dn(file)
+        
+        plot_event(ax, event + delta)
+   
+
+plot_roti_and_index(4)

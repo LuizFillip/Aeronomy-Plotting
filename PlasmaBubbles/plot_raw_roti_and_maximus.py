@@ -4,8 +4,6 @@ import datetime as dt
 import PlasmaBubbles as pb 
 import GEO as gg 
 
-
-
 args = dict(
      marker = 'o', 
      markersize = 3,
@@ -111,3 +109,11 @@ def plot_raw_roti_maximus_events(dn):
 dn = dt.datetime(2013, 1, 14, 20)
 
 fig = plot_raw_roti_maximus_events(dn)
+
+FigureName = 'raw_roti_maximus_events'
+
+fig.savefig(
+      b.LATEX(FigureName, 
+      folder = 'timeseries'),
+      dpi = 400
+      )

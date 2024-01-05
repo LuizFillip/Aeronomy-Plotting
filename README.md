@@ -8,11 +8,12 @@ In this repository, you can find:
   - Fabry-Perot and Digisonde
 
 - GNSS subproducts
-  - ROTI for observed Plasma Bubbles 
-  - ROTI timeseries 
+  - Slant Total Electron Content (STEC) variation
+  - Mapping in space coordinates
+  - ROT and ROTI
 
 - Bars
-  - seasonal and annual variations like a bar plot
+  - seasonal and annual with bar variations 
 
 - Probability distributions:
   - Rayleigh Taylor Growth rate ($\gamma_{RT}$) with Plasma Bubbles occurrence
@@ -24,3 +25,10 @@ In this repository, you can find:
 
 - Climatologies:
   - Seazonal and time variations
+
+- Plasma bubbles observations
+    - ROTI for observed Plasma Bubbles 
+    - ROTI timeseries 
+    
+- Wavelet 
+    - Contours of periods, time and power specral
