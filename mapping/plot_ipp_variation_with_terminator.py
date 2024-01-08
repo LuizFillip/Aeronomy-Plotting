@@ -3,7 +3,7 @@ import GEO as gg
 import matplotlib.pyplot as plt
 import datetime as dt 
 from matplotlib.gridspec import GridSpec
-from plotting import plot_terminator_and_equator, plot_corners
+import plotting as pl
 import base as b
 import PlasmaBubbles as pb 
 import os 
@@ -34,8 +34,7 @@ def multi_layout(nrows = 4, year = 2014):
     ax4 = fig.add_subplot(gs[3, nrows:], **args)
     axes = [ax1, ax2, ax3, ax4]
     
-    fig.text(
-        0.93, 0.3, 
+    fig.text(0.93, 0.3, 
         "ROTI (TECU/min)", 
         rotation = "vertical", 
         fontsize = 25
@@ -44,13 +43,8 @@ def multi_layout(nrows = 4, year = 2014):
     return fig, ax_map, axes
 
 
-def plot_ipp_on_map(
-        ax_map, 
-        df, dn, 
-        corners
-        ):
+def plot_ipp_on_map(ax, ds, corners, colorbar = False):
     
-    ds = b.sel_df(df, dn)
         
     for i, key in enumerate(corners.keys()):
         
@@ -63,15 +57,18 @@ def plot_ipp_on_map(
             (ds.lat < ylim[1])
             ]
         
-        ax_map.scatter(
+        img = ax.scatter(
             sel.lon,
             sel.lat, 
             c = sel.roti, 
-            s =  50, 
+            s =  30, 
             vmin = 0, 
             vmax = 2,
             cmap = 'jet'
             )
+        
+        ticks = np.arange(0, 2, 0.2)
+        b.colorbar(img, ax, ticks)
         
  
 def plot_lines( 
@@ -187,10 +184,10 @@ def plot_ipp_variation(df, start, dn, twilight = 12):
         nrows = 4, year = dn.year)
     
    
-    eq_lon, eq_lat = plot_terminator_and_equator(
+    eq_lon, eq_lat = pl.plot_terminator_and_equator(
             ax_map, dn, twilight)
     
-    corners = plot_corners(
+    corners = pl.plot_corners(
             ax_map,
             start.year,
             radius = 10,
@@ -249,4 +246,4 @@ def single_view():
 
 
 
-fig = single_view()
+# fig = single_view()

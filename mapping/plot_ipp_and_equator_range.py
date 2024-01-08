@@ -1,10 +1,10 @@
 import base as b
 import numpy as np
-import datetime as dt
 import cartopy.crs as ccrs
 import GEO as g
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb
+import datetime as dt
 
 b.config_labels()
 

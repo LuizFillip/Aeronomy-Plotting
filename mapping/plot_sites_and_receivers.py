@@ -16,40 +16,12 @@ args = dict(
 
 b.config_labels()
 
-def plot_sites(ax):
-    sites = ['saa', 'jic', 'boa',
-             'car', 'for', 'str']
-    
-    sites = ['saa', 'car'] 
-    names = ['Digisonde (São Luis)',  'Imager (Cariri)']  
-    
-    markers = ['*', 's']
-    colors = ['g', 'b']
-    for i, site in enumerate(sites):
-    
-        glat, glon = gg.sites[site]['coords']
-        name =  names[i]
-        marker = markers[i]
-    
-        ax.scatter(
-            glon, glat,
-            s = 200, 
-            c = colors[i],
-            label = name, 
-            marker = marker
-            )
+
         
         
         
         
-def get_equator_distance(lon, lat, year):
-    
-    min_d = gg.distance_from_equator(
-            lon, 
-            lat, 
-            year = year
-                )
-        
+
 def plot_receivers_coords(
         ax, 
         year, 
@@ -101,7 +73,7 @@ def plot_receivers_coords(
         label = 'GNSS receivers'
     
         )
-    plot_sites(ax)
+    # plot_sites(ax)
     
     ax.legend(
         # bbox_to_anchor = (0.7, 1.2),
