@@ -1,7 +1,7 @@
 import base as b
 import GEO as gg
 import matplotlib.pyplot as plt 
-
+import core as c
 
 
 b.config_labels()
@@ -61,7 +61,7 @@ def plot_in_circle(
         color = 'k'
         )
     
-    name = ev.get_filters_lists(
+    name = c.get_filters_lists(
             clon, 
             clat, 
             radius, 
