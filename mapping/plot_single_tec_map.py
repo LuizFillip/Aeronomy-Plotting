@@ -9,6 +9,8 @@ import GEO as g
 import base as b 
 
 b.config_labels(fontsize = 25)
+
+
 def tec_fname(filename: str) -> dt.datetime:
     """Convert TEC filename (EMBRACE format) to dt"""
     args = filename.split('_')
@@ -21,7 +23,7 @@ def tec_fname(filename: str) -> dt.datetime:
         "%Y-%m-%d %H:%M"
         )
 
-def load_and_plot(ax, infile, step = 5):
+def load_tec(infile):
 
     df = pd.read_csv(
         infile, 
@@ -29,22 +31,13 @@ def load_and_plot(ax, infile, step = 5):
         header = None
         ).replace(-1, np.nan)
     
-    
     xmax, ymax = df.values.shape
 
     lat = np.arange(0, xmax)*0.5 - 60
     lon = np.arange(0, ymax)*0.5 - 90
-    
-    v = np.arange(0, 80 + step, step*0.5)
-    img = ax.contourf(lon, lat, df.values, levels = v,
-                      cmap = 'rainbow')
-    
- 
-    fname = os.path.split(infile)[-1]
-    ax.set(title = tec_fname(fname).strftime('%d/%m %H:%M'))
-    
-    return img
-    
+         
+    return lon, lat, df.values
+
 def plot_colorbar(
         fig,
         rainbow = "rainbow",
@@ -66,12 +59,23 @@ def plot_colorbar(
         cax = cax, 
         orientation = "horizontal", 
         )
-    cb.set_label(r'TEC ($10^{16} / m^2$)', fontsize = fontsize)
+    cb.set_label(r'TEC ($10^{16} / m^2$)', 
+                 fontsize = fontsize)
     
 
 
+def plot_contourf(ax, lon, lat, values, step = 5):
     
+    v = np.arange(0, 80 + step, step*0.5)
     
+    img = ax.contourf(lon, lat, values, levels = v,
+                      cmap = 'rainbow')
+    
+ 
+    fname = os.path.split(infile)[-1]
+    ax.set(title = tec_fname(fname).strftime('%d/%m %H:%M'))
+    
+    return img
 
 
 def plot_tec_map(infile, fontsize = 40):
@@ -129,7 +133,8 @@ def plot_tec_map(infile, fontsize = 40):
              fontsize = fontsize)
                 
     return fig
-# infile = "D:\\database\\TEC_2013\\TEC_2013_03\\"
-# fig = plot_tec_map(infile)     
+
+infile = "D:\\database\\TEC_2013\\TEC_2013_03\\"
+fig = plot_tec_map(infile)     
 # fig.savefig("digisonde/src/figures/tec_maps.png")
 # plt.show()
