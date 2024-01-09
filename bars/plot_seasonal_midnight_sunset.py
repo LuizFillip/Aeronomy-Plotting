@@ -1,4 +1,4 @@
-import PlasmaBubbles as pb 
+import numpy as np 
 import matplotlib.pyplot as plt
 import base as b 
 import core as c
@@ -18,18 +18,13 @@ def plot_sunset_midnight_events(ds):
     period = ['sunset', 'midnight']
     
     plt.subplots_adjust(hspace = 0.1)
-    ylims = [350, 40]
-    for i, value in enumerate([2, 4]):
+    ylims = [350, 100]
+    for i, value in enumerate(period):
         
-      
-        
-        df =  pb.month_occurrence(
-            ds, value
-            )
-        
+        df = c.month_occurrence(ds)
+        df = df.loc[df['type'] == value].iloc[:, :-1]
+        df = df.replace(np.nan, 0)
         total = int(df.values.sum())
-    
-        
         df.plot(
             kind = 'bar', 
             ax = ax[i], 
@@ -53,14 +48,29 @@ def plot_sunset_midnight_events(ds):
             ylim = [0, ylims[i]]
             )
         
-    period_type = '$Kp > 3$'
+    # period_type = '$Kp > 3$'
     ax[0].legend(
         [f'{c}°' for c in ds.columns],
         ncol = 5, 
-        title = f'Longitudinal sectors (2013 - 2022) {period_type}',
+        title = f'Longitudinal sectors (2013 - 2022)',
         bbox_to_anchor = (.5, 1.4), 
         loc = "upper center", 
         columnspacing = 0.6
         )
     
     ax[1].set(xlabel = 'Months')
+    
+    return fig
+
+ds = c.epbs(class_epb = None)
+
+# ds
+
+fig = plot_sunset_midnight_events(ds)
+
+FigureName = 'seasonal_midnight_sunset'
+
+fig.savefig(
+    b.LATEX(FigureName, folder = 'bars'),
+    dpi = 400
+    )
