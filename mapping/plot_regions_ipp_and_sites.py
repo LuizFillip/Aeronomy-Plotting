@@ -33,7 +33,7 @@ def plot_terminator_and_equator(
     
     
     ax.scatter(inter_lon, inter_lat, s = 100, 
-               marker = 'X', color = 'k')
+               marker = 'X', color = 'r')
     
     return eq_lon, eq_lat
 

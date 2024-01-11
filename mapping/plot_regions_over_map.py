@@ -30,10 +30,13 @@ def plot_corners(
         ax,
         year,
         radius = 10,
-        label = False,
+        label = True,
         center = True
         ):
+    '''
+    Plot regions like rectangles over map
     
+    '''
     coords = gg.corner_coords(
             year, 
             radius, 
@@ -60,13 +63,14 @@ def plot_corners(
         clon = sum(list(set(xlim))) / 2
         clat = sum(list(set(ylim))) / 2
         
+        
+        
         if center:
             ax.scatter(clon, clat, c = 'k', s = 100)
         
-                
-        if label:
             
-
+        if label:
+        
             ax.text(clon, max(ylim) + 1, index, 
                     transform = ax.transData)
         

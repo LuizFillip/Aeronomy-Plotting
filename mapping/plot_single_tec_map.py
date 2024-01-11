@@ -80,8 +80,4 @@ def plot_tec_map(dn, ax = None):
 
 # import os
 
-
-# dn = dt.datetime(2013, 12, 25, 21, 30)
-
-
         

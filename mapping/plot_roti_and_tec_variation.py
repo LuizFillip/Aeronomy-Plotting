@@ -55,7 +55,8 @@ def plot_roti_tec_variation(df, start, dn, twilight = 12):
         df, 
         dn, 
         corners, 
-        right_ticks = True)
+        right_ticks = True
+        )
     
     local_term = pl.first_of_terminator(
             ax_map, 
@@ -63,7 +64,7 @@ def plot_roti_tec_variation(df, start, dn, twilight = 12):
             eq_lon, 
             eq_lat
             )
-    print(local_term)
+    # print(local_term)
     pl.plot_lines( 
             axes, 
             start,  
@@ -79,7 +80,7 @@ def plot_roti_tec_variation(df, start, dn, twilight = 12):
 
 def main():
     
-    start = dt.datetime(2013, 12, 25, 21, 29)
+    start = dt.datetime(2013, 12, 25, 20)
     
     df =  pb.concat_files(
         start, 
@@ -88,8 +89,8 @@ def main():
     
     df = b.sel_times(df, start)
             
-    dn = range_time(start, 150)
+    dn = range_time(start, 200)
  
     plot_roti_tec_variation(df, start, dn, twilight = 12)
-    
-main()
+    plt.show()
+# main()

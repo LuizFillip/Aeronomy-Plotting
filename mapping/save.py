@@ -39,7 +39,7 @@ def save_maps_with_ipp(df, start):
 
 def main():
     
-    start = dt.datetime(2013, 12, 25, 21, 29)
+    start = dt.datetime(2013, 12, 25, 20)
     
     df =  pb.concat_files(
         start, 
@@ -49,3 +49,5 @@ def main():
     df = b.sel_times(df, start)
     
     save_maps_with_ipp(df, start)
+    
+main()

@@ -83,7 +83,7 @@ def plot_lines(
     for i, ax in enumerate(axes):
     
         llon, llat = local_term[i + 1]
-        print(llon, llat)
+
         dusk = gg.dusk_time(
                 start,  
                 lat = llat, 
@@ -91,20 +91,23 @@ def plot_lines(
                 twilight = 18
                 )
         
+        ax.axvline(dusk, lw = 2)
+        
+        midnight = gg.local_midnight(llon, llat, start)
+        
         ax.axvline(
-            dusk, 
-            lw = 2, 
-            label = 'Terminator'
+            midnight, 
+            lw = 2,
+            color = 'b',
             )
-        
-        # midnight = gg.local_midnight(llon, llat, start)
-        
-        # ax.axvline(
-        #     midnight, 
-        #     lw = 2,
-        #     color = 'b', 
-        #     label = 'local midnight'
-        #     )
+        y = 4.8
+        if i == 0:
+            
+            ax.text(dusk, y, 'Terminator', 
+                    transform = ax.transData)
+            ax.text(midnight, y, 'midnight', 
+                    color = 'b',
+                    transform = ax.transData)
                 
 def plot_roti_timeseries(
         axes, 
@@ -117,10 +120,8 @@ def plot_roti_timeseries(
     
     for i, ax in enumerate(axes):
         
-        k = key[i]
-        xlim, ylim = corners[k]
+        xlim, ylim = corners[key[i]]
        
-        
         sel = df.loc[
             (df.index < dn) & 
             (df.lon > xlim[0]) & 
@@ -137,6 +138,12 @@ def plot_roti_timeseries(
     
         pl.plot_roti_points(ax, sel)
         
+        ax.set(
+            ylim = [0, 4.5], 
+            yticks = list(range(0, 5)), 
+            xlim = [df.index[0], df.index[-1]]
+            )
+        
         if right_ticks:
             ax.tick_params(
                 axis='y', 
@@ -149,13 +156,13 @@ def plot_roti_timeseries(
         if i != -1:
             ax.set(xticklabels = [])
             
-        if i == 0:
-            ax.legend(
-                bbox_to_anchor = (.5, 1.5), 
-                loc = "upper center", 
-                ncol = 2,
-                columnspacing = 0.7
-                )
+        # if i == 0:
+        #     ax.legend(
+        #         bbox_to_anchor = (.5, 1.5), 
+        #         loc = "upper center", 
+        #         ncol = 2,
+        #         columnspacing = 0.7
+        #         )
         
     b.format_time_axes(axes[-1])
 
@@ -227,18 +234,3 @@ def single_view(start):
     return fig
 
 
-# start = dt.datetime(2014, 1, 1, 21)
-
-# # fig = single_view(start)
-
-# df =  pb.concat_files(
-#     start, 
-#     root = os.getcwd()
-#     )
-
-# df = b.sel_times(df, start)
-         
-#  # dn = range_time(start, 10)
- 
-# df
- 
