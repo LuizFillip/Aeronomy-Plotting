@@ -246,4 +246,4 @@ def single_view():
 
 
 
-# fig = single_view()
+fig = single_view()

@@ -1,7 +1,6 @@
 import cartopy.crs as ccrs
 import GEO as gg
 import base as b 
-from shapely.geometry import Polygon
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb
 import datetime as dt
@@ -17,75 +16,6 @@ def load_data(dn, root = 'D:\\'):
     return b.sel_times(df, dn, hours = 0.5)
     
 
-def rectangle(ax, longitudes, latitudes):
-    
-    square = Polygon(zip(longitudes, latitudes))
-    
-    x, y = square.exterior.xy
-    
-    ax.add_patch(plt.Polygon(
-        list(zip(x, y)),
-        transform = ccrs.PlateCarree(), 
-        color = 'red', 
-        alpha = 0.5)
-        )
-
-def plot_corners(
-        ax,
-        year,
-        radius = 10,
-        label = False
-        ):
-    
-    coords = gg.corner_coords(
-            year, 
-            radius, 
-            angle = 45
-            )
-
-    x_limits, y_limits = coords[0][::-1], coords[1][::-1]
-    
-    out = {}
-
-    for i in range(len(x_limits)):
-        index = i + 1
-        
-        xlim, ylim = x_limits[i], y_limits[i]
-        
-        ax.plot(
-            xlim, ylim,
-            color = 'black', 
-            linewidth = 2, 
-            transform = ccrs.PlateCarree() 
-            )
-                
-        if label:
-            
-            clon = sum(list(set(xlim))) / 2
-            
-            ax.text(clon, max(ylim) + 1, index, 
-                    transform = ax.transData)
-        
-        x_values = sorted(list(set(xlim)))
-        y_values = sorted(list(set(ylim)))
-        
-        out[index] = (x_values, y_values)
-    
-    return out
-        
-
-def mappping():
-    fig, ax = plt.subplots(
-        dpi = 300,
-        ncols = 2, 
-        sharex = True, 
-        figsize = (12, 12),
-        subplot_kw = {'projection': ccrs.PlateCarree()}
-    )
-    
-    plt.subplots_adjust(wspace = 0.1)
-    
-    return fig, ax
 
 def plot_terminator_and_equator(
         ax, dn, twilight = 18):
@@ -110,7 +40,15 @@ def plot_terminator_and_equator(
 
 def plot_regions_ipp_and_sites(dn):
     
-    fig, ax = mappping()
+    fig, ax = plt.subplots(
+        dpi = 300,
+        ncols = 2, 
+        sharex = True, 
+        figsize = (12, 12),
+        subplot_kw = {'projection': ccrs.PlateCarree()}
+    )
+    
+    plt.subplots_adjust(wspace = 0.1)
     
     
     sites = ['saa', 'car', 'jic'] 
@@ -124,7 +62,7 @@ def plot_regions_ipp_and_sites(dn):
         
        gg.map_attrs(ax[i], dn.year)
        
-       corners = plot_corners(
+       corners = pl.plot_corners(
                ax[i],
                dn.year,
                radius = 10,
@@ -158,14 +96,15 @@ def plot_regions_ipp_and_sites(dn):
     
     return fig
 
-
-dn = dt.datetime(2013, 1, 14, 23)
-
-fig = plot_regions_ipp_and_sites(dn)
-
-FigureName = 'regions_and_ipp'
-
-fig.savefig(
-    b.LATEX(FigureName, folder = 'maps'),
-    dpi = 400
-    )
+def main():
+    
+    dn = dt.datetime(2013, 1, 14, 23)
+    
+    fig = plot_regions_ipp_and_sites(dn)
+    
+    FigureName = 'regions_and_ipp'
+    
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'maps'),
+        dpi = 400
+        )

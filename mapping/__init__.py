@@ -1,3 +1,5 @@
 from .plot_mag_meridians import plot_mag_meridians, plot_meridian
-# from .plot_squared_inclined import plot_corners, plot_terminator_and_equator
+from .plot_regions_ipp_and_sites import plot_terminator_and_equator
 from .plot_ipp_variation_with_terminator import  plot_ipp_on_map
+from .plot_regions_over_map import plot_corners
+from .plot_single_tec_map import plot_tec_map
