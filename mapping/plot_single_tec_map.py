@@ -28,16 +28,17 @@ def load_tec(infile):
 
 def plot_contourf(ax, lon, lat, values, step = 5):
     
-    v = np.arange(0, 70 + step, step*0.5)
+    ticks = np.arange(0, 90, 10)
+    levels = np.arange(0, 80 + step, step*0.5)
     
     img = ax.contourf(
         lon, lat, values, 
-        levels = v,
+        levels = levels,
         cmap = 'rainbow'
         )
     
     b.colorbar(
-        img, ax, v, 
+        img, ax, ticks, 
         label = r'TEC ($10^{16} / m^2$)'
         )
     
@@ -60,7 +61,7 @@ def plot_tec_map(dn, ax = None):
              )
     
     dn_min = b.closest_datetime(b.tec_dates(dn), dn)
-
+    # print(dn_min)
     lon, lat, vls =  load_tec(get_path(dn_min))
     
     plot_contourf(ax, lon, lat, vls)

@@ -74,11 +74,16 @@ def plot_lines(
         start,  
         local_term
         ):
+    """
+    Plot terminator of the first occurrence in 
+    the region and find the local midnight 
+    
+    """
     
     for i, ax in enumerate(axes):
     
         llon, llat = local_term[i + 1]
-        
+        print(llon, llat)
         dusk = gg.dusk_time(
                 start,  
                 lat = llat, 
@@ -92,19 +97,20 @@ def plot_lines(
             label = 'Terminator'
             )
         
-        midnight = gg.local_midnight(llon, llat, start)
+        # midnight = gg.local_midnight(llon, llat, start)
         
-        ax.axvline(
-            midnight, 
-            lw = 2,
-            color = 'b', 
-            label = 'local midnight'
-            )
+        # ax.axvline(
+        #     midnight, 
+        #     lw = 2,
+        #     color = 'b', 
+        #     label = 'local midnight'
+        #     )
                 
 def plot_roti_timeseries(
         axes, 
         df, dn, 
-        corners
+        corners,
+        right_ticks = False
         ):
     
     key = list(corners.keys())
@@ -129,20 +135,16 @@ def plot_roti_timeseries(
             transform = ax.transAxes
             )
     
-        ax.scatter(sel.index, sel.roti, 
-                   s = 3, color = 'k')
-        ax.set(
-            ylim = [0, 2], 
-            yticks = np.arange(0, 2, 0.5),
-            xlim = [df.index[0], df.index[-1]]
-            )
+        pl.plot_roti_points(ax, sel)
         
-        # ax.tick_params(
-        #     axis='y', 
-        #     labelright = True, 
-        #     labelleft = False, 
-        #     right = True, 
-        #     left = False)
+        if right_ticks:
+            ax.tick_params(
+                axis='y', 
+                labelright = True, 
+                labelleft = False, 
+                right = True, 
+                left = False)
+            
         
         if i != -1:
             ax.set(xticklabels = [])
@@ -157,29 +159,12 @@ def plot_roti_timeseries(
         
     b.format_time_axes(axes[-1])
 
-def first_of_terminator(
-        ax_map, 
-        corners, 
-        eq_lon, 
-        eq_lat
-        ):
-    
-    out = {}
-    for key in corners.keys():
-        xlim, ylim = corners[key]
-        ilon, ilat = gg.intersection(
-            eq_lon, eq_lat, 
-            [xlim[1], xlim[1]], ylim
-            )
-        out[key] = (ilon, ilat) 
-        ax_map.scatter(ilon, ilat, color = 'k')
-        
-    return out
+
 
 def plot_ipp_variation(df, start, dn, twilight = 12):
     
     fig, ax_map, axes = multi_layout(
-        nrows = 4, year = dn.year)
+        nrows = 4, year = start.year)
     
    
     eq_lon, eq_lat = pl.plot_terminator_and_equator(
@@ -192,7 +177,7 @@ def plot_ipp_variation(df, start, dn, twilight = 12):
             label = True
             )
     
-    local_term = first_of_terminator(
+    local_term = pl.first_of_terminator(
             ax_map, 
             corners, 
             eq_lon, 

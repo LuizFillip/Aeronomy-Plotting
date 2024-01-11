@@ -2,7 +2,29 @@ import cartopy.crs as ccrs
 import GEO as gg
 import matplotlib.pyplot as plt
 
+def first_of_terminator(
+        ax_map, 
+        corners, 
+        eq_lon = None, 
+        eq_lat = None,
+        year = 2013):
 
+    '''
+    First intersection of terminator and the 
+    region square
+    '''
+    out = {}
+    for key in corners.keys():
+        xlim, ylim = corners[key]
+        ilon, ilat = gg.intersection(
+            eq_lon, eq_lat, 
+            [xlim[1], xlim[1]], ylim
+            )
+        out[key] = (ilon, ilat) 
+        
+        ax_map.scatter(ilon, ilat, color = 'k')
+        
+    return out
 
 def plot_corners(
         ax,

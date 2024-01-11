@@ -6,7 +6,6 @@ from matplotlib.gridspec import GridSpec
 import plotting as pl
 import base as b
 import PlasmaBubbles as pb 
-import numpy as np 
 
 b.config_labels(fontsize = 25)
 
@@ -40,64 +39,7 @@ def multi_layout(nrows = 4):
     
     return fig, ax_map, axes
 
-def plot_roti_timeseries(
-        axes, 
-        df, dn, 
-        corners
-        ):
-    
-    key = list(corners.keys())
-    
-    for i, ax in enumerate(axes):
-        
-        k = key[i]
-        xlim, ylim = corners[k]
-       
-        
-        sel = df.loc[
-            (df.index < dn) & 
-            (df.lon > xlim[0]) & 
-            (df.lon < xlim[1]) & 
-            (df.lat > ylim[0]) & 
-            (df.lat < ylim[1])
-            ]
-        
-        ax.text(
-            0.03, 0.75,
-            f'Box {i + 1}', 
-            transform = ax.transAxes
-            )
-    
-        ax.scatter(sel.index, sel.roti, 
-                   s = 3, color = 'k')
-        ax.set(
-            yticks = np.arange(0, 4, 1),
-            xlim = [df.index[0], df.index[-1]]
-            )
-        
-        ax.tick_params(
-            axis='y', 
-            labelright = True, 
-            labelleft = False, 
-            right = True, 
-            left = False)
-        
-        if i != -1:
-            ax.set(xticklabels = [])
-            
-        # if i == 0:
-        #     ax.legend(
-        #         bbox_to_anchor = (.5, 1.5), 
-        #         loc = "upper center", 
-        #         ncol = 2,
-        #         columnspacing = 0.7
-        #         )
-        
-    b.format_time_axes(axes[-1])
 
-
-
- 
 def plot_roti_tec_variation(df, start, dn, twilight = 12):
     
     
@@ -105,14 +47,30 @@ def plot_roti_tec_variation(df, start, dn, twilight = 12):
     
     corners = pl.plot_tec_map(dn, ax = ax_map)
     
-    term_lon, term_lat = gg.terminator2(dn, 18)
+    eq_lon, eq_lat = pl.plot_terminator_and_equator(
+            ax_map, dn, twilight = 18)
     
-    ax_map.scatter(term_lon, term_lat, s = 10)
+    pl.plot_roti_timeseries(
+        axes, 
+        df, 
+        dn, 
+        corners, 
+        right_ticks = True)
     
-    plot_roti_timeseries(axes, df, dn, corners)
+    local_term = pl.first_of_terminator(
+            ax_map, 
+            corners, 
+            eq_lon, 
+            eq_lat
+            )
+    print(local_term)
+    pl.plot_lines( 
+            axes, 
+            start,  
+            local_term
+            )
     
-    fig.text(0.93, 0.3, 
-        "ROTI (TECU/min)", 
+    fig.text(0.93, 0.3, "ROTI (TECU/min)", 
         rotation = "vertical", 
         fontsize = 25
         )
@@ -130,5 +88,8 @@ def main():
     
     df = b.sel_times(df, start)
             
-    dn = range_time(start, 30)
+    dn = range_time(start, 150)
  
+    plot_roti_tec_variation(df, start, dn, twilight = 12)
+    
+main()
