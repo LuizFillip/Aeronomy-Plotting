@@ -36,11 +36,7 @@ def multi_layout(nrows = 4, year = 2014):
     ax4 = fig.add_subplot(gs[3, nrows:], **args)
     axes = [ax1, ax2, ax3, ax4]
     
-    # fig.text(0.93, 0.3, 
-    #     "ROTI (TECU/min)", 
-    #     rotation = "vertical", 
-    #     fontsize = 25
-    #     )
+    
     
     return fig, ax_map, axes
 
@@ -76,7 +72,8 @@ def plot_ipp_on_map(ax, ds, corners, colorbar = False):
 def plot_lines( 
         axes, 
         start,  
-        local_term):
+        local_term
+        ):
     
     for i, ax in enumerate(axes):
     
@@ -245,6 +242,18 @@ def single_view(start):
     return fig
 
 
-start = dt.datetime(2014, 1, 1, 21)
+# start = dt.datetime(2014, 1, 1, 21)
 
-fig = single_view(start)
+# # fig = single_view(start)
+
+# df =  pb.concat_files(
+#     start, 
+#     root = os.getcwd()
+#     )
+
+# df = b.sel_times(df, start)
+         
+#  # dn = range_time(start, 10)
+ 
+# df
+ 

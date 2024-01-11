@@ -46,7 +46,8 @@ def plot_contourf(ax, lon, lat, values, step = 5):
 def get_path(dn):
     infile = "D:\\database\\"
     fmt = 'TEC_%Y\\TEC_%Y_%m\\TECMAP_%Y%m%d_%H%M.txt'
-    return infile +  dn.strftime(fmt)
+    return infile + dn.strftime(fmt)
+
 
 def plot_tec_map(dn, ax = None):
     
@@ -58,23 +59,28 @@ def plot_tec_map(dn, ax = None):
              {'projection': ccrs.PlateCarree()}
              )
     
-    lon, lat, vls =  load_tec(get_path(dn))
+    dn_min = b.closest_datetime(b.tec_dates(dn), dn)
+
+    lon, lat, vls =  load_tec(get_path(dn_min))
     
     plot_contourf(ax, lon, lat, vls)
     g.mag_equator(ax)
     g.map_features(ax)
     g.map_boundaries(ax)
-    pl.plot_corners(ax, dn.year)
+    corners = pl.plot_corners(ax, dn.year)
     
-    term_lon, term_lat = g.terminator2(dn, 18)
     
-    ax.scatter(term_lon, term_lat, s = 10)
     ax.set(title = dn.strftime('%Y/%m/%d %H:%M (UT)'))
     
-    # if ax is None:
-    #     return fig
-    # else:
-    #     return ax
+    if ax is None:
+        return fig
+    else:
+        return corners
+
+# import os
 
 
+# dn = dt.datetime(2013, 12, 25, 21, 30)
 
+
+        

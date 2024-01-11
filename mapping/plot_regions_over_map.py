@@ -31,7 +31,8 @@ def plot_corners(
             xlim, ylim,
             color = 'black', 
             linewidth = 2, 
-            transform = ccrs.PlateCarree() 
+            transform = ccrs.PlateCarree() ,
+            label = ''
             )
         
         clon = sum(list(set(xlim))) / 2
