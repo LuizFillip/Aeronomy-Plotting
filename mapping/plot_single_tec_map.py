@@ -48,14 +48,15 @@ def get_path(dn):
     fmt = 'TEC_%Y\\TEC_%Y_%m\\TECMAP_%Y%m%d_%H%M.txt'
     return infile +  dn.strftime(fmt)
 
-def plot_tec_map(dn):
-
-    fig, ax = plt.subplots(
-         figsize = (10, 10), 
-         dpi = 300, 
-         subplot_kw = 
-         {'projection': ccrs.PlateCarree()}
-         )
+def plot_tec_map(dn, ax = None):
+    
+    if ax is None:
+        fig, ax = plt.subplots(
+             figsize = (10, 10), 
+             dpi = 300, 
+             subplot_kw = 
+             {'projection': ccrs.PlateCarree()}
+             )
     
     lon, lat, vls =  load_tec(get_path(dn))
     
@@ -70,10 +71,10 @@ def plot_tec_map(dn):
     ax.scatter(term_lon, term_lat, s = 10)
     ax.set(title = dn.strftime('%Y/%m/%d %H:%M (UT)'))
     
-    return fig
+    # if ax is None:
+    #     return fig
+    # else:
+    #     return ax
 
 
 
-dn = dt.datetime(2013, 12, 25, 1)
-
-fig = plot_tec_map(dn)

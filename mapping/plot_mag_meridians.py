@@ -97,7 +97,7 @@ def plot_mag_meridians(
 
 def main():
     fig, ax = plt.subplots(
-        dpi = 400,
+        dpi = 300,
         figsize = (9, 9),
         subplot_kw = 
             {
@@ -108,9 +108,9 @@ def main():
     year = 2013
     ax = plot_mag_meridians(ax, year)
     
-    rec = plot_receivers_coords(
-            ax, 
-            year, 
-            distance = None,
-            text = True
-            )
+    # rec = plot_receivers_coords(
+    #         ax, 
+    #         year, 
+    #         distance = None,
+    #         text = True
+    #         )

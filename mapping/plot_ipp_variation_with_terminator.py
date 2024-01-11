@@ -13,14 +13,16 @@ b.config_labels(fontsize = 25)
 
 def multi_layout(nrows = 4, year = 2014):
     
-    fig = plt.figure(dpi = 300, figsize=(18, 7))
+    fig = plt.figure(
+        dpi = 300, 
+        figsize = (18, 7)
+        )
     
     gs = GridSpec(nrows, 8)
     
-    plt.subplots_adjust(wspace= 0.2, hspace = 0.1)
+    plt.subplots_adjust(wspace = 2.2, hspace = 0.1)
     
-    ax_map = fig.add_subplot(
-        gs[:, :nrows], 
+    ax_map = fig.add_subplot( gs[:, :nrows], 
         projection = ccrs.PlateCarree()
         )
     
@@ -34,11 +36,11 @@ def multi_layout(nrows = 4, year = 2014):
     ax4 = fig.add_subplot(gs[3, nrows:], **args)
     axes = [ax1, ax2, ax3, ax4]
     
-    fig.text(0.93, 0.3, 
-        "ROTI (TECU/min)", 
-        rotation = "vertical", 
-        fontsize = 25
-        )
+    # fig.text(0.93, 0.3, 
+    #     "ROTI (TECU/min)", 
+    #     rotation = "vertical", 
+    #     fontsize = 25
+    #     )
     
     return fig, ax_map, axes
 
@@ -138,12 +140,12 @@ def plot_roti_timeseries(
             xlim = [df.index[0], df.index[-1]]
             )
         
-        ax.tick_params(
-            axis='y', 
-            labelright = True, 
-            labelleft = False, 
-            right = True, 
-            left = False)
+        # ax.tick_params(
+        #     axis='y', 
+        #     labelright = True, 
+        #     labelleft = False, 
+        #     right = True, 
+        #     left = False)
         
         if i != -1:
             ax.set(xticklabels = [])
@@ -170,8 +172,7 @@ def first_of_terminator(
         xlim, ylim = corners[key]
         ilon, ilat = gg.intersection(
             eq_lon, eq_lat, 
-            [xlim[1], xlim[1]], 
-            ylim
+            [xlim[1], xlim[1]], ylim
             )
         out[key] = (ilon, ilat) 
         ax_map.scatter(ilon, ilat, color = 'k')
@@ -211,10 +212,10 @@ def plot_ipp_variation(df, start, dn, twilight = 12):
         corners
         )
     
-    plot_ipp_on_map(ax_map, df, dn, corners)
-        
+    plot_ipp_on_map(ax_map, df, corners)
+
     fig.suptitle(
-        dn.strftime('%H:%M (UT)'),
+        dn.strftime('%d/%m/%Y %H:%M (UT)'),
         y = 1.01
         )
     
@@ -225,9 +226,8 @@ def range_time(start, mi):
     return start + dt.timedelta(minutes = mi)
 
 
-def single_view():
+def single_view(start):
     
-    start = dt.datetime(2014, 1, 1, 21)
     
     df =  pb.concat_files(
         start, 
@@ -245,5 +245,6 @@ def single_view():
     return fig
 
 
+start = dt.datetime(2014, 1, 1, 21)
 
-fig = single_view()
+fig = single_view(start)
