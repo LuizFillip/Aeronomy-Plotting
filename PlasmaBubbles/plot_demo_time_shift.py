@@ -10,7 +10,7 @@ args = dict(
     )
 
 
-def plot_events(ax, dn):
+def plot_events(ax, dn, col = '-50'):
     
     df = b.load(
         pb.epb_path(
@@ -27,8 +27,7 @@ def plot_events(ax, dn):
     ax.set(
         ylabel = 'EPBs occurrence', 
         yticks = [0, 1], 
-        xlim = [ds.index[0], 
-                ds.index[-1]],
+        xlim = [ds.index[0], ds.index[-1]],
         ylim = [-0.2, 1.2]
         )
     
@@ -118,6 +117,8 @@ def plot_demo_time_shift(dn, col):
 def main():
 
     col = '-70'
-    dn = dt.datetime(2022, 12, 20, 20)
+    
+    dn = dt.datetime(2013, 12, 25, 20)
     plot_demo_time_shift(dn, col)
     
+main()

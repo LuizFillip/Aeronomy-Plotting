@@ -121,7 +121,7 @@ def plot_data_roti(ax, df):
     
 
 
-def plot_roti_demo_threshold(ds):
+def plot_roti_demo_threshold(ds, day):
     
     fig, ax = plt.subplots(
         dpi = 300, 
@@ -176,8 +176,8 @@ def set_data():
     return df.between_time(
         '12:00', '20:00'
         )
-ds = set_data()
-fig = plot_roti_demo_threshold(ds)
+# ds = set_data()
+# fig = plot_roti_demo_threshold(ds)
 
 
-fig.savefig(b.LATEX('daytime_distribution'), dpi = 400)
+# fig.savefig(b.LATEX('daytime_distribution'), dpi = 400)

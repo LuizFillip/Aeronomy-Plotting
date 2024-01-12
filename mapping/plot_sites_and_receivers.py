@@ -16,12 +16,6 @@ args = dict(
 
 b.config_labels()
 
-
-        
-        
-        
-        
-
 def plot_receivers_coords(
         ax, 
         year, 
@@ -128,7 +122,7 @@ def plot_sites_and_receivers(
     ax.legend(loc = 'upper right')
     return fig, out
 
-fig, rec = plot_sites_and_receivers()
+# fig, rec = plot_sites_and_receivers()
 
 # FigureName = 'sites_instrumentation'
 

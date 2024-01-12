@@ -17,7 +17,7 @@ b.config_labels()
 
 def plot_epbs_occurrences_roti(
         ds,
-        factor,
+        the = 0.25 ,
         cols = None
         ):
 
@@ -37,7 +37,7 @@ def plot_epbs_occurrences_roti(
              'magenta']
     
     dn = ds.index[0]
-    the = 0.25 #pb.threshold(dn, factor)
+    
     
     title = f'Longitudinal zones (threshold = {the} TECU/min)'
     
@@ -54,8 +54,10 @@ def plot_epbs_occurrences_roti(
             color = 'k', lw = 2, linestyle = '--'
             )
         
+        ds1 = pb.events_by_longitude(ds[col], the)
+        
         ax[1].plot(
-             pb.events_by_longitude(ds[col], factor), 
+             ds1, 
              marker = 'o',
              markersize = 3,
              color = line.get_color(), 
@@ -147,11 +149,11 @@ def single_plot(
     plt.show()
     return fig
 
-dn = dt.datetime(2013, 4, 5, 20)
+# dn = dt.datetime(2017, 12, 17, 20)
 
-fig = single_plot(
-        dn, 
-        hours = 13,
-        factor = 5
-        )
+# fig = single_plot(
+#         dn, 
+#         hours = 13,
+#         factor = 5
+#         )
 

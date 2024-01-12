@@ -49,15 +49,13 @@ def plot_count_events():
     infile = "database/counts/"
     files = os.listdir(infile)
     
-    fig, axes = plt.subplots(nrows = 2, 
+    fig, ax = plt.subplots(nrows = 2, 
                              figsize = (12, 8), 
                              sharex = True)
     
     plt.subplots_adjust(hspace = 0.1)
     
-    s.config_labels(fontsize = 15)
-    
-    for num, a in enumerate(axes.flat):
+    for num, a in enumerate(ax.flat):
     
         plot(a, infile, files[num])
     

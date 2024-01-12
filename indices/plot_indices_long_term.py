@@ -1,11 +1,9 @@
 import matplotlib.pyplot as plt
-import base as s
+import base as b
 import datetime as dt
 import numpy as np
 
 PATH_INDEX =  'database/indices/omni_pro.txt'
-
-s.config_labels()
 
 
 def plot_dst(ax, dst, limit = -100 ):
@@ -25,14 +23,14 @@ def plot_dst(ax, dst, limit = -100 ):
     
     return dst
 
-def plot_f107(ax, f107, f107a, limit = 86):
+def plot_f107(ax, f107, limit = 86):
     
     ax.plot(f107)
-    ax.plot(
-        f107a, 
-        lw = 3, 
-        color = 'cornflowerblue'
-        )
+    # ax.plot(
+    #     f107a, 
+    #     lw = 3, 
+    #     color = 'cornflowerblue'
+    #     )
         
     ax.set(
         ylabel = '$F_{10.7}$ (sfu)', 
@@ -76,16 +74,18 @@ def plot_long_term(s_year, e_year):
     
     fig, ax = plt.subplots(
         dpi = 300,
-        figsize = (14, 10), 
+        figsize = (12, 10), 
         nrows = 3, 
         sharex = True
         )
     
-    plt.subplots_adjust(hspace = 0.1)
+    plt.subplots_adjust(hspace = 0.05)
     
-    df = s.load(PATH_INDEX)
+    df = b.load(PATH_INDEX)
     
-    df = s.sel_dates(
+    df["f107a"] = df["f107"].rolling(window = 5).mean(center = True)
+    
+    df = b.sel_dates(
         df, 
         dt.datetime(s_year, 12, 1), 
         dt.datetime(e_year, 1, 13)
@@ -93,15 +93,14 @@ def plot_long_term(s_year, e_year):
         
     plot_kp(ax[0], df['kp'])
     plot_dst(ax[1], df['dst'])
-    plot_f107(ax[2], df['f107'], df['f107a'])
+    plot_f107(ax[2], df['f107'])
   
     ax[2].set( 
         xlabel = 'years',
         xlim = [df.index[0], df.index[-1]]
         )
         
-    c = s.chars()
-    s.config_labels(fontsize = 20)
+    c = b.chars()
 
     for i, ax in enumerate(ax.flat):
         
@@ -114,4 +113,11 @@ def plot_long_term(s_year, e_year):
     
 
 
-f = plot_long_term(2012, 2023)
+fig = plot_long_term(2012, 2023)
+
+# FigureName = 'geomagnetic_indexes'
+
+# fig.savefig(
+#     b.LATEX(FigureName, folder = 'timeseries'),
+#     dpi = 400
+#     )

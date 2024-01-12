@@ -4,6 +4,9 @@ import datetime as dt
 import PlasmaBubbles as pb 
 import GEO as gg 
 
+b.config_labels()
+
+
 args = dict(
      marker = 'o', 
      markersize = 3,
@@ -18,26 +21,24 @@ def plot_roti_points(ax, ds, threshold = 0.25):
         
     ax.plot(ds['roti'], **args, label = 'ROTI points')
     
-    times = pb.time_range(ds)
+    if len(ds) != 0:
+        times = pb.time_range(ds)
+        
+        ax.axhline(0.25, color = 'red', lw = 2, 
+                    label = f'{threshold} TECU/min')
+        
+        df1 = pb.time_dataset(ds, 'max', times)
+        
+        ax.plot(df1, 
+                color = 'k',
+                marker = 'o', 
+                markersize = 3, 
+                linestyle = 'none',
+                label = 'Maximum value')
+        
+        ax.set(yticks = list(range(0, 5)))
     
-    ax.axhline(0.25, color = 'red', lw = 2, 
-                label = f'{threshold} TECU/min')
-    
-    df1 = pb.time_dataset(ds, 'max', times)
-    
-    ax.plot(df1, 
-            color = 'k',
-            marker = 'o', 
-            markersize = 3, 
-            linestyle = 'none',
-            label = 'Maximum value')
-    
-    ax.set(yticks = list(range(0, 4)), 
-           ylabel = 'ROTI (TECU/min)')
-    
-    ax.legend(loc = 'upper right')
-    
-    return df1['max']
+        return df1['max']
 
 def plot_occurrence_events(ax, ds):
     
@@ -78,6 +79,11 @@ def load_and_filter(dn, sector = -50, root = 'D:\\'):
 
 def plot_raw_roti_maximus_events(dn):
     
+    '''
+    Plot only one region by date
+
+    '''
+    
     fig, ax = plt.subplots(
         dpi = 300, 
         nrows = 2,
@@ -94,6 +100,10 @@ def plot_raw_roti_maximus_events(dn):
             twilight = 12
             )
     
+    ax[0].set(ylabel = 'ROTI (TECU/min)')
+    
+    ax[0].legend(loc = 'upper right')
+    
     ax[1].axvline(dusk, label = 'Region E terminator')
     
     ax[1].legend(loc = 'upper right')
@@ -106,14 +116,19 @@ def plot_raw_roti_maximus_events(dn):
     
     return fig
 
-dn = dt.datetime(2013, 1, 14, 20)
+def main():
+    
+    dn = dt.datetime(2013, 12, 24, 20)
+    
+    fig = plot_raw_roti_maximus_events(dn)
+    
+    # FigureName = 'raw_roti_maximus_events'
+    
+    # fig.savefig(
+    #       b.LATEX(FigureName, 
+    #       folder = 'timeseries'),
+    #       dpi = 400
+    #       )
+    
 
-fig = plot_raw_roti_maximus_events(dn)
-
-FigureName = 'raw_roti_maximus_events'
-
-fig.savefig(
-      b.LATEX(FigureName, 
-      folder = 'timeseries'),
-      dpi = 400
-      )
+# main()

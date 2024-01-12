@@ -34,7 +34,7 @@ def plot_contourf(ax, lon, lat, values, step = 5):
     img = ax.contourf(
         lon, lat, values, 
         levels = levels,
-        cmap = 'rainbow'
+        cmap = 'jet'
         )
     
     b.colorbar(
@@ -61,15 +61,14 @@ def plot_tec_map(dn, ax = None):
              )
     
     dn_min = b.closest_datetime(b.tec_dates(dn), dn)
-    # print(dn_min)
-    lon, lat, vls =  load_tec(get_path(dn_min))
+    
+    lon, lat, vls = load_tec(get_path(dn_min))
     
     plot_contourf(ax, lon, lat, vls)
     g.mag_equator(ax)
     g.map_features(ax)
     g.map_boundaries(ax)
     corners = pl.plot_corners(ax, dn.year)
-    
     
     ax.set(title = dn.strftime('%Y/%m/%d %H:%M (UT)'))
     
@@ -78,6 +77,6 @@ def plot_tec_map(dn, ax = None):
     else:
         return corners
 
-# import os
+
 
         

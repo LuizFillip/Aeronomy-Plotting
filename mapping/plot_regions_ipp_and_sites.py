@@ -7,7 +7,7 @@ import datetime as dt
 import plotting as pl 
 
 
-b.config_labels()
+b.config_labels(fontsize = 30)
 
 def load_data(dn, root = 'D:\\'):
     
@@ -16,45 +16,24 @@ def load_data(dn, root = 'D:\\'):
     return b.sel_times(df, dn, hours = 0.5)
     
 
-
-def plot_terminator_and_equator(
-        ax, dn, twilight = 18):
- 
-    eq_lon, eq_lat  = gg.load_equator(
-        dn.year, values = True)
-    
-    term_lon, term_lat = gg.terminator2(
-        dn, twilight)
-    
-    ax.scatter(term_lon, term_lat, s = 10)
-    
-    inter_lon, inter_lat = gg.intersection(
-        eq_lon, eq_lat, term_lon, term_lat)
-    
-    
-    ax.scatter(inter_lon, inter_lat, s = 100, 
-               marker = 'X', color = 'r')
-    
-    return eq_lon, eq_lat
-
-
 def plot_regions_ipp_and_sites(dn):
     
     fig, ax = plt.subplots(
         dpi = 300,
         ncols = 2, 
         sharex = True, 
-        figsize = (12, 12),
+        figsize = (14, 14),
         subplot_kw = {'projection': ccrs.PlateCarree()}
     )
     
-    plt.subplots_adjust(wspace = 0.1)
+    plt.subplots_adjust(wspace = 0.2)
     
-    
-    sites = ['saa', 'car', 'jic'] 
-    names = ['Digisonde (São Luis)',  
+    sites = ['car',  'jic', 'saa'] 
+    names = [  
              'Imager (Cariri)', 
-             'Digisonde (Jicamarca)']  
+             'Digisonde (Jicamarca)', 
+             'Digisonde (São Luis)'
+             ]  
     
     df = load_data(dn)
     
@@ -72,7 +51,9 @@ def plot_regions_ipp_and_sites(dn):
        gg.plot_sites_markers(ax[i], sites, names)
        
        l = b.chars()[i]
-       ax[i].text(0.05, 0.9, f'({l})', fontsize = 20,
+       
+       ax[i].text(
+           0.05, 0.9, f'({l})', fontsize = 30,
                   transform = ax[i].transAxes)
        
     pl.plot_ipp_on_map(ax[1], df, corners)
@@ -108,3 +89,5 @@ def main():
         b.LATEX(FigureName, folder = 'maps'),
         dpi = 400
         )
+    
+# main()

@@ -1,8 +1,16 @@
 import matplotlib.pyplot as plt 
 import datetime as dt 
-import events as ev 
+import core as c 
 import base as b
 
+names_seasons = {
+     
+     3: 'march equinox',
+     9: 'setember equinox',
+     12: 'december solstice',
+     6: 'june solstice'
+     
+     }
 
 def sel_year(ds, yr):
     ds1 = ds.loc[ds.index.year == yr]
@@ -16,14 +24,7 @@ def plot_scatter_occorrence(
         ax, ds, month = 3
         ):
     
-    names_seasons = {
-         
-         3: 'march equinox',
-         9: 'setember equinox',
-         12: 'december solstice',
-         6: 'june solstice'
-         
-         }
+    
     
     dn = dt.date(2013, month, 21)
     
@@ -38,7 +39,7 @@ def plot_scatter_occorrence(
         
         ax.scatter(ds1.doy, ds1.occ, color = 'k', s = 10)
         
-        ax.scatter(ev.dn2doy(dn), yr, s = 60, color = 'r')
+        ax.scatter(c.dn2doy(dn), yr, s = 60, color = 'r')
         
     name = names_seasons[month]
     
@@ -73,7 +74,7 @@ def plot_seasons_disponibility(
         
         month = (i + 1) * 3
         
-        ds = ev.seasons(df, month)
+        ds = c.seasons(df, names_seasons[month])
         
         name = plot_scatter_occorrence(
             ax, 
@@ -102,8 +103,9 @@ def plot_seasons_disponibility(
         )
     
     return fig
-# df = ev.concat_results('saa', col_g = 'e_f')
 
-# df['doy'] = df.index.day_of_year.copy()
-# fig = plot_seasons_disponibility(df)
+df = c.concat_results('saa')
+
+df['doy'] = df.index.day_of_year.copy()
+fig = plot_seasons_disponibility(df)
 

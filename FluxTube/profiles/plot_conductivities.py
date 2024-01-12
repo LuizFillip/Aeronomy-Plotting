@@ -1,8 +1,4 @@
 import matplotlib.pyplot as plt
-import pandas as pd
-import numpy as np
-import ionosphere as io
-import FluxTube as ft
 from utils import translate
 
 def plot_profiles(ax, df, col):
@@ -13,9 +9,8 @@ def plot_profiles(ax, df, col):
             df.index, 
             label = "$\Sigma_P^F + \Sigma_P^E$")
     
-    name =  translate(col)
-    ax.set(xlabel = "$\Sigma_P$ (ohms)", 
-           title = name.title())
+    # name =  translate(col)
+    ax.set(xlabel = "$\Sigma_P$ (ohms)", )
     
     return ax
 
@@ -71,12 +66,7 @@ def plot_conductivities(df):
         ax.axhline(300, color = "k")
     
 infile = "database/FluxTube/201301012100.txt"
-#infile = "201301012100.txt"
 
-
-df = ft.IntegratedRegions(
-    io.load_calculate(infile)
-    )
 
 def smooth_from_heigth(df):
     df[df.index >= 200] = df[df.index >= 200].rolling(

@@ -15,10 +15,7 @@ def range_time(start, mi):
 
 def multi_layout(nrows = 4):
     
-    fig = plt.figure(
-        dpi = 300, 
-        figsize = (18, 7)
-        )
+    fig = plt.figure(dpi = 300, figsize = (19, 8))
     
     gs = GridSpec(nrows, 8)
     
@@ -30,6 +27,7 @@ def multi_layout(nrows = 4):
         )
     
     ax1 = fig.add_subplot(gs[0, nrows:])
+    
     args = dict(sharey = ax1)
     
     ax2 = fig.add_subplot(gs[1, nrows:], **args)
@@ -47,7 +45,7 @@ def plot_roti_tec_variation(df, start, dn, twilight = 12):
     
     corners = pl.plot_tec_map(dn, ax = ax_map)
     
-    eq_lon, eq_lat = pl.plot_terminator_and_equator(
+    eq_lon, eq_lat = gg.plot_terminator_and_equator(
             ax_map, dn, twilight = 18)
     
     pl.plot_roti_timeseries(
@@ -64,7 +62,7 @@ def plot_roti_tec_variation(df, start, dn, twilight = 12):
             eq_lon, 
             eq_lat
             )
-    # print(local_term)
+
     pl.plot_lines( 
             axes, 
             start,  
@@ -80,7 +78,7 @@ def plot_roti_tec_variation(df, start, dn, twilight = 12):
 
 def main():
     
-    start = dt.datetime(2013, 12, 25, 20)
+    start = dt.datetime(2013, 12, 24, 20)
     
     df =  pb.concat_files(
         start, 
@@ -91,6 +89,9 @@ def main():
             
     dn = range_time(start, 200)
  
-    plot_roti_tec_variation(df, start, dn, twilight = 12)
+    plot_roti_tec_variation(
+        df, start, dn, twilight = 12)
     plt.show()
+    
+    # 
 # main()
