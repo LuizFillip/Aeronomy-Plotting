@@ -53,6 +53,6 @@ def plot_meridian_and_apex(year = 2013):
         
     return fig
 
-# fig = plot_meridian_and_apex()
+fig = plot_meridian_and_apex()
     
 # fig.savefig(b.LATEX('apex_meridian'), dpi = 400)

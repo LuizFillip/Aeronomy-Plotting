@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import base as b
@@ -70,7 +69,7 @@ def plot(
     vls = pt.values
     ticks = np.linspace(np.min(vls), np.max(vls), 5)
     
-    lbs  = b.Labels().infos[parameter]
+    
     
     if parameter == "ratio":
         label = lbs["symbol"] 
@@ -81,34 +80,19 @@ def plot(
             img, ax, ticks, 
             label = label)
     
-    ax.set(title = lbs["name"].replace("\n", " "))
     
-    
-def plot_ionospheric_parameters(ds):
-   
-    fig, ax = set_figure(
-        ncols = 1, 
-        nrows = 5, 
-        figsize = (12, 12), 
-        dpi = 300
-        )
-    
-    cols = ["N", "K", "nui", "R", "ratio"]
+parameter = 'sigma'
+lbs  = b.Labels().infos[parameter]
 
-    
-    for i, ax in enumerate(ax.flat):
-        
-        plot(ax, ds, parameter = cols[i])
-        
-        ax.set(xlim = [ds.index[0], ds.index[-1]])
-            
-        if i == len(cols) - 1:
-            b.format_time_axes(ax)
-            
-    fig.text(0.05, 0.45, "Altura de Apex (km)", 
-             rotation = "vertical")
-    
-    return fig
-    
-    
+ax.set(title = lbs["name"].replace("\n", " "))
 
+df = pd.read_csv('20131224sep.txt', index_col = 0)
+
+dn = '2013-12-24 20:00:00'
+
+ds = df.loc[df['dn'] == dn]
+
+ds = ds.loc[ds['hem'] == 'north']
+
+plt.plot(ds['F'], ds.index)
+plt.plot(ds['E'], ds.index)
