@@ -1,7 +1,9 @@
 import base as b
 import GEO as gg
 import cartopy.crs as ccrs
-from plotting import plot_meridian
+import  plotting as pl
+import matplotlib.pyplot as plt 
+
 
 PATH_COORDS = 'database/GEO/coords/'
 
@@ -14,7 +16,7 @@ args = dict(
     )
 
 
-b.config_labels()
+b.config_labels(fontsize = 25)
 
 def plot_receivers_coords(
         ax, 
@@ -84,25 +86,15 @@ def plot_sites_and_receivers(
         distance = 5
         ):
     
-    lat_lims = dict(
-        min = -15, 
-        max = 10, 
-        stp = 5
-        )
-
-    lon_lims = dict(
-        min = -55,
-        max = -25, 
-        stp = 5
-        )    
-
-    fig, ax = gg.quick_map(
-        lat_lims = lat_lims, 
-        lon_lims = lon_lims, 
-        figsize = (9, 9), 
-        year = year, 
-        degress = None
-        )
+    fig, ax = plt.subplots(
+        dpi = 300,
+        sharex = True, 
+        figsize = (10,10),
+        subplot_kw = {'projection': ccrs.PlateCarree()}
+    )
+    
+    gg.map_attrs(ax, year)
+    
     
     
     out = plot_receivers_coords(
@@ -110,14 +102,24 @@ def plot_sites_and_receivers(
     
     glat, glon = gg.sites['saa']['coords']
     
-    gg.circle_range(ax, glon, glat, radius = 500)
+    # gg.circle_range(ax, glon, glat, radius = 500)
     
-    # ax.text(0.05, 0.93, '(a)', transform = ax.transAxes)
     fontsize = 35
     ax.text(0.03, 0.91, '(a)', 
             transform = ax.transAxes, 
             fontsize = fontsize)
-    plot_meridian(ax, year)
+    
+    corners = pl.plot_corners(ax, year)
+    
+    pl.first_of_terminator(
+            ax, 
+            corners, 
+            eq_lon = None, 
+            eq_lat = None,
+            year = 2013
+            )
+    
+    
     
     ax.legend(loc = 'upper right')
     return fig, out

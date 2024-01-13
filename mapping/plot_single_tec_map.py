@@ -24,12 +24,15 @@ def load_tec(infile):
     lat = np.arange(0, xmax)*0.5 - 60
     lon = np.arange(0, ymax)*0.5 - 90
          
-    return lon, lat, df.values
+    # return lon, lat, df.values
+    df.columns = lon
+    df.index = lat
+    return df
 
 def plot_contourf(ax, lon, lat, values, step = 5):
     
-    ticks = np.arange(0, 90, 10)
-    levels = np.arange(0, 80 + step, step*0.5)
+    ticks = np.arange(0, 40, 10)
+    levels = np.arange(0, 40 + step, step*0.5)
     
     img = ax.contourf(
         lon, lat, values, 
@@ -62,8 +65,14 @@ def plot_tec_map(dn, ax = None):
     
     dn_min = b.closest_datetime(b.tec_dates(dn), dn)
     
-    lon, lat, vls = load_tec(get_path(dn_min))
+    df = load_tec(get_path(dn_min))
     
+    
+    # for col in df.columns:
+    #     if col < -60:
+    #         df[col] = np.nan 
+            
+    lon, lat, vls = df.columns, df.index, df.values
     plot_contourf(ax, lon, lat, vls)
     g.mag_equator(ax)
     g.map_features(ax)
@@ -78,5 +87,10 @@ def plot_tec_map(dn, ax = None):
         return corners
 
 
+dn = dt.datetime(2013, 5, 15, 23, 0)
+infile = get_path(dn)
+df = load_tec(infile)
 
-        
+
+fig = plot_tec_map(dn, ax = None)
+

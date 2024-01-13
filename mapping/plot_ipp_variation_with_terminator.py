@@ -72,7 +72,8 @@ def plot_ipp_on_map(ax, ds, corners, colorbar = False):
 def plot_lines( 
         axes, 
         start,  
-        local_term
+        local_term,
+        y = 4.8
         ):
     """
     Plot terminator of the first occurrence in 
@@ -100,7 +101,7 @@ def plot_lines(
             lw = 2,
             color = 'b',
             )
-        y = 4.8
+        
         if i == 0:
             
             ax.text(dusk, y, 'Terminator', 
@@ -139,8 +140,10 @@ def plot_roti_timeseries(
         pl.plot_roti_points(ax, sel)
         
         ax.set(
-            ylim = [0, 4.5], 
-            yticks = list(range(0, 5)), 
+            # ylim = [0, 4.5], 
+            # yticks = list(range(0, 5)), 
+            ylim = [0, 1],
+            yticks = np.arange(0, 1, 0.2),
             xlim = [df.index[0], df.index[-1]]
             )
         

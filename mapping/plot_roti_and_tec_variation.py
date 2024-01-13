@@ -66,7 +66,8 @@ def plot_roti_tec_variation(df, start, dn, twilight = 12):
     pl.plot_lines( 
             axes, 
             start,  
-            local_term
+            local_term,
+            y = 1.4
             )
     
     fig.text(0.93, 0.3, "ROTI (TECU/min)", 
@@ -78,7 +79,7 @@ def plot_roti_tec_variation(df, start, dn, twilight = 12):
 
 def main():
     
-    start = dt.datetime(2013, 12, 24, 20)
+    start = dt.datetime(2013, 5, 15, 20)
     
     df =  pb.concat_files(
         start, 
@@ -87,10 +88,11 @@ def main():
     
     df = b.sel_times(df, start)
             
-    dn = range_time(start, 200)
+    dn = range_time(start, 550)
  
     plot_roti_tec_variation(
         df, start, dn, twilight = 12)
+    
     plt.show()
     
     # 
