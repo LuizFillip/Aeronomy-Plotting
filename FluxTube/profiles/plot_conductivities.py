@@ -1,5 +1,10 @@
 import matplotlib.pyplot as plt
-from utils import translate
+import pandas as pd 
+import base as b 
+from matplotlib.gridspec import GridSpec
+
+
+b.config_labels(fontsize = 25)
 
 def plot_profiles(ax, df, col):
     ax.plot(df[f"{col}_E"], df.index, label = "$\Sigma_P^E$")
@@ -45,14 +50,7 @@ def plot_conductivities(df):
     
     plt.subplots_adjust(wspace = 0.1)
     
-    plot_profiles(ax[0], df, "south")
-    
-    plot_profiles(ax[1], df, "north")
-    
-    
-    plot_total(ax[2], df)
-
-
+   
     ax[1].legend(bbox_to_anchor = [1.5, 1.18],
                  ncol = 3)
     
@@ -65,7 +63,6 @@ def plot_conductivities(df):
         
         ax.axhline(300, color = "k")
     
-infile = "database/FluxTube/201301012100.txt"
 
 
 def smooth_from_heigth(df):
@@ -76,10 +73,44 @@ def smooth_from_heigth(df):
 
 #df = smooth_from_heigth(df)
 
-
-
 #plot_conductivities(df)
 
 
+lbs = b.Labels()
+
+infile = "20131224sep.txt"
+
+df = pd.read_csv(infile, index_col = 0)
+
+dn = '2013-12-24 22:00:00'
+
+ds = df.loc[df['dn'] == dn]
+
+fig = plt.figure(dpi = 300, figsize = (15, 6))
 
 
+plt.subplots_adjust(wspace = 0.4, hspace = 0.1)
+
+gs = GridSpec(1, 3)
+
+
+def plot_height_prf(ds):
+    ax1 = fig.add_subplot(gs[0, 0])
+
+    ax1.plot(ds.index, ds['E'])
+    
+    ax1.set(ylabel = 'Altura de Apex (km)', 
+            xlabel = '$\Sigma_P$')
+    return
+
+def plot_time_prf(ds):
+    
+    ax2 = fig.add_subplot(gs[0, 1:])
+    ax2.set(
+        xlabel = 'Hora universal',
+        ylabel = '$\Sigma_P$'
+        )
+    return 
+
+plot_height_prf(ds)
+plot_time_prf(ds)
