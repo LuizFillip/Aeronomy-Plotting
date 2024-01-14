@@ -6,17 +6,18 @@ import base as b
 b.config_labels(fontsize = 30)
 
 args = dict( 
-    s = 40, 
+    s = 50, 
     marker = '^',
     color = 'k', 
     transform = ccrs.PlateCarree()
     )
 
 
+
 def plot_regions_over_map(year = 2013):
     
     """
-    Plot only the regions (squares) pver the map
+    Plot only the regions (squares) over the map
     
     """
     
@@ -27,22 +28,34 @@ def plot_regions_over_map(year = 2013):
         subplot_kw = {'projection': ccrs.PlateCarree()}
     )
     
-    gg.map_attrs(ax, year, degress = 5)
+    gg.map_attrs(ax, year, degress = 5, grid = False)
     gg.plot_rectangles_regions(ax)
     
+    lon, lat = gg.stations_coordinates(year, distance = 5)
     
-    sites = gg.stations_near_of_equator(
-        year,
-        distance = 5
-        )
+    ax.scatter(lon, lat, **args, label = 'Receptores GNSS')
     
-    for (lon, lat) in sites.values():
+    c = ['red', 'blue']
+    n  = ['São Luis', 'Jicamarca']
+    for i, site in enumerate(['saa', 'jic']):
         
-        ax.scatter(lon, lat, **args)
+        glat, glon = gg.sites[site]['coords']
+        
+        ax.scatter(glon, glat, s = 150,
+                   c = c[i], marker = 's', 
+                   label = n[i])
     
+    ax.legend(
+        loc = 'lower right',
+        ncol = 1, 
+        # bbox_to_anchor = (0.5, 1.1), 
+        columnspacing = 0.2
+        )
     
     return fig
     
 fig = plot_regions_over_map(year = 2013)
 
 # plt.show()
+
+

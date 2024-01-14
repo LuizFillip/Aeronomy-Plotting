@@ -4,9 +4,8 @@ import matplotlib.pyplot as plt
 import base as b
 from FluxTube import Apex
 import numpy as np
-# from plotting import (
-#     plot_receivers_coords
-#     )
+
+
 b.config_labels()
 
 def plot_meridian(
@@ -61,22 +60,14 @@ def plot_mag_meridians(
         ax,
         year = 2013
         ):
-
-
-    gg.map_features(ax, grid = False)
-
-    lat = gg.limits(
-        min = -15, 
-        max = 10, 
-        stp = 10
+    
+    fig, ax = plt.subplots(
+        dpi = 300,
+        figsize = (9, 9),
+        subplot_kw = {'projection': ccrs.PlateCarree()}
         )
-    lon = gg.limits(
-        min = -60, 
-        max = -20, 
-        stp = 10
-        )    
 
-    gg.map_boundaries(ax, lon, lat)
+    gg.map_attrs(ax, year, degress = None)
     
     plot_meridian(ax, year)
     
@@ -93,26 +84,4 @@ def plot_mag_meridians(
         loc = "upper right"
         )
 
-    return ax
-
-def main():
-    fig, ax = plt.subplots(
-        dpi = 300,
-        figsize = (9, 9),
-        subplot_kw = 
-            {
-            'projection': ccrs.PlateCarree()
-            }
-        )
-    
-    year = 2013
-    ax = plot_mag_meridians(ax, year)
-    
-    # rec = plot_receivers_coords(
-    #         ax, 
-    #         year, 
-    #         distance = None,
-    #         text = True
-    #         )
-    
-# main()
+    return fig
