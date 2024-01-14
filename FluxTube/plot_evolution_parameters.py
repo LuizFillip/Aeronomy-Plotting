@@ -3,7 +3,7 @@ import RayleighTaylor as rt
 import os
 import GEO as g
 import datetime as dt
-
+import matplotlib.pyplot as plt
 from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
 

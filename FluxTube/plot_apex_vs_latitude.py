@@ -24,11 +24,15 @@ def infos(ax):
     
 
 def plot_apex_vs_latitude(
-        ax, 
+       
         lim = 15,
         color = 'k'
         ):
-    
+    fig, ax = plt.subplots(
+        figsize = (12, 6),
+        dpi = 300
+        )
+
     max_height = 500
     step = 50
     base = 75
@@ -37,7 +41,7 @@ def plot_apex_vs_latitude(
    
     for h in heights:
         
-        apx = Apex(h)
+        apx = Apex(h) 
         lats =  apx.latitude_range(
             points = 30, 
             base = 150
@@ -50,16 +54,13 @@ def plot_apex_vs_latitude(
         if h == 300:
             args = dict(
                 marker = 'o', 
-                markerfacecolor = color, 
+                markerfacecolor = 'w', 
                 lw = 2)
         else:
             args = dict(color = 'k', lw = 2)
             
-            
-        ax.plot(np.degrees(lats), 
-                apex, **args)    
+        ax.plot(np.degrees(lats), apex, **args)    
         
-    
     ax.set(
         xlim = [-lim, lim],
         ylim = [100, max_height],
@@ -91,19 +92,11 @@ def plot_apex_vs_latitude(
     #     fontsize = fontsize
     #     )
         
-    return ax
+    return fig 
 
 
-fig, ax = plt.subplots(
-    figsize = (12, 6),
-    dpi = 300
-    )
-
-plot_apex_vs_latitude(
-        ax,
-        color = 'k'
-        )
+fig = plot_apex_vs_latitude()
 
 FigureName = 'magnetic_lines'
 
-fig.savefig(b.LATEX(FigureName, folder = 'modeling'), dpi = 400)
+# fig.savefig(b.LATEX(FigureName, folder = 'modeling'), dpi = 400)
