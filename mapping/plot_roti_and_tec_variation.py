@@ -43,34 +43,23 @@ def plot_roti_tec_variation(df, start, dn, twilight = 12):
     
     fig, ax_map, axes = multi_layout(nrows = 4)
     
-    corners = pl.plot_tec_map(dn, ax = ax_map)
+    pl.plot_tec_map(dn, ax = ax_map)
     
-    eq_lon, eq_lat = gg.plot_terminator_and_equator(
-            ax_map, dn, twilight = 18)
+    lon, lat = gg.terminator2(dn, 18)
+    ax_map.scatter(lon, lat, c = 'k')
+    local_term = gg.first_edge(year = dn.year)
     
     pl.plot_roti_timeseries(
         axes, 
         df, 
         dn, 
-        corners, 
+        start,  
+        local_term,
         right_ticks = True
         )
-    
-    local_term = pl.first_of_terminator(
-            ax_map, 
-            corners, 
-            eq_lon, 
-            eq_lat
-            )
 
-    pl.plot_lines( 
-            axes, 
-            start,  
-            local_term,
-            y = 1.4
-            )
-    
-    fig.text(0.93, 0.3, "ROTI (TECU/min)", 
+    fig.text(
+        0.93, 0.3, "ROTI (TECU/min)", 
         rotation = "vertical", 
         fontsize = 25
         )
@@ -79,7 +68,7 @@ def plot_roti_tec_variation(df, start, dn, twilight = 12):
 
 def main():
     
-    start = dt.datetime(2013, 5, 15, 20)
+    start = dt.datetime(2014, 2, 9, 20)
     
     df =  pb.concat_files(
         start, 
@@ -90,10 +79,10 @@ def main():
             
     dn = range_time(start, 550)
  
-    plot_roti_tec_variation(
-        df, start, dn, twilight = 12)
+    plot_roti_tec_variation(df, start, dn)
     
     plt.show()
     
-    # 
+    
+    
 # main()

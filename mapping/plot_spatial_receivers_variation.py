@@ -1,41 +1,28 @@
 import base as b
 import GEO as gg
 import matplotlib.pyplot as plt 
+import cartopy.crs as ccrs
+
 import core as c
 
 
 b.config_labels()
 
-def map_attrs(year = 2021):
-
-    lat_lims = dict(
-        min = -15, 
-        max = 5, 
-        stp = 5
-        )
-    
-    lon_lims = dict(
-        min = -55,
-        max = -35, 
-        stp = 5
-        )    
-    
-    fig, ax = gg.quick_map(
-        lat_lims = lat_lims, 
-        lon_lims = lon_lims, 
-        figsize = (9, 9), 
-        year = year, 
-        grid = False,
-        degress = None
-        )
-    
-    return ax
 
 def plot_in_circle(
-        ax, 
+        year, 
         lon, lat, 
         center, radius = 8
         ):
+    
+    fig, ax = plt.subplots(
+        dpi = 300,
+        sharex = True, 
+        figsize = (10, 10),
+        subplot_kw = {'projection': ccrs.PlateCarree()}
+    )
+    
+    gg.map_attrs(ax, year, degress = 5, grid = False)
     
     circle = plt.Circle(
         center, 
@@ -81,16 +68,14 @@ def plot_in_circle(
 
 
 
-ax  = map_attrs()
-
+year = 2021
 clon, clat, radius = -45, -5, 5
 
 names, lon, lat = gg.arr_coords(
     year = 2021
     )
 
-in_x, in_y = plot_in_circle(
-    ax, lon, lat, (clon, clat), 
+in_x, in_y = plot_in_circle(year, lon, lat, (clon, clat), 
     radius
     )
 

@@ -81,9 +81,11 @@ def plot_lines(
     
     """
     
+    key = list(local_term.keys())
+    
     for i, ax in enumerate(axes):
     
-        llon, llat = local_term[i + 1]
+        llon, llat = local_term[key[i]]
 
         dusk = gg.dusk_time(
                 start,  
@@ -109,15 +111,27 @@ def plot_lines(
             ax.text(midnight, y, 'midnight', 
                     color = 'b',
                     transform = ax.transData)
+        
                 
 def plot_roti_timeseries(
         axes, 
         df, dn, 
-        corners,
+        start,  
+        local_term,
         right_ticks = False
         ):
     
+    vmax = int(np.ceil(df['roti'].max()))
+    
+    corners = gg.set_coords( dn.year)
     key = list(corners.keys())
+    
+    plot_lines( 
+            axes, 
+            start,  
+            local_term,
+            y = vmax + 0.5
+            )
     
     for i, ax in enumerate(axes):
         
@@ -132,18 +146,15 @@ def plot_roti_timeseries(
             ]
         
         ax.text(
-            0.03, 0.75,
-            f'Box {i + 1}', 
+            0.03, 0.75, f'Box {i + 1}', 
             transform = ax.transAxes
             )
     
         pl.plot_roti_points(ax, sel)
         
         ax.set(
-            # ylim = [0, 4.5], 
-            # yticks = list(range(0, 5)), 
-            ylim = [0, 1],
-            yticks = np.arange(0, 1, 0.2),
+            ylim = [0, vmax], 
+            yticks = list(range(0, vmax + 1)), 
             xlim = [df.index[0], df.index[-1]]
             )
         
@@ -153,12 +164,15 @@ def plot_roti_timeseries(
                 labelright = True, 
                 labelleft = False, 
                 right = True, 
-                left = False)
+                left = False
+                )
             
         
         if i != -1:
             ax.set(xticklabels = [])
             
+    
+        
         # if i == 0:
         #     ax.legend(
         #         bbox_to_anchor = (.5, 1.5), 

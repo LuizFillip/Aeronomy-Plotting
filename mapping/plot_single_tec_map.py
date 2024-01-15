@@ -5,13 +5,18 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import GEO as g
 import base as b 
-import plotting as pl
+import GEO as gg 
 
 
-b.config_labels(fontsize = 25)
+b.config_labels(fontsize = 30)
+
+def filter_data(df):
+    for col in df.columns:
+        if col < -60:
+            df[col] = np.nan 
 
 
-def load_tec(infile):
+def load_tec(infile, values = True):
 
     df = pd.read_csv(
         infile, 
@@ -24,15 +29,18 @@ def load_tec(infile):
     lat = np.arange(0, xmax)*0.5 - 60
     lon = np.arange(0, ymax)*0.5 - 90
          
-    # return lon, lat, df.values
     df.columns = lon
     df.index = lat
-    return df
-
-def plot_contourf(ax, lon, lat, values, step = 5):
     
-    ticks = np.arange(0, 40, 10)
-    levels = np.arange(0, 40 + step, step*0.5)
+    if values:
+        return df.columns, df.index, df.values
+    else:
+        return df
+
+def plot_contourf(ax, lon, lat, values, step = 5, vmax= 100):
+    
+    ticks = np.arange(0, vmax, 10)
+    levels = np.arange(0, vmax + step, step*0.5)
     
     img = ax.contourf(
         lon, lat, values, 
@@ -40,9 +48,8 @@ def plot_contourf(ax, lon, lat, values, step = 5):
         cmap = 'jet'
         )
     
-    b.colorbar(
-        img, ax, ticks, 
-        label = r'TEC ($10^{16} / m^2$)'
+    b.colorbar(img, ax, ticks, 
+               label = r'TEC ($10^{16} / m^2$)'
         )
     
     return img
@@ -65,21 +72,15 @@ def plot_tec_map(dn, ax = None):
     
     dn_min = b.closest_datetime(b.tec_dates(dn), dn)
     
-    df = load_tec(get_path(dn_min))
+    lon, lat, vls = load_tec(get_path(dn_min))
     
-    
-    # for col in df.columns:
-    #     if col < -60:
-    #         df[col] = np.nan 
-            
-    lon, lat, vls = df.columns, df.index, df.values
     plot_contourf(ax, lon, lat, vls)
     g.mag_equator(ax)
     g.map_features(ax)
     g.map_boundaries(ax)
-    corners = pl.plot_corners(ax, dn.year)
+    corners = gg.plot_rectangles_regions(ax, dn.year)
     
-    ax.set(title = dn.strftime('%Y/%m/%d %H:%M (UT)'))
+    ax.set(title = dn.strftime('%Y/%m/%d %Hh%M (UT)'))
     
     if ax is None:
         return fig
@@ -87,10 +88,11 @@ def plot_tec_map(dn, ax = None):
         return corners
 
 
-dn = dt.datetime(2013, 5, 15, 23, 0)
-infile = get_path(dn)
-df = load_tec(infile)
-
-
-fig = plot_tec_map(dn, ax = None)
+def main():
+    
+    dn = dt.datetime(2014, 2, 10, 3, 0)
+    
+    df = load_tec(get_path(dn))
+    
+    fig = plot_tec_map(dn, ax = None)
 

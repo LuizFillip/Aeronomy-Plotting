@@ -4,10 +4,11 @@ import base as b
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb
 import datetime as dt
-import plotting as pl 
+import numpy as np 
+import os 
 
 
-b.config_labels(fontsize = 30)
+b.config_labels(fontsize = 35)
 
 def load_data(dn, root = 'D:\\'):
     
@@ -15,71 +16,84 @@ def load_data(dn, root = 'D:\\'):
     
     return b.sel_times(df, dn, hours = 0.5)
     
+sites = ['car',  'for', 'saa'] 
+names = [ 'Imageador (Cariri)', 
+          'Ionossonda (Fortaleza)', 
+          'Ionossonda (São Luis)'   ]  
+
+def load_dataw(dn, file):
+    
+ 
+    df = pb.load_filter(file)
+    
+    
+    return b.sel_times(df, dn, hours = 0.01)
+
 
 def plot_regions_ipp_and_sites(dn):
     
     fig, ax = plt.subplots(
         dpi = 300,
-        ncols = 2, 
         sharex = True, 
-        figsize = (14, 14),
+        figsize = (10, 10),
         subplot_kw = {'projection': ccrs.PlateCarree()}
     )
     
-    plt.subplots_adjust(wspace = 0.2)
     
-    sites = ['car',  'jic', 'saa'] 
-    names = [  
-             'Imager (Cariri)', 
-             'Digisonde (Jicamarca)', 
-             'Digisonde (São Luis)'
-             ]  
+    gg.map_attrs(ax, dn.year, grid = False)
     
-    df = load_data(dn)
+    infile = 'D:\\database\\GNSS\\001\\'
     
-    for i in range(2):
+    for fn in  os.listdir(infile):
+    
+        file = os.path.join(infile, fn)
         
-       gg.map_attrs(ax[i], dn.year)
-       
-       corners = pl.plot_corners(
-               ax[i],
-               dn.year,
-               radius = 10,
-               label = False 
-               )
+        ds = load_dataw(dn, file)
+         
+        img = ax.scatter(
+                ds['lon'],
+                ds['lat'],
+                c = ds['roti'],
+                s = 50,
+                cmap = 'jet',
+                vmin = 0,
+                vmax = 2
+            )       
     
-       gg.plot_sites_markers(ax[i], sites, names)
-       
-       l = b.chars()[i]
-       
-       ax[i].text(
-           0.05, 0.9, f'({l})', fontsize = 30,
-                  transform = ax[i].transAxes)
-       
-    pl.plot_ipp_on_map(ax[1], df, corners)
-       
-    gg.stations_near_of_equator(
-        ax[0],
-         dn.year,
-         distance = 5, 
-         extra_sts = [])
+    ticks = np.arange(0, 2, 0.5)
+    b.colorbar(img, ax, ticks)
+    fmt = dn.strftime('%Hh00 - %Hh01 UT') 
+    
+    c = ['red', 'green', 'magenta']
+    for i, site in enumerate(sites):
         
-    ax[1].set(ylabel = '', 
-           yticklabels = [])
+        glat, glon = gg.sites[site]['coords']
+        
+        ax.scatter(glon, glat, s = 250,
+                   c = c[i], marker = 's', 
+                   label = names[i])
     
     
-    ax[0].legend(loc = 'upper center',
-                 ncol = 3, 
-                 bbox_to_anchor = (1.05, 1.2), 
-                 columnspacing = 0.2)
+    ax.set(title = fmt)
     
+    lon, lat = gg.terminator2(dn, 18)
+    
+    ax.plot(lon, lat, color = 'k', lw = 4, linestyle = '--')
+   
+    gg.plot_square_area(
+            ax, 
+            lat_min = -12, 
+            lon_min = -42,
+            lat_max = None, 
+            lon_max = None, 
+            radius = 10, 
+            )
     plt.show()
-    
     return fig
 
 def main():
     
-    dn = dt.datetime(2013, 1, 14, 23)
+    dn = dt.datetime(2013, 12, 24, 23)
     
     fig = plot_regions_ipp_and_sites(dn)
     
@@ -89,5 +103,9 @@ def main():
         b.LATEX(FigureName, folder = 'maps'),
         dpi = 400
         )
-    
-# main()
+
+# dn = dt.datetime(2021, 1, 1, 7)
+
+# fig = plot_regions_ipp_and_sites(dn)
+
+

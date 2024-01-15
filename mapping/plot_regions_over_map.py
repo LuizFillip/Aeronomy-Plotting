@@ -12,7 +12,22 @@ args = dict(
     transform = ccrs.PlateCarree()
     )
 
-
+def plot_sites(ax, year):
+    
+    lon, lat = gg.stations_coordinates(year, distance = 5)
+    
+    ax.scatter(lon, lat, **args, label = 'Receptores GNSS')
+    
+    c = ['red', 'blue']
+    n  = ['São Luis', 'Jicamarca']
+    
+    for i, site in enumerate(['saa', 'jic']):
+        
+        glat, glon = gg.sites[site]['coords']
+        
+        ax.scatter(glon, glat, s = 150,
+                   c = c[i], marker = 's', 
+                   label = n[i])
 
 def plot_regions_over_map(year = 2013):
     
@@ -30,20 +45,7 @@ def plot_regions_over_map(year = 2013):
     
     gg.map_attrs(ax, year, degress = 5, grid = False)
     gg.plot_rectangles_regions(ax)
-    
-    lon, lat = gg.stations_coordinates(year, distance = 5)
-    
-    ax.scatter(lon, lat, **args, label = 'Receptores GNSS')
-    
-    c = ['red', 'blue']
-    n  = ['São Luis', 'Jicamarca']
-    for i, site in enumerate(['saa', 'jic']):
-        
-        glat, glon = gg.sites[site]['coords']
-        
-        ax.scatter(glon, glat, s = 150,
-                   c = c[i], marker = 's', 
-                   label = n[i])
+    plot_sites(ax, year)
     
     ax.legend(
         loc = 'lower right',
@@ -56,6 +58,10 @@ def plot_regions_over_map(year = 2013):
     
 fig = plot_regions_over_map(year = 2013)
 
-# plt.show()
+FigureName = 'regions_and_ipp'
 
+# fig.savefig(
+#     b.LATEX(FigureName, folder = 'maps'),
+#     dpi = 400
+#     )
 
