@@ -17,8 +17,8 @@ b.config_labels()
 
 def plot_epbs_occurrences_roti(
         ds,
-        the = 0.25 ,
-        cols = None
+        cols = None,
+        the = 0.25
         ):
 
     fig, ax = plt.subplots(
@@ -28,16 +28,13 @@ def plot_epbs_occurrences_roti(
         figsize = (11, 6)
         )
     
-    ds = ds[[str(c * -10) for c in cols]]
+    ds = ds[[str(c1 * -10) for c1 in cols]]
     
     plt.subplots_adjust(hspace = 0.1)
     
-    color = ['k', 'b', 
-             'r', 'g', 
-             'magenta']
+    color = ['k', 'b', 'r', 'g', 'magenta']
     
     dn = ds.index[0]
-    
     
     title = f'Longitudinal zones (threshold = {the} TECU/min)'
     
@@ -128,7 +125,7 @@ def plot_epbs_occurrences_roti(
 def single_plot(
         dn, 
         cols = [8, 7, 6, 5], 
-        hours = 11, 
+        hours = 13, 
         factor = 8
         ):
         
@@ -142,18 +139,22 @@ def single_plot(
     
     fig = plot_epbs_occurrences_roti(
             ds, 
-            factor,
-            cols = cols
+            cols
         )
     
-    plt.show()
+    # plt.show()
+    
     return fig
 
-# dn = dt.datetime(2017, 12, 17, 20)
+
+
+
+
+# dn = dt.datetime(2017, 4, 23, 20)
 
 # fig = single_plot(
 #         dn, 
-#         hours = 13,
-#         factor = 5
+#         cols = [8, 7, 6, 5], 
+#         hours = 11, 
+#         factor = 8
 #         )
-

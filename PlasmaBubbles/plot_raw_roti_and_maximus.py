@@ -42,8 +42,9 @@ def plot_roti_points(ax, ds, threshold = 0.25):
 
 def plot_occurrence_events(ax, ds):
     
+    events = pb.events_by_longitude(ds, 0.25)
     ax.plot(
-          pb.events_by_longitude(ds, 0.25), 
+          events, 
           marker = 'o',
           markersize = 3,
           color = 'k'
@@ -65,15 +66,9 @@ def plot_occurrence_events(ax, ds):
             linestyle = '--'
             )
         
-def load_and_filter(dn, sector = -50, root = 'D:\\'):
-    
-    df = pb.concat_files(dn, root)
-    
-    df = b.sel_times(df, dn)
-    
-    coords = gg.set_coords(dn.year, radius = 10)
-    
-    return pb.filter_coords(df, sector, coords)
+    return events
+        
+
         
 
 
@@ -108,7 +103,7 @@ def plot_raw_roti_maximus_events(dn):
     
     ax[1].legend(loc = 'upper right')
     
-    df = load_and_filter(dn)
+    df = pb.load_raw_in_sector(dn)
     
     df1 = plot_roti_points(ax[0], df, threshold = 0.25)
     
@@ -130,5 +125,4 @@ def main():
     #       dpi = 400
     #       )
     
-
-# main()
+#   s

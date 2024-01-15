@@ -82,10 +82,10 @@ def plot_demo_data_reduced(
         rotation = "vertical", 
         fontsize = fontsize)
     
-year = 2013
-dn = dt.datetime(year, 10, 3, 12)
+# year = 2013
+# dn = dt.datetime(year, 10, 3, 12)
 
-ds = pb.concat_files(dn)
+# ds = pb.concat_files(dn)
 
 # ds = b.sel_times(ds, )
 
@@ -127,7 +127,7 @@ def plot_bad_receiver_example(
 # plot_bad_receiver_example(ds)
 
 
-plot_demo_data_reduced(
-        ds, 
-        fontsize = 20
-        )
+# plot_demo_data_reduced(
+#         ds, 
+#         fontsize = 20
+#         )
