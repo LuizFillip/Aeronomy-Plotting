@@ -17,15 +17,22 @@ args = dict(
     
 
 
-def plot_roti_points(ax, ds, threshold = 0.25):
+def plot_roti_points(
+        ax, ds, 
+        threshold = 0.25,
+        label = False
+        ):
         
     ax.plot(ds['roti'], **args, label = 'ROTI points')
     
     if len(ds) != 0:
         times = pb.time_range(ds)
         
-        ax.axhline(0.25, color = 'red', lw = 2, 
-                    label = f'{threshold} TECU/min')
+        ax.axhline(
+            threshold, 
+            color = 'red', lw = 2, 
+            label = f'{threshold} TECU/min'
+            )
         
         df1 = pb.time_dataset(ds, 'max', times)
         
@@ -36,13 +43,16 @@ def plot_roti_points(ax, ds, threshold = 0.25):
                 linestyle = 'none',
                 label = 'Maximum value')
         
-        ax.set(yticks = list(range(0, 5)))
+        ax.set(yticks = list(range(0, 3)))
+        
+        if label:
+            ax.set(ylabel = 'ROTI (TECU/min)')
     
         return df1['max']
 
-def plot_occurrence_events(ax, ds):
+def plot_occurrence_events(ax, ds, threshold = 0.25):
     
-    events = pb.events_by_longitude(ds, 0.25)
+    events = pb.events_by_longitude(ds, threshold)
     ax.plot(
           events, 
           marker = 'o',
@@ -51,10 +61,10 @@ def plot_occurrence_events(ax, ds):
         )
     
     ax.set(
-        ylabel = 'EPBs occurrence', 
+        ylabel = 'Ocorrência', 
         yticks = [0, 1], 
         xlim = [ds.index[0], ds.index[-1]],
-        ylim = [-0.2, 1.4]
+        ylim = [-0.2, 1.2]
         )
     
     b.format_time_axes(ax)
@@ -95,7 +105,7 @@ def plot_raw_roti_maximus_events(dn):
             twilight = 12
             )
     
-    ax[0].set(ylabel = 'ROTI (TECU/min)')
+    
     
     ax[0].legend(loc = 'upper right')
     
