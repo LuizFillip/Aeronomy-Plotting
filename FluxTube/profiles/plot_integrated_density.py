@@ -1,46 +1,82 @@
-import datetime as dt
-
+import plotting as pl 
+import base as b
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
+b.config_labels(fontsize = 25)
 
-def plot_profiles(fig, ax, df, glat = -2, col = "Ne"):
+lb = b.Labels().infos
+
+
+names = ['Norte', 'Sul', 'Total']
+def plot_gradient(ax, ds):
     
-   
-    if name == "Norte":
-        label1 = "Local"
-        label2 = "Fluxo de Tubo"
-    else:
-        label1 = ""
-        label2 = ""
+    symbol = lb['K']['symbol']
+    units = lb['K']['units']
+    
+    K = []
+    for col in ['north', 'south']:
         
+        df = ds.loc[ds['hem'] == col, 'K'] 
+         
+        K.append(df)
+        ax.plot(b.smooth2(df * 1e5, 3), df.index)
+    
+    total = pd.concat(K, axis = 1).dropna().sum(axis = 1)
+
+    ax.plot(total * 1e5, total.index)
+    
+    ax.set(
+        xlim = [-1, 13], 
+        xlabel = f'{symbol} ({units})', 
+        xticks = np.arange(0, 14, 2)
+        )
+    
+    ax.axvline(0, color = 'k', linestyle = '--')
+
+    return 
+
+
+
+def plot_density(ax, ds):
+    
+    out = []
+    for i, col in enumerate(['north', 'south']):
         
-    ax.plot(np.log10(iri["ne"]),
-            iri.index, 
-            label = label1)
+        df = ds.loc[ds['hem'] == col, 'N']
+        out.append(df)
+        ax.plot(np.log10(df), df.index, 
+                label = names[i])
     
-    ax1 = ax.twiny()
-    ax1.plot(np.log10(df[col]), df.index, 
-             label = label2,
-             linestyle = "--")
+    total = pd.concat(out, axis = 1).dropna().sum(axis = 1)
+
+    ax.plot(np.log10(total), total.index, 
+            label  = names[-1])
     
-    fig.legend(ncol = 2, 
-               bbox_to_anchor=(0.5, 1.01), 
-               loc="upper center")
+    ax.set(
+        ylabel = 'Altura de Apex',
+        xlim = [15, 20], 
+        xticks = np.arange(15, 21, 1),
+        xlabel = "log10($N_0$) ($cm^{-2}$)"
+        )
     
+    ax.legend(
+        ncol = 3,
+        bbox_to_anchor = (1., 1.15),
+        loc = "upper center"
+        )
+
+
+def plot_ft_density_profiles(ds):
+    '''
+    This plot can be found in the subsection .. 
+    in the chapter .. of the thesis
     
-    
-    ax1.set(xlim = [13, 20], 
-           xlabel = "Fluxo de tubo log10(N) ($cm^{-2}$)")
-    ax.set(xlim = [4, 7], 
-           xlabel = "Local log10(Ne) ($cm^{-3}$)")
-    
-    ax.text(0.1, 0.9, name, transform = ax.transAxes)
-    
-def plot_ft_density_profiles(Ne, K, alts):
-    ffig, ax = plt.subplots(
-        figsize = (8, 6),
+    '''
+    fig, ax = plt.subplots(
+        figsize = (10, 8),
         sharey = True,
         ncols = 2, 
         dpi = 300,
@@ -49,19 +85,28 @@ def plot_ft_density_profiles(Ne, K, alts):
 
     plt.subplots_adjust(wspace = 0.05)
     
-    infile = "database/FluxTube/201301012100.txt"
+    plot_density(ax[0], ds)
     
-    ax[1].set(xlabel = "$K = \\frac{1}{N_0 R_e L^3}\\frac{\partial }{\partial L}  (N L^3)$")
+    plot_gradient(ax[1], ds)
     
+    for i, ax in enumerate(ax.flat):
+        
+        l = b.chars()[i]
+        
+        ax.text(
+            0.1, 0.9, f'({l})', 
+            transform = ax.transAxes
+            )
     
-    
-
-import plotting as pl 
+    return fig
 
 ds = pl.load_fluxtube()
 
-ds
+fig = plot_ft_density_profiles(ds)
 
+FigureName = 'electron_density_and_gradient'
 
-
-
+fig.savefig(
+    b.LATEX(FigureName, folder = 'profiles'),
+    dpi = 400
+    )
