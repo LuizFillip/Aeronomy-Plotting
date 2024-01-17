@@ -60,7 +60,16 @@ def plot_apex_vs_latitude(
             args = dict(color = 'k', lw = 2)
             
         ax.plot(np.degrees(lats), apex, **args)    
+    
+    lat_mag = 3
+    zeq = Apex(400).apex_height(lat_mag)
         
+    ax.arrow(
+        x = lat_mag, y= 0, 
+        dx = 0, dy=zeq, width= 0.1, 
+        color='red', head_length = 5,
+        label = 'Altura local') 
+    
     ax.set(
         xlim = [-lim, lim],
         ylim = [100, max_height],
@@ -95,8 +104,8 @@ def plot_apex_vs_latitude(
     return fig 
 
 
-fig = plot_apex_vs_latitude()
+# fig = plot_apex_vs_latitude()
 
-FigureName = 'magnetic_lines'
+# FigureName = 'magnetic_lines'
 
 # fig.savefig(b.LATEX(FigureName, folder = 'modeling'), dpi = 400)

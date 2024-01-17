@@ -1,116 +1,86 @@
 import matplotlib.pyplot as plt
-import pandas as pd 
 import base as b 
-from matplotlib.gridspec import GridSpec
+import numpy as np
+import plotting as pl 
 
 
 b.config_labels(fontsize = 25)
 
-def plot_profiles(ax, df, col):
-    ax.plot(df[f"{col}_E"], df.index, label = "$\Sigma_P^E$")
-    ax.plot(df[f"{col}_F"], df.index, label = "$\Sigma_P^F$")
-    
-    ax.plot(df[f"total_{col}"], 
-            df.index, 
-            label = "$\Sigma_P^F + \Sigma_P^E$")
-    
-    # name =  translate(col)
-    ax.set(xlabel = "$\Sigma_P$ (ohms)", )
-    
-    return ax
+
+lbs = b.Labels()
 
 
-def plot_total(ax, df):
+
+
+def plot_height_prf(ax, df, col):
+   
     
-    region_E = df[["south_E", "north_E"]].sum(axis = 1)
-    region_F = df[["south_F", "north_F"]].sum(axis = 1)
+    ds = df.loc[df['hem'] == 'north']
+    ax.plot(b.smooth2(ds[col], 10), ds.index, 
+            label = 'Norte', color = 'b', lw = 1)
     
-    ax.plot(region_E, df.index, label = "$\Sigma_P^E$")
-    ax.plot(region_F, df.index, label = "$\Sigma_P^F$")
+    ds1 = df.loc[df['hem'] == 'south']
+    ax.plot(b.smooth2(ds1[col], 10), ds1.index, 
+            label = 'Sul', color = 'r', lw = 1)
     
-    ax.plot(region_E + region_F, 
-            df.index, 
-            label = "$\Sigma_P^F + \Sigma_P^E$")
+    total = ds[col] + ds1[col]
     
-    ax.set(xlabel = "$\Sigma_P$ (ohms)", 
-           title = "Total")
+    ax.plot(b.smooth2(total, 10), total.index, 
+            label = 'Total', lw = 1, color = 'k')
     
-    return ax
+    
+    ax.set(xlabel = f'$\Sigma_P^{col}$'
+        )
+    
+
+    return total
 
 
 def plot_conductivities(df):
     
     fig, ax = plt.subplots(
-        figsize = (8, 5), 
-        sharey = True,
-        sharex = True,
-        dpi = 300, 
-        ncols = 3
-        )    
+        ncols = 3, 
+        sharey= True,
+        dpi = 300, figsize = (12, 6))
     
-    plt.subplots_adjust(wspace = 0.1)
     
-   
-    ax[1].legend(bbox_to_anchor = [1.5, 1.18],
-                 ncol = 3)
+    plt.subplots_adjust(wspace = 0.1, hspace = 0.1)
     
-    ax[0].set(ylim = [100, 700], 
-              xlim = [0, 120])
-    
-    for ax in ax.flat:
+    out = []
+    for i, col in enumerate(['E', 'F']):
         
-        ax.axhline(150, color = "k")
+        total = plot_height_prf(ax[i], df, col)
         
-        ax.axhline(300, color = "k")
+        out.append(total)
+        
+    ratio = out[1] / (out[1] + out[0]) 
     
+    ax[2].plot(b.smooth2(ratio, 2), ratio.index, 
+               lw = 1, label = 'Total', color = 'k')
 
-
-def smooth_from_heigth(df):
-    df[df.index >= 200] = df[df.index >= 200].rolling(
-        10, min_periods = 3).mean()
+    ax[2].set(xlabel = '$\\frac{\Sigma_P^F}{\Sigma_P^F + \Sigma_P^E}$',
+              xlim = [0.6, 1.0],
+              xticks = np.arange(0.5, 1.1, 0.2),
+              )
     
-    return df.interpolate()
-
-#df = smooth_from_heigth(df)
-
-#plot_conductivities(df)
-
-
-lbs = b.Labels()
-
-infile = "20131224sep.txt"
-
-df = pd.read_csv(infile, index_col = 0)
-
-dn = '2013-12-24 22:00:00'
-
-ds = df.loc[df['dn'] == dn]
-
-fig = plt.figure(dpi = 300, figsize = (15, 6))
-
-
-plt.subplots_adjust(wspace = 0.4, hspace = 0.1)
-
-gs = GridSpec(1, 3)
-
-
-def plot_height_prf(ds):
-    ax1 = fig.add_subplot(gs[0, 0])
-
-    ax1.plot(ds.index, ds['E'])
+    ax[0].set(ylabel = 'Altura de Apex (km)', 
+              xticks = np.arange(0, 8, 1))
     
-    ax1.set(ylabel = 'Altura de Apex (km)', 
-            xlabel = '$\Sigma_P$')
-    return
-
-def plot_time_prf(ds):
+    ax[1].set(xticks = np.arange(10, 100, 20))
     
-    ax2 = fig.add_subplot(gs[0, 1:])
-    ax2.set(
-        xlabel = 'Hora universal',
-        ylabel = '$\Sigma_P$'
-        )
-    return 
+    ax[0].legend(ncol = 3,
+                 bbox_to_anchor = (1.5, 1.2),
+                 loc = "upper center")
+    
+    return fig
+    
+ds = pl.load_fluxtube()
+fig = plot_conductivities(ds)
 
-plot_height_prf(ds)
-plot_time_prf(ds)
+
+# FigureName = 'conductivities'
+
+# fig.savefig(
+#     b.LATEX(FigureName, folder = 'profiles'),
+#     dpi = 400
+#     )
