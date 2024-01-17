@@ -36,8 +36,6 @@ def multi_layout(nrows = 4, year = 2014):
     ax4 = fig.add_subplot(gs[3, nrows:], **args)
     axes = [ax1, ax2, ax3, ax4]
     
-    
-    
     return fig, ax_map, axes
 
 

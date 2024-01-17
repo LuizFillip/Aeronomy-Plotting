@@ -8,4 +8,4 @@ from .plot_ipp_variation_with_terminator import (
 from .plot_roti_and_tec_variation import plot_roti_tec_variation
 
 import base as b 
-b.config_labels(fontsize = 25)
+b.config_labels(fontsize = 30)

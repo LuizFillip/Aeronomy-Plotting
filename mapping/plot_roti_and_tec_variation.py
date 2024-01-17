@@ -38,7 +38,7 @@ def multi_layout(nrows = 4):
     return fig, ax_map, axes
 
 
-def plot_roti_tec_variation(df, start, dn, twilight = 12):
+def plot_roti_tec_variation(df, start, dn):
     
     
     fig, ax_map, axes = multi_layout(nrows = 4)
@@ -46,7 +46,7 @@ def plot_roti_tec_variation(df, start, dn, twilight = 12):
     pl.plot_tec_map(dn, ax = ax_map)
     
     lon, lat = gg.terminator2(dn, 18)
-    ax_map.scatter(lon, lat, c = 'k')
+    ax_map.scatter(lon, lat, c = 'k', s = 10)
     local_term = gg.first_edge(year = dn.year)
     
     pl.plot_roti_timeseries(
