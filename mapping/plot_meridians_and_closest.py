@@ -1,101 +1,75 @@
 import GEO as gg 
-from intersect import intersection
-import numpy as np
-from FluxTube import Apex
-import base as b 
 import matplotlib.pyplot as plt 
 import cartopy.crs as ccrs
-
-def plot_ranges_for_each_apex(
-         x, y,
-         ax,
-         amin = 200, 
-         amax = 500, 
-         step = 100, 
-         base = 150,
-         set_hemis = "south"
-         ):
- 
-     heights = np.arange(amin, amax + step, step)[::-1]
-          
-     for alt in heights:
-         
-         mlat = Apex(alt).apex_lat_base(base = base)
-         
-         rlat = np.degrees(mlat)
-         
-         x1, y1 = gg.limit_hemisphere(
-                 x, y, rlat, 
-                 hemisphere = set_hemis
-                 )
-         
-         ax.plot(x1, y1, "--", 
-                label = f"{alt} km", 
-                lw = 2)
+import datetime as dt
          
       
-def plot_site_and_closest_meridian(
-        ax, 
-        site = "saa"
-        ):
+def plot_meridians_and_closest(dn):
       
       fig, ax = plt.subplots(
           dpi = 300,
           figsize = (8, 8),
           subplot_kw = 
-              {
-              'projection': ccrs.PlateCarree()
-              }
+              {'projection': ccrs.PlateCarree()}
           )
 
-      path = 'database/20130101.txt'
+  
+      lat_lims = dict(min = -30, max = 30, stp = 10)
+      lon_lims = dict(min = -70, max = -30, stp = 10) 
 
-      df = b.load(path)
+      gg.map_attrs(
+          ax, year = 2013, 
+          lon_lims = lon_lims, 
+          lat_lims = lat_lims,
+          grid = False,
+          degress = None)
 
-      dn = df.index.unique()[0]
+      mer = gg.meridians(dn, delta = 5)
       
-      gg.map_features(ax)
-
-      ds = df.loc[(df.index == dn) & 
-                  (df['apex'] == 300)]
+      glat, glon = gg.sites['saa']['coords']
       
+      meridian = mer.range_meridians()
       
-      print(len(ds))
-      lat = gg.limits(
-          min = -25, 
-          max = 15, 
-          stp = 10
+      for num in range(meridian.shape[0]):
+          
+          x, y = meridian[num][0], meridian[num][1]
+          
+          ax.plot(x, y, lw = 1, color = 'k')
+          
+      x, y = mer.closest_from_site(glon, glat)
+      
+      nx, ny = gg.intersec_with_equator(x, y, dn.year)
+      
+      ax.scatter(
+          nx, ny, 
+          marker = '^', 
+          c = 'r', 
+          s = 150,
+          label = 'intersecção com equador'
           )
-      lon = gg.limits(
-          min = -85, 
-          max = -30, 
-          stp = 10
-          )    
-
-      gg.map_boundaries(ax, lon, lat)
-
-
-      img = ax.scatter(
-          ds['glon'], 
-          ds['glat'], 
-          c = ds['zon']
+      
+      ax.scatter(
+          glon, glat, 
+          marker = 's',
+          s = 150,
+          c = 'r',
+          label = 'São Luís'
           )
+      
+      
+      ax.plot(x, y, color = 'r', lw = 2)
+      rlat = 12.236
+      
+      xe, ye = gg.limit_hemisphere(
+              x, y, nx, ny, rlat, 
+              hemisphere = 'both'
+              )
+      
+      ax.plot(xe, ye, 'k', lw = 3,
+              linestyle = '--')
+      return fig 
 
 
-      return 
+dn = dt.datetime(2013, 12, 24)
 
-
-
-
-
-# path = 'database/20130101.txt'
-
-# df = b.load(path)
-
-# dn = df.index.unique()[0]
-
-# ds = df.loc[(df.index == dn) & 
-#             (df['apex'] == 300)]
-
-
-# ds['glat'], ds['glon']
+fig = plot_meridians_and_closest(dn)

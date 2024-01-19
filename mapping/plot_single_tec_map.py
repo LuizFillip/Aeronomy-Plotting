@@ -25,12 +25,8 @@ def load_tec(infile, values = True):
         ).replace(-1, np.nan)
     
     xmax, ymax = df.values.shape
-
-    lat = np.arange(0, xmax)*0.5 - 60
-    lon = np.arange(0, ymax)*0.5 - 90
-         
-    df.columns = lon
-    df.index = lat
+    df.columns = np.arange(0, ymax)*0.5 - 90
+    df.index = np.arange(0, xmax)*0.5 - 60
     
     if values:
         return df.columns, df.index, df.values
@@ -73,16 +69,20 @@ def plot_tec_map(dn, ax = None):
     dn_min = b.closest_datetime(b.tec_dates(dn), dn)
     
     lon, lat, vls = load_tec(get_path(dn_min))
-    
-    plot_contourf(ax, lon, lat, vls)
+    plot_contourf(ax, lon, lat, vls, vmax = 80)
     g.mag_equator(ax)
     g.map_features(ax)
     g.map_boundaries(ax)
+    
     corners = gg.plot_rectangles_regions(ax, dn.year)
+    lon, lat = gg.terminator2(dn, 18)
+    
+    ax.scatter(lon, lat, c = 'k', s = 10)
     
     ax.set(title = dn.strftime('%Y/%m/%d %Hh%M (UT)'))
     
     if ax is None:
+        
         return fig
     else:
         return corners
@@ -90,9 +90,10 @@ def plot_tec_map(dn, ax = None):
 
 def main():
     
-    dn = dt.datetime(2014, 2, 10, 3, 0)
+    dn = dt.datetime(2013, 8, 28, 3, 0)
     
     df = load_tec(get_path(dn))
     
     fig = plot_tec_map(dn, ax = None)
 
+# main()

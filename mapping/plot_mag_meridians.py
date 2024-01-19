@@ -6,7 +6,22 @@ from FluxTube import Apex
 import numpy as np
 
 
-b.config_labels()
+b.config_labels(fontsize = 25)
+
+def plot_meridian_range(ax):
+
+    x1, y1 = gg.limit_hemisphere(
+            x, y, nx, ny, rlat, 
+            hemisphere = 'both'
+            )
+    
+    ax.plot(
+        x1, y1, 
+        linestyle = '--', 
+        lw = 3, 
+        color = line.get_color(), 
+        label = 'Meridiano magnético'
+        )
 
 def plot_meridian(
         ax, 
@@ -19,7 +34,13 @@ def plot_meridian(
     
 
     for i, site in enumerate([ "saa"]): #"jic",
-          
+    
+        glat, glon = gg.sites[site]['coords']  
+        # print(glat, glon)
+        ax.scatter(glon, glat,  s = 300, 
+                   marker = '^', c = 'b', 
+                   label = 'São Luís')
+            
         nx, ny, x, y = gg.load_meridian(year, site)
         
         x = sorted(x)
@@ -34,40 +55,34 @@ def plot_meridian(
         ax.scatter(nx, ny,
             marker = "^", 
             s = 300, 
-            c = 'k',
-            label = 'Equator intersection'
+            c = 'r',
+            label = 'Intersecção com o Equador'
             )
         
         
-        x1, y1 = gg.limit_hemisphere(
-                x, y, nx, ny, rlat, 
-                hemisphere = 'both'
-                )
         
-        ax.plot(
-            x1, y1, 
-            linestyle = '--', 
-            lw = 3, 
-            color = line.get_color(), 
-            label = 'Magnetic meridian'
-            )
-        
-    ax.legend()
-        
+    return None        
 
 
 def plot_mag_meridians(
-        ax,
         year = 2013
         ):
     
     fig, ax = plt.subplots(
         dpi = 300,
-        figsize = (9, 9),
+        figsize = (10, 10),
         subplot_kw = {'projection': ccrs.PlateCarree()}
         )
+    
+    lat_lims = dict(min = -40, max = 20, stp = 10)
+    lon_lims = dict(min = -90, max = -30, stp = 10) 
 
-    gg.map_attrs(ax, year, degress = None)
+    gg.map_attrs(
+        ax, year, 
+        lon_lims = lon_lims, 
+        lat_lims = lat_lims,
+        grid = False,
+                 degress = None)
     
     plot_meridian(ax, year)
     
@@ -79,9 +94,12 @@ def plot_mag_meridians(
     
    
     ax.legend(
-        bbox_to_anchor = (.5, 1.2),
         ncol = 1, 
         loc = "upper right"
         )
 
     return fig
+
+fig = plot_mag_meridians(
+        year = 2013
+        )

@@ -45,8 +45,7 @@ def plot_roti_tec_variation(df, start, dn):
     
     pl.plot_tec_map(dn, ax = ax_map)
     
-    lon, lat = gg.terminator2(dn, 18)
-    ax_map.scatter(lon, lat, c = 'k', s = 10)
+    
     local_term = gg.first_edge(year = dn.year)
     
     pl.plot_roti_timeseries(
@@ -68,7 +67,7 @@ def plot_roti_tec_variation(df, start, dn):
 
 def main():
     
-    start = dt.datetime(2014, 2, 9, 20)
+    start = dt.datetime(2013, 1, 7, 22)
     
     df =  pb.concat_files(
         start, 
