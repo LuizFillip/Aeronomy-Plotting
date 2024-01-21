@@ -3,6 +3,7 @@ import base as b
 import datetime as dt  
 import PlasmaBubbles as pb 
 import GEO as gg 
+import numpy as np
 
 b.config_labels()
 
@@ -23,7 +24,10 @@ def plot_roti_points(
         label = False
         ):
         
-    ax.plot(ds['roti'], **args, label = 'ROTI points')
+    ax.plot(ds['roti'], **args, 
+            label = 'Pontos de ROTI')
+    
+    vmax = np.ceil(ds['roti'].values.max())
     
     if len(ds) != 0:
         times = pb.time_range(ds)
@@ -38,19 +42,19 @@ def plot_roti_points(
         
         ax.plot(df1, 
                 color = 'k',
-                marker = 'o', 
+                # marker = 'o', 
                 markersize = 3, 
-                linestyle = 'none',
-                label = 'Maximum value')
+                # linestyle = 'none',
+                label = 'Valor máximo')
         
-        ax.set(yticks = list(range(0, 3)))
+        ax.set(yticks = np.arange(0, vmax + 2, 1))
         
         if label:
             ax.set(ylabel = 'ROTI (TECU/min)')
     
         return df1['max']
 
-def plot_occurrence_events(ax, ds, threshold = 0.25):
+def plot_occurrence_events(ax, ds, threshold = 0.4):
     
     events = pb.events_by_longitude(ds, threshold)
     ax.plot(
@@ -64,7 +68,7 @@ def plot_occurrence_events(ax, ds, threshold = 0.25):
         ylabel = 'Ocorrência', 
         yticks = [0, 1], 
         xlim = [ds.index[0], ds.index[-1]],
-        ylim = [-0.2, 1.2]
+        ylim = [-0.2, 1.4]
         )
     
     b.format_time_axes(ax)
@@ -77,8 +81,6 @@ def plot_occurrence_events(ax, ds, threshold = 0.25):
             )
         
     return events
-        
-
         
 
 
@@ -100,25 +102,38 @@ def plot_raw_roti_maximus_events(dn):
     
     dusk = gg.dusk_time(
             dn,  
-            lat = -2.53, 
-            lon = -44.296, 
+            lat = 0, 
+            lon = -30, 
             twilight = 12
             )
     
     
     
-    ax[0].legend(loc = 'upper right')
+    ax[1].axvline(dusk, lw = 2, linestyle = '--')
     
-    ax[1].axvline(dusk, label = 'Region E terminator')
     
-    ax[1].legend(loc = 'upper right')
     
-    df = pb.load_raw_in_sector(dn)
+    # df = pb.load_raw_in_sector(dn)
     
-    df1 = plot_roti_points(ax[0], df, threshold = 0.25)
+    dn = dt.datetime(2013, 12, 24, 20)
+
+    df = pb.concat_files(dn, root = 'D:\\')
+
+    df = b.sel_times(df, dn, hours = 11)
+
+    lat_min = -12 
+    lon_min = -48
+    
+    df =  df.loc[(df['lon'] > lon_min) ]
+    
+    
+    df1 = plot_roti_points(ax[0], df, threshold = 0.4, label = True)
     
     plot_occurrence_events(ax[1], df1)
     
+    b.plot_letters(ax, x = 0.02, y = 0.85)
+    
+    ax[0].legend(loc = 'upper right')
     return fig
 
 def main():
@@ -135,4 +150,4 @@ def main():
     #       dpi = 400
     #       )
     
-#   s
+main()
