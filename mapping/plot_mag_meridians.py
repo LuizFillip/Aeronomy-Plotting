@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 import base as b
 from FluxTube import Apex
 import numpy as np
+import pandas as pd 
 
 
 b.config_labels(fontsize = 25)
 
-def plot_meridian_range(ax):
+def plot_meridian_range(
+        ax,x, y, nx, ny, rlat = 12):
 
     x1, y1 = gg.limit_hemisphere(
             x, y, nx, ny, rlat, 
@@ -19,7 +21,6 @@ def plot_meridian_range(ax):
         x1, y1, 
         linestyle = '--', 
         lw = 3, 
-        color = line.get_color(), 
         label = 'Meridiano magnético'
         )
 
@@ -63,7 +64,36 @@ def plot_meridian(
         
     return None        
 
+def plot_electron_density(ax):
+    
+    df = pd.read_csv('models/temp/map_iri.txt', index_col = 0)
 
+    df = pd.pivot_table(
+        df, 
+        columns = '0', 
+        index = '1', 
+        values = '2')
+
+    vls = df.values *1e-12
+    
+    
+    ticks = np.linspace(
+    np.nanmax(vls), 
+    np.nanmin(vls), 10)
+    
+    
+    
+    img = ax.contourf(
+        df.columns, 
+        df.index, 
+        vls, 50,
+        cmap = 'jet'     
+        )
+    
+    
+    b.colorbar(img, ax, ticks, label = '$N_e (\\times 10^{12}~ m^{-3})$')
+    
+    return 
 def plot_mag_meridians(
         year = 2013
         ):
@@ -74,15 +104,17 @@ def plot_mag_meridians(
         subplot_kw = {'projection': ccrs.PlateCarree()}
         )
     
-    lat_lims = dict(min = -40, max = 20, stp = 10)
-    lon_lims = dict(min = -90, max = -30, stp = 10) 
+    lat_lims = dict(min = -30, max = 18, stp = 10)
+    lon_lims = dict(min = -80, max = -30, stp = 10) 
 
     gg.map_attrs(
         ax, year, 
         lon_lims = lon_lims, 
         lat_lims = lat_lims,
         grid = False,
-                 degress = None)
+        degress = None)
+    
+    plot_electron_density(ax)
     
     plot_meridian(ax, year)
     
@@ -92,6 +124,7 @@ def plot_mag_meridians(
         degress = None
         )
     
+    
    
     ax.legend(
         ncol = 1, 
@@ -100,6 +133,11 @@ def plot_mag_meridians(
 
     return fig
 
-fig = plot_mag_meridians(
-        year = 2013
-        )
+fig = plot_mag_meridians(year = 2013 )
+
+# fig.savefig(
+#     b.LATEX(FigureName, folder = 'profiles'),
+#     dpi = 400
+#     )
+
+

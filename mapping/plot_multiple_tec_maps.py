@@ -11,8 +11,8 @@ import base as b
 fig, ax = plt.subplots(
      figsize = (20, 15), 
      dpi = 300, 
-     ncols = 5, 
-     nrows = 3,
+     ncols = 3, 
+     nrows = 2,
      subplot_kw = 
      {'projection': ccrs.PlateCarree()}
      )
