@@ -2,38 +2,64 @@ import matplotlib.pyplot as plt
 import base as b 
 import numpy as np
 import plotting as pl 
-
+import pandas as pd
 
 b.config_labels(fontsize = 25)
 
 
-lbs = b.Labels()
+lb = b.Labels().infos
 
 
+names = ['Norte', 'Sul', 'Total']
 
 
-def plot_height_prf(ax, df, col):
-   
+def plot_height_prf(ax, ds, region = 'E'):
     
-    ds = df.loc[df['hem'] == 'north']
-    ax.plot(b.smooth2(ds[col], 10), ds.index, 
-            label = 'Norte', color = 'b', lw = 1)
-    
-    ds1 = df.loc[df['hem'] == 'south']
-    ax.plot(b.smooth2(ds1[col], 10), ds1.index, 
-            label = 'Sul', color = 'r', lw = 1)
-    
-    total = ds[col] + ds1[col]
-    
-    ax.plot(b.smooth2(total, 10), total.index, 
-            label = 'Total', lw = 1, color = 'k')
-    
-    
-    ax.set(xlabel = f'$\Sigma_P^{col}$'
-        )
+    if region == 'E':
+        number = 7
+    else:
+        number = 2
+        
+    out = []
+    for i, col in enumerate(['north', 'south']):
+        name = names[i]
+        df = ds.loc[ds['hem'] == col, region]
+        out.append(df)
+        ax.plot(
+            b.smooth2(df, number), 
+                df.index, 
+                label = name)
+        
+        ax.set(xlabel = b.y_label("S"+ region))
+        
+    total = pd.concat(
+        out, axis = 1
+        ).dropna().sum(axis = 1)
+
+    ax.plot(
+        b.smooth2(total, number), 
+        total.index, 
+        label = 'Total')
     
 
     return total
+
+def total_ratio(ax, region_E, region_F):
+
+        
+    ratio = region_F / (region_E + region_F) 
+    
+    ax.plot(b.smooth2(ratio, 2), 
+            ratio.index, 
+            lw = 1, label = 'Total', color = 'k')
+
+    ax.set(
+        xlabel = b.y_label('ratio'),
+        xlim = [0.5, 1.2],
+        )
+    
+    
+    ax.axvline(1, linestyle = ':')
 
 
 def plot_conductivities(df):
@@ -41,36 +67,24 @@ def plot_conductivities(df):
     fig, ax = plt.subplots(
         ncols = 3, 
         sharey= True,
-        dpi = 300, figsize = (12, 6))
+        dpi = 300, 
+        figsize = (14, 10))
     
     
     plt.subplots_adjust(wspace = 0.1, hspace = 0.1)
     
-    out = []
-    for i, col in enumerate(['E', 'F']):
-        
-        total = plot_height_prf(ax[i], df, col)
-        
-        out.append(total)
-        
-    ratio = out[1] / (out[1] + out[0]) 
-    
-    ax[2].plot(b.smooth2(ratio, 2), ratio.index, 
-               lw = 1, label = 'Total', color = 'k')
-
-    ax[2].set(xlabel = '$\\frac{\Sigma_P^F}{\Sigma_P^F + \Sigma_P^E}$',
-              xlim = [0.6, 1.0],
-              xticks = np.arange(0.5, 1.1, 0.2),
-              )
+    region_E = plot_height_prf(ax[0], df, region = 'E')
+    region_F = plot_height_prf(ax[1], df, region = 'F')
+    total_ratio(ax[2], region_E, region_F)
     
     ax[0].set(ylabel = 'Altura de Apex (km)', 
-              xticks = np.arange(0, 8, 1))
-    
-    ax[1].set(xticks = np.arange(10, 100, 20))
-    
-    ax[0].legend(ncol = 3,
-                 bbox_to_anchor = (1.5, 1.2),
-                 loc = "upper center")
+              xticks = np.arange(0, 8, 1), 
+              ylim = [100, 500]
+              )
+        
+    ax[2].legend(ncol = 1,loc = "lower center")
+    ax[1].legend(ncol = 1,loc = "lower right")
+    b.plot_letters(ax, y = 1.03, x = 0.01)
     
     return fig
     

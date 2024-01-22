@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from utils import save_plot  
-import ionosphere as io
+import aeronomy as io
 from GEO import sites 
 import datetime as dt
 
@@ -54,8 +53,7 @@ def plot_local_ratio_conductivities(**kwargs):
      
     
      df = io.cond_from_models(**kwargs)
-     
-     
+    
      ax[1].plot(df["hall"] / df["perd"],  df.index)
      ax[1].set(
          xlim = [-2, 100], 
