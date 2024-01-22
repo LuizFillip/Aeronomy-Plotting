@@ -43,37 +43,6 @@ def plot_grid(
     return ax
     
     
-def plot_colorbar(
-        fig,
-        vmin, 
-        vmax, 
-        coord = "mer", 
-        rainbow = "rainbow",
-        fontsize = 40
-        ):
-    
-    norm = mpl.colors.Normalize(
-        vmin = vmin, vmax=vmax
-        )
-   
-    cax = plt.axes([0.2, 1.001, 0.6, 0.02])
-    
-    if coord == "zon":
-        label = "Velocidade zonal (m/s)"
-    else:
-        label = "Velocidade meridional (m/s)"
-        
-    cb = fig.colorbar(
-        mpl.cm.ScalarMappable(
-            norm = norm, 
-            cmap = rainbow
-            ),
-        ticks = np.arange(vmin, vmax, 10),
-        label = label, 
-        cax = cax, 
-        orientation = "horizontal", 
-        )
-    cb.set_label(label, fontsize = fontsize)
 
 
 

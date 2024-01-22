@@ -1,5 +1,4 @@
-import os
-import pandas as pd
+import base as b
 import numpy as np
 import cartopy.crs as ccrs
 import datetime as dt
@@ -70,13 +69,26 @@ def plot_multiple_tec_maps(start):
                    xlabel = '', 
                    ylabel = '')
     
-    
+        l = b.chars()[hour]
+        ax.text(0.02, 1.05, f'({l})', 
+                transform = ax.transAxes)
     plot_colorbar(
             fig,
             vmin = 0, 
             vmax = 60
             )
+    
     return fig 
 
-
-start =  dt.datetime(2014, 2, 9, 23, 0)
+def main():
+    
+    start =  dt.datetime(2014, 2, 9, 23, 0)
+    
+    fig = plot_multiple_tec_maps(start)
+    
+    FigureName = start.strftime('midnight_event_%Y%m%d')
+    fig.savefig(
+        b.LATEX(FigureName, 
+                folder = 'maps'),
+        dpi = 400
+        )

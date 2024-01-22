@@ -8,7 +8,7 @@ import base as b
 import GEO as gg 
 
 
-b.config_labels(fontsize = 30)
+b.config_labels(fontsize = 25)
 
 def filter_data(df):
     for col in df.columns:
@@ -33,7 +33,10 @@ def load_tec(infile, values = True):
     else:
         return df
 
-def plot_contourf(ax, lon, lat, values, step = 5, vmax= 100):
+def plot_contourf(
+        ax, lon, lat, values, 
+        step = 5, vmax = 100,
+        colorbar = True):
     
     ticks = np.arange(0, vmax, 10)
     levels = np.arange(0, vmax + step, step*0.5)
@@ -44,9 +47,12 @@ def plot_contourf(ax, lon, lat, values, step = 5, vmax= 100):
         cmap = 'jet'
         )
     
-    b.colorbar(img, ax, ticks, 
-               label = r'TEC ($10^{16} / m^2$)'
-        )
+    if colorbar:
+            
+        b.colorbar(
+            img, ax, ticks, 
+            label = r'TEC ($10^{16} / m^2$)'
+            )
     
     return img
 
@@ -56,7 +62,7 @@ def get_path(dn):
     return infile + dn.strftime(fmt)
 
 
-def plot_tec_map(dn, ax = None):
+def plot_tec_map(dn, ax = None, vmax = 60, colorbar = True):
     
     if ax is None:
         fig, ax = plt.subplots(
@@ -69,7 +75,12 @@ def plot_tec_map(dn, ax = None):
     dn_min = b.closest_datetime(b.tec_dates(dn), dn)
     
     lon, lat, vls = load_tec(get_path(dn_min))
-    plot_contourf(ax, lon, lat, vls, vmax = 80)
+     
+    img = plot_contourf(
+        ax, lon, lat, vls,
+        vmax = vmax, 
+        colorbar= colorbar
+        )
     g.mag_equator(ax)
     g.map_features(ax)
     g.map_boundaries(ax)
@@ -85,7 +96,10 @@ def plot_tec_map(dn, ax = None):
         
         return fig
     else:
-        return corners
+        if colorbar:
+            return img
+        else:
+            return corners
 
 
 def main():
