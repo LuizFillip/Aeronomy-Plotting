@@ -89,15 +89,8 @@ def plot_ft_density_profiles(ds):
     
     plot_gradient(ax[1], ds)
     
-    for i, ax in enumerate(ax.flat):
-        
-        l = b.chars()[i]
-        
-        ax.text(
-            0.1, 0.9, f'({l})', 
-            transform = ax.transAxes
-            )
     
+    b.plot_letters(ax)
     return fig
 
 ds = pl.load_fluxtube()

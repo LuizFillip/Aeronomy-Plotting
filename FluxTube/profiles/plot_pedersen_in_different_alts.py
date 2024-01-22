@@ -77,4 +77,4 @@ def plot_pedersen_in_different_alts():
     
     ax.legend()
     
-plot_pedersen_in_different_alts()
+# plot_pedersen_in_different_alts()

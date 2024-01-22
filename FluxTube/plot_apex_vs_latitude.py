@@ -5,40 +5,29 @@ import base as b
 
 b.config_labels(fontsize = 25)
 
-def infos(ax):
-    x = -18
-    fontsize = 35
-    ax.text(
-        x, 100, 
-        'E region',
-        transform = ax.transData, 
-        fontsize = fontsize,
-        color = 'k'
-        )
-    ax.text(
-        x, 200, 'F region', 
-        transform = ax.transData, 
-        fontsize = fontsize,
-        color = 'k'
-        )
     
     
-def plot_hlines(ax):
+def plot_hlines(ax, label = False, x = -18):
     
-    ax.axhline(
-        150, 
-        color = "red", 
-        lw = 2,
-        linestyle = "--"
-        )
+    colors = ['r', 'k']
+    names = ['Região E', 'Região F']
     
-   
-    ax.axhline(
-        300, 
-        color = "k", 
-        lw= 2,
-        linestyle = "--"
-        )
+    for i, height in enumerate([150, 300]):
+        ax.axhline(
+            height, 
+            color = colors[i], 
+            lw = 2,
+            linestyle = "--"
+            )
+        if label:
+            
+            ax.text(
+                x, height - 50, 
+                names[i],
+                transform = ax.transData,
+                color = 'k'
+                )
+    
 
 def plot_arrow(ax, lat_mag = 3):
     
@@ -49,6 +38,17 @@ def plot_arrow(ax, lat_mag = 3):
         dx = 0, dy=zeq, width= 0.1, 
         color='red', head_length = 5,
         label = 'Altura local') 
+
+def sel_height(h, height = 300):
+    if h == 300:
+        args = dict(
+            marker = 'o', 
+            markerfacecolor = 'w', 
+            lw = 2)
+    else:
+        args = dict(color = 'k', lw = 2)
+        
+    return args
 
 def plot_apex_vs_latitude(
        
@@ -78,17 +78,16 @@ def plot_apex_vs_latitude(
             base = base
             )
         
-        # if h == 300:
-        #     args = dict(
-        #         marker = 'o', 
-        #         markerfacecolor = 'w', 
-        #         lw = 2)
-        # else:
-        #     args = dict(color = 'k', lw = 2)
+        if h == 300:
+            print(np.degrees(lats))
         
+            
         args = dict(color = 'k', lw = 2)
         ax.plot(np.degrees(lats), apex, **args)    
     
+    apx = Apex(300) 
+    
+    print(np.degrees(apx.apex_latitude))
     
     
     ax.set(
@@ -102,18 +101,13 @@ def plot_apex_vs_latitude(
 
     
     plot_hlines(ax)
-    
-    # ax.text(
-    #     0.03, 0.91, '(b)', 
-    #     transform = ax.transAxes, 
-    #     fontsize = fontsize
-    #     )
+
         
     return fig 
 
 
 fig = plot_apex_vs_latitude()
 
-FigureName = 'magnetic_lines'
+# FigureName = 'magnetic_lines'
 
-fig.savefig(b.LATEX(FigureName, folder = 'modeling'), dpi = 400)
+# fig.savefig(b.LATEX(FigureName, folder = 'modeling'), dpi = 400)
