@@ -106,7 +106,7 @@ def plot_apex_vs_latitude(
     return fig 
 
 
-fig = plot_apex_vs_latitude()
+# fig = plot_apex_vs_latitude()
 
 # FigureName = 'magnetic_lines'
 

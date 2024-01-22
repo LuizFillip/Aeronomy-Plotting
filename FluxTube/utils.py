@@ -5,7 +5,7 @@ import pandas as pd
 dn = '2013-12-24 22:00:00'
 
 
-def load_sep(dn = dn):
+def load_fluxtube(dn = dn):
     
     infile = "20131224sep.txt"
     
