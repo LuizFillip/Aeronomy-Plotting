@@ -6,7 +6,7 @@ import plotting as pl
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
-
+b.config_labels(fontsize = 25)
 
 def plot_colorbar(
         fig,
@@ -36,7 +36,8 @@ def plot_colorbar(
 
 
 
-def plot_multiple_tec_maps(start):
+def plot_multiple_tec_maps(
+        start, vmax = 60):
     
 
     fig, ax = plt.subplots(
@@ -49,7 +50,7 @@ def plot_multiple_tec_maps(start):
          )
     
     plt.subplots_adjust(
-        wspace = 0.1, 
+        wspace = 0.05, 
         hspace = 0.3
         )
         
@@ -58,7 +59,8 @@ def plot_multiple_tec_maps(start):
         dn = start + dt.timedelta(hours = hour)
         
         pl.plot_tec_map(
-            dn, ax = ax, vmax = 100, 
+            dn, ax = ax, 
+            vmax = vmax, 
             colorbar = False)
         
         ax.set(title = dn.strftime('%Hh%M UT'))
@@ -75,20 +77,22 @@ def plot_multiple_tec_maps(start):
     plot_colorbar(
             fig,
             vmin = 0, 
-            vmax = 60
+            vmax = vmax
             )
     
     return fig 
 
 def main():
     
-    start =  dt.datetime(2014, 2, 9, 23, 0)
+    start =  dt.datetime(2013, 8, 28, 1, 0)
     
-    fig = plot_multiple_tec_maps(start)
+    fig = plot_multiple_tec_maps(start, vmax = 30)
     
     FigureName = start.strftime('midnight_event_%Y%m%d')
-    fig.savefig(
-        b.LATEX(FigureName, 
-                folder = 'maps'),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, 
+    #             folder = 'maps'),
+    #     dpi = 400
+    #     )
+    
+main()

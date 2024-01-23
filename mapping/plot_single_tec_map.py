@@ -33,10 +33,12 @@ def load_tec(infile, values = True):
     else:
         return df
 
-def plot_contourf(
-        ax, lon, lat, values, 
+def plot_matrix(
+        ax, infile, 
         step = 5, vmax = 100,
         colorbar = True):
+    
+    lon, lat, values = load_tec(infile)
     
     ticks = np.arange(0, vmax, 10)
     levels = np.arange(0, vmax + step, step*0.5)
@@ -56,10 +58,7 @@ def plot_contourf(
     
     return img
 
-def get_path(dn):
-    infile = "D:\\database\\"
-    fmt = 'TEC_%Y\\TEC_%Y_%m\\TECMAP_%Y%m%d_%H%M.txt'
-    return infile + dn.strftime(fmt)
+
 
 
 def plot_tec_map(dn, ax = None, vmax = 60, colorbar = True):
@@ -74,21 +73,25 @@ def plot_tec_map(dn, ax = None, vmax = 60, colorbar = True):
     
     dn_min = b.closest_datetime(b.tec_dates(dn), dn)
     
-    lon, lat, vls = load_tec(get_path(dn_min))
+    path = b.get_path(dn_min)
      
-    img = plot_contourf(
-        ax, lon, lat, vls,
+    img = plot_matrix(
+        ax, path,
         vmax = vmax, 
         colorbar= colorbar
         )
-    g.mag_equator(ax)
-    g.map_features(ax)
-    g.map_boundaries(ax)
+  
     
-    corners = gg.plot_rectangles_regions(ax, dn.year)
+    g.map_attrs(
+        ax, dn.year, 
+        grid = False,
+        degress = None
+        )
+    
+    # corners = gg.plot_rectangles_regions(ax, dn.year)
     lon, lat = gg.terminator2(dn, 18)
     
-    ax.scatter(lon, lat, c = 'k', s = 10)
+    ax.scatter(lon, lat, c = 'k', s = 5)
     
     ax.set(title = dn.strftime('%Y/%m/%d %Hh%M (UT)'))
     
@@ -98,8 +101,7 @@ def plot_tec_map(dn, ax = None, vmax = 60, colorbar = True):
     else:
         if colorbar:
             return img
-        else:
-            return corners
+       
 
 
 def main():
