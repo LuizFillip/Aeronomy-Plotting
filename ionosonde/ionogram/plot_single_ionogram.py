@@ -30,11 +30,11 @@ def crop_region_E(img):
     
     return img[y: y + h, x: x + w]
 
-def plot_single_ionogram(fname):
-    
-    fig, ax = plt.subplots(
-        figsize = (10, 8),
-        dpi = 300)
+def plot_single_ionogram(fname, ax = None, label = False):
+    if ax is None:
+        fig, ax = plt.subplots(
+            figsize = (10, 8),
+            dpi = 300)
     
     img = io.imread(fname)
     img = crop_region_E(img)
@@ -42,14 +42,20 @@ def plot_single_ionogram(fname):
     
     plt.gca().invert_yaxis()
     
-    redefine_ticks(img)
+    if label:
+        redefine_ticks(img)
+        ax.set(ylabel = 'Altitude (km)', 
+               xlabel = 'Frequency (MHz)')
+        
+    else:
+        ax.axis('off')
     
-    ax.set(ylabel = 'Altitude (km)', 
-           xlabel = 'Frequency (MHz)')
     
-    return fig
+    if ax is None:
+        
+        return fig
+    else:
+        return ax
 
 
 
-
-fname = 'digisonde/data/ionogram/20130114/FZA0M_20130114(014)200000.PNG'
