@@ -109,26 +109,7 @@ def plot_roti_curves(ax, dn):
     b.format_time_axes(ax)
     
     
-def plot_shades(ax1, dn, times):
-    
-    delta = dt.timedelta(minutes = 10)
-                
-    b.format_time_axes(ax1)
-    
-    for i, n in enumerate(times):
-        
-        ax1.text(
-            n, 3.5, i + 1, 
-            transform = ax1.transData
-            )
-        
-        ax1.axvspan(
-            n, n + delta,
-            alpha = 0.7, 
-            color = 'gray',
-            edgecolor = 'k', 
-            lw = 2
-        )
+
   
     
 def plot_multi_instrumentation(dn, fn_skys):
@@ -184,7 +165,7 @@ def plot_multi_instrumentation(dn, fn_skys):
     
     return fig
 
-dn = dt.datetime(2013, 6, 10, 20)
+# dn = dt.datetime(2013, 6, 10, 20)
 
 
 # fn_skys = [ 
