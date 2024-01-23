@@ -187,12 +187,12 @@ def plot_multi_instrumentation(dn, fn_skys):
 dn = dt.datetime(2013, 6, 10, 20)
 
 
-fn_skys = [ 
-    'O6_CA_20130610_220827.png',
-    'O6_CA_20130610_225828.png', 
-    'O6_CA_20130611_001329.png', 
-    'O6_CA_20130611_014955.png'
-    ]
+# fn_skys = [ 
+#     'O6_CA_20130610_220827.png',
+#     'O6_CA_20130610_225828.png', 
+#     'O6_CA_20130611_001329.png', 
+#     'O6_CA_20130611_014955.png'
+#     ]
 
 # dn = dt.datetime(2013, 1, 14, 20)
 
@@ -213,4 +213,4 @@ fn_skys = [
 # plot_roti_curves(ax, dn)
 
 
-fig = plot_multi_instrumentation(dn, fn_skys)
+# fig = plot_multi_instrumentation(dn, fn_skys)
