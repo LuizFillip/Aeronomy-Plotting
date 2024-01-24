@@ -87,14 +87,15 @@ def plot_conductivities(df):
     b.plot_letters(ax, y = 1.03, x = 0.01)
     
     return fig
+
+def main():
+    ds = pl.load_fluxtube()
+    fig = plot_conductivities(ds)
     
-ds = pl.load_fluxtube()
-fig = plot_conductivities(ds)
-
-
-# FigureName = 'conductivities'
-
-# fig.savefig(
-#     b.LATEX(FigureName, folder = 'profiles'),
-#     dpi = 400
-#     )
+    
+    FigureName = 'conductivities'
+    
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'profiles'),
+        dpi = 400
+        )

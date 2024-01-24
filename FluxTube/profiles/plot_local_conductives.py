@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import aeronomy as io
-from GEO import sites 
+import models as m
 import datetime as dt
+import base as b 
 
+b.config_labels(fontsize = 25)
 
 def plot_local_conductivies(
         ax, 
@@ -12,7 +14,7 @@ def plot_local_conductivies(
         step = 50
         ):
     
-    name = "Condutividades locais"
+    name = "$\sigma$"
     units = "mho/m"
     
     if nu.name == "perd":
@@ -42,7 +44,7 @@ def plot_local_conductivies(
         )
     return ax
 
-def plot_local_ratio_conductivities(**kwargs):
+def plot_local_ratio_conductivities(df):
     
      fig, ax = plt.subplots(
          dpi = 300, 
@@ -51,10 +53,8 @@ def plot_local_ratio_conductivities(**kwargs):
          sharey = True
          )
      
-    
-     df = io.cond_from_models(**kwargs)
-    
      ax[1].plot(df["hall"] / df["perd"],  df.index)
+     
      ax[1].set(
          xlim = [-2, 100], 
          xlabel = "$\sigma_H / \sigma_P$"
@@ -78,20 +78,13 @@ def plot_local_ratio_conductivities(**kwargs):
             df.index
             )
      
-     fig.suptitle(kwargs["dn"].strftime("%d/%m/%Y %H:%M (UT)") +
-                  " - São Luís")
-     
      return fig
      
-glat, glon = sites["saa"]["coords"]
+dn = dt.datetime(2013, 12, 24, 22)
 
-kwargs = dict(
-    dn = dt.datetime(2013, 1, 1, 21), 
-    glat = glat, 
-    glon = glon,
-    hmin = 50
-    )
+df = m.altrange_models(**m.kargs(dn, hmin = 80))
    
-fig = plot_local_ratio_conductivities(**kwargs)
+df = io.conductivity_parameters(df, other_conds = True)
 
+fig = plot_local_ratio_conductivities(df)
 
