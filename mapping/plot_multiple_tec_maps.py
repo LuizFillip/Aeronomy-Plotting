@@ -14,10 +14,12 @@ def plot_colorbar(
         vmax, 
         rainbow = "jet",
         fontsize = 25,
-        step = 10):
+        step = 10
+        ):
     
     norm = mpl.colors.Normalize(
-        vmin = vmin, vmax=vmax
+        vmin = vmin, 
+        vmax = vmax
         )
     
     label = r'TEC ($10^{16} / m^2$)'

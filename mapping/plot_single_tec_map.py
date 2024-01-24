@@ -46,7 +46,7 @@ def plot_matrix(
     img = ax.contourf(
         lon, lat, values, 
         levels = levels,
-        cmap = 'jet'
+        cmap = 'rainbow'
         )
     
     if colorbar:
