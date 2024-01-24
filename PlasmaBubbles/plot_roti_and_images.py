@@ -128,7 +128,7 @@ def plot_roti_and_images(
         ):
 
     fig = plt.figure(
-        dpi = 500,
+        dpi = 300,
         figsize = (16, 5),
         layout = 'constrained'
         )
@@ -183,4 +183,4 @@ def main():
     # fig.savefig(save_in, dpi = 300)
     
     
-# main()
+main()

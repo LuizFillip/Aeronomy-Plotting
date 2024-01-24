@@ -140,7 +140,7 @@ def plot_demo_time_shift(dn, col):
     
     ax[0].legend(loc = 'upper right', ncol = 1)
     
-    b.plot_letters(ax, x = 0.02, y = 0.85)
+    b.plot_letters(ax, x = 0.02, y = 0.85, offset = 1)
 
     return fig 
 
