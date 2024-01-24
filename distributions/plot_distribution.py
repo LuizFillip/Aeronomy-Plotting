@@ -85,6 +85,7 @@ def plot_distribution(
         ):
 
     ds = c.probability_distribution(df, col)    
+    ds = ds.loc[~(ds['rate'] == 0)]
     epbs = ds['epbs'].sum()
     
     if count:
@@ -132,7 +133,7 @@ def plot_distribution(
             color = "k"
             )
         
-    return epbs 
+    return ds, epbs 
 
 
 

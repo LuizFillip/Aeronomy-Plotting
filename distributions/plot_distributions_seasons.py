@@ -34,13 +34,15 @@ def plot_single_season(
         
         label = f'({index}) {name[i]}'
         
-        epbs = pl.plot_distribution(
+        ds1, epbs = pl.plot_distribution(
                 ax1, 
                 ds, 
                 col,
                 count = False,
                 label = label
                 )
+        
+        
         
         days = pl.plot_histogram(
                 ax2, 
@@ -158,7 +160,7 @@ def plot_distributions_seasons(
     
     fig.text(
         0.42, 0.07, 
-        b.y_label('gamma'), 
+        b.y_label(col), 
         fontsize = fontsize
         )
     
@@ -191,13 +193,13 @@ def save_figs(df, col = 'gamma'):
 
 df = c.concat_results('saa')
 
-col = 'gamma'
+col = 'vp'
 
 limit = c.limits_on_parts(
     df['f107a'], parts = 2)
 
-# fig = plot_distributions_seasons(
-#     df, col, level = 83.66)
+fig = plot_distributions_seasons(
+    df, col, level = 83.66)
 
 # FigureName = 'seasonal_all_periods'
 
@@ -206,7 +208,7 @@ limit = c.limits_on_parts(
 #     dpi = 400
 #     )
 
-save_figs(df, col = 'gamma')
+# save_figs(df, col = 'gamma')
 
 
 
