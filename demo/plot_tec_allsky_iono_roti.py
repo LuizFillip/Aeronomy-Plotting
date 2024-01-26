@@ -12,10 +12,9 @@ import cartopy.crs as ccrs
 from skimage import io
 
 
-PATH_SKY = 'database/images/CA_2013_1224/'
-PATH_IONO = 'database/ionogram/20131224F/'
-
 b.config_labels(fontsize = 20)
+
+
 
 def roti_limit(dn):
     
@@ -47,10 +46,10 @@ def closest_iono(target):
     
     return dn
 
-def plot_ionogram(target, ax):
+def plot_ionogram(target, ax, site = 'FZA0M'):
             
     dn = closest_iono(target)
-    file = dn.strftime('FZA0M_%Y%m%d(%j)%H%M%S.PNG')
+    file = dn.strftime(f'{site}_%Y%m%d(%j)%H%M%S.PNG')
     
     infile = os.path.join(PATH_IONO, file)
     
@@ -93,94 +92,123 @@ def title(ax, dn, index):
     title = dn.strftime(f'({index}) %Hh%M')
     ax.set(title = title)
  
+
+
+def TEC_AllSky_6300(files, dn, site = 'FZA0M'):
     
-fig = plt.figure(
-    dpi = 300,
-    figsize = (11,  14),
-    layout = 'constrained'
-    )
-
-ncols = 4
-gs2 = GridSpec(4, ncols)
-
-gs2.update(hspace = 0.3, wspace = 0)
-
-
-
-files = ['O6_CA_20131224_214144.tif', 
-         'O6_CA_20131225_002749.tif',
-         'O6_CA_20131225_011602.tif',
-         'O6_CA_20131225_021645.tif']
-
-dn = dt.datetime(2013, 12, 24, 20)
-
-ax_rot = plt.subplot(gs2[-1, :])
-
-pl.plot_roti_points(
-        ax_rot, roti_limit(dn), 
-        threshold = 0.25,
-        label = True
+    fig = plt.figure(
+        dpi = 300,
+        figsize = (11,  14),
+        layout = 'constrained'
         )
-
-b.format_time_axes(ax_rot, translate = True)
-
-for col, file in enumerate(files):
-    index = col + 1
     
-    ax_img = plt.subplot(gs2[0, col])
+    ncols = 4
+    gs2 = GridSpec(4, ncols)
     
-    target = plot_images(file, ax_img)
+    gs2.update(hspace = 0.3, wspace = 0)
     
-    title(ax_img, target, index)
+    ax_rot = plt.subplot(gs2[-1, :])
     
-    ax_ion = plt.subplot(gs2[1, col])
-    
-    dn = plot_ionogram(target, ax_ion)
-    
-
-    title(ax_ion, dn, index)
-    
-    ax_tec = plt.subplot(
-        gs2[2, col], 
-        projection = ccrs.PlateCarree())
-    
-    img = pl.plot_tec_map(
-        target, ax_tec, vmax = 100, 
-        colorbar = False)
-    
-    if index == 2:
-        ax_ion.text(
-            0.6, -0.1, 'Frequência (MHz)',
-            transform = ax_ion.transAxes
-        )
-        ax_tec.text(
-            0.6, -0.1, 'Longitude (°)',
-            transform = ax_tec.transAxes
-        )
-    if index == 1:
-        ax_ion.set(ylabel = 'Altura virtual (km)')
-        
-    if index != 1:
-        ax_tec.set(
-            xticks = [], 
-            yticks = [], 
-            xlabel = '', 
-            ylabel = '', 
-            title = ''
+    pl.plot_roti_points(
+            ax_rot, roti_limit(dn), 
+            threshold = 0.25,
+            label = True
             )
-
-    else:
+    
+    ax_rot.set(ylim = [0, 5], 
+               yticks = np.arange(6))
+    
+    b.format_time_axes(ax_rot, translate = True)
+    
+    for col, file in enumerate(files):
+        index = col + 1
         
-        ax_tec.set(
-            xticks = np.arange(-90, -20, 20), 
-            yticks = np.arange(-40, 40, 20), 
+        ax_img = plt.subplot(gs2[0, col])
+        
+        target = plot_images(file, ax_img)
+        
+        title(ax_img, target, index)
+        
+        ax_ion = plt.subplot(gs2[1, col])
+        
+        dn = plot_ionogram(target, ax_ion, site = site)
+        
+    
+        title(ax_ion, dn, index)
+        
+        ax_tec = plt.subplot(
+            gs2[2, col], 
+            projection = ccrs.PlateCarree())
+        
+        img = pl.plot_tec_map(
+            target, ax_tec, 
+            vmax = 70, 
+            colorbar = False)
+        
+        if index == 2:
+            ax_ion.text(
+                0.6, -0.1, 'Frequência (MHz)',
+                transform = ax_ion.transAxes
+            )
+            ax_tec.text(
+                0.6, -0.1, 'Longitude (°)',
+                transform = ax_tec.transAxes
+            )
+        if index == 1:
+            ax_ion.set(ylabel = 'Altura virtual (km)')
+            
+        if index != 1:
+            ax_tec.set(
+                xticks = [], 
+                yticks = [], 
                 xlabel = '', 
-                title = '')
+                ylabel = '', 
+                title = ''
+                )
+    
+        else:
+            
+            ax_tec.set(
+                xticks = np.arange(-90, -20, 20), 
+                yticks = np.arange(-40, 40, 20), 
+                xlabel = '', 
+                title = ''
+                )
+            
         
-    
-    title(ax_tec, dn, index)
-    
-    plot_shades(ax_rot, target, index)
+        title(ax_tec, dn, index)
+        
+        plot_shades(ax_rot, target, index)
+        
+    return fig 
+
+
+epb_files= [
+    'O6_CA_20131224_214144.tif', 
+    'O6_CA_20131225_002749.tif',
+    'O6_CA_20131225_011602.tif',
+    'O6_CA_20131225_021645.tif'
+    ]
+
+no_epb_files = [ 
+        
+    'O6_CA_20130610_220827.tif',
+    'O6_CA_20130610_225828.tif', 
+    'O6_CA_20130611_001329.tif', 
+    'O6_CA_20130611_010516.tif'
+    ]
+
+dn = dt.datetime(2013, 3, 24, 20)
+dn = dt.datetime(2013, 6, 10, 20)
+
+
+site =  'FZA0M'
+site =  'SAA0K'
+folder_img = dn.strftime('CA_%Y_%m%d')
+folder_ion = dn.strftime('%Y%m%d')
+PATH_SKY = f'database/images/{folder_img}/'
+PATH_IONO = f'database/ionogram/{folder_ion}{site[0]}/'
 
 
 
+fig  =TEC_AllSky_6300(no_epb_files, dn, site)
