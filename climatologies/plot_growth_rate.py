@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import base as b 
-import RayleighTaylor as rt 
+import datetime as dt 
+import numpy as np
 
 
 b.config_labels()
@@ -27,7 +28,8 @@ def plot_gamma(ax, df):
         )
     
     ax.set(
-        ylim = [-1, 4], 
+        ylim = [0, 4], 
+        yticks = np.arange(0, 5, 1),
         ylabel = b.y_label('gamma'),
         xlabel = 'years',
         xlim = [df.index[0], df.index[-1]]
@@ -49,13 +51,13 @@ def plot_grad(ax, df):
         )
 
     ax.set(
-        ylim = [-1, 7], 
+    
+        ylim = [0, 5], 
+        yticks = np.arange(0, 6, 1),
         ylabel = b.y_label('K')
         )
     
-    ax.axhline(df.max(), linestyle = '--')
-    ax.axhline(df.min(), linestyle = '--')
-    
+
     
 def plot_ratio(ax, df):
     
@@ -67,7 +69,8 @@ def plot_ratio(ax, df):
     ax.axhline(1, linestyle = '--')
     
     ax.set(
-        ylim = [0.9, 1.05], 
+        ylim = [0.89, 1], 
+        yticks = np.arange(0.8, 1.1, 0.05),
         ylabel = b.y_label('ratio')
         )
     
@@ -108,7 +111,8 @@ def plot_vzp(ax, df):
         )
     
     ax.set(
-        ylim = [-10, 90], 
+        ylim = [0, 90], 
+        yticks = np.arange(0, 100, 20),
         ylabel = b.y_label('vp')
         )
     
@@ -131,8 +135,9 @@ def plot_wind(ax, df):
         )
     
     ax.set(
-        ylim = [-10, 15], 
-        ylabel = b.y_label('mer_perp')
+        ylim = [-5, 15], 
+        yticks = np.arange(-5, 20, 5),
+        ylabel = b.y_label('UL')
         )
     
     
@@ -141,8 +146,7 @@ def plot_wind(ax, df):
 
 
 def plot_annual_GRT(
-        site = 'saa', 
-        col = 'e_f'
+        df
         ):
 
     fig, ax = plt.subplots(
@@ -153,9 +157,7 @@ def plot_annual_GRT(
         )
     
     plt.subplots_adjust(hspace = 0.1)
-      
-    df = rt.load_grt(site)
-
+     
     plot_ratio(ax[0], df['ratio'])
     plot_vzp(ax[1], df['vp'])
     plot_wind(ax[2], df['mer_perp'])
@@ -167,24 +169,24 @@ def plot_annual_GRT(
     
     ax[0].set(title = df.columns.name)
     
-    for i, ax in enumerate(ax.flat):
-        
-        l = b.chars()[i]
-        ax.text(
-            0.02, 0.8, f'({l})', 
-            transform = ax.transAxes
-            )
-    
+    b.plot_letters(ax, y = 0.8, x = 0.02, 
+                   fontsize = 20)
     return fig
 
 
-fig = plot_annual_GRT(site = 'saa')
+def main():
+    PATH_GAMMA = 'database/gamma/p_saa.txt'
+    
+    df = b.load(PATH_GAMMA)
+    
+    df = df.loc[df.index.time == dt.time(22, 0)]
+    
+    fig = plot_annual_GRT(df)
+    
+    FigureName = 'annual_grt_parameters'
+    
+    fig.savefig(b.LATEX(
+        FigureName, 
+        folder = 'timeseries'), dpi = 400)
 
-
-FigureName = 'annual_grt_parameters'
-
-# fig.savefig(b.LATEX(FigureName), dpi = 400)
-
-# df = rt.load_grt()
-
-# df.columns
+# main()
