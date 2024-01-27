@@ -6,7 +6,24 @@ import plotting as pl
 
 b.config_labels(fontsize = 25)
 
+def save_figures(df):
+    
+    for col in ['gamma', 'vp', 'gravity']:
 
+        FigureName = f'PD_{col}_effects'
+        
+        fig = plot_distributions_solar_flux(
+                df, 
+                col,
+                level = 83.66
+                )
+        
+        fig.savefig(
+            b.LATEX(FigureName),
+            dpi = 400
+            )
+        
+        
 def plot_distributions_solar_flux(
         df, 
         col = 'gamma',
@@ -41,7 +58,7 @@ def plot_distributions_solar_flux(
         index = i + 1
         label = f'({index}) {labels[i]}'
     
-        epbs = pl.plot_distribution(
+        data, epbs = pl.plot_distribution(
                 ax[0], 
                 ds,
                 col = col,
@@ -86,24 +103,8 @@ def plot_distributions_solar_flux(
     
 
 
-def save_figures(df):
-    
-    for col in ['gamma', 'vp', 'gravity']:
 
-        FigureName = f'PD_{col}_effects'
-        
-        fig = plot_distributions_solar_flux(
-                df, 
-                col,
-                level = 83.66
-                )
-        
-        fig.savefig(
-            b.LATEX(FigureName),
-            dpi = 400
-            )
 
-df = c.concat_results('saa')
 
 def main(df, col = 'gamma'):
     
@@ -121,7 +122,11 @@ def main(df, col = 'gamma'):
     #     dpi = 400
     #     )
 
-# save_figures(df)
+df = c.concat_results('saa')
 
 
-# main(df)
+fig = plot_distributions_solar_flux(
+        df, 
+        col = 'gamma',
+        level = 83.66
+        )

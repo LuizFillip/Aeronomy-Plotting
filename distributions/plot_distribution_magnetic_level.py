@@ -2,57 +2,126 @@ import numpy as np
 import matplotlib.pyplot as plt
 import base as b
 import core as c
-from plotting import plot_distribution
+import plotting as pl
 
 
 
 def plot_geomag_distribution(
         df, 
-        col = 'gamma',
-        quiet_level = 3 
+        level = 86, 
+        fontsize = 30 
         ):
+    nrows = 4
     
-    fig, ax = plt.subplots(
-        dpi = 300, 
-        sharex = True,
-        sharey = True,
-        figsize = (12, 6)
-        )
-        
-    labels = [f'$Kp \\leq$ {quiet_level}', 
+    quiet_level = 3 
+    titles = [f'$Kp \\leq$ {quiet_level}', 
               f'$Kp >$ {quiet_level}']
     
-    datasets = c.kp_levels(
-        df, 
-        level = quiet_level
+    
+    fig, ax = plt.subplots(
+          ncols = nrows // 2, 
+          nrows = nrows,
+          figsize = (18, 14), 
+          dpi = 300, 
+          sharex = 'col', 
+          sharey = 'row'
         )
     
-    total = []
+    plt.subplots_adjust(
+        hspace = 0.1, 
+        wspace = 0.05
+        )
     
-    for i, ds in enumerate(datasets):
-                       
-        count = plot_distribution(
-            ax, 
-            ds, 
-            col = col,
-            label = f'{labels[i]}'
+    
+    for col, df_disturb in enumerate(
+                    c.kp_levels(
+                        df, 
+                        level = quiet_level
+                        )):
+                                    
+    
+        solar_dfs = c.solar_levels(
+            df_disturb, 
+            level,
+            flux_col = 'f107a'
             )
         
-        total.append(count)
+        ax[0, col].set(title = titles[col])
         
-    ax.legend(ncol = 2, loc = 'upper center')
+        for row, season_name in enumerate(
+                pl.seasons_keys.values()):
+            
+            
+            epb = pl.plot_single_season(
+                    col = 'gamma',
+                    ax1 = ax[row, col], 
+                    ax2 = None,
+                    solar_dfs = solar_dfs,
+                    season_name = season_name, 
+                    level = level
+                    )
+                    
     
-    ax.set(
-        xlabel =  b.y_label('gamma'), 
-        ylabel = 'EPB occurrence probability'
+            pl.plot_infos(
+                ax[row, col], epb, 
+                x = 0.65, 
+                y = 0.2
+                )
+            
+    
+            l = b.chars()[row]
+            
+            ax[row, 0].text(
+                0.02, 0.85,
+                f'({l}) {season_name}',
+                transform = ax[row, 0].transAxes
+                )
+            
+            ax[row, 1].text(
+                0.02, 0.85,
+                f'{season_name}',
+                transform = ax[row, 1].transAxes
+                )
+        
+    
+    ax[0, 0].legend(
+        ncol = 2, 
+        bbox_to_anchor = (1., 1.6),
+        loc = "upper center"
         )
     
+    
+    fig.text(
+        0.05, 0.35, 
+        "EPB occurrence probability", 
+        fontsize = fontsize, 
+        rotation = 'vertical'
+        )
+    
+    fig.text(
+        0.42, 0.07, 
+        b.y_label('gamma'), 
+        fontsize = fontsize
+        )
+        
     return fig
 
 
-df = c.concat_results('saa')
+def main():
 
-col = 'gamma'
-fig = plot_geomag_distribution(df, col)
-
-df
+    df = c.concat_results('saa')
+    
+    limit = c.limits_on_parts(
+        df['f107a'], parts = 2
+        )
+        
+    fig = plot_geomag_distribution(df, level = limit)
+    
+    
+    FigureName = 'seasonal_quiet_disturbed'
+    
+    fig.savefig(
+        b.LATEX(FigureName, 
+                folder = 'distributions/en/'),
+        dpi = 400
+        )

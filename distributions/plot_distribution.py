@@ -85,7 +85,12 @@ def plot_distribution(
         ):
 
     ds = c.probability_distribution(df, col)    
-    ds = ds.loc[~(ds['rate'] == 0)]
+    
+    ds = ds.loc[~((ds['days'] == 1) & 
+                  (ds['epbs'] == 1))].dropna()
+    
+    # ds['std'] = ds['std'].replace(np.nan, 0)
+    
     epbs = ds['epbs'].sum()
     
     if count:

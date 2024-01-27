@@ -22,3 +22,18 @@ def plot_infos(
             infos, 
             transform = ax.transAxes
             )
+
+
+seasons_keys = {
+      0: 'March equinox',
+      1: 'June solstice',
+      2: 'September equinox',
+      3: 'December solstice'
+      }
+
+# seasons_keys = {
+#       'March equinox': 3,
+#       'June solstice': 6,
+#       'September equinox': 9,
+#       'December solstice': 12
+#       }
