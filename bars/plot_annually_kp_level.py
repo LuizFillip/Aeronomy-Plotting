@@ -63,7 +63,11 @@ def plot_annualy_kp_level(
     return fig
 
 df = c.concat_results('saa')
-fig = plot_annualy_kp_level(df)
+# fig = plot_annualy_kp_level(df)
 
 
-fig.savefig(b.LATEX('kp_annual_variation', folder = 'bars'))
+# fig.savefig(b.LATEX('kp_annual_variation', folder = 'bars'))
+
+ds = c.non_and_occurrences(df).yearly()
+
+ds

@@ -9,7 +9,7 @@ b.config_labels(fontsize = 25)
 def save_figures(df):
     
     for col in ['gamma', 'vp', 'gravity']:
-s
+
         FigureName = f'PD_{col}_effects'
         
         fig = plot_distributions_solar_flux(
@@ -89,8 +89,8 @@ def plot_distributions_solar_flux(
             fontsize = 30
             )
         
-    # print('days', sum(total_day))
-    # print('epbs', sum(total_epb))
+    print('days', sum(total_day))
+    print('epbs', sum(total_epb))
     
     ax[1].legend(ncol = 2, loc = 'upper center')
     ax[0].legend(ncol = 2, loc = 'upper center')
@@ -119,10 +119,10 @@ def main():
     
     FigureName = f'PD_{col}_effects'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder = 'distributions/en/'),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder = 'distributions/en/'),
+    #     dpi = 400
+    #     )
 
 
 
