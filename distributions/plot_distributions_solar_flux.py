@@ -9,7 +9,7 @@ b.config_labels(fontsize = 25)
 def save_figures(df):
     
     for col in ['gamma', 'vp', 'gravity']:
-
+s
         FigureName = f'PD_{col}_effects'
         
         fig = plot_distributions_solar_flux(
@@ -37,7 +37,7 @@ def plot_distributions_solar_flux(
         figsize = (12, 12)
         )
     
-    plt.subplots_adjust(hspace = 0.05)
+    plt.subplots_adjust(hspace = 0.1)
         
     labels = [
         '$F_{10.7} < $' + f' {level}',
@@ -83,9 +83,10 @@ def plot_distributions_solar_flux(
         l = b.chars()[i]
         
         ax[i].text(
-            0.02, 0.85,
+            0.03, 0.85,
             f'({l})',
-            transform = ax[i].transAxes
+            transform = ax[i].transAxes, 
+            fontsize = 30
             )
         
     # print('days', sum(total_day))
@@ -100,33 +101,29 @@ def plot_distributions_solar_flux(
     
     return fig
 
+
+
+def main():
     
-
-
-
-
-
-def main(df, col = 'gamma'):
+    df = c.concat_results('saa')
     
-    
+    limit = c.limits_on_parts(
+        df['f107a'], parts = 2
+        )
+    col = 'gamma'
     fig = plot_distributions_solar_flux(
             df, 
             col,
-            level = 83.66
+            level = limit
             )
     
     FigureName = f'PD_{col}_effects'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName),
-    #     dpi = 400
-    #     )
-
-df = c.concat_results('saa')
-
-
-fig = plot_distributions_solar_flux(
-        df, 
-        col = 'gamma',
-        level = 83.66
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'distributions/en/'),
+        dpi = 400
         )
+
+
+
+# main()

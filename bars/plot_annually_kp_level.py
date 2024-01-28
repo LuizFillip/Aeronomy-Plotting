@@ -2,11 +2,10 @@ import matplotlib.pyplot as plt
 import base as b
 import core as c
 
-b.config_labels()
+b.config_labels(fontsize = 25)
 
 def plot_annualy_kp_level(
         df,
-        solar_level = 86,
         kp_level = 3
         ):
     
@@ -32,7 +31,7 @@ def plot_annualy_kp_level(
     
     for i, dataset in enumerate(levels):
         
-        ds = c.year_occurrence(dataset)
+        ds = c.non_and_occurrences(dataset).yearly()
      
         ds['epb'].plot(
             kind = 'bar',
@@ -66,4 +65,5 @@ def plot_annualy_kp_level(
 df = c.concat_results('saa')
 fig = plot_annualy_kp_level(df)
 
-fig.savefig(b.LATEX('kp_annual_variation'))
+
+fig.savefig(b.LATEX('kp_annual_variation', folder = 'bars'))

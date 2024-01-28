@@ -5,7 +5,7 @@ import core as c
 import plotting as pl
 
 
-
+b.config_labels(fontsize = 25)
 def plot_geomag_distribution(
         df, 
         level = 86, 
@@ -48,11 +48,9 @@ def plot_geomag_distribution(
         
         ax[0, col].set(title = titles[col])
         
-        for row, season_name in enumerate(
-                pl.seasons_keys.values()):
+        for row, season_name in enumerate(pl.seasons_keys.values()):
             
-            
-            epb = pl.plot_single_season(
+            epb, _ = pl.plot_single_season(
                     col = 'gamma',
                     ax1 = ax[row, col], 
                     ax2 = None,
@@ -61,7 +59,7 @@ def plot_geomag_distribution(
                     level = level
                     )
                     
-    
+         
             pl.plot_infos(
                 ax[row, col], epb, 
                 x = 0.65, 
@@ -71,14 +69,16 @@ def plot_geomag_distribution(
     
             l = b.chars()[row]
             
+            y = 0.82
+            x = 0.02
             ax[row, 0].text(
-                0.02, 0.85,
+                x, y,
                 f'({l}) {season_name}',
                 transform = ax[row, 0].transAxes
                 )
             
             ax[row, 1].text(
-                0.02, 0.85,
+                x, y,
                 f'{season_name}',
                 transform = ax[row, 1].transAxes
                 )
@@ -99,7 +99,7 @@ def plot_geomag_distribution(
         )
     
     fig.text(
-        0.42, 0.07, 
+        0.45, 0.07, 
         b.y_label('gamma'), 
         fontsize = fontsize
         )
@@ -125,3 +125,6 @@ def main():
                 folder = 'distributions/en/'),
         dpi = 400
         )
+    
+    
+# main()

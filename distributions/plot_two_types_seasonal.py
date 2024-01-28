@@ -25,7 +25,7 @@ def plot_distributions_seasons(
     
     plt.subplots_adjust(
         hspace = 0.1, 
-        wspace = 0.1
+        wspace = 0.05
         )
     
     
@@ -39,7 +39,7 @@ def plot_distributions_seasons(
     for row, season_name in enumerate(pl.seasons_keys.values()):
         
         
-        epb = pl.plot_single_season(
+        epb, _ = pl.plot_single_season(
                 col = 'gamma',
                 ax1 = ax[row, 0], 
                 ax2 = None,
@@ -66,16 +66,15 @@ def plot_distributions_seasons(
             )
         
     
-        l = b.chars()[row]
-        
+        y = 0.80
         ax[row, 0].text(
-            0.02, 0.85,
-            f'({l}) {season_name}',
+            0.02, y,
+            f'{season_name}',
             transform = ax[row, 0].transAxes
             )
         
         ax[row, 1].text(
-            0.02, 0.85,
+            0.02, y,
             f'{season_name}',
             transform = ax[row, 1].transAxes
             )
@@ -83,7 +82,7 @@ def plot_distributions_seasons(
     
     ax[0, 0].legend(
         ncol = 2, 
-        bbox_to_anchor = (1., 1.3),
+        bbox_to_anchor = (1., 1.5),
         loc = "upper center"
         )
     
@@ -98,6 +97,10 @@ def plot_distributions_seasons(
     ax[-1, 0].set(xlabel = b.y_label('gamma'))
     ax[-1, 1].set(xlabel = b.y_label('vp'))
     
+    ax[0, 0].text(0, 1.05, '(a)', fontsize = 30, 
+                  transform = ax[0, 0].transAxes)
+    ax[0, 1].text(0, 1.05, '(b)', fontsize = 30, 
+                  transform = ax[0, 1].transAxes)
     return fig
 
 
@@ -121,3 +124,5 @@ def main():
                 folder = 'distributions/en/'),
         dpi = 400
         )
+    
+main()

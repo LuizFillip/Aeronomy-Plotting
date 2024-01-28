@@ -79,10 +79,10 @@ def plot_single_season(
             
         
             
-    # if ax2 is not None:
-    #     return total_epb, total_day
-    # else:
-    return total_epb, total_day
+    if ax2 is not None:
+        return total_epb, total_day
+    else:
+        return total_epb, total_day
     
 
 def plot_distributions_seasons(
@@ -210,7 +210,7 @@ def main():
     FigureName = 'seasonal_all_periods'
     
     fig.savefig(
-        b.LATEX(FigureName),
+        b.LATEX(FigureName, folder = 'distributions/en/'),
         dpi = 400
         )
     
