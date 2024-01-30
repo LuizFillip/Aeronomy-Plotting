@@ -7,16 +7,14 @@ import matplotlib as mpl
 def set_figure(
         ncols = 2, 
         nrows = 2, 
-        figsize = (12, 10), 
+        figsize = , 
         dpi = 300
         ):
     
     fig, ax = plt.subplots(
-        dpi = dpi,
-        figsize = figsize,
-        ncols = ncols,
-        nrows = nrows,
-        sharex = True,
+        dpi = 300,
+        figsize = (12, 10),
+        ncols = 2,
         sharey = True
         )
     
@@ -30,29 +28,6 @@ def set_figure(
         
       
 
-def plot(ax, ts, parameter, cmap = "rainbow"):
-
-            
-    pt = pd.pivot_table(
-         ts, 
-         values = parameter, 
-         columns = ts.index, 
-         index = "alt"
-         )
-    
-    ax.contourf(
-        pt.columns, pt.index, pt.values, 30,
-        norm = plt.Normalize(
-            vmin =-110, vmax = 110),
-        cmap = cmap
-       )
-    
-    
-    ax.axhline(300, linestyle = "--")
-    
-    lbs  = Labels().infos[parameter]
-    
-    ax.set(title = lbs["name"])
         
     
 
