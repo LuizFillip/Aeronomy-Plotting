@@ -1,85 +1,71 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import base as b 
-import GEO as gg
-import os
-import datetime as dt 
 import RayleighTaylor as rt
 
 b.config_labels(fontsize = 25)
 
-PATH_FT = 'FluxTube/data/reduced/'
+def pipe_data():
+    
+    df = b.load('20131224tlt.txt')
+    
+    df['vp'] = 25
+    
+    ds = rt.add_gammas(df)
+    
+    ds['gr'] = ds['ge'] / ds['nui']
+    
+    ds['K'] = ds['K'] *1e5
+    ds['gamma'] = ds['gamma'] *1e3
+    
+    return ds
 
 def plot_growth_rate_parameters():
-
-    
-   
-    ax[0].legend(   
-        bbox_to_anchor = (1., 1.1), 
-        ncol = 3, 
-        loc = 'upper center'
+    fig, ax = plt.subplots(
+        nrows = 5,
+        figsize = (12, 14),
+        sharex = True,
+        dpi = 300
         )
     
-    ax[0].set(
-        xlabel = '$\gamma_{FT} ~(10^{-4}~s^{-1})$', 
-        ylabel = 'Altura de apex (km)'
-        )
+    plt.subplots_adjust(hspace = 0.1)
     
-    ax[1].set(
-        ylabel = 'Altura local (km)',
-        xlabel = '$\gamma_{RT} ~(10^{-4}~s^{-1})$'
-        )
     
-    for i, ax in enumerate(ax.flat):
-        ax.axhline(300)
-        ax.axvline(0)
-        ax.set(ylim = [200, 550], 
-               xlim = [-30, 30])
+    ds = pipe_data()
     
-        letter = b.chars()[i]
-        ax.text(
-            0.04, 0.95, f"({letter}) ", 
-            transform = ax.transAxes
-            )
+    cols = ['ratio', 'K', 
+            'mer_perp',
+            'gr', 'gamma']
     
-    fig.suptitle('Comparação entre os perfis locais e integrados')
+    lims = [[0.5, 1.1], 
+            [-1, 6], 
+            [-6, 0], 
+            [0, 10], 
+            [0, 2]]
+    for i, col in enumerate(cols):
+        
+        ax[i].plot(ds[col])
+        
+        ax[i].set(
+            ylabel = b.y_label(col),
+            ylim = lims[i])
+        
+        
+    b.format_time_axes(ax[-1], translate = True)
+    
+    b.plot_letters(ax, y = 0.7, x = 0.03)
 
     return fig
 
-def plot_single_parameters(ax, ds):
-    
+     
 
-    cols = ['gr', 'K', 'mer_parl', 'ratio']
-    ylabel = ['$g / \\nu_{eff}$', '$K^F$',
-              '$U_L$', '$\Sigma_F$']
-    
-    
-    for i, ax in enumerate(ax.flat):
-        
-        ax.plot(ds[cols[i]])
-        
-        ax.set(ylabel = ylabel[i])
-        
-        if i >= 2:
-        
-            b.axes_month_format(ax)
+fig = plot_growth_rate_parameters()
 
 
-                             
+FigureName = 'gamma_parameters'
 
-fig, ax = plt.subplots(
-    nrows = 5,
-    figsize = (14, 8),
-    sharex = True,
-    dpi = 300
+fig.savefig(
+    b.LATEX(FigureName, 
+            folder = 'timeseries'),
+    dpi = 400
     )
-
-plt.subplots_adjust(wspace = 0.2)
-
-
-df = b.load('20131224tlt.txt')
-
-df['vp'] = 25
-ds = rt.gammas_integrated(df)
-
-ds
