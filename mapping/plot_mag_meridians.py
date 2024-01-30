@@ -199,7 +199,7 @@ def plot_mag_meridians(
 
     return fig
 
-# fig = plot_mag_meridians(year = 2013)
+fig = plot_mag_meridians(year = 2013)
 
 # fig.savefig(
 #     b.LATEX(FigureName, folder = 'profiles'),

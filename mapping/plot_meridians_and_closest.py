@@ -2,20 +2,26 @@ import GEO as gg
 import matplotlib.pyplot as plt 
 import cartopy.crs as ccrs
 import datetime as dt
-         
+import base as b 
+
+b.config_labels(fontsize = 35)
       
 def plot_meridians_and_closest(dn):
       
       fig, ax = plt.subplots(
           dpi = 300,
-          figsize = (8, 8),
+          figsize = (12, 12),
           subplot_kw = 
               {'projection': ccrs.PlateCarree()}
           )
 
   
-      lat_lims = dict(min = -30, max = 30, stp = 10)
-      lon_lims = dict(min = -70, max = -30, stp = 10) 
+      lat_lims = dict(min = -30, 
+                      max = 30, 
+                      stp = 10)
+      lon_lims = dict(min = -70, 
+                      max = -30, 
+                      stp = 10) 
 
       gg.map_attrs(
           ax, year = 2013, 
@@ -30,11 +36,11 @@ def plot_meridians_and_closest(dn):
       
       meridian = mer.range_meridians()
       
-      for num in range(meridian.shape[0]):
+      # for num in range(meridian.shape[0]):
           
-          x, y = meridian[num][0], meridian[num][1]
+      #     x, y = meridian[num][0], meridian[num][1]
           
-          ax.plot(x, y, lw = 1, color = 'k')
+      #     ax.plot(x, y, lw = 1, color = 'k')
           
       x, y = mer.closest_from_site(glon, glat)
       
@@ -45,28 +51,35 @@ def plot_meridians_and_closest(dn):
           marker = '^', 
           c = 'r', 
           s = 150,
-          label = 'intersecção com equador'
+          label = 'Intersecção com equador'
           )
       
       ax.scatter(
           glon, glat, 
-          marker = 's',
-          s = 150,
-          c = 'r',
+          marker = '^',
+          s = 200,
+          c = 'b',
           label = 'São Luís'
           )
       
       
-      ax.plot(x, y, color = 'r', lw = 2)
+      ax.plot(x, y, color = 'k', lw = 2, 
+              label = 'Meridiano magnético')
       rlat = 12.236
       
-      xe, ye = gg.limit_hemisphere(
-              x, y, nx, ny, rlat, 
-              hemisphere = 'both'
-              )
       
-      ax.plot(xe, ye, 'k', lw = 3,
-              linestyle = '--')
+      ax.legend(
+          loc = 'upper center', 
+        #  bbox_to_anchor = (0.5, 1.3)
+          )
+      
+      # xe, ye = gg.limit_hemisphere(
+      #         x, y, nx, ny, rlat, 
+      #         hemisphere = 'both'
+      #         )
+      
+      # ax.plot(xe, ye, 'k', lw = 3,
+      #         linestyle = '--')
       return fig 
 
 

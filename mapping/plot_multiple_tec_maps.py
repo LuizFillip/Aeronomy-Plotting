@@ -1,40 +1,12 @@
 import base as b
-import numpy as np
 import cartopy.crs as ccrs
 import datetime as dt
 import plotting as pl
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 
 b.config_labels(fontsize = 25)
 
-def plot_colorbar(
-        fig,
-        vmin, 
-        vmax, 
-        rainbow = "jet",
-        fontsize = 25,
-        step = 10
-        ):
-    
-    norm = mpl.colors.Normalize(
-        vmin = vmin, 
-        vmax = vmax
-        )
-    
-    label = r'TEC ($10^{16} / m^2$)'
-    cax = plt.axes([0.2, 1.001, 0.6, 0.02])
-   
-    cb = fig.colorbar(
-        mpl.cm.ScalarMappable(
-            norm = norm, 
-            cmap = rainbow
-            ),
-        ticks = np.arange(vmin, vmax + step, step),
-        cax = cax, 
-        orientation = "horizontal", 
-        )
-    cb.set_label(label, fontsize = fontsize)
+
 
 
 
@@ -76,7 +48,7 @@ def plot_multiple_tec_maps(
         l = b.chars()[hour]
         ax.text(0.02, 1.05, f'({l})', 
                 transform = ax.transAxes)
-    plot_colorbar(
+    b.fig_colorbar(
             fig,
             vmin = 0, 
             vmax = vmax
