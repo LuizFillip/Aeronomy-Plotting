@@ -66,6 +66,8 @@ def plot_single_season(
                 label = label
                 )
         
+        print(i)
+        
         total_epb.append(epbs)
         
         if ax2 is not None:
@@ -209,10 +211,10 @@ def main():
     
     FigureName = 'seasonal_all_periods'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder = 'distributions/en/'),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder = 'distributions/en/'),
+    #     dpi = 400
+    #     )
     
     # save_figs(df, col = 'gamma')
     
