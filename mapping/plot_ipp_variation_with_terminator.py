@@ -71,6 +71,7 @@ def plot_lines(
         axes, 
         start,  
         local_term,
+        plot_term =False,
         y = 4.8
         ):
     """
@@ -103,9 +104,10 @@ def plot_lines(
             )
         
         if i == 0:
-            
-            ax.text(dusk, y, 'Terminator', 
-                    transform = ax.transData)
+            if plot_term:
+                ax.text(dusk, y, 'Terminator', 
+                        transform = ax.transData)
+                
             ax.text(midnight, y, 'midnight', 
                     color = 'b',
                     transform = ax.transData)
@@ -119,8 +121,16 @@ def plot_roti_timeseries(
         right_ticks = False
         ):
     
-    vmax = int(np.ceil(df['roti'].max()))
-    
+    # try:
+    #     vmax = int(np.ceil(df['roti'].max()))
+    # except:
+    vmax  = 2
+        
+    if len(np.unique(df.index.date)) == 1:
+        plot_term = False
+    else:
+        plot_term = True
+        
     corners = gg.set_coords( dn.year)
     key = list(corners.keys())
     
@@ -128,6 +138,7 @@ def plot_roti_timeseries(
             axes, 
             start,  
             local_term,
+            plot_term,
             y = vmax 
             )
     
