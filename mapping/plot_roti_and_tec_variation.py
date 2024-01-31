@@ -65,20 +65,22 @@ def plot_roti_tec_variation(df, start, dn):
 
 def main():
     
-    start = dt.datetime(2022, 7, 24, 20)
+    start = dt.datetime(2022, 7, 25, 0)
     
     df =  pb.concat_files(
         start, 
         root = 'D:\\'
         )
     
-    df = b.sel_times(df, start)
-            
+    df = b.sel_times(df, start, hours = 8)
+  
     dn = range_time(start, 450)
+    
+    
  
     plot_roti_tec_variation(df, start, dn)
-    
-    plt.show()
+    # 
+    # plt.show()
     
     
     
