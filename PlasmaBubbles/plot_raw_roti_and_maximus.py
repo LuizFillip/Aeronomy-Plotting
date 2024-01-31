@@ -21,7 +21,8 @@ args = dict(
 def plot_roti_points(
         ax, ds, 
         threshold = 0.25,
-        label = False
+        label = False, 
+        points_max = True
         ):
         
     ax.plot(ds['roti'], **args, 
@@ -40,12 +41,19 @@ def plot_roti_points(
         
         df1 = pb.time_dataset(ds, 'max', times)
         
-        ax.plot(df1, 
-                color = 'k',
-                # marker = 'o', 
-                markersize = 3, 
-                # linestyle = 'none',
-                label = 'Valor máximo')
+        if points_max:
+            extra_args = dict(marker = 'o', 
+                              linestyle = 'none', 
+                              markersize = 3)
+        else:
+            extra_args = dict(markersize = 3)
+        
+        ax.plot(
+            df1, 
+            color = 'k',                
+            label = 'Valor máximo',
+            **extra_args
+            )
         
         ax.set(yticks = np.arange(0, vmax + 2, 1))
         
