@@ -128,7 +128,7 @@ def plot_roti_timeseries(
             axes, 
             start,  
             local_term,
-            y = vmax + 0.5
+            y = vmax 
             )
     
     for i, ax in enumerate(axes):

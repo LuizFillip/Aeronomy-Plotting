@@ -35,7 +35,8 @@ def load_tec(infile, values = True):
 
 def plot_matrix(
         ax, infile, 
-        step = 5, vmax = 100,
+        step = 5, 
+        vmax = 100,
         colorbar = True):
     
     lon, lat, values = load_tec(infile)
@@ -61,7 +62,13 @@ def plot_matrix(
 
 
 
-def plot_tec_map(dn, ax = None, vmax = 60, colorbar = True):
+def plot_tec_map(
+        dn, 
+        ax = None, 
+        step = 1,
+        vmax = 60, 
+        colorbar = True
+        ):
     
     if ax is None:
         fig, ax = plt.subplots(
@@ -77,6 +84,7 @@ def plot_tec_map(dn, ax = None, vmax = 60, colorbar = True):
      
     img = plot_matrix(
         ax, path,
+        step = step, 
         vmax = vmax, 
         colorbar= colorbar
         )
@@ -88,7 +96,7 @@ def plot_tec_map(dn, ax = None, vmax = 60, colorbar = True):
         degress = None
         )
     
-    # corners = gg.plot_rectangles_regions(ax, dn.year)
+    gg.plot_rectangles_regions(ax, dn.year)
     lon, lat = gg.terminator2(dn, 18)
     
     ax.scatter(lon, lat, c = 'k', s = 5)

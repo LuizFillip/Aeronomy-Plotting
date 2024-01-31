@@ -40,20 +40,18 @@ def multi_layout(nrows = 4):
 
 def plot_roti_tec_variation(df, start, dn):
     
-    
     fig, ax_map, axes = multi_layout(nrows = 4)
     
-    pl.plot_tec_map(dn, ax = ax_map)
+    pl.plot_tec_map(dn, ax = ax_map, vmax = 20)
     
-    
-    local_term = gg.first_edge(year = dn.year)
+    local_terminator = gg.first_edge(year = dn.year)
     
     pl.plot_roti_timeseries(
         axes, 
         df, 
         dn, 
         start,  
-        local_term,
+        local_terminator,
         right_ticks = True
         )
 
@@ -67,7 +65,7 @@ def plot_roti_tec_variation(df, start, dn):
 
 def main():
     
-    start = dt.datetime(2013, 1, 7, 22)
+    start = dt.datetime(2022, 7, 24, 20)
     
     df =  pb.concat_files(
         start, 
@@ -76,7 +74,7 @@ def main():
     
     df = b.sel_times(df, start)
             
-    dn = range_time(start, 550)
+    dn = range_time(start, 450)
  
     plot_roti_tec_variation(df, start, dn)
     

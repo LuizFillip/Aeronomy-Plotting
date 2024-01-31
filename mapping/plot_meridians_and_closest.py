@@ -53,6 +53,7 @@ def plot_meridians_and_closest(dn):
           s = 150,
           label = 'Intersecção com equador'
           )
+      print(nx, ny)
       
       ax.scatter(
           glon, glat, 
