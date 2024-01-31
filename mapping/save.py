@@ -11,16 +11,18 @@ def range_time(start, mi):
     return start + dt.timedelta(minutes = mi)
 
 
-def save_maps_with_ipp(df, start):
+def save_frames(df, start, hours):
     
     '''
     See 'plot_ipp_variation_with_terminator'
     '''
+    dn_date = start.strftime('%Y%m%d')
     
-    folder = start.strftime('%Y%m%d')
+    folder = 'database/' + dn_date 
+    
     b.make_dir(folder)
-    
-    for minute in tqdm(range(0, 721)):
+    shift = hours * 60 + 1 
+    for minute in tqdm(range(0, shift), dn_date):
         
         plt.ioff()
         dn = range_time(start, minute)
@@ -35,18 +37,22 @@ def save_maps_with_ipp(df, start):
         plt.clf()   
         plt.close()
 
-def run(start):
+def run(start, midnight = True):
     
     
     df =  pb.concat_files(
         start, 
         root = 'D:\\'
         )
+    if midnight:
+        hours = 8
+    else:
+        hours = 12
+        
+    df = b.sel_times(df, start, hours = hours)
     
-    df = b.sel_times(df, start)
+    save_frames(df, start, hours)
     
-    save_maps_with_ipp(df, start)
-    
-# start = dt.datetime(2014, 2, 9, 20)
+start = dt.datetime(2022, 7, 25, 0)
 
-# run(start)
+run(start)
