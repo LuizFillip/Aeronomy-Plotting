@@ -30,7 +30,7 @@ def plot_collision_freq(ax, ds):
     ax.plot(total, total.index, label = 'Total')
     
     ax.set(
-        xscale ='log',  
+        # xscale ='log',  
         xlabel = b.y_label('nueff'),
         ylim = [150, 500]
         )
@@ -48,6 +48,7 @@ def plot_recombination(ax, ds):
         
         df = ds.loc[ds['hem'] == col, 'R']
         out.append(df)
+        
         ax.plot(df, df.index, 
                 label = names[i])
     
@@ -57,7 +58,7 @@ def plot_recombination(ax, ds):
             label  = names[-1])
     
     ax.set(
-        xscale ='log', 
+        # xscale ='log', 
         ylabel = 'Altura de Apex',
         xlabel = b.y_label('R')
         )
@@ -83,7 +84,10 @@ def plot_local_profiles(ax, dn):
         linestyle = '--', 
         label = 'Perfil local\nno equador')
     
-    ax1.set(xscale ='log', xlabel = b.y_label('nuR'))
+    ax1.set(
+        xscale ='log', 
+        xlabel = b.y_label('nuR')
+        )
     ax1.legend(loc = 'upper right')
     ax1.axvline(0, lw = 1, linestyle = ':')
     

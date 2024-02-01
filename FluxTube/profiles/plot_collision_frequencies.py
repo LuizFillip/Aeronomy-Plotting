@@ -66,4 +66,4 @@ def quick_view():
     
     return fig
 
-quick_view()
+# quick_view()

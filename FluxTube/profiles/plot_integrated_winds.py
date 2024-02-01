@@ -15,12 +15,12 @@ def plot_integrated_winds(ax, ds):
     for i, col in enumerate(['north', 'south']):
         name = names[i]
         df = ds.loc[ds['hem'] == col].dropna()
-        zon.append(df['zon'])
-        mer.append(df['mer'])
+        zon.append(df['zon_ef'])
+        mer.append(df['mer_parl'])
         UL.append(df['mer_perp'])
         
-        ax[0].plot(df['mer'], df.index, label = name)
-        ax[1].plot(df['zon'], df.index, label = name)
+        ax[0].plot(df['mer_parl'], df.index, label = name)
+        ax[1].plot(df['zon_ef'], df.index, label = name)
         ax[i].axvline(0, linestyle = '--')
     
     
@@ -29,11 +29,11 @@ def plot_integrated_winds(ax, ds):
     ax[0].plot(total(mer), df.index, label = names[-1])
     
     ax[0].set(ylabel = 'Altura de Apex (km)', 
-              xlim = [-100, 200],
+              xlim = [-50, 150],
               xlabel = 'Velocidade meridional (m/s)')
     
     ax[1].set(ylim = [150, 500],
-              xlim = [-100, 200],
+              xlim = [-50, 150],
               xlabel = 'Velocidade zonal (m/s)')
     
     ax[2].plot(total(UL), df.index, lw = 2)
@@ -62,7 +62,7 @@ def plot_local_winds(ax):
     
     ax[1].legend(loc = 'lower right')
 
-def plot_winds_profiles():
+def plot_winds_profiles(ds):
     
     fig, ax = plt.subplots(
         dpi = 300,
@@ -78,7 +78,7 @@ def plot_winds_profiles():
     
     plot_local_winds(ax)
     
-    ds = pl.load_fluxtube()
+
     plot_integrated_winds(ax, ds)
     
     ax[0].legend(loc = 'lower right')
@@ -88,8 +88,9 @@ def plot_winds_profiles():
     return fig
 
 
-fig = plot_winds_profiles()
+ds = pl.load_fluxtube()
 
+fig = plot_winds_profiles(ds)
 
 FigureName = 'zonal_meridional_winds'
 
