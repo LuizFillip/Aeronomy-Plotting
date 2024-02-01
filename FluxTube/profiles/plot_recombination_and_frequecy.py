@@ -32,7 +32,7 @@ def plot_collision_freq(ax, ds):
     ax.set(
         xscale ='log',  
         xlabel = b.y_label('nueff'),
-        ylim = [100, 500]
+        ylim = [150, 500]
         )
     
     ax.axvline(0, color = 'k', linestyle = '--')
@@ -73,7 +73,7 @@ def plot_local_profiles(ax, dn):
     df = m.altrange_models(**m.kargs(dn, hmin = 80))
     df = ae.conductivity_parameters(df, other_conds = True)
 
-    ax1 = ax[0] #.twiny()
+    ax1 = ax[0].twiny()
     
     ax1.plot(
         df['R'],
@@ -81,13 +81,13 @@ def plot_local_profiles(ax, dn):
         lw = 2,
         color = 'k', 
         linestyle = '--', 
-        label = 'Perfil local no equador')
+        label = 'Perfil local\nno equador')
     
     ax1.set(xscale ='log', xlabel = b.y_label('nuR'))
-    
+    ax1.legend(loc = 'upper right')
     ax1.axvline(0, lw = 1, linestyle = ':')
     
-    ax1 = ax[1] #.twiny()
+    ax1 = ax[1].twiny()
     
     ax1.plot(
         df['nui'],
@@ -103,7 +103,7 @@ def plot_local_profiles(ax, dn):
         )
     
     ax1.axvline(0, lw = 1, linestyle = ':')
-    ax1.legend(loc = 'center right')
+    
     return 
 
 
@@ -124,6 +124,7 @@ def plot_ft_density_profiles(ds):
     plt.subplots_adjust(wspace = 0.05)
     
     dn = dt.datetime(2013, 12, 24, 22)
+    
     plot_local_profiles(ax, dn)
     
     plot_recombination(ax[0], ds)
@@ -137,12 +138,12 @@ ds = pl.load_fluxtube()
 
 fig = plot_ft_density_profiles(ds)
 
-# FigureName = 'recombination_frequency'
+FigureName = 'recombination_frequency'
 
-# fig.savefig(
-#     b.LATEX(FigureName, folder = 'profiles'),
-#     dpi = 400
-#     )
+fig.savefig(
+    b.LATEX(FigureName, folder = 'profiles'),
+    dpi = 400
+    )
 
 
 
