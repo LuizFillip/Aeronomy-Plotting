@@ -32,7 +32,7 @@ def plot_integrated_winds(ax, ds):
               xlim = [-100, 200],
               xlabel = 'Velocidade meridional (m/s)')
     
-    ax[1].set(ylim = [100, 500],
+    ax[1].set(ylim = [150, 500],
               xlim = [-100, 200],
               xlabel = 'Velocidade zonal (m/s)')
     

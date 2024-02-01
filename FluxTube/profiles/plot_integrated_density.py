@@ -151,4 +151,3 @@ def plot_ft_density_profiles(ds):
 #     )
 
 
-# b.y_label('L')

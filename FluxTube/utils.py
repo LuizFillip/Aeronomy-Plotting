@@ -7,7 +7,7 @@ dn = '2013-12-24 22:00:00'
 
 def load_fluxtube(dn = dn):
     
-    infile = "20131224sep.txt"
+    infile = "plotting/FluxTube/data/20131224sep.txt"
     
     df = pd.read_csv(infile, index_col = 0)
     
