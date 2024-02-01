@@ -28,7 +28,8 @@ def plot_roti_points(
     ax.plot(ds['roti'], **args, 
             label = 'Pontos de ROTI')
     
-    vmax = np.ceil(ds['roti'].values.max())
+    # vmax = np.ceil(ds['roti'].values.max())
+    vmax = 2
     
     if len(ds) != 0:
         times = pb.time_range(ds)
@@ -42,9 +43,10 @@ def plot_roti_points(
         df1 = pb.time_dataset(ds, 'max', times)
         
         if points_max:
-            extra_args = dict(marker = 'o', 
-                              linestyle = 'none', 
-                              markersize = 3)
+            extra_args = dict(
+                marker = 'o', 
+                linestyle = 'none', 
+                markersize = 3)
         else:
             extra_args = dict(markersize = 3)
         

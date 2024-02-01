@@ -11,18 +11,25 @@ def range_time(start, mi):
     return start + dt.timedelta(minutes = mi)
 
 
+def path_in(start):
+    dn_date = start.strftime('%Y%m%d')
+    
+    return 'database/' + dn_date 
+    
+    
+
 def save_frames(df, start, hours):
     
     '''
     See 'plot_ipp_variation_with_terminator'
     '''
-    dn_date = start.strftime('%Y%m%d')
     
-    folder = 'database/' + dn_date 
-    
+    folder =  path_in(start)
+
     b.make_dir(folder)
     shift = hours * 60 + 1 
-    for minute in tqdm(range(0, shift), dn_date):
+    
+    for minute in tqdm(range(0, shift), folder):
         
         plt.ioff()
         dn = range_time(start, minute)
@@ -55,4 +62,13 @@ def run(start, midnight = True):
     
 start = dt.datetime(2022, 7, 25, 0)
 
-run(start)
+# run(start)
+
+path_in = path_in(start)
+path_out = 'movies/'
+
+b.images_to_movie(
+        path_in, 
+        path_out,
+        fps = 12
+        )
