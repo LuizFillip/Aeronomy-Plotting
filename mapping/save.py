@@ -64,23 +64,20 @@ def run(start, midnight = True):
 # start = dt.datetime(2022, 7, 25, 0)
 
 
-
-
-
 file = open('dias_tecmap.txt').readlines()
 
 files = [pd.to_datetime(f[15:]) for f in file]
 
 
-for start in files[2:]:
-    # try:
-    run(start)
-
-    b.images_to_movie(
-            path_in = path_in(start), 
-            path_out = 'movies/',
-            fps = 12
-            )
-    # except:
-    #     continue 
+for start in files[4:]:
+    try:
+        run(start)
+    
+        b.images_to_movie(
+                path_in = path_in(start), 
+                path_out = 'movies/',
+                fps = 12
+                )
+    except:
+        continue 
     
