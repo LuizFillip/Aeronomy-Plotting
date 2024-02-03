@@ -138,16 +138,17 @@ def plot_ft_density_profiles(ds):
     b.plot_letters(ax, y = 1.05, x = 0.01)
     return fig
 
-ds = pl.load_fluxtube()
-
-fig = plot_ft_density_profiles(ds)
-
-FigureName = 'recombination_frequency'
-
-fig.savefig(
-    b.LATEX(FigureName, folder = 'profiles'),
-    dpi = 400
-    )
+def main():
+    ds = pl.load_fluxtube()
+    
+    fig = plot_ft_density_profiles(ds)
+    
+    FigureName = 'recombination_frequency'
+    
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'profiles'),
+        dpi = 400
+        )
 
 
 

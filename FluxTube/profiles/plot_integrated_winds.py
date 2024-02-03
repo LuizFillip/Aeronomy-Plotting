@@ -87,14 +87,14 @@ def plot_winds_profiles(ds):
     
     return fig
 
-
-ds = pl.load_fluxtube()
-
-fig = plot_winds_profiles(ds)
-
-FigureName = 'zonal_meridional_winds'
-
-fig.savefig(
-    b.LATEX(FigureName, folder = 'profiles'),
-    dpi = 400
-    )
+def main():
+    ds = pl.load_fluxtube()
+    
+    fig = plot_winds_profiles(ds)
+    
+    FigureName = 'zonal_meridional_winds'
+    
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'profiles'),
+        dpi = 400
+        )
