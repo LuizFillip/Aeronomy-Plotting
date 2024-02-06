@@ -5,17 +5,21 @@ import datetime as dt
 from tqdm import tqdm 
 import PlasmaBubbles as pb 
 import pandas as pd 
-
+import os 
 
 def range_time(start, mi):
         
     return start + dt.timedelta(minutes = mi)
 
 
-def path_in(start):
-    dn_date = start.strftime('%Y%m%d')
+def path_in(start = None):
+    root = 'database/TEC/'
     
-    return 'database/' + dn_date 
+   
+    if start is None:
+        return root
+    else:
+        return root + start.strftime('%Y%m%d')
     
     
 
@@ -43,35 +47,26 @@ def save_frames(df, start, hours):
         fig.savefig(f'{folder}/{name}')
             
         plt.clf()   
-        plt.close()
+        plt.close()    
+
+
+
 
 def run(start, midnight = True):
     
-    
-    df =  pb.concat_files(
-        start, 
-        root = 'D:\\'
-        )
-    if midnight:
-        hours = 9
-    else:
-        hours = 12
-        
-    df = b.sel_times(df, start, hours = hours)
-    
-    save_frames(df, start, hours)
-    
-# start = dt.datetime(2022, 7, 25, 0)
-
-
-file = open('dias_tecmap.txt').readlines()
-
-files = [pd.to_datetime(f[15:]) for f in file]
-
-
-for start in files[4:]:
     try:
-        run(start)
+        df =  pb.concat_files(
+            start, 
+            root = 'D:\\'
+            )
+        if midnight:
+            hours = 10
+        else:
+            hours = 12
+            
+        df = b.sel_times(df, start, hours = hours)
+        
+        save_frames(df, start, hours)
     
         b.images_to_movie(
                 path_in = path_in(start), 
@@ -79,5 +74,19 @@ for start in files[4:]:
                 fps = 12
                 )
     except:
-        continue 
+        print(start)
+        pass
+
+
+file = open('dias_tecmap.txt').readlines()
+
+files = [pd.to_datetime(f[15:]) for f in file]
+
+
+folder_created = os.listdir(path_in())
+
+for file in files:
+    folder_name = file.strftime('%Y%m%d')
     
+    if folder_name not in folder_created:
+        run(file, midnight = True)
