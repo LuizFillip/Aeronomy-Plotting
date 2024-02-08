@@ -79,6 +79,7 @@ def plot_epbs_occurrences_roti(
         yticks = list(range(4)),
         ylabel = 'ROTI (TECU/min)'
         )
+    
     delta = dt.timedelta(hours = 2.1)
     ax[1].text(
         dusk + delta, 
@@ -125,11 +126,9 @@ def plot_epbs_occurrences_roti(
 def single_plot(
         dn, 
         cols = [8, 7, 6, 5], 
-        hours = 13, 
-        factor = 8
+        hours = 13
         ):
         
-    infile = f'database/epbs/longs/{dn.year}.txt'
     infile = 'database/longitudes_all_years.txt'
     ds = b.sel_times(
             b.load(infile),
@@ -142,16 +141,15 @@ def single_plot(
             cols
         )
     
-    # plt.show()
+    plt.show()
     
     return fig
 
 
-# dn = dt.datetime(2022, 7, 24, 20)
+# dn = dt.datetime(2020, 2, 28, 20)
 
 # fig = single_plot(
 #         dn, 
-#         cols = [8, 7, 6, 5], 
-#         hours = 11, 
-#         factor = 8
+#         cols = [8, 5], 
+#         hours = 11
 #         )
