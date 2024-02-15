@@ -116,7 +116,7 @@ def main():
     
     dn = dt.datetime(2013, 8, 28, 3, 0)
     
-    df = load_tec(get_path(dn))
+    df = load_tec(b.get_path(dn))
     
     fig = plot_tec_map(dn, ax = None)
 

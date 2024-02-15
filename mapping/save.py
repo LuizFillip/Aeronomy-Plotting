@@ -52,41 +52,46 @@ def save_frames(df, start, hours):
 
 
 
-def run(start, midnight = True):
+def run(start):
     
-    try:
-        df =  pb.concat_files(
-            start, 
-            root = 'D:\\'
-            )
-        if midnight:
-            hours = 10
-        else:
-            hours = 12
-            
-        df = b.sel_times(df, start, hours = hours)
+    # try:
+    df =  pb.concat_files(
+        start, 
+        root = 'D:\\'
+        )
+    if start.hour == 0:
+        hours = 10
+    else:
+        hours = 12
         
-        save_frames(df, start, hours)
+    df = b.sel_times(df, start, hours = hours)
     
-        b.images_to_movie(
-                path_in = path_in(start), 
-                path_out = 'movies/',
-                fps = 12
-                )
-    except:
-        print(start)
-        pass
+    save_frames(df, start, hours)
 
+    b.images_to_movie(
+            path_in = path_in(start), 
+            path_out = 'movies/',
+            fps = 12
+            )
+    # except:
+    #     print(start)
+    #     pass
 
-file = open('dias_tecmap.txt').readlines()
-
-files = [pd.to_datetime(f[15:]) for f in file]
-
-
-folder_created = os.listdir(path_in())
-
-for file in files:
-    folder_name = file.strftime('%Y%m%d')
+def main():
     
-    if folder_name not in folder_created:
-        run(file, midnight = True)
+    file = open('dias_tecmap.txt').readlines()
+    
+    files = [pd.to_datetime(f[15:]) for f in file]
+    
+    
+    folder_created = os.listdir(path_in())
+    
+    for file in files:
+        folder_name = file.strftime('%Y%m%d')
+        
+        if folder_name not in folder_created:
+            run(file, midnight = True)
+            
+            
+# start = dt.datetime(2019, 9, 7)
+# run(start)

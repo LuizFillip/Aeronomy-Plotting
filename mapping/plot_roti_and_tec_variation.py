@@ -26,23 +26,20 @@ def multi_layout(nrows = 4):
         projection = ccrs.PlateCarree()
         )
     
-    ax1 = fig.add_subplot(gs[0, nrows:])
+
+    axes = []
+    for row in range(4):
     
-    args = dict(sharey = ax1)
-    
-    ax2 = fig.add_subplot(gs[1, nrows:], **args)
-    ax3 = fig.add_subplot(gs[2, nrows:], **args)
-    ax4 = fig.add_subplot(gs[3, nrows:], **args)
-    axes = [ax1, ax2, ax3, ax4]
-    
+        axes.append(fig.add_subplot(gs[row, nrows:]))
+        
     return fig, ax_map, axes
 
 
-def plot_roti_tec_variation(df, start, dn):
+def plot_roti_tec_variation(df, start, dn, vmax = 10):
     
     fig, ax_map, axes = multi_layout(nrows = 4)
     
-    pl.plot_tec_map(dn, ax = ax_map, vmax = 20)
+    pl.plot_tec_map(dn, ax = ax_map, vmax = vmax)
     
     local_terminator = gg.first_edge(year = dn.year)
     
@@ -76,12 +73,8 @@ def main():
   
     dn = range_time(start, 450)
     
-    
- 
     plot_roti_tec_variation(df, start, dn)
-    # 
-    # plt.show()
+ 
     
     
-    
-# main()
+main()

@@ -83,8 +83,9 @@ def plot_lines(
     key = list(local_term.keys())
     
     for i, ax in enumerate(axes):
-    
-        llon, llat = local_term[key[i]]
+        
+        ref_long = key[i]
+        llon, llat = local_term[ref_long]
 
         dusk = gg.dusk_time(
                 start,  
@@ -94,8 +95,8 @@ def plot_lines(
                 )
         
         ax.axvline(dusk, lw = 2)
-        
-        midnight = gg.local_midnight(llon, llat, start)
+        print(ref_long)
+        midnight = gg.local_midnight(start, ref_long + 5)
         
         ax.axvline(
             midnight, 
@@ -121,9 +122,6 @@ def plot_roti_timeseries(
         right_ticks = False
         ):
     
-    # try:
-    #     vmax = int(np.ceil(df['roti'].max()))
-    # except:
     vmax  = 2
         
     if len(np.unique(df.index.date)) == 1:
