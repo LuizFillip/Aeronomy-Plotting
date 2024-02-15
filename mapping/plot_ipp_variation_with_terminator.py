@@ -1,8 +1,6 @@
-import cartopy.crs as ccrs
 import GEO as gg
 import matplotlib.pyplot as plt
 import datetime as dt 
-from matplotlib.gridspec import GridSpec
 import plotting as pl
 import base as b
 import PlasmaBubbles as pb 
@@ -11,32 +9,7 @@ import numpy as np
 
 b.config_labels(fontsize = 25)
 
-def multi_layout(nrows = 4, year = 2014):
-    
-    fig = plt.figure(
-        dpi = 300, 
-        figsize = (18, 7)
-        )
-    
-    gs = GridSpec(nrows, 8)
-    
-    plt.subplots_adjust(wspace = 2.2, hspace = 0.1)
-    
-    ax_map = fig.add_subplot( gs[:, :nrows], 
-        projection = ccrs.PlateCarree()
-        )
-    
-    gg.map_attrs(ax_map, year, grid = False)
-    
-    ax1 = fig.add_subplot(gs[0, nrows:])
-    args = dict(sharey = ax1)
-    
-    ax2 = fig.add_subplot(gs[1, nrows:], **args)
-    ax3 = fig.add_subplot(gs[2, nrows:], **args)
-    ax4 = fig.add_subplot(gs[3, nrows:], **args)
-    axes = [ax1, ax2, ax3, ax4]
-    
-    return fig, ax_map, axes
+
 
 
 def plot_ipp_on_map(ax, ds, corners, colorbar = False):
@@ -95,7 +68,7 @@ def plot_lines(
                 )
         
         ax.axvline(dusk, lw = 2)
-        print(ref_long)
+
         midnight = gg.local_midnight(start, ref_long + 5)
         
         ax.axvline(
@@ -194,7 +167,7 @@ def plot_roti_timeseries(
 
 def plot_ipp_variation(df, start, dn, twilight = 12):
     
-    fig, ax_map, axes = multi_layout(
+    fig, ax_map, axes = b.multi_layout(
         nrows = 4, year = start.year)
     
    
@@ -234,9 +207,9 @@ def plot_ipp_variation(df, start, dn, twilight = 12):
     
     return fig
     
-def range_time(start, mi):
+def range_time(start, minutes):
         
-    return start + dt.timedelta(minutes = mi)
+    return start + dt.timedelta(minutes = minutes)
 
 
 def single_view(start):

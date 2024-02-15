@@ -114,7 +114,7 @@ def plot_tec_map(
 
 def main():
     
-    dn = dt.datetime(2013, 8, 28, 3, 0)
+    dn = dt.datetime(2022, 8, 28, 3, 0)
     
     df = load_tec(b.get_path(dn))
     
