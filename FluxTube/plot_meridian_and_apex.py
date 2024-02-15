@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from plotting import (
     plot_apex_vs_latitude,
     plot_mag_meridians, 
-    plot_receivers_coords
     )
 from matplotlib.gridspec import GridSpec
 import base as b 
@@ -37,12 +36,12 @@ def plot_meridian_and_apex(year = 2013):
     
     plot_mag_meridians(ax2, year)
     
-    plot_receivers_coords(
-            ax2, 
-            year, 
-            distance = None,
-            text = False
-            )
+    # plot_receivers_coords(
+    #         ax2, 
+    #         year, 
+    #         distance = None,
+    #         text = False
+    #         )
     
     for i, a in enumerate([ax1, ax2]):
         l = b.chars()[i]

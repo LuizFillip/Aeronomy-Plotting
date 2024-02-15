@@ -1,7 +1,6 @@
 import datetime as dt
 import plotting as pl 
 import base as b
-import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import models as m 

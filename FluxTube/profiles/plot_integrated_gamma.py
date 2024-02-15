@@ -30,8 +30,6 @@ def plot_integrated_parameters(ax, ds):
     ax.axvline(0, linestyle = '--')
     ax.axhline(300, linestyle = '--')
     
-    
-    
     ax.set(xlim = [-3, 3], 
            xticks = np.arange(-3, 4, 1),
            ylim = [150, 500], 
@@ -44,8 +42,6 @@ def local_gamma(ds):
     infile = 'plotting/FluxTube/data/winds.txt'
      
     wd = pd.read_csv(infile, index_col = 0)
-    
-    
     
     df = m.altrange_models(**m.kargs(dn, hmin = 80))
     df = ae.conductivity_parameters(df, other_conds = True)

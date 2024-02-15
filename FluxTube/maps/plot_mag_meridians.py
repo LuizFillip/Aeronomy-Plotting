@@ -6,7 +6,7 @@ from FluxTube import Apex
 import numpy as np
 
 
-b.config_labels(fontsize = 25)
+b.config_labels(fontsize = 35)
 
 def plot_meridian(
         ax, 
@@ -23,8 +23,8 @@ def plot_meridian(
         glat, glon = gg.sites[site]['coords']  
         # print(glat, glon)
         ax.scatter(glon, glat,  s = 300, 
-                   marker = '^', c = 'b', 
-                   label = 'São Luís')
+                    marker = '^', c = 'b', 
+                    label = 'São Luís')
             
         nx, ny, x, y = gg.load_meridian(year, site)
         
@@ -37,13 +37,6 @@ def plot_meridian(
         
         line, = ax.plot(x, y, color = 'k')
 
-        ax.scatter(nx, ny,
-            marker = "^", 
-            s = 300, 
-            c = 'r',
-            label = 'Intersecção com o Equador'
-            )
-        
         
         x1, y1 = gg.limit_hemisphere(
                 x, y, nx, ny, rlat, 
@@ -55,7 +48,7 @@ def plot_meridian(
             linestyle = '--', 
             lw = 3, 
             color = line.get_color(), 
-            label = 'Meridiano magnético'
+            # label = 'Meridiano magnético'
             )
         
     return None        
@@ -72,7 +65,7 @@ def plot_mag_meridians(
         )
     
     lat_lims = dict(min = -20, max = 20, stp = 10)
-    lon_lims = dict(min = -55, max = -30, stp = 10) 
+    lon_lims = dict(min = -60, max = -30, stp = 10) 
 
     gg.map_attrs(
         ax, year, 
