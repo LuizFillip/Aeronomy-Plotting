@@ -63,11 +63,6 @@ def plot_elevation(ax, el):
            ylim = [20, 60], 
            yticks = np.arange(20, 70, 10))
 
-
-
-
-
-
 def plot_roti_parameters(dn, station, prn):
     
     fig, ax = plt.subplots(
@@ -104,10 +99,10 @@ dn = dt.datetime(2013, 12, 24)
     
 fig = plot_roti_parameters(dn, station, prn)
 
-FigureName = 'ROTI_parameters'
+# FigureName = 'ROTI_parameters'
 
-fig.savefig(
-    b.LATEX(FigureName, folder = 'timeseries'),
-    dpi = 400
-    )
+# fig.savefig(
+#     b.LATEX(FigureName, folder = 'timeseries'),
+#     dpi = 400
+#     )
 

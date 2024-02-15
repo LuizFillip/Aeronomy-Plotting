@@ -9,7 +9,7 @@ import os
 
 def load_data():
     
-    dn = dt.datetime(2013, 4, 5, 20)
+    dn = dt.datetime(2013, 12, 24, 20)
         
     
     df = pb.concat_files(
@@ -32,4 +32,16 @@ def load_data():
 
 
 
-load_data()
+# load_data()
+
+# dn = dt.datetime(2013, 12, 24, 20)
+    
+
+# df = pb.concat_files(
+#         dn, 
+#         root = 'D:\\' ,
+#         days = 1
+#         )
+
+
+# df

@@ -117,7 +117,8 @@ def plot_annually_epbs_and_indices(
 # df = c.concat_results('saa')
 df = c.epbs(geo = True)
 
-fig = plot_annually_epbs_and_indices(df)
+# fig = plot_annually_epbs_and_indices(df)
 
-fig.savefig(b.LATEX('annual_variation', folder = 'bars'))
+# fig.savefig(b.LATEX('annual_variation', folder = 'bars'))
 
+df

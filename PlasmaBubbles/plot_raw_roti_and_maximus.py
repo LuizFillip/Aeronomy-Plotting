@@ -121,8 +121,6 @@ def plot_raw_roti_maximus_events(dn):
     
     ax[1].axvline(dusk, lw = 2, linestyle = '--')
     
-    
-    
     # df = pb.load_raw_in_sector(dn)
     
     dn = dt.datetime(2013, 12, 24, 20)
@@ -137,7 +135,8 @@ def plot_raw_roti_maximus_events(dn):
     df =  df.loc[(df['lon'] > lon_min) ]
     
     
-    df1 = plot_roti_points(ax[0], df, threshold = 0.4, label = True)
+    df1 = plot_roti_points(ax[0], df,
+                           threshold = 0.4, label = True)
     
     plot_occurrence_events(ax[1], df1)
     

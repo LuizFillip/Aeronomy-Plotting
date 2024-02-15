@@ -59,7 +59,7 @@ def plot_sunset_midnight_events(ds):
         )
     
     ax[1].set(xlabel = 'Months')
-    
+    plt.show()
     return fig
 
 ds = c.epbs(class_epb = None)
@@ -70,7 +70,7 @@ fig = plot_sunset_midnight_events(ds)
 
 FigureName = 'seasonal_midnight_sunset'
 
-fig.savefig(
-    b.LATEX(FigureName, folder = 'bars'),
-    dpi = 400
-    )
+# fig.savefig(
+#     b.LATEX(FigureName, folder = 'bars'),
+#     dpi = 400
+#     )
