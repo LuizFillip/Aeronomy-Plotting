@@ -31,7 +31,7 @@ def plot_gamma(ax, df):
         ylim = [0, 4], 
         yticks = np.arange(0, 5, 1),
         ylabel = b.y_label('gamma'),
-        xlabel = 'years',
+        xlabel = 'Anos',
         xlim = [df.index[0], df.index[-1]]
         )
     
@@ -68,9 +68,10 @@ def plot_ratio(ax, df):
     
     ax.axhline(1, linestyle = '--')
     
+    vmin, vmax, step = 0.8, 1.2, 0.1
     ax.set(
-        ylim = [0.89, 1], 
-        yticks = np.arange(0.8, 1.1, 0.05),
+        ylim = [vmin, vmax], 
+        yticks = np.arange(vmin, vmax + step, step),
         ylabel = b.y_label('ratio')
         )
     
@@ -116,8 +117,8 @@ def plot_vzp(ax, df):
         ylabel = b.y_label('vp')
         )
     
-    ax.axhline(df.max(), linestyle = '--')
-    ax.axhline(df.min(), linestyle = '--')
+    # ax.axhline(df.max(), linestyle = '--')
+    # ax.axhline(df.min(), linestyle = '--')
     
 def plot_wind(ax, df):
     
@@ -134,9 +135,10 @@ def plot_wind(ax, df):
         lw = 2
         )
     
+    vmin, vmax, step = -20, 20, 5
     ax.set(
-        ylim = [-5, 15], 
-        yticks = np.arange(-5, 20, 5),
+        ylim = [vmin, vmax], 
+        yticks = np.arange(vmin, vmax + step, step),
         ylabel = b.y_label('UL')
         )
     
@@ -145,9 +147,7 @@ def plot_wind(ax, df):
     ax.axhline(df.min(), linestyle = '--')
 
 
-def plot_annual_GRT(
-        df
-        ):
+def plot_annual_GRT(df):
 
     fig, ax = plt.subplots(
         sharex = True,
@@ -169,24 +169,33 @@ def plot_annual_GRT(
     
     ax[0].set(title = df.columns.name)
     
+    
     b.plot_letters(ax, y = 0.8, x = 0.02, 
                    fontsize = 20)
     return fig
 
 
 def main():
-    PATH_GAMMA = 'database/gamma/p_saa.txt'
+    PATH_GAMMA = 'database/gamma/p_jic.txt'
     
     df = b.load(PATH_GAMMA)
-    
-    df = df.loc[df.index.time == dt.time(22, 0)]
+
+    df = df.loc[df.index.time == dt.time(0, 0)]
     
     fig = plot_annual_GRT(df)
     
     FigureName = 'annual_grt_parameters'
     
-    fig.savefig(b.LATEX(
-        FigureName, 
-        folder = 'timeseries'), dpi = 400)
+    # fig.savefig(b.LATEX(
+    #     FigureName, 
+    #     folder = 'timeseries'), dpi = 400)
+
+
 
 # main()
+
+
+# df = df.loc[df.index.time == dt.time(22, 0)]
+
+
+# df['ratio']

@@ -48,7 +48,9 @@ def plot_epbs_occurrences_roti(
         
         ax[0].axhline(
             the, 
-            color = 'k', lw = 2, linestyle = '--'
+            color = 'k', 
+            lw = 2, 
+            linestyle = '--'
             )
         
         ds1 = pb.events_by_longitude(ds[col], the)
@@ -112,7 +114,6 @@ def plot_epbs_occurrences_roti(
         transform = ax[0].transAxes
         )
     
-    
     for limit in [0, 1]:
         ax[1].axhline(
             limit, 
@@ -129,7 +130,7 @@ def single_plot(
         hours = 13
         ):
         
-    infile = 'database/longitudes_all_years.txt'
+    infile = 'longitudes_all_years.txt'
     ds = b.sel_times(
             b.load(infile),
             dn, 
@@ -141,15 +142,54 @@ def single_plot(
             cols
         )
     
-    plt.show()
+    # plt.show()
     
     return fig
 
 
-# dn = dt.datetime(2020, 2, 28, 20)
+def save_img(fig, save_in):
+    
+    
+    fig.savefig(
+        save_in, 
+        dpi = 300, 
+        pad_inches = 0, 
+        bbox_inches = "tight"
+        )
+    
+    return 
 
-# fig = single_plot(
-#         dn, 
-#         cols = [8, 5], 
-#         hours = 11
-#         )
+
+save_in = 'D:\\img\\2019\\'
+
+def save_frames():
+    
+    for day in range(365):
+    
+        delta = dt.timedelta(days = day)
+        
+        plt.ioff()
+        
+        dn = dt.datetime(2019, 1, 1, 20) + delta
+        
+        fig = single_plot(
+                dn, 
+                cols = [8], 
+                hours = 11
+                )
+        
+        name = dn.strftime('%j')
+        print(name)
+        save_img(fig, f'{save_in}{name}')
+        
+        plt.clf()   
+        plt.close()
+        
+        
+dn = dt.datetime(2019, 2, 7, 20)
+
+fig = single_plot(
+        dn, 
+        cols = [8], 
+        hours = 11
+        )

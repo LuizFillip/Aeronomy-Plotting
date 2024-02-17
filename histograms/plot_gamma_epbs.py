@@ -1,12 +1,14 @@
-import events as ev
 import base as b 
+import core as c
 import matplotlib.pyplot as plt 
 import numpy as np 
 
-
-df = b.load('interval.txt')
-
 b.config_labels()
+
+site = 'jic'
+df = c.concat_results(site)
+
+
 
 args = dict(
      facecolor = 'lightgrey', 
@@ -68,6 +70,9 @@ def plot_gamma_epbs_count(
     
     return fig
     
-arr = df.values.ravel()
-fig = plot_gamma_epbs_count(arr)
+# arr = df.values.ravel()
+# fig = plot_gamma_epbs_count(arr)
 
+df = df.loc[df.index.year == 2019]
+
+df['gamma'].plot()
