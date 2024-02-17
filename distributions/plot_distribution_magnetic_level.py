@@ -6,10 +6,13 @@ import plotting as pl
 
 
 b.config_labels(fontsize = 25)
-def plot_geomag_distribution(
+
+
+def plot_storm_levels_distribution(
         df, 
         level = 86, 
-        fontsize = 30 
+        fontsize = 30,
+        translate = False
         ):
     nrows = 4
     
@@ -90,10 +93,14 @@ def plot_geomag_distribution(
         loc = "upper center"
         )
     
-    
+    if translate:
+        ylabel = 'Probabilidade de ocorrência das EPBs'
+    else:
+        ylabel = 'EPB occurrence Probability'
+        
     fig.text(
-        0.05, 0.35, 
-        "EPB occurrence probability", 
+        0.05, 0.25, 
+        ylabel, 
         fontsize = fontsize, 
         rotation = 'vertical'
         )
@@ -115,16 +122,18 @@ def main():
         df['f107a'], parts = 2
         )
         
-    fig = plot_geomag_distribution(df, level = limit)
+    fig = plot_storm_levels_distribution(
+        df, level = limit, 
+        translate = True)
     
     
     FigureName = 'seasonal_quiet_disturbed'
     
     fig.savefig(
         b.LATEX(FigureName, 
-                folder = 'distributions/en/'),
+                folder = 'distributions/pt/'),
         dpi = 400
         )
     
     
-# main()
+main()

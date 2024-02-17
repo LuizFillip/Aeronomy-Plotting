@@ -89,8 +89,8 @@ def plot_distributions_solar_flux(
             fontsize = 30
             )
         
-    print('days', sum(total_day))
-    print('epbs', sum(total_epb))
+    # print('days', sum(total_day))
+    # print('epbs', sum(total_epb))
     
     ax[1].legend(ncol = 2, loc = 'upper center')
     ax[0].legend(ncol = 2, loc = 'upper center')
@@ -104,13 +104,14 @@ def plot_distributions_solar_flux(
 
 
 def main():
-    
-    df = c.concat_results('saa')
+    site = 'jic'
+    df = c.concat_results(site)
     
     limit = c.limits_on_parts(
         df['f107a'], parts = 2
         )
-    col = 'gamma'
+    col = 'vp'
+    
     fig = plot_distributions_solar_flux(
             df, 
             col,

@@ -9,7 +9,8 @@ b.config_labels(fontsize = 25)
 def plot_distributions_seasons(
         df, 
         level = 86, 
-        fontsize = 30
+        fontsize = 30,
+        translate = False
         ):
     
     nrows = 4
@@ -86,10 +87,14 @@ def plot_distributions_seasons(
         loc = "upper center"
         )
     
+    if translate:
+        ylabel = 'Probabilidade de ocorrência das EPBs'
+    else:
+        ylabel = 'EPB occurrence Probability'
     
     fig.text(
         0.05, 0.35, 
-        "EPB occurrence probability", 
+        ylabel, 
         fontsize = fontsize, 
         rotation = 'vertical'
         )
@@ -114,14 +119,15 @@ def main():
     fig = plot_distributions_seasons(
             df, 
             level = limit, 
-            fontsize = 30
+            fontsize = 30,
+            translate = True
             )
     
     FigureName = 'seasonal_gamma_and_vp'
     
     fig.savefig(
         b.LATEX(FigureName, 
-                folder = 'distributions/en/'),
+                folder = 'distributions/pt/'),
         dpi = 400
         )
     

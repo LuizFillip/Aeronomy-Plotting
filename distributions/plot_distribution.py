@@ -58,8 +58,10 @@ def plot_histogram(
      
     if axis_label:
 
-        ax.set(xlabel = xlabel, 
-               ylabel = 'Frequency of occurrence')
+        ax.set(
+            xlabel = xlabel, 
+            ylabel = 'Frequency of occurrence'
+            )
     
     plt.xticks(rotation = 0)
     

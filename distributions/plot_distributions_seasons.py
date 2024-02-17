@@ -36,6 +36,40 @@ def solar_labels(level):
     '$F_{10.7} \\leq $' + f' {level}',
     '$F_{10.7} > $' + f' {level}'
     ]        
+
+
+def FigureLabels(
+        fig, 
+        translate = False, 
+        fontsize = 30
+        ):
+    if translate:
+        ylabel1 = "EPB occurrence probability"
+        ylabel2 = "Frequency of occurrence"
+        
+    else:
+        ylabel1 = "Probabilidade de ocorrência das EPBs"
+        ylabel2 = "Frequência de ocorrência"
+        
+    fig.text(
+        0.05, 0.35, 
+        ylabel1, 
+        fontsize = fontsize, 
+        rotation = 'vertical'
+        )
+    
+    fig.text(
+        0.5, 0.37, 
+        ylabel2, 
+        fontsize = fontsize, 
+        rotation = 'vertical'
+        )
+    
+    fig.text(
+        0.42, 0.07, 
+        b.y_label('gamma'), 
+        fontsize = fontsize
+        )
         
 def plot_single_season(
         col,
@@ -65,9 +99,7 @@ def plot_single_season(
                 count = False,
                 label = label
                 )
-        
-        print(i)
-        
+                
         total_epb.append(epbs)
         
         if ax2 is not None:
@@ -90,8 +122,7 @@ def plot_single_season(
 def plot_distributions_seasons(
         df, 
         col,
-        level = 86, 
-        fontsize = 30
+        level = 86
         ):
     
     nrows = 4
@@ -172,25 +203,10 @@ def plot_distributions_seasons(
         loc = "upper center"
         )
     
-    
-    fig.text(
-        0.05, 0.35, 
-        "EPB occurrence probability", 
-        fontsize = fontsize, 
-        rotation = 'vertical'
-        )
-    
-    fig.text(
-        0.5, 0.37, 
-        "Frequency of occurrence", 
-        fontsize = fontsize, 
-        rotation = 'vertical'
-        )
-    
-    fig.text(
-        0.42, 0.07, 
-        b.y_label('gamma'), 
-        fontsize = fontsize
+    FigureLabels(
+        fig, 
+        translate = True, 
+        fontsize = 30
         )
     
     ax[0, 1].set(ylim = [0, 300])
@@ -211,12 +227,12 @@ def main():
     
     FigureName = 'seasonal_all_periods'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder = 'distributions/en/'),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'distributions/pt/'),
+        dpi = 400
+        )
     
-    # save_figs(df, col = 'gamma')
+    save_figs(df, col = 'gamma')
     
         
     
