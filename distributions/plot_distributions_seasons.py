@@ -31,12 +31,6 @@ def save_figs(df, col = 'gamma'):
             dpi = 400
             )
 
-def solar_labels(level):
-    return [
-    '$F_{10.7} \\leq $' + f' {level}',
-    '$F_{10.7} > $' + f' {level}'
-    ]        
-
 
 def FigureLabels(
         fig, 
@@ -125,23 +119,7 @@ def plot_distributions_seasons(
         level = 86
         ):
     
-    nrows = 4
-    
-    fig, ax = plt.subplots(
-          ncols = nrows // 2, 
-          nrows = nrows,
-          figsize = (18, 14), 
-          dpi = 300, 
-          sharex = 'col', 
-          sharey = 'col'
-        )
-    
-    plt.subplots_adjust(
-        hspace = 0.1, 
-        wspace = 0.18
-        )
-    
-    
+
     solar_dfs = c.solar_levels(
         df, 
         level,
@@ -236,4 +214,74 @@ def main():
     
         
     
-# main()
+def FigureAxes(nrows = 4):
+    
+    fig, ax = plt.subplots(
+          ncols = nrows // 2, 
+          nrows = nrows,
+          figsize = (18, 14), 
+          dpi = 300, 
+          sharex = 'col', 
+          sharey = 'col'
+        )
+    
+    plt.subplots_adjust(
+        hspace = 0.1, 
+        wspace = 0.18
+        )
+    
+    return fig, ax 
+
+
+fig, ax = FigureAxes()
+
+df = c.concat_results('saa')
+
+names = ['march', 'june', 'september', 'december']
+
+
+limit = c.limits_on_parts(df['f107a'])
+# limit = None
+
+for row, name in enumerate(names):
+    
+    total_epb = []
+    total_day = []
+    
+    
+    df_season = c.SeasonsSplit(df, name).sel_season
+    
+    df_index = c.DisturbedLevels(df_season)
+    
+    for index, df_level in enumerate(df_index.F107(limit)):
+
+        ds, epb = pl.plot_distribution(
+                ax[row, 0], 
+                df_level, 
+                parameter = 'gamma'
+                )
+        
+        total_epb.append(epb)
+        
+        days = pl.plot_histogram(
+                ax[row, 1], 
+                ds, 
+                index, 
+                )
+        
+        total_day.append(days)
+        
+        
+    pl.plot_infos(
+        ax[row, 0], 
+        total_epb, 
+        x = 0.6, y = 0.2,
+        translate = True
+        )
+    
+    pl.plot_infos(
+        ax[row, 1], 
+        total_day, 
+        x = 0.6, y = 0.2,
+        translate = True
+        )
