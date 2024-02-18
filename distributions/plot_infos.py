@@ -1,19 +1,30 @@
 
     
 def fmt(index, value):
-    return f'({index}) {value} events'
+    return f'({index}) {value} '
 
 def plot_infos(
         ax, 
         values, 
-        title = 'EPB occurrence',
         x = 0.75, 
-        y = 0.25
+        y = 0.25,
+        translate = False
         ):
+    
+    if isinstance(translate, str):
+        title = translate
+        event = 'eventos'
+        
+    if translate:
+        title = 'Ocorrência de EPBs'
+        event = 'eventos'
+    else:
+        title = 'EPB occurrence'
+        event = 'events'
     
     out = []
     for i, val in enumerate(values):
-        out.append(fmt(i + 1, val))
+        out.append(fmt(i + 1, val) + event)
         
     infos = (f'{title}\n' + '\n'.join(out))
         
@@ -24,16 +35,3 @@ def plot_infos(
             )
 
 
-seasons_keys = {
-      0: 'March equinox',
-      1: 'June solstice',
-      2: 'September equinox',
-      3: 'December solstice'
-      }
-
-# seasons_keys = {
-#       'March equinox': 3,
-#       'June solstice': 6,
-#       'September equinox': 9,
-#       'December solstice': 12
-#       }
