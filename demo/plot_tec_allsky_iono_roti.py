@@ -10,7 +10,7 @@ import numpy as np
 import PlasmaBubbles as pb 
 import cartopy.crs as ccrs
 from skimage import io
-
+import GEO as gg
 
 b.config_labels(fontsize = 20)
 
@@ -25,14 +25,27 @@ def roti_limit(dn):
     
     lon_min = -48
     
-    return df.loc[(df['lon'] > lon_min) ]
+    sector = -50
+
+    coords = gg.set_coords(dn.year, radius = 10)
+
+    return pb.filter_coords(df, sector, coords)
+    # return pb.longitude_sector(df, long)
+    
+    # return df.loc[(df['lon'] > lon_min) ]
 
 def plot_images(file, ax_img):
      
     AllSky = im.processing_img(
         os.path.join(PATH_SKY, file)
         )
-    AllSky.display(ax_img, AllSky.bright)
+    
+    new_img= AllSky.bright
+    
+    # if hori_flip: new_img = np.fliplr(new_img)
+    # if vert_flip: new_img = np.flipud(new_img)
+    # new_img = np.fliplr(np.flipud(new_img))
+    AllSky.display(ax_img, new_img)
             
     return im.fn2datetime(file)
 
@@ -94,7 +107,7 @@ def title(ax, dn, index):
  
 
 
-def TEC_AllSky_6300(files, dn, site = 'FZA0M'):
+def TEC_6300_IONOGRAM_ROTI(files, dn, site = 'FZA0M'):
     
     fig = plt.figure(
         dpi = 300,
@@ -102,21 +115,24 @@ def TEC_AllSky_6300(files, dn, site = 'FZA0M'):
         layout = 'constrained'
         )
     
-    ncols = 4
-    gs2 = GridSpec(4, ncols)
+    gs2 = GridSpec(len(files), len(files))
     
     gs2.update(hspace = 0.3, wspace = 0)
     
     ax_rot = plt.subplot(gs2[-1, :])
     
+    df = roti_limit(dn)
     pl.plot_roti_points(
-            ax_rot, roti_limit(dn), 
+            ax_rot, df , 
             threshold = 0.25,
             label = True
             )
-    
-    ax_rot.set(ylim = [0, 5], 
-               yticks = np.arange(6))
+    vmax = np.ceil(df['roti'].max()) + 1
+    ax_rot.set(
+        ylim = [0, vmax], 
+        xlim = [df.index[0], df.index[-1]],
+        yticks = np.arange(0, vmax + 1, 1)
+        )
     
     b.format_time_axes(ax_rot, translate = True)
     
@@ -133,17 +149,14 @@ def TEC_AllSky_6300(files, dn, site = 'FZA0M'):
         
         dn = plot_ionogram(target, ax_ion, site = site)
         
-    
         title(ax_ion, dn, index)
         
         ax_tec = plt.subplot(
             gs2[2, col], 
-            projection = ccrs.PlateCarree())
+            projection = ccrs.PlateCarree()
+            )
         
-        img = pl.plot_tec_map(
-            target, ax_tec, 
-            vmax = 70, 
-            colorbar = False)
+        
         
         if index == 2:
             ax_ion.text(
@@ -154,6 +167,21 @@ def TEC_AllSky_6300(files, dn, site = 'FZA0M'):
                 0.6, -0.1, 'Longitude (°)',
                 transform = ax_tec.transAxes
             )
+        
+        tec_max = 50
+        if index == 4:
+            pl.plot_tec_map(
+                target, ax_tec, 
+                vmax = tec_max, 
+                colorbar = True
+                )
+        else:
+            pl.plot_tec_map(
+                target, ax_tec, 
+                vmax = tec_max, 
+                colorbar = False
+                )
+            
         if index == 1:
             ax_ion.set(ylabel = 'Altura virtual (km)')
             
@@ -179,18 +207,28 @@ def TEC_AllSky_6300(files, dn, site = 'FZA0M'):
         title(ax_tec, dn, index)
         
         plot_shades(ax_rot, target, index)
-        
+    
+    ax_img.text(
+        -3.3, 1.1, '(b)', 
+        fontsize = 35,
+        transform = ax_img.transAxes
+        )
+    
     return fig 
 
+dn = dt.datetime(2013, 12, 24, 20)
 
-epb_files= [
-    'O6_CA_20131224_214144.tif', 
-    'O6_CA_20131225_002749.tif',
+files = [
+    # 'O6_CA_20131224_222810.tif', 
+    'O6_CA_20131224_231957.tif',
     'O6_CA_20131225_011602.tif',
-    'O6_CA_20131225_021645.tif'
+    'O6_CA_20131225_021645.tif',
+    'O6_CA_20131225_024146.tif'
     ]
 
-no_epb_files = [ 
+dn = dt.datetime(2013, 6, 10, 20)
+
+files = [ 
         
     'O6_CA_20130610_220827.tif',
     'O6_CA_20130610_225828.tif', 
@@ -198,9 +236,14 @@ no_epb_files = [
     'O6_CA_20130611_010516.tif'
     ]
 
-dn = dt.datetime(2013, 3, 24, 20)
-dn = dt.datetime(2013, 6, 10, 20)
+# dn = dt.datetime(2022, 7, 24, 20)
 
+# files = [ 
+#     'O6_CA_20220725_000007.tif',
+#     'O6_CA_20220725_021618.tif',
+#     'O6_CA_20220725_034219.tif', 
+#     'O6_CA_20220725_041809.tif'
+#     ]
 
 site =  'FZA0M'
 site =  'SAA0K'
@@ -211,4 +254,10 @@ PATH_IONO = f'database/ionogram/{folder_ion}{site[0]}/'
 
 
 
-fig  =TEC_AllSky_6300(no_epb_files, dn, site)
+fig  = TEC_6300_IONOGRAM_ROTI(files, dn, site)
+
+# FigureName = 'Midnight_validation'
+fig.savefig(
+    b.LATEX(folder_ion, folder = 'products'),
+    dpi = 400
+    )
