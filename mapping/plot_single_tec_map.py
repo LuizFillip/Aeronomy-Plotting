@@ -41,7 +41,7 @@ def plot_matrix(
     
     lon, lat, values = load_tec(infile)
     
-    ticks = np.arange(0, vmax, 10)
+    ticks = np.arange(0, vmax, 15)
     levels = np.arange(0, vmax + step, step*0.5)
     
     img = ax.contourf(
@@ -54,6 +54,7 @@ def plot_matrix(
             
         b.colorbar(
             img, ax, ticks, 
+            width = '5%',
             label = r'TEC ($10^{16} / m^2$)'
             )
     
@@ -86,7 +87,7 @@ def plot_tec_map(
         ax, path,
         step = step, 
         vmax = vmax, 
-        colorbar= colorbar
+        colorbar = colorbar
         )
   
     
@@ -96,7 +97,7 @@ def plot_tec_map(
         degress = None
         )
     
-    gg.plot_rectangles_regions(ax, dn.year)
+    # gg.plot_rectangles_regions(ax, dn.year)
     lon, lat = gg.terminator2(dn, 18)
     
     ax.scatter(lon, lat, c = 'k', s = 5)

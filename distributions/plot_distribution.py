@@ -22,28 +22,26 @@ def plot_cumullative(ax, ds, color):
      
 def plot_histogram(
         ax, 
-        dataset, 
+        ds, 
         index, 
-        label, 
-        col = 'gamma',
+        label = '', 
+        parameter = 'gamma',
         width = 0.07,
-        axis_label = False
+        axis_label = False,
+        translate = True
         ):
     
-    if col == 'vp':
+    if parameter == 'vp':
         xlabel = b.y_label('vp')
         width = 1.7
-    elif col == 'gravity':
+    elif parameter == 'gravity':
         xlabel = b.y_label('gamma')
         width = 0.015
     else:
         xlabel = b.y_label('gamma')
         width = 0.07
         
-    ds = c.probability_distribution(
-        dataset,
-        col
-        )
+    #   ds = c.probability_distribution(dataset, parameter)
     
     days = int(ds['days'].sum())
     
@@ -57,6 +55,11 @@ def plot_histogram(
         )
      
     if axis_label:
+        
+        if translate:
+            ylabel = 'Frequência de ocorrência'
+        else:
+            ylabel = 'Frequency of occurrence'
 
         ax.set(
             xlabel = xlabel, 
@@ -65,7 +68,7 @@ def plot_histogram(
     
     plt.xticks(rotation = 0)
     
-    vmin, vmax, step = c.limits(col)
+    vmin, vmax, step = c.limits(parameter)
     
     ax.set(
         xlim = [vmin, vmax],
@@ -80,19 +83,21 @@ def plot_histogram(
 def plot_distribution(
         ax, 
         df, 
-        col = 'gamma',
+        parameter = 'gamma',
         label = '', 
         count = False,
-        axis_label = False
+        axis_label = False,
+        translate = False,
+        drop_ones = True,
+        percent = True
         ):
 
-    ds = c.probability_distribution(df, col)    
+    ds = c.probability_distribution(df, parameter)    
     
-    ds = ds.loc[~((ds['days'] == 1) & 
-                  (ds['epbs'] == 1))].dropna()
-    
-    # ds['std'] = ds['std'].replace(np.nan, 0)
-    
+    if drop_ones:
+        ds = ds.loc[~((ds['days'] == 1) & 
+                      (ds['epbs'] == 1))].dropna()
+        
     epbs = ds['epbs'].sum()
     
     if count:
@@ -100,39 +105,49 @@ def plot_distribution(
     else:
         LABEL = label
     
+    if percent:
+        factor = 100
+    else:
+        factor = 1
+        
     ax.errorbar(
         ds['start'], 
-        ds['rate'], 
+        ds['rate'] * factor, 
         xerr = ds['std'],
-        yerr = ds['epb_error'],
+        yerr = ds['epb_error'] * factor,
         label = LABEL,
         **args
         )
     
-    vmin, vmax, step = c.limits(col)
+    vmin, vmax, step = c.limits(parameter)
     
-    if col == 'vp':
+    if parameter == 'vp':
         xlabel = b.y_label('vp')
     else:
         xlabel = b.y_label('gamma')
     
     ax.set(
         xlim = [vmin, vmax],
-        ylim = [-0.2, 1.4], 
-        yticks = np.arange(0, 1.2, 0.25),
+        ylim = [-0.2* factor, 1.4* factor], 
+        yticks = np.arange(0, 1.2* factor, 0.25* factor),
         xticks = np.arange(
             vmin, vmax + step, step*2
             ),
        
         )
     
+    if translate:
+        ylabel = 'Probalidade de ocorrência das EPBs'
+    else:
+        ylabel = 'EPB occurrence probability'
+        
     if axis_label:
         ax.set(
             xlabel = xlabel, 
-            ylabel = 'EPB occurrence probability'
+            ylabel = ylabel
             )
     
-    for bar in [0, 1]:
+    for bar in [0, 1* factor]:
         ax.axhline(
             bar, 
             linestyle = ":", 

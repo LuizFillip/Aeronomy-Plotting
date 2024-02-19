@@ -48,9 +48,7 @@ def plot_distributions_seasons(
                 season_name = season_name, 
                 level = level
                 )
-        
-        # print(epb)
-        
+                
         _ = pl.plot_single_season(
                 col = 'vp',
                 ax1 = ax[row, 1], 

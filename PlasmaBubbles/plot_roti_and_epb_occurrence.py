@@ -179,17 +179,17 @@ def save_frames():
                 )
         
         name = dn.strftime('%j')
-        print(name)
+        # print(name)
         save_img(fig, f'{save_in}{name}')
         
         plt.clf()   
         plt.close()
         
         
-dn = dt.datetime(2019, 2, 7, 20)
+# dn = dt.datetime(2019, 2, 7, 20)
 
-fig = single_plot(
-        dn, 
-        cols = [8], 
-        hours = 11
-        )
+# fig = single_plot(
+#         dn, 
+#         cols = [8], 
+#         hours = 11
+#         )

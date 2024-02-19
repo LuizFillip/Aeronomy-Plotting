@@ -108,17 +108,18 @@ def plot_roti_parameters(dn, station, prn):
         
     return fig
 
-
-prn = 'G21'
-station = 'salu'
-dn = dt.datetime(2013, 12, 24)
+def main():
     
-fig = plot_roti_parameters(dn, station, prn)
-
-FigureName = 'ROTI_parameters'
-
-fig.savefig(
-    b.LATEX(FigureName, folder = 'timeseries'),
-    dpi = 400
-    )
-
+    prn = 'G21'
+    station = 'salu'
+    dn = dt.datetime(2013, 12, 24)
+        
+    fig = plot_roti_parameters(dn, station, prn)
+    
+    FigureName = 'ROTI_parameters'
+    
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'timeseries'),
+        dpi = 400
+        )
+    

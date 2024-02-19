@@ -73,6 +73,6 @@ def plot_gamma_epbs_count(
 # arr = df.values.ravel()
 # fig = plot_gamma_epbs_count(arr)
 
-df = df.loc[df.index.year == 2019]
+# df = df.loc[df.index.year == 2019]
 
-df['gamma'].plot()
+# df['gamma'].plot()
