@@ -168,7 +168,7 @@ def TEC_6300_IONOGRAM_ROTI(files, dn, site = 'FZA0M'):
                 transform = ax_tec.transAxes
             )
         
-        tec_max = 50
+        tec_max = 40
         if index == 4:
             pl.plot_tec_map(
                 target, ax_tec, 

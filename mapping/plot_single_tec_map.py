@@ -3,7 +3,6 @@ import numpy as np
 import cartopy.crs as ccrs
 import datetime as dt
 import matplotlib.pyplot as plt
-import GEO as g
 import base as b 
 import GEO as gg 
 
@@ -91,7 +90,7 @@ def plot_tec_map(
         )
   
     
-    g.map_attrs(
+    gg.map_attrs(
         ax, dn.year, 
         grid = False,
         degress = None

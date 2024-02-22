@@ -160,17 +160,19 @@ def save_img(fig, save_in):
     return 
 
 
-save_in = 'D:\\img\\2019\\'
+from tqdm import tqdm 
 
-def save_frames():
+def save_frames(year):
     
-    for day in range(365):
+    save_in = f'D:\\img\\{year}\\'
+    
+    for day in tqdm(range(365), str(year)):
     
         delta = dt.timedelta(days = day)
         
         plt.ioff()
         
-        dn = dt.datetime(2019, 1, 1, 20) + delta
+        dn = dt.datetime(year, 1, 1, 20) + delta
         
         fig = single_plot(
                 dn, 
@@ -179,7 +181,7 @@ def save_frames():
                 )
         
         name = dn.strftime('%j')
-        # print(name)
+
         save_img(fig, f'{save_in}{name}')
         
         plt.clf()   
@@ -193,3 +195,6 @@ def save_frames():
 #         cols = [8], 
 #         hours = 11
 #         )
+
+
+# save_frames(2019)
