@@ -132,9 +132,7 @@ def main():
     vz = dg.vertical_drift(ds)
     
     vz = vz.replace(0, np.nan)
-    
-    print(vz)
-    
+        
     fig = plot_vz_and_frequencies(ds, vz, dn)
     
 # main()

@@ -65,6 +65,6 @@ def save_frames(year):
     return 
 
 # for year in [2015, 2019]:
-year = 2015
-save_frames(year)
+# year = 2019
+# save_frames(year)
 
