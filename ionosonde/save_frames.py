@@ -4,7 +4,7 @@ import datetime as dt
 import plotting as pl
 from tqdm import tqdm 
 import digisonde as dg
-
+import numpy as np
 
 def save_img(fig, save_in):
     
@@ -32,6 +32,7 @@ def save_frames(year):
     infile = 'digisonde/data/jic_freqs.txt'
     df = b.load(infile)
 
+    df = df.drop(columns = ['8', '9'])
     
     save_in = f'D:\\img3\\{year}\\'
  
@@ -45,10 +46,9 @@ def save_frames(year):
             
             dn = dt.datetime(year, 1, 1, 20) + delta
             
-            ds = b.sel_times(
-                df, dn, hours = 7).interpolate()
+            ds = b.sel_times(df, dn, hours = 7).interpolate()
             
-            vz = dg.vertical_drift(ds)
+            vz = dg.vertical_drift(ds).replace(0, np.nan)
             
             fig = pl.plot_vz_and_frequencies(ds, vz, dn)
     
@@ -64,7 +64,7 @@ def save_frames(year):
         
     return 
 
-for year in [2015, 2019]:
-    
-    save_frames(year)
+# for year in [2015, 2019]:
+year = 2015
+save_frames(year)
 

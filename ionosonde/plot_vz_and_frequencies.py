@@ -41,6 +41,7 @@ def plot_infos(ax, vz, dn):
     data = dg.time_between_terminator(vz, dn)
     idx = data['time']
     vmax = data['vp']
+    
     ax.axvline(idx, label = 'Vp')
     
     idx = idx.strftime('%Hh%M')
@@ -58,7 +59,7 @@ def plot_infos(ax, vz, dn):
 def plot_vz_and_frequencies(df, vz, dn):
     
     df = df.iloc[1:]
-    vz = vz.dropna().iloc[1:]
+    # vz = vz.dropna().iloc[1:]
     
     fig, ax = plt.subplots(
         figsize = (12, 8), 
@@ -113,6 +114,8 @@ def plot_vz_and_frequencies(df, vz, dn):
     return fig
 
 
+import numpy as np
+
 
 
         
@@ -122,16 +125,20 @@ def main():
 
     df = b.load(infile)
     df = df.drop(columns = ['8', '9'])
-    dn = dt.datetime(2015, 1, 6, 20)
+    dn = dt.datetime(2019, 1, 2, 20)
 
     ds = b.sel_times(df, dn, hours = 7).interpolate()
 
     vz = dg.vertical_drift(ds)
     
+    vz = vz.replace(0, np.nan)
+    
+    print(vz)
+    
     fig = plot_vz_and_frequencies(ds, vz, dn)
     
 # main()
-
+# plt.show()
 # infile = 'digisonde/data/jic_freqs.txt'
 
 # df = b.load(infile)
