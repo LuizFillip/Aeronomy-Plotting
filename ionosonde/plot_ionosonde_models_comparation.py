@@ -30,7 +30,6 @@ def plot_ionosonde_and_models(year = 2015):
     
     df1 = b.sel_time(c.concat_results(site = 'jic'), year)
         
-    
     ax[0].plot(df2['hmF2'], label = 'ionosonde')
     ax[0].plot(df3['hmF2'], label = 'IRI-2016')
     
@@ -80,4 +79,4 @@ def plot_ionosonde_and_models(year = 2015):
     return fig
         
         
-fig = plot_ionosonde_and_models(year = 2014)
+# fig = plot_ionosonde_and_models(year = 2014)

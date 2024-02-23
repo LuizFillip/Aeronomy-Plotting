@@ -29,8 +29,9 @@ def save_img(fig, save_in):
 def save_frames(year):
     
    
-    infile =  f'database/jic/freq/{year}'
-    df = dg.freq_fixed(infile)
+    infile = 'digisonde/data/jic_freqs.txt'
+    df = b.load(infile)
+
     
     save_in = f'D:\\img3\\{year}\\'
  
@@ -63,4 +64,7 @@ def save_frames(year):
         
     return 
 
-save_frames(2019)
+for year in [2015, 2019]:
+    
+    save_frames(year)
+
