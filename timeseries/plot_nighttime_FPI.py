@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import FabryPerot as fp
-import settings as s
+import base as s
 import models as m
 
 
@@ -22,13 +22,17 @@ def plot_directions(
     
     names = ["zonal", "meridional"]
     
-
+    infile = 'FabryPerot/data/winds_bjl'
+    ds1 = s.load(infile)
+    
+    dn = df.index[-1].date()
+    
+    ds1 = ds1.loc[ds1.index.date == dn]
+    
     for i, coord in enumerate(coords.keys()):
         
-        ds = m.load_hwm(df, alt = 250, site = "car")
-        
-        ax[i].plot(ds[coord], lw = 2, label = "HWM-14 (250 km)")
-        
+        ax[i].plot(ds1[coord], lw = 2, label = "HWM-14 (250 km)")
+       
         for direction in coords[coord]:
             
             ds = df.loc[(df["dir"] == direction)]
@@ -42,7 +46,8 @@ def plot_directions(
                 )
         ax[i].legend(loc = "lower left", ncol = 3)
         ax[i].set(ylabel = f"{names[i]} wind (m/s)", 
-                  ylim = [-100, 200])
+                  ylim = [-100, 200], 
+                  xlim = [ds.index[0], ds.index[-1]])
         ax[i].axhline(0, color = "k", linestyle = "--")
 
 
@@ -75,21 +80,18 @@ def plot_nighttime_observation(
     
     if "car" in path:    
         ax[0].set_title("Cariri")
+    elif 'bfp' in path:
+        ax[0].set_title("Cachoeira Paulista")
     else:
         ax[0].set_title("Cajazeiras")
    
     return fig
         
-def main():
+infile = 'FabryPerot/data/FPI/'
+import os 
+
+for file in os.listdir(infile):
     
- 
-    path = 'database/FabryPerot/car/minime01_car_20130216.cedar.005.txt'
-    #path = 'database/FabryPerot/caj/minime02_caj_20121216.cedar.005.txt'
-    fig = plot_nighttime_observation(path)
+    fig = plot_nighttime_observation(infile + file)
     
-    # fig.savefig("FabryPerot/figures/20130318.png", dpi = 300)
-
-
-
-main()
-plt.show()
+    fig.savefig('FabryPerot/img/' + file.replace('txt', 'png'))

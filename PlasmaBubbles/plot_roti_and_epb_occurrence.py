@@ -67,7 +67,7 @@ def plot_epbs_occurrences_roti(
                 dn,  
                 lat = 2, 
                 lon = int(col), 
-                twilight = 12
+                twilight = 18
                 )
         
         ax[1].axvline(
@@ -188,13 +188,15 @@ def save_frames(year):
         plt.close()
         
         
-# dn = dt.datetime(2019, 2, 7, 20)
+dn = dt.datetime(2015, 1, 6, 20)
 
-# fig = single_plot(
-#         dn, 
-#         cols = [8], 
-#         hours = 11
-#         )
+fig = single_plot(
+        dn, 
+        cols = [8], 
+        hours = 11
+        )
+
+plt.show()
 
 
 # save_frames(2019)

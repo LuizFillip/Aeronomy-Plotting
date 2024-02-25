@@ -218,23 +218,6 @@ path = "database/FabryPerot/cariri/2013/"
 
 path = 'database/FabryPerot/cariri/2013/minime01_car_20130422.cedar.005.txt'
 
-# ds = fp.get_similar()
-# save_in = 'database/img_fpi/'
-# dates = np.unique(ds.index.date)
-# dates = [dn.strftime('%Y%m%d') for dn in dates]
-
-
-# for dn in dates: #:
-    
-#     for f in os.listdir(path):
-#         if dn in f:
-
-#             fig = plot_nighttime_observation(
-#                 os.path.join(path, f)
-#                 )
-            
-#             fig.savefig(save_in + dn, dpi = 400)
-
 
 
 

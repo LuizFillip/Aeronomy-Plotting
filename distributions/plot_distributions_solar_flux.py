@@ -107,6 +107,9 @@ def main():
     site = 'jic'
     df = c.concat_results(site)
     
+   
+
+
     limit = c.limits_on_parts(
         df['f107a'], parts = 2
         )
@@ -128,3 +131,46 @@ def main():
 
 
 # main()
+
+
+def plot():
+
+    fig, ax = plt.subplots(
+        figsize = (12, 8),
+        dpi = 300,
+        nrows = 2,
+        sharex = True
+        )
+    
+    col = 'vp'
+    
+    
+    
+    for index, year in enumerate([2015, 2019]):
+        
+        ds = c.local_results(year)
+         
+        data, epbs = pl.plot_distribution(
+                ax[0], 
+                ds,
+                parameter = col,
+                label = year,
+                axis_label = True,
+                drop_ones = False
+            )
+        
+        days = pl.plot_histogram(
+                ax[1], 
+                data, 
+                index, 
+                label = year, 
+                parameter = col,
+                axis_label = True
+            )
+        
+        ax[index].legend()
+        
+        
+    ds = c.local_results(2015)
+    
+    ds

@@ -176,11 +176,12 @@ def plot_annual_GRT(df):
 
 
 def main():
-    PATH_GAMMA = 'database/gamma/p_jic.txt'
+    PATH_GAMMA = 'database/gamma/p_saa.txt'
     
     df = b.load(PATH_GAMMA)
 
-    df = df.loc[df.index.time == dt.time(0, 0)]
+    df = df.loc[(df.index.time == dt.time(22, 0)) &
+                (df.index.year == 2019)]
     
     fig = plot_annual_GRT(df)
     
@@ -192,7 +193,7 @@ def main():
 
 
 
-# main()
+main()
 
 
 # df = df.loc[df.index.time == dt.time(22, 0)]
