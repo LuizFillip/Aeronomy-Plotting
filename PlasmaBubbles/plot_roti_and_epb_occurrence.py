@@ -3,6 +3,7 @@ import base as b
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
 import GEO as gg 
+from tqdm import tqdm 
 
 
 args = dict(
@@ -82,13 +83,7 @@ def plot_epbs_occurrences_roti(
         ylabel = 'ROTI (TECU/min)'
         )
     
-    delta = dt.timedelta(hours = 2.1)
-    ax[1].text(
-        dusk + delta, 
-        1.15,
-        'Terminators',
-        transform = ax[1].transData
-        )
+    
     
     ax[1].legend(
         ncol = 5, 
@@ -106,6 +101,14 @@ def plot_epbs_occurrences_roti(
         )
      
     b.format_time_axes(ax[1])
+    
+    delta = dt.timedelta(hours = 2.1)
+    ax[1].text(
+        dusk + delta, 
+        1.15,
+        'Terminators',
+        transform = ax[1].transData
+        )
     
     ax[0].text(
         0.78, 
@@ -141,9 +144,7 @@ def single_plot(
             ds, 
             cols
         )
-    
-    # plt.show()
-    
+        
     return fig
 
 
@@ -160,7 +161,6 @@ def save_img(fig, save_in):
     return 
 
 
-from tqdm import tqdm 
 
 def save_frames(year):
     
@@ -177,7 +177,7 @@ def save_frames(year):
         fig = single_plot(
                 dn, 
                 cols = [8], 
-                hours = 11
+                hours = 14
                 )
         
         name = dn.strftime('%j')
@@ -188,15 +188,15 @@ def save_frames(year):
         plt.close()
         
         
-dn = dt.datetime(2015, 1, 6, 20)
+# dn = dt.datetime(2015, 1, 6, 20)
 
-fig = single_plot(
-        dn, 
-        cols = [8], 
-        hours = 11
-        )
+# fig = single_plot(
+#         dn, 
+#         cols = [8], 
+#         hours = 11
+#         )
 
-plt.show()
+# plt.show()
 
 
 # save_frames(2019)

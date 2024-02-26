@@ -40,15 +40,11 @@ def plot_histogram(
     else:
         xlabel = b.y_label('gamma')
         width = 0.07
-        
-    #   ds = c.probability_distribution(dataset, parameter)
-    
+            
     days = int(ds['days'].sum())
-    
-    offset = width * index
-    
+        
     ax.bar(
-        ds['start'] + offset,
+        ds['start'] + (width * index),
         ds['days'], 
         width = width, 
         label = label
@@ -63,7 +59,7 @@ def plot_histogram(
 
         ax.set(
             xlabel = xlabel, 
-            ylabel = 'Frequency of occurrence'
+            ylabel = ylabel 
             )
     
     plt.xticks(rotation = 0)
