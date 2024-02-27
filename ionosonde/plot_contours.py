@@ -15,7 +15,6 @@ ds['year'] = ds.index.year
 col = 'QF'
 
 ds[col] =  b.smooth2(ds[col], 6)
-# ds = ds.interpolate()
 
 
 df = pd.pivot_table(
