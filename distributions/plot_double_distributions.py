@@ -109,11 +109,11 @@ def plot_double_distributions(df):
       
     return fig
 
-df = c.concat_results('saa')
+# df = c.concat_results('saa')
 
 
-fig = plot_double_distributions(df)
+# fig = plot_double_distributions(df)
 
-FigureName = 'PD_double_effects'
+# FigureName = 'PD_double_effects'
 
 # fig.savefig(b.LATEX(FigureName), dpi = 400)

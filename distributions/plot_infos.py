@@ -8,18 +8,23 @@ def plot_infos(
         values, 
         x = 0.75, 
         y = 0.25,
-        translate = False
+        translate = False,
+        epb_title = True
         ):
     
     if isinstance(translate, str):
         title = translate
         event = 'eventos'
-        
-    if translate:
-        title = 'Ocorrência de EPBs'
-        event = 'eventos'
+    
+    if epb_title:
+        if translate:
+            title = 'Ocorrência de EPBs'
+            event = 'eventos'
+        else:
+            title = 'EPB occurrence'
+            event = 'events'
     else:
-        title = 'EPB occurrence'
+        title = '$\gamma_{RT}$ total'
         event = 'events'
     
     out = []
@@ -28,10 +33,7 @@ def plot_infos(
         
     infos = (f'{title}\n' + '\n'.join(out))
         
-    ax.text(
-            x, y, 
-            infos, 
-            transform = ax.transAxes
-            )
+    ax.text(x, y, infos, transform = ax.transAxes)
 
 
+    return None 

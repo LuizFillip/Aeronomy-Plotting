@@ -6,58 +6,81 @@ import plotting as pl
 b.config_labels()
 
 
-def plot_single_year(ds, col = 'gamma2'):
+def plot_single_year(
+        ax, 
+        ds, 
+        label, 
+        index = 0, 
+        col = 'gamma2'
+        ):
+    
+    label = f'({index + 1}) {label}'
+   
+    data, epbs = pl.plot_distribution(
+            ax[0], 
+            ds,
+            parameter = col,
+            label = label,
+            axis_label = True,
+            drop_ones = False,
+            translate = False
+        )
+    days = pl.plot_histogram(
+            ax[1], 
+            data, 
+            index, 
+            label = label, 
+            parameter = col,
+            axis_label = True,
+            translate = False
+        )
+        
+    
+    ax[0].set(xlabel = '', ylim = [-10, 140])
+    loc = 'upper center'
+    ax[1].legend(ncols = 2, loc = loc)
+    ax[0].legend(ncols = 2,  loc = loc)
+    
+    return epbs, days
+    
+                
 
+
+
+def plot_compare_sites_in_year(year):
+    
     fig, ax = plt.subplots(
-        figsize = (12, 12),
+        figsize = (10, 8),
         dpi = 300,
         nrows = 2,
         sharex = True
         )
     
-    plt.subplots_adjust(hspace = 0.1)
-        
-    # for index, year in enumerate([2015, 2019]):
     
-    index = 0
-
-    data, epbs = pl.plot_distribution(
-            ax[0], 
-            ds,
-            parameter = col,
-            label = year,
-            axis_label = True,
-            drop_ones = False,
-            translate = True
-        )
+    plt.subplots_adjust(hspace = 0.05)
     
-   
-    # print(data)
-    days = pl.plot_histogram(
-            ax[1], 
-            data, 
-            index, 
-            label = year, 
-            parameter = col,
-            axis_label = True,
-            translate = True
-        )
+    ds = c.local_results(year)
     
-    ax[index].legend()
-    ax[0].set(xlabel = '', ylim = [-10, 110])
-            
-# plot_single_year(2019,  col = 'gamma2')
+    epbs, days = plot_single_year(
+        ax, ds, 'Jicamarca', col = 'gamma2')
+    
+    df = c.concat_results('saa')
+    
+    df = df.loc[df.index.year == year]
+    
+    epbs1, days1 = plot_single_year(
+        ax, df, 'São Luís', index = 1, col = 'gamma')
+    
+    
+    ax[0].set(title = year)
+    
+    
+    pl.plot_infos(ax[0], [epbs, epbs1])
+    pl.plot_infos(ax[1], [days, days1])
+    
+    return fig
 
-# year = 2019
-# ds = c.local_results(year)
 
+year = 2016
 
-# site = 'jic'
-# df = c.concat_results(site)
-# df = df.loc[df.index.year == 2019]
-# # plot_single_year(df, col = 'vp')
-
-
-# # 
-
-# df['gamma'].plot()
+fig = plot_compare_sites_in_year(year)
