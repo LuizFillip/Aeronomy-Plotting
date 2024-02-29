@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import base as b
 import core as c
@@ -10,15 +9,16 @@ b.config_labels(fontsize = 25)
 
 def plot_storm_levels_distribution(
         df, 
+        nrows = 4,
         level = 86, 
         fontsize = 30,
         translate = False
         ):
-    nrows = 4
     
     quiet_level = 3 
-    titles = [f'$Kp \\leq$ {quiet_level}', 
-              f'$Kp >$ {quiet_level}']
+    titles = [
+        f'$Kp \\leq$ {quiet_level}', 
+        f'$Kp >$ {quiet_level}']
     
     
     fig, ax = plt.subplots(
@@ -35,12 +35,7 @@ def plot_storm_levels_distribution(
         wspace = 0.05
         )
     
-    
-    for col, df_disturb in enumerate(
-                    c.kp_levels(
-                        df, 
-                        level = quiet_level
-                        )):
+    for col, df_disturb in enumerate(c.kp_levels(df)):
                                     
     
         solar_dfs = c.solar_levels(
@@ -94,9 +89,9 @@ def plot_storm_levels_distribution(
         )
     
     if translate:
-        ylabel = 'Probabilidade de ocorrência das EPBs'
+        ylabel = 'Probabilidade de ocorrência'
     else:
-        ylabel = 'EPB occurrence Probability'
+        ylabel = 'Occurrence Probability'
         
     fig.text(
         0.05, 0.25, 

@@ -103,8 +103,10 @@ def plot_distribution(
     
     if percent:
         factor = 100
+        symbol = ' (\%)'
     else:
         factor = 1
+        symbol = ''
         
     ax.errorbar(
         ds['start'], 
@@ -133,9 +135,9 @@ def plot_distribution(
         )
     
     if translate:
-        ylabel = 'Probalidade de ocorrência das EPBs'
+        ylabel = 'Probalidade de ocorrência' + symbol
     else:
-        ylabel = 'EPB occurrence probability'
+        ylabel = 'Occurrence probability' + symbol
         
     if axis_label:
         ax.set(

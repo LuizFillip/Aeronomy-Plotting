@@ -1,4 +1,4 @@
-
+import base as b
     
 def fmt(index, value):
     return f'({index}) {value} '
@@ -37,3 +37,32 @@ def plot_infos(
 
 
     return None 
+
+def legend(ax):
+    
+    ax.legend(
+        ncol = 2, 
+        bbox_to_anchor = (0.5, 1.3),
+        loc = "upper center"
+        )
+def plot_events_infos(ax, row, LIST):
+    
+
+    for col, total in enumerate(LIST):    
+        
+        plot_infos(
+            ax[row, col], 
+            total, 
+            x = 0.55, y = 0.2,
+            translate = True
+            )
+        
+        legend(ax[0, col])
+        l = b.chars()[col]
+        
+        ax[0, col].text(
+            -0.1, 1.2, f'({l})', 
+            fontsize = 35,
+            transform = ax[0, col].transAxes
+            )
+        

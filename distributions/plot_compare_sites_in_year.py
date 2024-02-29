@@ -50,7 +50,7 @@ def plot_single_year(
 def plot_compare_sites_in_year(year):
     
     fig, ax = plt.subplots(
-        figsize = (10, 8),
+        figsize = (12, 8),
         dpi = 300,
         nrows = 2,
         sharex = True

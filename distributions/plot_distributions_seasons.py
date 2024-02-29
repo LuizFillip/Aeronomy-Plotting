@@ -67,39 +67,12 @@ def FigureLabels(
         
 
   
-def legend(ax):
-    
-    ax.legend(
-        ncol = 2, 
-        bbox_to_anchor = (0.5, 1.3),
-        loc = "upper center"
-        )
+
 
 
 
         
-def plot_events_infos(ax, row, LIST):
-    
-    
-    
-    for col, total in enumerate(LIST):    
-        
-        pl.plot_infos(
-            ax[row, col], 
-            total, 
-            x = 0.55, y = 0.2,
-            translate = True
-            )
-        
-        legend(ax[0, col])
-        l = b.chars()[col]
-        
-        ax[0, col].text(
-            -0.1, 1.2, f'({l})', 
-            fontsize = 35,
-            transform = ax[0, col].transAxes
-            )
-        
+
         
 def FigureAxes(nrows = 4):
     
@@ -171,7 +144,7 @@ def plot_distributions_seasons(
                 )
         
         LIST = [total_epb, total_day]
-        plot_events_infos(ax, row, LIST)
+        pl.plot_events_infos(ax, row, LIST)
             
         
     FigureLabels(
@@ -194,9 +167,12 @@ def main():
             parameter = 'gamma',
             limit = limit
             )
-    FigureName = 'seasonal_all_periods'
+    # FigureName = 'seasonal_all_periods'
      
-    fig.savefig(
-         b.LATEX(FigureName, folder = 'distributions/pt/'),
-         dpi = 400
-         )
+    # fig.savefig(
+    #      b.LATEX(FigureName, folder = 'distributions/pt/'),
+    #      dpi = 400
+    #      )
+    
+    
+main()
