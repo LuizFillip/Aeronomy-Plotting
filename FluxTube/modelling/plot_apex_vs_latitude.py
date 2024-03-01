@@ -87,9 +87,8 @@ def plot_apex_vs_latitude(
     
     apx = Apex(300) 
     
-    print(np.degrees(apx.apex_latitude))
-    
-    
+    # print(np.degrees(apx.apex_latitude))
+
     ax.set(
         xlim = [-lim, lim],
         ylim = [75, max_height],
@@ -106,7 +105,7 @@ def plot_apex_vs_latitude(
     return fig 
 
 
-fig = plot_apex_vs_latitude()
+# fig = plot_apex_vs_latitude()
 
 # FigureName = 'magnetic_lines'
 
