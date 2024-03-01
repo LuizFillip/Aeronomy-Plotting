@@ -6,6 +6,8 @@ import datetime as dt
 import matplotlib.pyplot as plt
 from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
+import base as b 
+import plotting as pl 
 
 
 def shade_interval(ax, dn):
@@ -28,7 +30,7 @@ def shade_interval(ax, dn):
         )
 
 def plot_contour(ax, ds1, vmin, vmax, color =  'k'):
-    ax = plot_apex_vs_latitude(ax, color)
+    ax = pl.plot_apex_vs_latitude(ax, color)
     
     levels = MaxNLocator(nbins = 100).tick_values(vmin, vmax)
     cmap = plt.get_cmap('rainbow')
