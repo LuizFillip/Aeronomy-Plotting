@@ -32,46 +32,6 @@ def save_figs(df, col = 'gamma'):
             )
 
 
-def FigureLabels(
-        fig, 
-        translate = False, 
-        fontsize = 30
-        ):
-    if translate:
-        ylabel1 = "Probabilidade de ocorrência (\%)"
-        ylabel2 = "Frequência de ocorrência"
-       
-    else:
-        ylabel1 = "EPB occurrence probability"
-        ylabel2 = "Frequency of occurrence"
-        
-    fig.text(
-        0.07, 0.33, 
-        ylabel1, 
-        fontsize = fontsize, 
-        rotation = 'vertical'
-        )
-    
-    fig.text(
-        0.49, 0.37, 
-        ylabel2, 
-        fontsize = fontsize, 
-        rotation = 'vertical'
-        )
-    
-    fig.text(
-        0.45, 0.07, 
-        b.y_label('gamma'), 
-        fontsize = fontsize
-        )
-        
-
-  
-
-
-
-
-        
 
         
 def FigureAxes(nrows = 4):
@@ -123,7 +83,8 @@ def plot_distributions_seasons(
                     ax[row, 0], 
                     df_level, 
                     parameter,
-                    label = F107_labels[index]
+                    label = F107_labels[index],
+                    drop_ones = True
                     )
             
             total_epb.append(epb)
@@ -144,12 +105,12 @@ def plot_distributions_seasons(
                 )
         
         LIST = [total_epb, total_day]
-        pl.plot_events_infos(ax, row, LIST)
+        pl.plot_events_infos(ax, row, LIST, translate = False)
             
         
-    FigureLabels(
+    pl.FigureLabels(
         fig, 
-        translate = True, 
+        translate = False, 
         fontsize = 30
         )
     
@@ -167,12 +128,12 @@ def main():
             parameter = 'gamma',
             limit = limit
             )
-    # FigureName = 'seasonal_all_periods'
+    FigureName = 'seasonal_all_periods'
      
-    # fig.savefig(
-    #      b.LATEX(FigureName, folder = 'distributions/pt/'),
-    #      dpi = 400
-    #      )
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'distributions/pt/'),
+          dpi = 400
+          )
     
     
-main()
+# main()
