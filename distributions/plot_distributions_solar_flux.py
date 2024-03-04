@@ -44,34 +44,33 @@ def plot_distributions_solar_flux(
         '$F_{10.7} > $' + f' {level}'
         ]
     
-  
-    solar_dfs = c.solar_levels(
-        df, 
-        level,
-        flux_col = 'f107a'
-        )
+    
+    df_index = c.DisturbedLevels(df)
+    
+    F107_labels = df_index.solar_labels(level)
      
     total_epb = []
     total_day = []
     
-    for i, ds in enumerate(solar_dfs):
+    for i, ds in enumerate(df_index.F107(level)):
         index = i + 1
-        label = f'({index}) {labels[i]}'
+        label = f'({index}) {F107_labels[i]}'
     
         data, epbs = pl.plot_distribution(
                 ax[0], 
                 ds,
-                col = col,
+                parameter = col,
                 label = label,
-                axis_label = True
+                axis_label = True,
+                drop_ones = True
             )
         
         days = pl.plot_histogram(
                 ax[1], 
-                ds, 
+                data, 
                 index, 
                 label, 
-                col = col,
+                parameter = col,
                 axis_label = True
             )
         
@@ -96,24 +95,20 @@ def plot_distributions_solar_flux(
     ax[0].legend(ncol = 2, loc = 'upper center')
     
     pl.plot_infos(ax[0], total_epb)
-    pl.plot_infos(ax[1], total_day,
-                title = '$\gamma_{RT}$ total')
+    pl.plot_infos(ax[1], total_day, epb_title = False)
     
     return fig
 
 
 
 def main():
-    site = 'jic'
+    site = 'saa'
     df = c.concat_results(site)
-    
-   
-
 
     limit = c.limits_on_parts(
         df['f107a'], parts = 2
         )
-    col = 'vp'
+    col = 'gamma'
     
     fig = plot_distributions_solar_flux(
             df, 
@@ -123,10 +118,10 @@ def main():
     
     FigureName = f'PD_{col}_effects'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder = 'distributions/en/'),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'distributions/en/'),
+        dpi = 400
+        )
 
 
 
