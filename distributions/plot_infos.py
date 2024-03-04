@@ -6,8 +6,8 @@ def fmt(index, value):
 def plot_infos(
         ax, 
         values, 
-        x = 0.75, 
-        y = 0.25,
+        x = 0.70, 
+        y = 0.20,
         translate = False,
         epb_title = True
         ):
@@ -45,16 +45,29 @@ def legend(ax):
         bbox_to_anchor = (0.5, 1.3),
         loc = "upper center"
         )
-def plot_events_infos(ax, row, LIST):
+def plot_events_infos(
+        ax, row, LIST, 
+        translate = True, 
+        epb_title = True
+        ):
     
 
     for col, total in enumerate(LIST):    
         
+        if col == 0:
+            epb_title = True
+        else:
+            epb_title = False
+            
+        factor = col / 8.5
+        
         plot_infos(
             ax[row, col], 
             total, 
-            x = 0.55, y = 0.2,
-            translate = True
+            x = 0.65, 
+            y = 0.2,
+            translate = translate,
+            epb_title = epb_title
             )
         
         legend(ax[0, col])
@@ -65,4 +78,36 @@ def plot_events_infos(ax, row, LIST):
             fontsize = 35,
             transform = ax[0, col].transAxes
             )
+
+def FigureLabels(
+        fig, 
+        translate = False, 
+        fontsize = 30
+        ):
+    if translate:
+        ylabel1 = "Probabilidade de ocorrência (\%)"
+        ylabel2 = "Frequência de ocorrência"
+       
+    else:
+        ylabel1 = "EPB occurrence probability (\%)"
+        ylabel2 = "Frequency of occurrence"
         
+    fig.text(
+        0.07, 0.33, 
+        ylabel1, 
+        fontsize = fontsize, 
+        rotation = 'vertical'
+        )
+    
+    fig.text(
+        0.49, 0.37, 
+        ylabel2, 
+        fontsize = fontsize, 
+        rotation = 'vertical'
+        )
+    
+    fig.text(
+        0.45, 0.07, 
+        b.y_label('gamma'), 
+        fontsize = fontsize
+        )

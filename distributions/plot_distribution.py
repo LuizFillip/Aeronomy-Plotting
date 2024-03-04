@@ -84,16 +84,26 @@ def plot_distribution(
         count = False,
         axis_label = False,
         translate = False,
-        drop_ones = True,
-        percent = True
+        drop_ones = False,
+        percent = True,
+        season = ''
         ):
 
     ds = c.probability_distribution(df, parameter)    
     
     if drop_ones:
-        ds = ds.loc[~((ds['days'] == 1) & 
-                      (ds['epbs'] == 1))].dropna()
+        ds = ds.loc[~(
+            (ds['days'] == 1) & 
+            (ds['epbs'] == 1))].dropna()
         
+    # if parameter == 'vp' and season == 'december':
+    #     ds = ds.loc[~((ds['rate'] == 0) |
+    #                   (ds['rate'] == 1))] 
+        
+    # if parameter == 'vp' and season == 'june':
+    #     ds = ds.loc[~ (ds['rate'] == 1)] 
+        
+    
     epbs = ds['epbs'].sum()
     
     if count:

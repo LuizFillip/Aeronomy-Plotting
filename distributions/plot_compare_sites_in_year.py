@@ -11,7 +11,7 @@ def plot_single_year(
         ds, 
         label, 
         index = 0, 
-        col = 'gamma2'
+        parameter = 'gamma'
         ):
     
     label = f'({index + 1}) {label}'
@@ -19,18 +19,18 @@ def plot_single_year(
     data, epbs = pl.plot_distribution(
             ax[0], 
             ds,
-            parameter = col,
-            label = label,
+            parameter,
+            label,
             axis_label = True,
-            drop_ones = False,
+            drop_ones = True,
             translate = False
         )
     days = pl.plot_histogram(
             ax[1], 
             data, 
             index, 
-            label = label, 
-            parameter = col,
+            label, 
+            parameter,
             axis_label = True,
             translate = False
         )
@@ -47,7 +47,9 @@ def plot_single_year(
 
 
 
-def plot_compare_sites_in_year(year):
+def plot_compare_sites_in_year(
+        year, parameter = 'gamma'
+                               ):
     
     fig, ax = plt.subplots(
         figsize = (12, 8),
@@ -59,17 +61,26 @@ def plot_compare_sites_in_year(year):
     
     plt.subplots_adjust(hspace = 0.05)
     
-    ds = c.local_results(year)
-    
-    epbs, days = plot_single_year(
-        ax, ds, 'Jicamarca', col = 'gamma2')
     
     df = c.concat_results('saa')
     
     df = df.loc[df.index.year == year]
     
+    epbs, days = plot_single_year(
+        ax, df, 'São Luís',
+        index = 0, 
+        parameter = parameter)
+    
+    
+    ds = c.local_results(year)
+    # ds = c.concat_results('jic')
+    # ds = ds.loc[ds.index.year == year]
+    
     epbs1, days1 = plot_single_year(
-        ax, df, 'São Luís', index = 1, col = 'gamma')
+        ax, ds, 'Jicamarca', index = 1,
+        parameter = parameter)
+    
+    
     
     
     ax[0].set(title = year)
@@ -77,10 +88,9 @@ def plot_compare_sites_in_year(year):
     
     pl.plot_infos(ax[0], [epbs, epbs1])
     pl.plot_infos(ax[1], [days, days1])
-    
+    plt.show()
     return fig
-
-
-year = 2016
-
-fig = plot_compare_sites_in_year(year)
+# import numpy as np
+for year in range(2013, 2021):
+    
+    fig = plot_compare_sites_in_year(year)
