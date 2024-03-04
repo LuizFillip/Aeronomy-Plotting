@@ -39,12 +39,6 @@ def plot_distributions_solar_flux(
     
     plt.subplots_adjust(hspace = 0.1)
         
-    labels = [
-        '$F_{10.7} < $' + f' {level}',
-        '$F_{10.7} > $' + f' {level}'
-        ]
-    
-    
     df_index = c.DisturbedLevels(df)
     
     F107_labels = df_index.solar_labels(level)
