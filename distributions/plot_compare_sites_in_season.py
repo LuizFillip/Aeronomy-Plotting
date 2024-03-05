@@ -13,8 +13,7 @@ def set_data(year, wind = -20):
 
 
 def plot_compare_sites_in_season(
-        parameter = 'gamma',
-        year = 2015
+        parameter = 'gamma'
         ):
     fig, ax = plt.subplots(
           ncols = 2,
@@ -40,7 +39,7 @@ def plot_compare_sites_in_season(
         total_epb = []
         total_day = []
         
-        for index, df in enumerate(set_data(year)):
+        for index, df in enumerate(c.get_same_length()):
             
             df_season = c.SeasonsSplit(df, name)
         
@@ -48,7 +47,8 @@ def plot_compare_sites_in_season(
                     ax[row, 0], 
                     df_season.sel_season, 
                     parameter,
-                    label = titles[index]
+                    label = titles[index],
+                    drop_ones = True
                     )
             
             total_epb.append(epb)
@@ -71,7 +71,7 @@ def plot_compare_sites_in_season(
         
         pl.plot_events_infos(ax, row, LIST)
     
-    fig.suptitle(year)
+    # fig.suptitle(year)
     
     pl.FigureLabels(
             fig, 
@@ -81,9 +81,8 @@ def plot_compare_sites_in_season(
     plt.show()
     return fig
 
-for year in range(2013, 2021):
+# for year in range(2013, 2021):
 
-    fig = plot_compare_sites_in_season(
-            parameter = 'gamma',
-            year = year
-            )
+fig = plot_compare_sites_in_season(
+        parameter = 'gamma'
+        )
