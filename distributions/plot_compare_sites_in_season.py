@@ -42,12 +42,14 @@ def plot_compare_sites_in_season(
         for index, df in enumerate(c.get_same_length()):
             
             df_season = c.SeasonsSplit(df, name)
+            
+            label = f'({index + 1}) {titles[index]}'
         
-            ds, epb = pl.plot_distribution(
+            data, epb = pl.plot_distribution(
                     ax[row, 0], 
                     df_season.sel_season, 
                     parameter,
-                    label = titles[index],
+                    label = label,
                     drop_ones = True
                     )
             
@@ -55,9 +57,9 @@ def plot_compare_sites_in_season(
             
             days = pl.plot_histogram(
                     ax[row, 1], 
-                    ds, 
+                    data, 
                     index,
-                    label = titles[index]
+                    label = label
                     )
             total_day.append(days)
                     

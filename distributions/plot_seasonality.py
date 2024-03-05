@@ -7,31 +7,6 @@ import plotting as pl
 
 b.config_labels(fontsize = 25)
 
-    
-def save_figs(df, col = 'gamma'):
-    
-    names = ['seasonal_quiet', 
-             'seasonal_disturbed']
-    
-    title = ['$Kp \\leq 3$',  '$Kp > 3$']
-
-    for i, FigureName in enumerate(names):
-    
-        if 'quiet' in FigureName:
-            df1 = df.loc[df['kp'] <= 3]
-        else:
-            df1 = df.loc[df['kp'] > 3]
-        
-        fig = plot_distributions_seasons(df1, col)
-        
-        fig.suptitle(title[i], y = 0.95)
-        
-        fig.savefig(
-            b.LATEX(FigureName),
-            dpi = 400
-            )
-
-
 
         
 def FigureAxes(nrows = 4):

@@ -6,23 +6,7 @@ import plotting as pl
 
 b.config_labels(fontsize = 25)
 
-def save_figures(df):
-    
-    for col in ['gamma', 'vp', 'gravity']:
 
-        FigureName = f'PD_{col}_effects'
-        
-        fig = plot_distributions_solar_flux(
-                df, 
-                col,
-                level = 83.66
-                )
-        
-        fig.savefig(
-            b.LATEX(FigureName),
-            dpi = 400
-            )
-        
         
 def plot_distributions_solar_flux(
         df, 
