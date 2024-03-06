@@ -54,6 +54,6 @@ def plot_montly_averages(df):
     return fig
 
 
-infile = 'FabryPerot/data/FPI/9/'
-df = fp.join_days(infile)
-fig = plot_montly_averages(df)
+# infile = 'FabryPerot/data/FPI/9/'
+# df = fp.join_days(infile)
+# fig = plot_montly_averages(df)
