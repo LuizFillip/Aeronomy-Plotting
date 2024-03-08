@@ -59,13 +59,13 @@ def plot_growth_rate_parameters():
 
      
 
-fig = plot_growth_rate_parameters()
+# fig = plot_growth_rate_parameters()
 
 
-FigureName = 'gamma_parameters'
+# FigureName = 'gamma_parameters'
 
-fig.savefig(
-    b.LATEX(FigureName, 
-            folder = 'timeseries'),
-    dpi = 400
-    )
+# fig.savefig(
+#     b.LATEX(FigureName, 
+#             folder = 'timeseries'),
+#     dpi = 400
+#     )
