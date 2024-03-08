@@ -133,7 +133,7 @@ def single_plot(
         hours = 13
         ):
         
-    infile = 'longitudes_all_years.txt'
+    infile = 'database/longitudes_all_years.txt'
     ds = b.sel_times(
             b.load(infile),
             dn, 
@@ -166,7 +166,7 @@ def save_frames(year):
     
     save_in = f'D:\\img\\{year}\\'
     
-    for day in tqdm(range(365), str(year)):
+    for day in tqdm(range(330, 366, 1), str(year)):
     
         delta = dt.timedelta(days = day)
         
@@ -199,4 +199,4 @@ def save_frames(year):
 # plt.show()
 
 
-# save_frames(2019)
+# save_frames(2013)

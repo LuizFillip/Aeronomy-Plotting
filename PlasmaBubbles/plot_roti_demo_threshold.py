@@ -176,8 +176,26 @@ def set_data():
     return df.between_time(
         '12:00', '20:00'
         )
-# ds = set_data()
-# fig = plot_roti_demo_threshold(ds)
+path = 'D:\\database\\GNSS\\roti\\are2019\\'
+
+# df = pb.load_filter(path)
+
+from tqdm import tqdm 
+
+def threshold(df):
+    df = df.between_time('12:00', '20:00')
+    return (1.2 * df['roti'].mean() + 4 * df['roti'].std())
+
+# out = []
+# idx = []
+# for file in tqdm(os.listdir(path)):
+    
+#     df = pb.load_filter(path + file)
+#     idx.append(df.index[0])
+#     out.append(threshold(df))
 
 
-# fig.savefig(b.LATEX('daytime_distribution'), dpi = 400)
+
+# plt.plot(idx, out)
+
+# plt.show()
