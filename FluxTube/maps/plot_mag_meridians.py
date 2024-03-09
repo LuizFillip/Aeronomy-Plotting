@@ -72,7 +72,8 @@ def plot_mag_meridians(
         lon_lims = lon_lims, 
         lat_lims = lat_lims,
         grid = False,
-                 degress = None)
+        degress = None
+        )
     
     plot_meridian(ax, year)
     
