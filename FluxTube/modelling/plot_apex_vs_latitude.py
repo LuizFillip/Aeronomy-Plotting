@@ -51,18 +51,18 @@ def sel_height(h, height = 300):
     return args
 
 def plot_apex_vs_latitude(
-       
+        ax = None, 
         lim = 15,
-        color = 'k'
+        max_height = 500, 
+        step = 100,
+        base = 100
         ):
-    fig, ax = plt.subplots(
-        figsize = (10, 10),
-        dpi = 300
-        )
+    if ax is None:
+        fig, ax = plt.subplots(
+            figsize = (10, 10),
+            dpi = 300
+            )
 
-    max_height = 550
-    step = 100
-    base = 75
     heights = np.arange(base, max_height, step )
      
    
@@ -79,19 +79,17 @@ def plot_apex_vs_latitude(
             )
         
         if h == 300:
-            print(np.degrees(lats))
+            color = 'black'
+        else:
+            color = '#0C5DA5'
         
             
-        args = dict(color = 'k', lw = 2)
+        args = dict(color = color, lw = 2)
         ax.plot(np.degrees(lats), apex, **args)    
-    
-    apx = Apex(300) 
-    
-    # print(np.degrees(apx.apex_latitude))
-
+        
     ax.set(
         xlim = [-lim, lim],
-        ylim = [75, max_height],
+        ylim = [100, 450],
         ylabel = "Altura de Apex (km)", 
         xlabel = "Latitude magnética (°)"
         )
@@ -105,7 +103,7 @@ def plot_apex_vs_latitude(
     return fig 
 
 
-# fig = plot_apex_vs_latitude()
+fig = plot_apex_vs_latitude()
 
 # FigureName = 'magnetic_lines'
 
