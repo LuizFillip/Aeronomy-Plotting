@@ -1,78 +1,86 @@
 import core as c
 import matplotlib.pyplot as plt
 import base as b 
-import numpy as np
 
-b.config_labels()
+b.config_labels(fontsize = 25)
+
+
+def plot_annualy_variation(ds, years):
+    
+    import matplotlib.pyplot as plt
+    
+    fig, ax = plt.subplots(
+        nrows = 2,
+        ncols = len(years) // 2,
+        dpi = 300, 
+        sharex = True,
+        sharey = True,
+        figsize = (14, 8)
+        )
+    
+    plt.subplots_adjust(hspace = 0.1)
+    
+    for i, ax in enumerate(ax.flat):
+        year = years[i]
+        # ds1 = locate_sector_year(ds, year, long = -80)
+        ds.plot(kind = 'bar', ax = ax)
+        
+        ax.text(0.5, 0.8, year, transform = ax.transAxes)
+        
+        ax.set(ylabel = 'Noites com EPBs')
+        
+    return fig
+    
+    
 
 def plot_annually_events_count(ds):
     
     
     fig, ax = plt.subplots(
         dpi = 300, 
-        nrows = 2,
         sharex = True,
-        figsize = (12, 8)
+        figsize = (14, 6)
         )
-
-    period = ['sunset', 'midnight']
     
     plt.subplots_adjust(hspace = 0.1)
     
-    ylims = [350, 100]
+    df = c.CountAllOccurences(ds).year
+        
+    df.plot(
+        kind = 'bar', 
+        ax = ax, 
+        legend = False
+        )
     
-    for i, value in enumerate(period):
-        
-        df =  c.year_occurrence( ds )
-        
-        df1 = df.loc[df['type'] == value].iloc[:, :-1]
-        # df = df.replace(np.nan, 0)
-        print(df1)
-        
-        total = int(df1.values.sum())
+    plt.xticks(rotation = 0)
     
-        df1.plot(
-            kind = 'bar', 
-            ax = ax[i], 
-            legend = False
-            )
+    ax.set(
+        ylabel = 'Noites com EPB',
+        xlabel = 'Anos'
+        )
         
-        title = f'({b.chars()[i]}) Post {period[i]} '
-        events = f'({total}  events)'
-        
-        plt.xticks(rotation = 0)
-        
-        ax[i].text(
-            0.03, 0.85, 
-            title + events, 
-            transform = ax[i].transAxes
-            )
-        
-        ax[i].set(
-            ylabel = 'Nigths with EPB',
-            ylim = [0, ylims[i]]
-            )
-        
-   
-    ax[0].legend(
-        [f'{c}°' for c in ds.columns],
+    t = [f'{col}° ({vl})' for col, vl in zip(ds.columns, df.sum().values)]
+    
+    ax.legend(
+        t,
         ncol = 5, 
-        title = 'Longitudinal sectors (2013 - 2022)',
-        bbox_to_anchor = (.5, 1.4), 
+        title = 'Setores longitudinais e eventos de EPBs (2013 - 2022)',
+        bbox_to_anchor = (.5, 1.3), 
         loc = "upper center", 
         columnspacing = 0.6
         )
-    
-    ax[1].set(xlabel = 'Years')
-    
     return fig
-ds = c.epbs(class_epb = None)
+
+typing = 'sunset'
+# typing = 'postmidnight'
+path = f'database/epbs/{typing}_events3.txt'
+ds = b.load(path)
 
 fig = plot_annually_events_count(ds)
 
-FigureName = 'annualy_midnight_sunset'
+# FigureName = 'annualy_midnight_sunset'
 
-fig.savefig(
-    b.LATEX(FigureName, folder = 'bars'),
-    dpi = 400
-    )
+# fig.savefig(
+#     b.LATEX(FigureName, folder = 'bars'),
+#     dpi = 400
+#     )

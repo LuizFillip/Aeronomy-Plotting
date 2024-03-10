@@ -1,9 +1,12 @@
-import PlasmaBubbles as pb 
+import core as c
 import matplotlib.pyplot as plt
 import base as b 
 
+b.config_labels(fontsize = 25)
 
-def plot_seasonal_occurrence(ds):
+
+
+def plot_seasonal_occurrence(ds, percent = True):
     
     
     fig, ax = plt.subplots(
@@ -15,59 +18,49 @@ def plot_seasonal_occurrence(ds):
     
     plt.subplots_adjust(hspace = 0.1)
         
-    df =  pb.month_occurrence(
-        ds, 1
-        )
-    
-    
-    df.plot(
-        kind = 'bar', 
-        ax = ax, 
-        legend = False
-        )
+    df = c.CountAllOccurences(ds).month
+        
+    df.plot(kind = 'bar', ax = ax, legend = False)
 
-    
     plt.xticks(rotation = 0)
     
     ax.set(
-        ylabel = 'Nigths with EPB',
-        xlabel = 'Months',
+        ylabel = 'Noites com EPB',
+        xlabel = 'Meses',
         xticklabels = b.number_to_months()
         )
         
-    t = df.sum().values
-    c = ds.columns
+    t = [f'{col}° ({vl})' for col, vl in zip(ds.columns, df.sum().values)]
+    
     ax.legend(
-        [f'{c[i]}° ({t[i]})' for i in range(len(c))],
+        t,
         ncol = 5, 
-        title = f'Longitudinal sectors and EPBs events (2013 - 2022)',
+        title = 'Setores longitudinais e eventos de EPBs (2013 - 2022)',
         bbox_to_anchor = (.5, 1.3), 
         loc = "upper center", 
         columnspacing = 0.6
         )
     
+    return fig
     
     
+    
+def main():
+    typing = 'sunset'
+    typing = 'postmidnight'
+    path = f'database/epbs/{typing}_events3.txt'
+    path = f'database/{typing}_events'
+    ds = b.load(path)
+    
+    
+    fig = plot_seasonal_occurrence(ds)
+    
+    # FigureName = f'seasonal_{typing}'
+    
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'bars'),
+    #       dpi = 400
+    #       )
+    
 
-path = 'database/epbs/events_types.txt'
-
-ds = b.load(path)
-
-ds
-
-# from geophysical_indices import INDEX_PATH
-# import pandas as pd
- 
-
-# df = pd.concat(
-#     [b.load(path), 
-#      b.load(INDEX_PATH)], 
-#     axis = 1).dropna()
-
-
-# ds = df.loc[df['kp'] > 3].iloc[:, :5]
-
-
-plot_seasonal_occurrence(ds)
-
-
+main()

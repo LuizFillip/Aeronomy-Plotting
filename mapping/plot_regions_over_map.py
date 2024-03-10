@@ -58,8 +58,6 @@ def plot_regions_over_map(year = 2013):
     
 fig = plot_regions_over_map(year = 2013)
 
-FigureName = 'regions_and_ipp'
-
 # fig.savefig(
 #     b.LATEX(FigureName, folder = 'maps'),
 #     dpi = 400

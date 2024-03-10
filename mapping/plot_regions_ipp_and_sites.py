@@ -109,3 +109,30 @@ def main():
 # fig = plot_regions_ipp_and_sites(dn)
 
 
+path = 'D:\\database\\GNSS\\roti\\are2019\\004'
+
+ds = pb.load_filter(path)
+
+ds = b.sel_times(ds, ds.index[0], hours = 3)
+fig, ax = plt.subplots(
+    dpi = 300,
+    sharex = True, 
+    figsize = (10, 10),
+    subplot_kw = {'projection': ccrs.PlateCarree()}
+)
+
+
+gg.map_attrs(ax, 2019, grid = False)
+
+img = ax.scatter(
+         ds['lon'],
+         ds['lat'],
+         c = ds['roti'],
+         s = 50,
+         cmap = 'jet',
+         vmin = 0,
+         vmax = 0.5
+     )       
+
+ticks = np.arange(0, 0.5, 0.01)
+b.colorbar(img, ax, ticks)

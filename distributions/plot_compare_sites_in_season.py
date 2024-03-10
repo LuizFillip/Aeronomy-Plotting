@@ -71,7 +71,7 @@ def plot_compare_sites_in_season(
         
         LIST = [total_epb, total_day]
         
-        pl.plot_events_infos(ax, row, LIST)
+        pl.plot_events_infos(ax, row, LIST, translate = False)
     
     # fig.suptitle(year)
     

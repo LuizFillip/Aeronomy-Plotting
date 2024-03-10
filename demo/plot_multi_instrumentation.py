@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 from skimage import io
 from matplotlib.gridspec import GridSpec
 import digisonde as dg 
-import FetchData as c
 import os 
 import imager as im
 import base as b 
@@ -29,13 +28,11 @@ def plot_imager(ax_img, PATH_SKY, file, index):
     
     new_img= AllSky.bright
     
-    # if hori_flip: new_img = np.fliplr(new_img)
-    # if vert_flip: new_img = np.flipud(new_img)
-    # new_img = np.fliplr(np.flipud(new_img))
     AllSky.display(ax_img, new_img)
     dn = im.fn2datetime(file)
-    title = dn.strftime(f'({index}) %H:%M')
+    title = dn.strftime(f'({index}) %Hh%M')
     ax_img.set(title = title)
+    
     return dn 
 
 def plot_ionogram(ax2, target, col, site, PATH_IONO):
@@ -61,7 +58,7 @@ def plot_ionogram(ax2, target, col, site, PATH_IONO):
         )
     
     
-    title = target.strftime(f'({col + 1}) %H:%M')
+    title = dn.strftime(f'({col + 1}) %H:%M')
     
     ax2.set(title = title)
     
@@ -82,7 +79,7 @@ args = dict(
      markersize = 5,
      linestyle = 'none', 
      color = 'gray', 
-     alpha = 1, 
+     alpha = 0.7, 
      )
 
 
@@ -93,20 +90,18 @@ def plot_roti_curves(ax, dn):
 
     ds = b.sel_times(ds, dn)
     
-    ds = ds.loc[(ds['lon'] > -50) & 
-                (ds['lon'] < -40) &
-                (ds['lat'] > -5) & 
-                (ds['lat'] < -1 )]
+    # ds = ds.loc[(ds['lon'] > -50) & 
+    #             (ds['lon'] < -40) &
+    #             (ds['lat'] > -5) & 
+    #             (ds['lat'] < -1 )]
     
-    ds = ds[~ds['prn'].str.contains('R')]
+    # ds = ds[~ds['prn'].str.contains('R')]
         
     ax.plot(ds['roti'], **args, 
             label = 'ROTI points')
     
     times = pb.time_range(ds)
     
-    ax.axhline(0.25, color = 'red', lw = 2, 
-                label = '0.25 TECU/min')
     
     df1 = pb.maximum_in_time_window(ds, 'max', times)
     
@@ -117,8 +112,13 @@ def plot_roti_curves(ax, dn):
             linestyle = 'none',
             label = 'Maximum value')
     
-    ax.set(yticks = list(range(0, 5)), 
-           ylabel = 'ROTI (TECU/min)')
+    ax.axhline(0.25, color = 'red', lw = 2, 
+                label = '0.25 TECU/min')
+    
+    
+    ax.set(yticks = list(range(0, 7)), 
+           ylabel = 'ROTI (TECU/min)', 
+           xlim = [df1.index[0], df1.index[-1]])
     ax.legend(loc = 'upper right')
     
     b.format_time_axes(ax)
@@ -129,7 +129,7 @@ def plot_shades(ax1, n, index):
     delta = dt.timedelta(minutes = 10)
     
     ax1.text(
-        n, 3.5, index, 
+        n, 5.5, index, 
         transform = ax1.transData
         )
     
@@ -142,8 +142,8 @@ def plot_shades(ax1, n, index):
     )
     
 def closest_iono(PATH_IONO, target):
-    iono_times = [dg.ionosonde_fname(f) for 
-                  f in os.listdir(PATH_IONO) 
+    iono_times = [
+        dg.ionosonde_fname(f) for f in os.listdir(PATH_IONO) 
                   if 'PNG' in f ]
     
     dn = b.closest_datetime(iono_times, target)
@@ -160,7 +160,7 @@ def plot_multi_instrumentation(fn_skys):
         figsize = (12, 12),
         layout = "constrained"
         )
-    site =  'FZA0M'
+    # site =  'FZA0M'
     site =  'SAA0K'
     folder_img = dn.strftime('CA_%Y_%m%d')
     folder_ion = dn.strftime('%Y%m%d')
@@ -171,12 +171,11 @@ def plot_multi_instrumentation(fn_skys):
     gs2 = GridSpec(3, len(fn_skys))
     
     gs2.update(hspace = 0.2, wspace = 0)
-    
-    out = []
-    
+        
     ax3 = plt.subplot(gs2[-1, :])
 
-
+    plot_roti_curves(ax3, dn)
+    
     for col, fn_sky in enumerate(fn_skys):
                 
         ax1 = plt.subplot(gs2[0, col])
@@ -185,30 +184,30 @@ def plot_multi_instrumentation(fn_skys):
         
         ax2 = plt.subplot(gs2[1, col])
         
-        plot_ionogram(ax2, target, col, site, PATH_IONO)
+        dn1 = plot_ionogram(ax2, target, col, site, PATH_IONO)
         
-        plot_shades(ax3, target, col + 1)
+        plot_shades(ax3, dn1, col + 1)
     
     
-    plot_roti_curves(ax3, dn)
-    plot_shades(ax3, dn, out)
+    
     
     return fig
 
+FigureName = 'non_EPB_occurrence'
+fn_skys = [ 
+    'O6_CA_20130610_220827.tif',
+    'O6_CA_20130610_225828.tif', 
+    'O6_CA_20130611_001329.tif', 
+    'O6_CA_20130611_014955.tif'
+    ]
 
-# fn_skys = [ 
-#     'O6_CA_20130610_220827.png',
-#     'O6_CA_20130610_225828.png', 
-#     'O6_CA_20130611_001329.png', 
-#     'O6_CA_20130611_014955.png'
-#     ]
+# FigureName = 'EPB_occurrence'
 
-
-fn_skys = [
-    'O6_CA_20130114_224619.tif', 
-    'O6_CA_20130114_231829.tif',
-    'O6_CA_20130114_234329.tif', 
-    'O6_CA_20130115_020958.tif']
+# fn_skys = [
+#     'O6_CA_20130114_224619.tif', 
+#     'O6_CA_20130114_231829.tif',
+#     'O6_CA_20130114_234329.tif', 
+#     'O6_CA_20130115_020958.tif']
 
 
 
@@ -217,7 +216,9 @@ fig = plot_multi_instrumentation(fn_skys)
 
 
 
-# fig.savefig(b.LATEX('non_EPB_occurrence'), dpi = 400)
+fig.savefig(
+    b.LATEX(FigureName, 
+    folder = 'modeling'), dpi = 400)
 # 
 
 

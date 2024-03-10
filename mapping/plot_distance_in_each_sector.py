@@ -48,7 +48,7 @@ def plot_distance_in_each_sector():
     fig, ax = plt.subplots(
         dpi = 300,
         figsize = (12,12),
-        subplot_kw={
+        subplot_kw = {
             'projection': ccrs.PlateCarree()
             }
         )

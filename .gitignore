@@ -2,6 +2,10 @@
 /layouts/__pycache__/*
 /histograms/__pycache__/*
 /FluxTube/__pycache__/*
+/FluxTube/modelling/__pycache__/*
+/FluxTube/maps/__pycache__/*
+/FluxTube/profiles/__pycache__/*
+
 /correlations/__pycache__/*
 /time_heights/__pycache__/*
 /timeseries/__pycache__/*

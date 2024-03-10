@@ -1,10 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import settings as s
-from FabryPerot.src.core import load_FPI
-from common import load
-from utils import time2float, save_plot
+import base as b 
+from FabryPerot import load_FPI
 
 
 def plot_component(
@@ -82,12 +80,14 @@ def plot_dir(ax, col, HWM, FPI, coord = "zon"):
 
 def plot_climatology_HWM_FPI():
 
-    fig, ax = plt.subplots(figsize = (14, 6), 
-                           nrows = 2, 
-                           ncols = 2,
-                           sharey = True,
-                           sharex = True, 
-                           dpi = 300)
+    fig, ax = plt.subplots(
+        figsize = (14, 6), 
+        nrows = 2, 
+        ncols = 2,
+        sharey = True,
+        sharex = True, 
+        dpi = 300
+        )
     s.config_labels()
     plt.subplots_adjust(hspace = 0.15, wspace=0.25)
          
@@ -106,4 +106,4 @@ def plot_climatology_HWM_FPI():
     fig.suptitle(year, y = 0.98)
     return fig
     
-save_plot(plot_climatology_HWM_FPI)
+# save_plot(plot_climatology_HWM_FPI)

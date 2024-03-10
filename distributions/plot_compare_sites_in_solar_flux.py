@@ -4,11 +4,6 @@ import core as c
 import plotting as pl 
  
 
-
-
-
-    
-
 def plot_compare_sites_in_solar_flux(df):
     fig, ax = plt.subplots(
         dpi = 300, 
@@ -25,15 +20,12 @@ def plot_compare_sites_in_solar_flux(df):
     
     F107_labels = df_index.solar_labels(limit)
     
-    datasets = [sep_data(df, 'saa'), sep_data(df, 'jic')]
-
     titles = [ 'São Luís', 'Jicamarca']
     
     total_epb = []
     total_day = []
     
-    
-    for i, ds in enumerate(datasets):
+    for i, ds in enumerate(c.get_same_length()):
         index = i + 1
         label = f'({index}) {titles[i]}'
         data, epbs = pl.plot_distribution(
@@ -70,7 +62,5 @@ def plot_compare_sites_in_solar_flux(df):
     return fig 
 
 df = c.concat_sites()
-
-# df = df.loc[~df.index.year.isin([2014, 2015, 2020])]
 
 fig = plot_compare_sites_in_solar_flux(df)

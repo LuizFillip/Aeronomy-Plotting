@@ -12,7 +12,7 @@ import datetime as dt
 
 b.config_labels(fontsize = 25)
 
-def load_dataset(dn):
+def load_dataset(dn, hours = 12):
     
     out = []
     for folder in [ 'events2', 'long2']:
@@ -21,7 +21,7 @@ def load_dataset(dn):
                 dn.year, root = 'D:\\', folder = folder)
             )
         
-        out.append(b.sel_times(ds, dn))
+        out.append(b.sel_times(ds, dn, hours = hours))
         
     return tuple(out)
 
@@ -34,10 +34,10 @@ def plot_roti_epb_occurrence_in_column(df, ds):
         dpi = 300, 
         sharey= 'col',
         sharex= True,
-        figsize = (16, 10)
+        figsize = (18, 10)
         )
 
-    plt.subplots_adjust(hspace = 0.1)
+    plt.subplots_adjust(hspace = 0.05)
 
     dn = df.index[0]
     
@@ -53,8 +53,11 @@ def plot_roti_epb_occurrence_in_column(df, ds):
         ax[i, 1].axvline(terminator, color = 'k', lw = 2)
         ax[i, 0].axvline(terminator, color = 'k', lw = 2)
         
-        
-        ax[i, 0].set(ylim = [0, 2])
+        ax[i, 0].text(
+            0.1, 0.85, col, 
+            transform = ax[i, 0].transAxes)
+    
+        ax[i, 0].set(ylim = [0, 4])
         
     b.format_time_axes(ax[-1, 0])
     b.format_time_axes(ax[-1, 1])
@@ -62,9 +65,8 @@ def plot_roti_epb_occurrence_in_column(df, ds):
     return fig 
 
 
-dn = dt.datetime(2013,3,29, 20)
+# dn = dt.datetime(2013, 2, 1, 20)
 
-ds, df = load_dataset(dn)
+# ds, df = load_dataset(dn, hours = 12)
 
-
-fig = plot_roti_epb_occurrence_in_column(df, ds)
+# fig = plot_roti_epb_occurrence_in_column(df, ds)
