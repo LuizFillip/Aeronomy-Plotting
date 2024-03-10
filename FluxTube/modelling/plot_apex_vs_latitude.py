@@ -55,7 +55,8 @@ def plot_apex_vs_latitude(
         lim = 15,
         max_height = 500, 
         step = 100,
-        base = 100
+        base = 100,
+        translate = False
         ):
     if ax is None:
         fig, ax = plt.subplots(
@@ -86,12 +87,18 @@ def plot_apex_vs_latitude(
             
         args = dict(color = color, lw = 2)
         ax.plot(np.degrees(lats), apex, **args)    
-        
+    
+    if translate:
+        ylabel = "Altura de Apex (km)"
+        xlabel = "Latitude magnética (°)"
+    else:
+        ylabel = 'Apex height (km)'
+        xlabel = 'Magnetic Latitude (°)'
     ax.set(
         xlim = [-lim, lim],
         ylim = [100, 450],
-        ylabel = "Altura de Apex (km)", 
-        xlabel = "Latitude magnética (°)"
+        ylabel = ylabel, 
+        xlabel = xlabel
         )
     
     ax.axvline(0, linestyle = "--", lw = 1)
@@ -99,11 +106,11 @@ def plot_apex_vs_latitude(
     
     plot_hlines(ax)
 
-        
-    return fig 
+    if ax is None:
+        return fig 
 
 
-fig = plot_apex_vs_latitude()
+# fig = plot_apex_vs_latitude()
 
 # FigureName = 'magnetic_lines'
 

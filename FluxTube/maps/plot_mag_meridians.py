@@ -24,7 +24,7 @@ def plot_meridian(
         # print(glat, glon)
         ax.scatter(glon, glat,  s = 300, 
                     marker = '^', c = 'b', 
-                    label = 'São Luís')
+                    label = 'São Luís (ionosonde)')
             
         nx, ny, x, y = gg.load_meridian(year, site)
         
@@ -55,17 +55,19 @@ def plot_meridian(
 
 
 def plot_mag_meridians(
+        ax = None, 
         year = 2013
         ):
     
-    fig, ax = plt.subplots(
-        dpi = 300,
-        figsize = (10, 10),
-        subplot_kw = {'projection': ccrs.PlateCarree()}
-        )
+    if ax is None:
+        fig, ax = plt.subplots(
+            dpi = 300,
+            figsize = (10, 10),
+            subplot_kw = {'projection': ccrs.PlateCarree()}
+            )
     
-    lat_lims = dict(min = -20, max = 20, stp = 10)
-    lon_lims = dict(min = -60, max = -30, stp = 10) 
+    lat_lims = dict(min = -20, max = 20, stp = 5)
+    lon_lims = dict(min = -60, max = -25, stp = 5) 
 
     gg.map_attrs(
         ax, year, 
@@ -88,9 +90,8 @@ def plot_mag_meridians(
         ncol = 1, 
         loc = "upper right"
         )
+    if ax is None:
+        return fig
 
-    return fig
-
-fig = plot_mag_meridians(
-        year = 2013
-        )
+# fig = plot_mag_meridians( year = 2013
+#         )
