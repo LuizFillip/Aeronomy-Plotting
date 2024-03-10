@@ -152,9 +152,7 @@ def TEC_6300_IONOGRAM_ROTI(files, dn, site = 'FZA0M'):
         title(ax_ion, dn, index)
         
         ax_tec = plt.subplot(
-            gs2[2, col], 
-            projection = ccrs.PlateCarree()
-            )
+            gs2[2, col], projection = ccrs.PlateCarree())
         
         
         
