@@ -10,24 +10,40 @@ import datetime as dt
 import PlasmaBubbles as pb 
 
 
+def get_datetime_from_file(fn):
+    date_obj = im.fn2datetime(fn).date() 
+    time_obj = dt.time(20, 0)
+    
+    return dt.datetime.combine(date_obj, time_obj)
+    
+
 def folder_date(dn):
     return dn.strftime('%Y%m%d')
 
-def plot_imager(ax2, fname, col):
-        
-    ax2.imshow(io.imread(fname, as_gray = True), cmap = 'gray')
-       
-    ax2.set_axis_off()
+def plot_imager(ax_img, PATH_SKY, file, index):
     
-    dn = im.imager_fname(fname).datetime
-    title = dn.strftime(f'({col + 1}) %H:%M')
-    ax2.set(title = title)
+    
+    AllSky = im.processing_img(
+        os.path.join(PATH_SKY, file)
+        )
+    
+    new_img= AllSky.bright
+    
+    # if hori_flip: new_img = np.fliplr(new_img)
+    # if vert_flip: new_img = np.flipud(new_img)
+    # new_img = np.fliplr(np.flipud(new_img))
+    AllSky.display(ax_img, new_img)
+    dn = im.fn2datetime(file)
+    title = dn.strftime(f'({index}) %H:%M')
+    ax_img.set(title = title)
+    return dn 
 
-    return ax2
-
-def plot_ionogram(ax2, fname, col):
-        
-    img = io.imread(fname)
+def plot_ionogram(ax2, target, col, site, PATH_IONO):
+    
+    dn = closest_iono(PATH_IONO, target)
+    file = dn.strftime(f'{site}_%Y%m%d(%j)%H%M%S.PNG')
+            
+    img = io.imread(os.path.join(PATH_IONO, file))
     
     ax2.imshow(
         dg.crop_image(
@@ -44,9 +60,8 @@ def plot_ionogram(ax2, fname, col):
         labelleft = False
         )
     
-    dn = dg.ionosonde_fname(fname) 
     
-    title = dn.strftime(f'({col + 1}) %H:%M')
+    title = target.strftime(f'({col + 1}) %H:%M')
     
     ax2.set(title = title)
     
@@ -64,10 +79,10 @@ def plot_ionogram(ax2, fname, col):
 
 args = dict(
      marker = 'o', 
-     markersize = 1,
+     markersize = 5,
      linestyle = 'none', 
      color = 'gray', 
-     alpha = 0.3, 
+     alpha = 1, 
      )
 
 
@@ -93,12 +108,12 @@ def plot_roti_curves(ax, dn):
     ax.axhline(0.25, color = 'red', lw = 2, 
                 label = '0.25 TECU/min')
     
-    df1 = pb.time_dataset(ds, 'max', times)
+    df1 = pb.maximum_in_time_window(ds, 'max', times)
     
     ax.plot(df1, 
             color = 'k',
             marker = 'o', 
-            markersize = 3, 
+            markersize = 5, 
             linestyle = 'none',
             label = 'Maximum value')
     
@@ -125,62 +140,60 @@ def plot_shades(ax1, n, index):
         edgecolor = 'k', 
         lw = 2
     )
+    
+def closest_iono(PATH_IONO, target):
+    iono_times = [dg.ionosonde_fname(f) for 
+                  f in os.listdir(PATH_IONO) 
+                  if 'PNG' in f ]
+    
+    dn = b.closest_datetime(iono_times, target)
+    
+    return dn
   
     
-def plot_multi_instrumentation(dn, fn_skys):
+def plot_multi_instrumentation(fn_skys):
+    
+    dn = get_datetime_from_file(fn_skys[0])
 
     fig = plt.figure(
         dpi = 300,
         figsize = (12, 12),
         layout = "constrained"
         )
-    
-    PATH_IMAG = f'imager/img/{im.folder_from_dn(dn)}/'
-    PATH_IONO = f'digisonde/data/ionogram/{folder_date(dn)}/'
+    site =  'FZA0M'
+    site =  'SAA0K'
+    folder_img = dn.strftime('CA_%Y_%m%d')
+    folder_ion = dn.strftime('%Y%m%d')
+    PATH_SKY = f'database/images/{folder_img}/'
+    PATH_IONO = f'database/ionogram/{folder_ion}{site[0]}/'
+
 
     gs2 = GridSpec(3, len(fn_skys))
     
-    gs2.update(
-        hspace = 0.2,  
-        wspace = 0
-        )
+    gs2.update(hspace = 0.2, wspace = 0)
     
     out = []
     
+    ax3 = plt.subplot(gs2[-1, :])
+
+
     for col, fn_sky in enumerate(fn_skys):
-        
-        imag = os.path.join(
-            PATH_IMAG,
-            fn_sky
-            )
-        
+                
         ax1 = plt.subplot(gs2[0, col])
         
-        plot_imager(ax1, imag, col)
-        
-
-        fn_iono = c.get_closest_iono(
-            fn_sky, PATH_IONO)
-        
-        iono = os.path.join(
-            PATH_IONO,
-            fn_iono
-            )
+        target = plot_imager(ax1, PATH_SKY, fn_sky, col + 1)
         
         ax2 = plt.subplot(gs2[1, col])
         
-        plot_ionogram(ax2, iono, col)
+        plot_ionogram(ax2, target, col, site, PATH_IONO)
         
-        out.append(im.fn2datetime(fn_sky))
+        plot_shades(ax3, target, col + 1)
     
-    ax3 = plt.subplot(gs2[-1, :])
     
     plot_roti_curves(ax3, dn)
     plot_shades(ax3, dn, out)
     
     return fig
-
-# dn = dt.datetime(2013, 6, 10, 20)
 
 
 # fn_skys = [ 
@@ -190,23 +203,21 @@ def plot_multi_instrumentation(dn, fn_skys):
 #     'O6_CA_20130611_014955.png'
 #     ]
 
-# dn = dt.datetime(2013, 1, 14, 20)
 
-# fn_skys = [
-#     'O6_CA_20130114_224619.png', 
-#     'O6_CA_20130114_231829.png',
-#     'O6_CA_20130114_234329.png', 
-#     'O6_CA_20130115_020958.png']
+fn_skys = [
+    'O6_CA_20130114_224619.tif', 
+    'O6_CA_20130114_231829.tif',
+    'O6_CA_20130114_234329.tif', 
+    'O6_CA_20130115_020958.tif']
+
+
+
+
+fig = plot_multi_instrumentation(fn_skys) 
+
 
 
 # fig.savefig(b.LATEX('non_EPB_occurrence'), dpi = 400)
 # 
 
 
-
-# fig, ax  = plt.subplots()
-
-# plot_roti_curves(ax, dn)
-
-
-# fig = plot_multi_instrumentation(dn, fn_skys)
