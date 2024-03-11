@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import base as b
 import core as c 
 import plotting as pl 
- 
+
+b.config_labels(fontsize = 25)
 
 def plot_compare_sites_in_solar_flux(df):
     fig, ax = plt.subplots(
@@ -13,14 +14,8 @@ def plot_compare_sites_in_solar_flux(df):
         )
     
     plt.subplots_adjust(hspace = 0.1)
-        
-    df_index = c.DisturbedLevels(df)
     
-    limit = c.limits_on_parts(df['f107a'], parts = 2)
-    
-    F107_labels = df_index.solar_labels(limit)
-    
-    titles = [ 'São Luís', 'Jicamarca']
+    titles = ['São Luís', 'Jicamarca']
     
     total_epb = []
     total_day = []
@@ -34,7 +29,8 @@ def plot_compare_sites_in_solar_flux(df):
                 parameter = 'gamma',
                 label = label,
                 axis_label = True,
-                drop_ones = True
+                drop_ones = True,
+                translate = True
             )
         
         days = pl.plot_histogram(
@@ -56,11 +52,28 @@ def plot_compare_sites_in_solar_flux(df):
     ax[0].legend(loc = 'upper center', ncol = 2)
     ax[1].legend(loc = 'upper center', ncol = 2)
     
-    pl.plot_infos(ax[0], total_epb)
-    pl.plot_infos(ax[1], total_day, epb_title = False)
-        
+    x = 0.68
+    pl.plot_infos(ax[0], total_epb, 
+                  x = x, 
+                  translate = True)
+    pl.plot_infos(ax[1], total_day, 
+                  x = x, 
+                  epb_title = False, 
+                  translate = True)
+
+    b.plot_letters(ax, y = 0.87, x = 0.02)
+    
     return fig 
 
-df = c.concat_sites()
-
-fig = plot_compare_sites_in_solar_flux(df)
+def main():
+    df = c.concat_sites()
+    
+    fig = plot_compare_sites_in_solar_flux(df)
+    
+    FigureName = 'compare_jic_saa'
+      
+    fig.savefig(
+          b.LATEX(FigureName, 
+                  folder = 'distributions/pt/'),
+          dpi = 400
+          )

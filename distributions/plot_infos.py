@@ -14,18 +14,17 @@ def plot_infos(
     
     if isinstance(translate, str):
         title = translate
+        
+    if translate:
+        title = 'Ocorrência de EPBs'
         event = 'eventos'
-    
-    if epb_title:
-        if translate:
-            title = 'Ocorrência de EPBs'
-            event = 'eventos'
-        else:
-            title = 'EPB occurrence'
-            event = 'events'
     else:
-        title = '$\gamma_{RT}$ total'
+        title = 'EPB occurrence'
         event = 'events'
+        
+        
+    if not epb_title:       
+        title = '$\gamma_{RT}$ total'
     
     out = []
     for i, val in enumerate(values):
@@ -48,7 +47,8 @@ def legend(ax):
 def plot_events_infos(
         ax, row, LIST, 
         translate = True, 
-        epb_title = True
+        epb_title = True,
+        x = 0.6, y = 0.2
         ):
     
 
@@ -64,8 +64,8 @@ def plot_events_infos(
         plot_infos(
             ax[row, col], 
             total, 
-            x = 0.65, 
-            y = 0.2,
+            x = x, 
+            y = y,
             translate = translate,
             epb_title = epb_title
             )

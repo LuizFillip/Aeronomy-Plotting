@@ -1,19 +1,14 @@
 import matplotlib.pyplot as plt
 import core as c
 import plotting as pl
+import base as b 
 
-def set_data(year, wind = -20):    
-    jic = c.local_results(year)
-    
-    df = c.concat_results('saa')
-    
-    saa = df.loc[df.index.year == year]
-    
-    return saa, jic
 
+b.config_labels(fontsize = 25)
 
 def plot_compare_sites_in_season(
-        parameter = 'gamma'
+        parameter = 'gamma', 
+        translate = True
         ):
     fig, ax = plt.subplots(
           ncols = 2,
@@ -41,7 +36,7 @@ def plot_compare_sites_in_season(
         
         for index, df in enumerate(c.get_same_length()):
             
-            df_season = c.SeasonsSplit(df, name)
+            df_season = c.SeasonsSplit(df, name, translate = translate)
             
             label = f'({index + 1}) {titles[index]}'
         
@@ -68,23 +63,33 @@ def plot_compare_sites_in_season(
                 f'{df_season.name}',
                 transform = ax[row, index].transAxes
                 )
+            
+            ax[row, index].set(ylim = [0, 300])
         
         LIST = [total_epb, total_day]
         
-        pl.plot_events_infos(ax, row, LIST, translate = False)
-    
-    # fig.suptitle(year)
-    
+        pl.plot_events_infos(ax, row, LIST, translate = translate)
+        
     pl.FigureLabels(
             fig, 
-            translate = False, 
+            translate = translate, 
             fontsize = 30
             )
     plt.show()
     return fig
 
-# for year in range(2013, 2021):
+def main():
+    
+    fig = plot_compare_sites_in_season(
+            parameter = 'gamma'
+            )
+    
+    FigureName = 'compare_jic_saa_in_season'
+      
+    fig.savefig(
+          b.LATEX(FigureName, 
+                  folder = 'distributions/pt/'),
+          dpi = 400
+          )
 
-fig = plot_compare_sites_in_season(
-        parameter = 'gamma'
-        )
+
