@@ -2,7 +2,6 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import base as b 
 import PlasmaBubbles as pb 
-import plotting as pl 
 import GEO as gg 
 
 b.config_labels(fontsize = 25)
@@ -38,32 +37,14 @@ def plot_arrow_and_note(ax, start, end, time):
         )
     
 
-def terminator_time(ax, dn, col):
+
+
+
+def dusk(dn, col):
     
-    lon, lat = gg.first_edge(dn.year)[col]
+    lon, lat = gg.first_edge(dn.year)[int(col)]
     
-    lon, lat = -30, 0
-    dusk = gg.dusk_time(
-            dn, 
-            lat = lat, 
-            lon = lon, 
-            twilight = 18
-            )
-    label = 'Terminadouro solar'
-    ax.axvline(
-        dusk, 
-        lw = 2, 
-        linestyle = '--', 
-        
-        )
-    d = dt.timedelta(hours = 0.1)
-    ax.text(dusk + d, 1.1, label, 
-            transform = ax.transData)
-    
-    return dusk
-     
-def to_brazilian(dtime):
-    return str(round(dtime, 2)).replace('.', ',')
+    return gg.dusk_time(dn, lat = lat, lon = lon, twilight = 18)
 
 def plot_terminator_shift(ax, dusk, occur):
 
@@ -75,12 +56,10 @@ def plot_terminator_shift(ax, dusk, occur):
         )
     
     middle = middle_time(occur, dusk)
-    dtime = (occur - dusk).total_seconds() / 3600
-    
-    dtime = to_brazilian(dtime)
-    
+    dtime = round((occur - dusk).total_seconds() / 3600, 2)
+        
     ax.annotate(
-        f'{dtime} horas',
+        f'{dtime}',
         xy = (middle, 0.55), 
         xycoords = 'data',
         fontsize = 30.0,
@@ -88,78 +67,92 @@ def plot_terminator_shift(ax, dusk, occur):
         ha = 'center'
         )
     
-def plot_shift(ax, events, dusk):
+def plot_shift(ax, ds, col):
     
-    ds = pb.track_time_diff(events, col = 'max')
+    dn = ds.index[0]
+    ds = pb.track_time_diff(ds, col, floatType = False)
   
-    occur = events[events['max'] == 1].index.min()
+    occur = ds[ds[col] == 1].index.min()
     
-    plot_terminator_shift(ax, dusk, occur)
+    plot_terminator_shift(ax, dusk(dn, col), occur)
     
     for i in range(len(ds)):
         sel = ds.iloc[i, :]
         start = sel['start']
         end = sel['end']
-        time = sel['duration']
-        
-        if sel['duration'] > 1:  
+        time = sel['duration']     
             
-            plot_arrow_and_note(ax, start, end, time)
+        plot_arrow_and_note(ax, start, end, time)
 
-def plot_demo_time_shift(dn, col):
+
+def plot_occurrencegram(ax, ds, threshold = 0.25):
+    dn = ds.index[0]
+    col = ds.name
+    ds1 = pb.events_by_longitude(ds, threshold)
     
+    ax.plot(
+         ds1, 
+         marker = 'o',
+         markersize = 3,
+         color = 'k', 
+         label = f'{col}°'
+        )
+        
+    ax.axvline(
+        dusk(dn, col), 
+        linestyle = '--',
+        color = 'k', 
+        )
+    
+    b.format_time_axes(ax, translate = True)
+    
+    return ds1
+
+
+def plot_roti_max(ax, ds, threshold = 0.25):
+    
+    col = ds.name
+    ax.plot(ds)
+    
+    ax.axvline(
+        dusk(dn, col), 
+        linestyle = '--',
+        color = 'k', 
+        )
+    
+    ax.axhline(
+         threshold, 
+         color = 'red', lw = 2, 
+         label = f'{threshold} TECU/min'
+         )
+
+
+df = b.load('database/longitudes_all_years.txt')
+
+
+dn = dt.datetime(2013, 2, 2, 20)
+
+
+ds = b.sel_times(df, dn, hours = 11)
+
+
+def plot_epb_time_feadtures(ds,  col = '-50'):
+
     fig, ax = plt.subplots(
-        figsize = (14, 8), 
-        nrows = 2, 
-        sharex = True, 
-        dpi = 300 
-        )
-    
+          figsize = (14, 8), 
+          nrows = 2, 
+          sharex = True, 
+          dpi = 300 
+          )
+      
     plt.subplots_adjust(hspace = 0.05)
-    
-    # df = pb.load_raw_in_sector(dn)
-    
-    df = pb.concat_files(dn, root = 'D:\\')
 
-    df = b.sel_times(df, dn, hours = 11)
-
-    lon_min = -48
+    plot_roti_max(ax[0], ds[col])
     
-    df =  df.loc[(df['lon'] > lon_min) ]
-    
-    ds = pl.plot_roti_points(ax[0], df, label = True)
-    
-    events = pl.plot_occurrence_events(ax[1], ds)
-    
-    dusk = terminator_time(ax[1], dn, col)
-    
-    plot_shift(ax[1], events, dusk)
-    
-    b.format_time_axes(ax[1], translate = True)
+    events = plot_occurrencegram(ax[1], ds[col])
     
     
-    ax[0].legend(loc = 'upper right', ncol = 1)
+    plot_shift(ax[1], events, col)
+    return fig
     
-    b.plot_letters(ax, x = 0.02, y = 0.85, offset = 1)
-
-    return fig 
-
-
-
-def main():
-
-    col = -50
-    
-    dn = dt.datetime(2013, 12, 24, 20)
-    fig = plot_demo_time_shift(dn, col)
-    FigureName = dn.strftime('sunset_event_%Y%m%d')
-    fig.savefig(
-        b.LATEX(FigureName, 
-                folder = 'timeseries'),
-        dpi = 400
-        )
-
-    plt.show()
-    
-main()
-
+fig = plot_epb_time_feadtures(ds,  col = '-50')

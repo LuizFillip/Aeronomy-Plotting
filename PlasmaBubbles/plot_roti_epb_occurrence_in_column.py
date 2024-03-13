@@ -3,13 +3,6 @@ import base as b
 import PlasmaBubbles as pb 
 import datetime as dt
 
-
-
-# year = 2014
-
-# df = b.load('long_20140209')
-# ds = b.load('even_20140209')
-
 b.config_labels(fontsize = 25)
 
 def load_dataset(dn, hours = 12):
@@ -55,7 +48,8 @@ def plot_roti_epb_occurrence_in_column(df, ds):
         
         ax[i, 0].text(
             0.1, 0.85, col, 
-            transform = ax[i, 0].transAxes)
+            transform = ax[i, 0].transAxes
+            )
     
         ax[i, 0].set(ylim = [0, 4])
         
@@ -65,7 +59,7 @@ def plot_roti_epb_occurrence_in_column(df, ds):
     return fig 
 
 
-# dn = dt.datetime(2013, 2, 1, 20)
+# dn = dt.datetime(2013, 5, 17, 20)
 
 # ds, df = load_dataset(dn, hours = 12)
 

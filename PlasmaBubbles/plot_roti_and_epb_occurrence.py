@@ -151,12 +151,7 @@ def single_plot(
 def save_img(fig, save_in):
     
     
-    fig.savefig(
-        save_in, 
-        dpi = 300, 
-        pad_inches = 0, 
-        bbox_inches = "tight"
-        )
+   
     
     return 
 
@@ -188,13 +183,13 @@ def save_frames(year):
         plt.close()
         
         
-# dn = dt.datetime(2015, 1, 6, 20)
+dn = dt.datetime(2015, 1, 8, 20)
 
-# fig = single_plot(
-#         dn, 
-#         cols = [8], 
-#         hours = 11
-#         )
+fig = single_plot(
+        dn, 
+        cols = [8], 
+        hours = 11
+        )
 
 # plt.show()
 
