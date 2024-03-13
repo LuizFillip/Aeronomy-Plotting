@@ -78,30 +78,3 @@ fig, ax = plt.subplots(
 arr = df['f107'].values
 plot_histogram(ax, arr, binwidth = 3)
 
-def split_array_into_three_equal_parts(arr):
-    sorted_arr = sorted(arr)
-    
-    length = len(sorted_arr)
-    
-    if length < 3:
-        raise ValueError("Array should have at least three elements.")
-    
-    # Calculate the indices to split the array into three parts
-    part_size = length // 3
-    index1 = part_size
-    index2 = 2 * part_size
-    
-    # Split the sorted array into three parts based on magnitude
-    part1 = sorted_arr[:index1]
-    part2 = sorted_arr[index1:index2]
-    part3 = sorted_arr[index2:]
-    
-    return part1, part2, part3
-
-# Example usage:
-# my_array = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-part1, part2, part3 = split_array_into_three_equal_parts(arr)
-
-print("Part 1:", max(part1))
-print("Part 2:", max(part2))
-print("Part 3:", max(part3))
