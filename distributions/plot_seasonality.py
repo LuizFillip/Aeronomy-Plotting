@@ -88,7 +88,9 @@ def plot_distributions_seasons(
         
         LIST = [total_epb, total_day]
         pl.plot_events_infos(
-            ax, row, LIST, translate = translate)
+            ax, row, LIST, 
+            translate = translate
+            )
             
         
     pl.FigureLabels(
@@ -113,10 +115,10 @@ def main():
             )
     FigureName = 'seasonal_all_periods'
      
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'distributions/en/'),
-          dpi = 400
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'distributions/en/'),
+    #       dpi = 400
+    #       )
     
     
 # main()
