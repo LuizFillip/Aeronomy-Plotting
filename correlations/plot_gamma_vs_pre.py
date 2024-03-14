@@ -65,10 +65,10 @@ def plot_seasonal_gamma_vs_pre(df, col = 'gamma'):
     
     return fig  
 
-df = c.concat_results('saa')
 
 
-def plot_general_correlation(df, ax = None, col = 'gamma'):
+def plot_single_correlation(
+        df, ax = None, col = 'gamma'):
     
     
     if ax is None:
@@ -77,21 +77,27 @@ def plot_general_correlation(df, ax = None, col = 'gamma'):
                xlabel = b.y_label('vp'))
     
     
-    x, y = df['vp'].values, df[col].values
+    x_vls, y_vls = df['vp'].values, df[col].values
     
-    fit = b.linear_fit(x, y)
-    r2 = fit.r2_score
-    ax.scatter(x, y, s = 10, c = 'k')
+    fit = b.linear_fit(x_vls, y_vls)
     
-    ax.plot(x, fit.y_pred, lw = 2, color = 'red')
+    ax.scatter(x_vls, y_vls, s = 10, c = 'k')
+    
+    ax.plot(x_vls, fit.y_pred, lw = 2, color = 'red')
+    
+    a1, b1 = fit.coeficients
+    a1, b1 = round(a1, 2), round(b1, 2)
+    info = f'$\\gamma_{{RT}} = {a1}V_p + {b1}$'
     ax.text(
-        0.1, 0.8, f'$R^2$ = {r2}', 
-        transform = ax.transAxes)
+        0.5, 0.1, info, 
+        transform = ax.transAxes
+        )
     
-       
-    return fig
+    if ax is None:
+        return fig
 
 
 # fig = plot_general_correlation(df, col = 'gravity')
+df = c.concat_results('saa')
 
-fig = plot_seasonal_gamma_vs_pre(df, col = 'gravity')
+fig = plot_seasonal_gamma_vs_pre(df, col = 'gamma')
