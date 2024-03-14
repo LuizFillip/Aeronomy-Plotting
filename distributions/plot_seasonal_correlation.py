@@ -7,7 +7,9 @@ import plotting as pl
 
 b.config_labels(fontsize= 25)
 
-def plot_labels(fig, ax, fontsize = 30, translate = False ):
+def plot_labels(
+        fig, ax, 
+        fontsize = 30, translate = False ):
    
 
     if translate:
@@ -35,14 +37,15 @@ def plot_labels(fig, ax, fontsize = 30, translate = False ):
         b.y_label('vp'), 
         fontsize = fontsize
         )
-    
+    x = -0.15
+    y = 1.1
     ax[0, 0].text(
-        0, 1.05, '(a)', 
+        x, y, '(a)', 
         fontsize = fontsize, 
         transform = ax[0, 0].transAxes
         )
     ax[0, 1].text(
-        0, 1.05, '(b)', 
+        x, y, '(b)', 
         fontsize = fontsize, 
         transform = ax[0, 1].transAxes
         )
@@ -88,7 +91,7 @@ def plot_seasonal_correlation(
             col = 'gamma'
             )
         
-        ax[row, 1].set(ylim  = [0, 3.2])
+        ax[row, 1].set(ylim  = [0, 3])
         
         for index, df_level in enumerate(df_index.F107(limit)):
         
@@ -113,22 +116,31 @@ def plot_seasonal_correlation(
                 f'{df_season.name}',
                 transform = ax[row, 1].transAxes
                 )
+            
+            
+    ax[0, 0].legend(
+        ncol = 2,  
+        bbox_to_anchor = (0.5, 1.3), 
+        loc = 'upper center', 
+        )
      
     plot_labels(fig, ax, fontsize = 30, translate = False )
     
     return fig
 
+def main():
+    df = c.concat_results('saa')
+     
+    limit = c.limits_on_parts(df['f107a'], parts = 2)
+    
+    fig = plot_seasonal_correlation(df, limit)
+    
+    FigureName = 'seasonal_vp_correlation'
+     
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'distributions/en/'),
+          dpi = 400
+          )
 
-df = c.concat_results('saa')
- 
-limit = c.limits_on_parts(
-     df['f107a'], parts = 2
-     )
-fig = plot_seasonal_correlation(df, limit)
 
-FigureName = 'seasonal_vp_correlation'
- 
-# fig.savefig(
-#       b.LATEX(FigureName, folder = 'distributions/en/'),
-#       dpi = 400
-#       )
+# main()
