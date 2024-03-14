@@ -37,18 +37,15 @@ def plot_infos(
 
     return None 
 
-def legend(ax):
     
-    ax.legend(
-        ncol = 2, 
-        bbox_to_anchor = (0.5, 1.3),
-        loc = "upper center"
-        )
+    
+    
+    
 def plot_events_infos(
         ax, row, LIST, 
         translate = True, 
         epb_title = True,
-        x = 0.6, y = 0.2
+        x = 0.68, y = 0.2
         ):
     
 
@@ -67,8 +64,12 @@ def plot_events_infos(
             translate = translate,
             epb_title = epb_title
             )
-        
-        legend(ax[0, col])
+                
+        ax[0, col].legend(
+            ncol = 2, 
+            bbox_to_anchor = (0.5, 1.3),
+            loc = "upper center"
+            )
         l = b.chars()[col]
         
         ax[0, col].text(

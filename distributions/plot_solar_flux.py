@@ -71,12 +71,14 @@ def plot_distributions_solar_flux(
         
     # print('days', sum(total_day))
     # print('epbs', sum(total_epb))
-    
+    x = 0.75
+    y = 0.15
     ax[1].legend(ncol = 2, loc = 'upper center')
     ax[0].legend(ncol = 2, loc = 'upper center')
     
-    pl.plot_infos(ax[0], total_epb)
-    pl.plot_infos(ax[1], total_day, epb_title = False)
+    pl.plot_infos(ax[0], x = x, y = y, values = total_epb)
+    pl.plot_infos(ax[1], x = x, y = y, values = total_day, 
+                  epb_title = False)
     
     return fig
 
@@ -106,11 +108,3 @@ def main():
 
 main()
 
-
-# df = c.concat_results('saa')
-
-# limit = c.limits_on_parts(
-#      df['f107a'], parts = 2
-#      )
-
-# limit 

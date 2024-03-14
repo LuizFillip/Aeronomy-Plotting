@@ -32,7 +32,8 @@ def FigureAxes(nrows = 4):
 def plot_distributions_seasons(
         df, 
         parameter = 'gamma',
-        limit = 86
+        limit = 86, 
+        translate = False
         ):
     
     fig, ax = FigureAxes()
@@ -54,38 +55,45 @@ def plot_distributions_seasons(
         
         for index, df_level in enumerate(df_index.F107(limit)):
     
-            ds, epb = pl.plot_distribution(
+            data, epb = pl.plot_distribution(
                     ax[row, 0], 
                     df_level, 
                     parameter,
                     label = F107_labels[index],
-                    drop_ones = True
+                    drop_ones = True, 
+                    translate = translate
                     )
             
             total_epb.append(epb)
             
             days = pl.plot_histogram(
                     ax[row, 1], 
-                    ds, 
+                    data, 
                     index,
                     label = F107_labels[index]
                     )
             
             total_day.append(days)
+            
+            ax[row, 1].set(ylim = [0, 300])
                     
             ax[row, index].text(
                 0.07, 0.82,
                 f'{df_season.name}',
                 transform = ax[row, index].transAxes
                 )
+            
+            # if name == 'december':
+            #     print(data)
         
         LIST = [total_epb, total_day]
-        pl.plot_events_infos(ax, row, LIST, translate = False)
+        pl.plot_events_infos(
+            ax, row, LIST, translate = translate)
             
         
     pl.FigureLabels(
         fig, 
-        translate = False, 
+        translate = translate, 
         fontsize = 30
         )
     
@@ -106,7 +114,7 @@ def main():
     FigureName = 'seasonal_all_periods'
      
     fig.savefig(
-          b.LATEX(FigureName, folder = 'distributions/pt/'),
+          b.LATEX(FigureName, folder = 'distributions/en/'),
           dpi = 400
           )
     
