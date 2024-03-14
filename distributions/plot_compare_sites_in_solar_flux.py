@@ -5,7 +5,10 @@ import plotting as pl
 
 b.config_labels(fontsize = 25)
 
-def plot_compare_sites_in_solar_flux(df):
+def plot_compare_sites_in_solar_flux(
+        df, 
+        parameter = 'gamma'
+        ):
     fig, ax = plt.subplots(
         dpi = 300, 
         nrows = 2,
@@ -26,7 +29,7 @@ def plot_compare_sites_in_solar_flux(df):
         data, epbs = pl.plot_distribution(
                 ax[0], 
                 ds,
-                parameter = 'gamma',
+                parameter,
                 label = label,
                 axis_label = True,
                 drop_ones = True,
@@ -38,7 +41,7 @@ def plot_compare_sites_in_solar_flux(df):
                 data, 
                 index, 
                 label =  label,
-                parameter = 'gamma',
+                parameter = parameter,
                 axis_label = True
             )
         
@@ -66,14 +69,16 @@ def plot_compare_sites_in_solar_flux(df):
     return fig 
 
 def main():
-    df = c.concat_sites()
+    df = c.concat_sites('saa')
     
     fig = plot_compare_sites_in_solar_flux(df)
     
     FigureName = 'compare_jic_saa'
       
-    fig.savefig(
-          b.LATEX(FigureName, 
-                  folder = 'distributions/pt/'),
-          dpi = 400
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, 
+    #               folder = 'distributions/pt/'),
+    #       dpi = 400
+    #       )
+    
+main()

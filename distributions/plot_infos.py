@@ -59,8 +59,6 @@ def plot_events_infos(
         else:
             epb_title = False
             
-        factor = col / 8.5
-        
         plot_infos(
             ax[row, col], 
             total, 

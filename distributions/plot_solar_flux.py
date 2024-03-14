@@ -11,7 +11,8 @@ b.config_labels(fontsize = 25)
 def plot_distributions_solar_flux(
         df, 
         col = 'gamma',
-        level = 86
+        level = 86, 
+        translate = False
         ):
     
     fig, ax = plt.subplots(
@@ -40,7 +41,8 @@ def plot_distributions_solar_flux(
                 parameter = col,
                 label = label,
                 axis_label = True,
-                drop_ones = True
+                drop_ones = True, 
+                translate = translate
             )
         
         days = pl.plot_histogram(
@@ -49,7 +51,8 @@ def plot_distributions_solar_flux(
                 index, 
                 label, 
                 parameter = col,
-                axis_label = True
+                axis_label = True,
+                translate = translate
             )
         
         ax[1].set(ylim = [0, 500])
@@ -80,29 +83,34 @@ def plot_distributions_solar_flux(
 
 
 def main():
-    site = 'saa'
-    df = c.concat_results(site)
+    df = c.concat_results('saa')
 
     limit = c.limits_on_parts(
         df['f107a'], parts = 2
         )
-    col = 'gamma'
     
     fig = plot_distributions_solar_flux(
             df, 
-            col,
+            col = 'gamma',
             level = limit
             )
     
-    FigureName = f'PD_{col}_effects'
+    # FigureName = f'PD_{col}_effects'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder = 'distributions/en/'),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder = 'distributions/en/'),
+    #     dpi = 400
+    #     )
 
 
 
-# main()
+main()
 
 
+# df = c.concat_results('saa')
+
+# limit = c.limits_on_parts(
+#      df['f107a'], parts = 2
+#      )
+
+# limit 

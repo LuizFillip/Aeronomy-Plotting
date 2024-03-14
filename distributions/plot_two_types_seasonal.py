@@ -126,10 +126,10 @@ def main():
     
     FigureName = 'seasonal_gamma_and_vp'
     
-    fig.savefig(
-        b.LATEX(FigureName, 
-                folder = 'distributions/pt/'),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, 
+    #             folder = 'distributions/pt/'),
+    #     dpi = 400
+    #     )
     
 # main()
