@@ -137,10 +137,10 @@ def main():
     
     FigureName = 'seasonal_vp_correlation'
      
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'distributions/en/'),
-          dpi = 400
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'distributions/en/'),
+    #       dpi = 400
+    #       )
 
 
-# main()
+main()

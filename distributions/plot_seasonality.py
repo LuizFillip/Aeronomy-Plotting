@@ -70,6 +70,7 @@ def plot_distributions_seasons(
                     ax[row, 1], 
                     data, 
                     index,
+                    parameter = parameter,
                     label = F107_labels[index]
                     )
             
@@ -83,8 +84,7 @@ def plot_distributions_seasons(
                 transform = ax[row, index].transAxes
                 )
             
-            # if name == 'december':
-            #     print(data)
+        
         
         LIST = [total_epb, total_day]
         pl.plot_events_infos(
@@ -104,21 +104,21 @@ def plot_distributions_seasons(
 
 def main():
 
-
+    parameter = 'gamma'
     df = c.concat_results('saa')
     limit = c.limits_on_parts(df['f107a'])
     
     fig = plot_distributions_seasons(
             df, 
-            parameter = 'gamma',
+            parameter = parameter,
             limit = limit
             )
-    FigureName = 'seasonal_all_periods'
+    FigureName = f'seasonal_{parameter}'
      
-    # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'distributions/en/'),
-    #       dpi = 400
-    #       )
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'distributions/en/'),
+          dpi = 400
+          )
     
     
-main()
+# main()

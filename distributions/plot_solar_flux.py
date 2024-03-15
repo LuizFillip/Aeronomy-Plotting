@@ -10,7 +10,7 @@ b.config_labels(fontsize = 25)
         
 def plot_distributions_solar_flux(
         df, 
-        col = 'gamma',
+        parameter = 'gamma',
         level = 86, 
         translate = False
         ):
@@ -38,7 +38,7 @@ def plot_distributions_solar_flux(
         data, epbs = pl.plot_distribution(
                 ax[0], 
                 ds,
-                parameter = col,
+                parameter = parameter,
                 label = label,
                 axis_label = True,
                 drop_ones = True, 
@@ -50,7 +50,7 @@ def plot_distributions_solar_flux(
                 data, 
                 index, 
                 label, 
-                parameter = col,
+                parameter = parameter,
                 axis_label = True,
                 translate = translate
             )
@@ -90,21 +90,21 @@ def main():
     limit = c.limits_on_parts(
         df['f107a'], parts = 2
         )
-    
+    parameter = 'gamma'
     fig = plot_distributions_solar_flux(
             df, 
-            col = 'gamma',
+            parameter,
             level = limit
             )
     
-    # FigureName = f'PD_{col}_effects'
+    FigureName = f'solar_flux_{parameter}'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder = 'distributions/en/'),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'distributions/en/'),
+        dpi = 400
+        )
 
 
 
 main()
-
+# 
