@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt 
 import base as b
 import core as c
-import PlasmaBubbles as pb 
 import GEO as gg
 import numpy as np 
 
@@ -15,9 +14,9 @@ args = dict(
     )
 
 
-def plot_EPBs(ax, df, col = 'epb'):
+def plot_EPBs(ax, df, col = -50):
     
-    ds = c.non_and_occurrences(df).yearly()
+    ds = c.count_occurences(df).year 
     
     ds[col].plot(
         kind = 'bar', 
@@ -41,7 +40,8 @@ def plot_F107(ax, df, solar_level = 84.33):
     ax.plot(
         df['f107a'], 
         lw = 2, 
-        label = '81 years average')
+        label = '81 days average'
+        )
     
     ax.axhline(
         solar_level, 
@@ -91,7 +91,9 @@ def plot_Kp(ax, df, kp_level = 3):
 
 def plot_annually_epbs_and_indices(
         df,
-        kp_level = 3
+        kp_level = 3,
+        f107_level = 84.33,
+        col = 'epb'
         ):
     
     fig, ax = plt.subplots(
@@ -102,23 +104,26 @@ def plot_annually_epbs_and_indices(
     
     plt.subplots_adjust(hspace = 0.1)
    
-    plot_EPBs(ax[0], df)
-    solar_level = c.limits_on_parts(df['f107a'], parts = 2)
+    plot_EPBs(ax[0], df, col = 'epb')
     
     df.index = df.index.map(gg.year_fraction)
 
-    plot_F107(ax[1], df, solar_level = 84.33)
+    plot_F107(ax[1], df, solar_level = f107_level)
     plot_Kp(ax[2], df, kp_level = kp_level)
 
     b.plot_letters(ax, y = 0.83, x = 0.02)
     
     return fig
 
-# df = c.concat_results('saa')
-df = c.epbs(geo = True)
+
+
+
+# df = c.epbs(col = -50, geo = True, eyear = 2022)
+
 
 # fig = plot_annually_epbs_and_indices(df)
 
 # fig.savefig(b.LATEX('annual_variation', folder = 'bars'))
 
-df
+
+

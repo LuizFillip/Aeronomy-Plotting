@@ -48,14 +48,14 @@ def plot_seasonal_occurrence(ds, percent = True):
 def main():
     typing = 'sunset'
     typing = 'postmidnight'
-    path = f'database/epbs/{typing}_events3.txt'
-    path = f'database/{typing}_events'
+
+    path = f'database/epbs/{typing}_events2'
     ds = b.load(path)
     
     
     fig = plot_seasonal_occurrence(ds)
     
-    # FigureName = f'seasonal_{typing}'
+    FigureName = f'seasonal_{typing}'
     
     # fig.savefig(
     #       b.LATEX(FigureName, folder = 'bars'),
@@ -63,4 +63,4 @@ def main():
     #       )
     
 
-main()
+# main()
