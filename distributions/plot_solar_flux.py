@@ -22,7 +22,7 @@ def plot_distributions_solar_flux(
         figsize = (12, 12)
         )
     
-    plt.subplots_adjust(hspace = 0.1)
+    plt.subplots_adjust(hspace = 0.05)
         
     df_index = c.DisturbedLevels(df)
     
@@ -55,7 +55,7 @@ def plot_distributions_solar_flux(
                 translate = translate
             )
         
-        ax[1].set(ylim = [0, 500])
+        ax[1].set(ylim = [0, 600])
         ax[0].set(xlabel = '')
         total_epb.append(epbs)
         total_day.append(days)
@@ -63,28 +63,36 @@ def plot_distributions_solar_flux(
         l = b.chars()[i]
         
         ax[i].text(
-            0.03, 0.85,
+            0.03, 0.87,
             f'({l})',
             transform = ax[i].transAxes, 
             fontsize = 30
             )
         
-    # print('days', sum(total_day))
-    # print('epbs', sum(total_epb))
-    x = 0.75
-    y = 0.15
+    x = 0.67
+    y = 0.2
+    
     ax[1].legend(ncol = 2, loc = 'upper center')
     ax[0].legend(ncol = 2, loc = 'upper center')
     
-    pl.plot_infos(ax[0], x = x, y = y, values = total_epb)
-    pl.plot_infos(ax[1], x = x, y = y, values = total_day, 
-                  epb_title = False)
+    pl.plot_infos(ax[0], x = x, y = y, 
+                  translate = translate, 
+                  values = total_epb)
+    
+    pl.plot_infos(ax[1], 
+                  x = x + 0.05, 
+                  y = y,
+                  values = total_day, 
+                  epb_title = False, 
+                  translate = translate)
     
     return fig
 
 
 
 def main():
+    
+    translate = True
     df = c.concat_results('saa')
 
     limit = c.limits_on_parts(
@@ -94,17 +102,23 @@ def main():
     fig = plot_distributions_solar_flux(
             df, 
             parameter,
-            level = limit
+            level = limit, 
+            translate= translate
             )
     
+    if translate:
+        folder = 'distributions/pt/'
+    else:
+        folder = 'distributions/en/'
+        
     FigureName = f'solar_flux_{parameter}'
     
     fig.savefig(
-        b.LATEX(FigureName, folder = 'distributions/en/'),
+        b.LATEX(FigureName, folder),
         dpi = 400
         )
 
 
 
 main()
-# 
+
