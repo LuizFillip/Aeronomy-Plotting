@@ -22,7 +22,7 @@ def FigureAxes(nrows = 4):
     
     plt.subplots_adjust(
         hspace = 0.1, 
-        wspace = 0.18
+        wspace = 0.2
         )
     
     return fig, ax 
@@ -46,8 +46,11 @@ def plot_distributions_seasons(
         total_epb = []
         total_day = []
         
-        
-        df_season = c.SeasonsSplit(df, name)
+        df_season = c.SeasonsSplit(
+            df, 
+            name, 
+            translate = translate
+            )
         
         df_index = c.DisturbedLevels(df_season.sel_season)
         
@@ -89,6 +92,7 @@ def plot_distributions_seasons(
         LIST = [total_epb, total_day]
         pl.plot_events_infos(
             ax, row, LIST, 
+            x = 0.55,
             translate = translate
             )
             
@@ -103,6 +107,8 @@ def plot_distributions_seasons(
 
 
 def main():
+    
+    translate = True
 
     parameter = 'gamma'
     df = c.concat_results('saa')
@@ -111,14 +117,22 @@ def main():
     fig = plot_distributions_seasons(
             df, 
             parameter = parameter,
-            limit = limit
+            limit = limit,
+            translate = translate
             )
     FigureName = f'seasonal_{parameter}'
-     
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'distributions/en/'),
-          dpi = 400
-          )
     
+    if translate:
+        folder = 'distributions/pt/'
+    else:
+        folder = 'distributions/en/'
+        
+    
+    fig.savefig(
+        b.LATEX(FigureName, folder),
+        dpi = 400
+        )
+    
+
     
 # main()

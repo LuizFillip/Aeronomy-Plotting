@@ -53,13 +53,15 @@ def plot_events_infos(
         
         if col == 0:
             epb_title = True
+            f = 0
         else:
             epb_title = False
+            f =  0.05
             
         plot_infos(
             ax[row, col], 
             total, 
-            x = x, 
+            x = x + f, 
             y = y,
             translate = translate,
             epb_title = epb_title
