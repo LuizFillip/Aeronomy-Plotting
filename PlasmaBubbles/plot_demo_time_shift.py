@@ -70,10 +70,10 @@ def plot_terminator_shift(ax, dusk, occur):
 def plot_shift(ax, ds, col):
     
     dn = ds.index[0]
-    ds = pb.track_time_diff(ds, col, floatType = False)
-  
     occur = ds[ds[col] == 1].index.min()
     
+    ds = pb.track_time_diff(ds, col, floatType = False)
+  
     plot_terminator_shift(ax, dusk(dn, col), occur)
     
     for i in range(len(ds)):
@@ -127,13 +127,7 @@ def plot_roti_max(ax, ds, threshold = 0.25):
          )
 
 
-df = b.load('database/longitudes_all_years.txt')
 
-
-dn = dt.datetime(2013, 2, 2, 20)
-
-
-ds = b.sel_times(df, dn, hours = 11)
 
 
 def plot_epb_time_feadtures(ds,  col = '-50'):
@@ -154,5 +148,13 @@ def plot_epb_time_feadtures(ds,  col = '-50'):
     
     plot_shift(ax[1], events, col)
     return fig
-    
+
+df = b.load('database/longitudes_all_years.txt')
+
+
+dn = dt.datetime(2013, 2, 2, 20)
+
+
+ds = b.sel_times(df, dn, hours = 11)
+
 fig = plot_epb_time_feadtures(ds,  col = '-50')

@@ -59,8 +59,8 @@ def plot_roti_epb_occurrence_in_column(df, ds):
     return fig 
 
 
-# dn = dt.datetime(2013, 5, 17, 20)
+dn = dt.datetime(2013, 5, 15, 20)
 
-# ds, df = load_dataset(dn, hours = 12)
+ds, df = load_dataset(dn, hours = 12)
 
-# fig = plot_roti_epb_occurrence_in_column(df, ds)
+fig = plot_roti_epb_occurrence_in_column(df, ds)
