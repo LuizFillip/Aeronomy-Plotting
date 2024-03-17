@@ -1,49 +1,18 @@
 import matplotlib.pyplot as plt
 import base as b 
-import events as ev 
-    
+import core as c 
+import PlasmaBubbles as pb 
+
+
 args = dict(
     edgecolor = 'black', 
     color = 'gray', 
     linewidth = 1
     )
 
-def plot_seasonal(ax, ds):
+b.config_labels()
 
-    df = ev.monthly_occurrences(ds)
-        
-    df['epb'].plot(
-        kind = 'bar', 
-        ax = ax, 
-        legend = False, **args
-        )
-        
-    ax.set(
-        ylabel = 'Nigths with EPB',
-        xlabel = 'Months',
-        ylim = [0, 80]
-        )
-    
-    ax.set_xticklabels(b.number_to_months(), rotation=0)
-    
-    
-    
-def plot_annually(ax, ds):
 
-    df = ev.yearly_occurrences(ds)
-        
-    df['epb'].plot(
-        kind = 'bar', 
-        ax = ax, 
-        legend = False, **args
-        )
-        
-    ax.set(
-        ylabel = 'Nigths with EPB',
-        xlabel = 'Years',
-        )
-    
-    plt.xticks(rotation = 0)
 
 
 
@@ -61,28 +30,61 @@ def plot_annual_seasonal(ds):
     plt.subplots_adjust(wspace = 0.05)
     
     
-    plot_seasonal(ax[0], ds)
-    plot_annually(ax[1], ds)
-    
-    for i, ax in enumerate(ax.flat):
-       
-       l = b.chars()[i]
-       ax.text(
-           0.02, 0.83, f'({l})', 
-           fontsize = 35,
-           transform = ax.transAxes
-           )
-    
     return fig 
 
-ds = ev.epbs(
-        col = -50, 
-        class_epb = 'midnight',
-        geo = False
-        )
 
-fig = plot_annual_seasonal(ds)
+def format_days_axes(ax):
+    
+    major_formatter = dates.DateFormatter('%Y')
+    major_locator = dates.YearLocator()
+    
+    
+    ax.xaxis.set_major_locator(major_locator)
+    ax.xaxis.set_major_formatter(major_formatter)
+    
+    ax.set(xlabel = 'Anos', 
+    xlim = [df.index[0], df.index[-1]])
+    
 
-save_in = 'G:\\Meu Drive\\Doutorado\Travels\\seasonal_yearly'
+# ds = ev.epbs(
+#         col = -50, 
+#         class_epb = 'midnight',
+#         geo = False
+#         )
 
-fig.savefig(save_in, dpi = 300)
+
+
+df = b.load('events_2013_2023_2')
+
+ds = pb.sel_sunset(df)
+
+
+import matplotlib.dates as dates
+
+
+fig, ax = plt.subplots(
+    dpi = 300, 
+    sharey = True,
+    figsize = (16, 6)
+    )
+
+df  = c.seasonal_yearly_occurrence(ds, col = -50)
+
+
+ax.bar(df.index, df.values.ravel(), width = 20, **args)
+    
+
+
+    
+    
+format_days_axes(ax)
+
+ax.set(
+    ylabel = 'Noites com EPB',
+    ylim = [0, 35]
+    )
+
+plt.xticks(rotation = 0)
+
+plt.show()
+
