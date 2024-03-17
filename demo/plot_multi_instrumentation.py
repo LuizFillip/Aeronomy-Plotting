@@ -22,13 +22,13 @@ def folder_date(dn):
 def plot_imager(ax_img, PATH_SKY, file, index):
     
     
-    AllSky = im.processing_img(
+    all_sky = im.processing_img(
         os.path.join(PATH_SKY, file)
         )
     
-    new_img= AllSky.bright
+    new_img = all_sky.bright
     
-    AllSky.display(ax_img, new_img)
+    all_sky.display(ax_img, new_img)
     dn = im.fn2datetime(file)
     title = dn.strftime(f'({index}) %Hh%M')
     ax_img.set(title = title)
@@ -151,7 +151,7 @@ def closest_iono(PATH_IONO, target):
     return dn
   
     
-def plot_multi_instrumentation(fn_skys):
+def plot_multi_instrumentation(fn_skys, site =  'SAA0K'):
     
     dn = get_datetime_from_file(fn_skys[0])
 
@@ -161,7 +161,7 @@ def plot_multi_instrumentation(fn_skys):
         layout = "constrained"
         )
     # site =  'FZA0M'
-    site =  'SAA0K'
+    
     folder_img = dn.strftime('CA_%Y_%m%d')
     folder_ion = dn.strftime('%Y%m%d')
     PATH_SKY = f'database/images/{folder_img}/'
@@ -194,7 +194,7 @@ def plot_multi_instrumentation(fn_skys):
     return fig
 
 FigureName = 'non_EPB_occurrence'
-fn_skys = [ 
+no_epb_occurrence = [ 
     'O6_CA_20130610_220827.tif',
     'O6_CA_20130610_225828.tif', 
     'O6_CA_20130611_001329.tif', 
@@ -212,13 +212,16 @@ fn_skys = [
 
 
 
-fig = plot_multi_instrumentation(fn_skys) 
+# fig = plot_multi_instrumentation(fn_skys) 
 
 
 
-fig.savefig(
-    b.LATEX(FigureName, 
-    folder = 'modeling'), dpi = 400)
-# 
+# fig.savefig(
+#     b.LATEX(FigureName, 
+#     folder = 'modeling'), dpi = 400)
+#
 
 
+
+        
+# b.get_var_name(FigureName)

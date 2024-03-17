@@ -1,9 +1,6 @@
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt 
-from plotting import (
-    plot_apex_vs_latitude,
-    plot_mag_meridians, 
-    )
+import plotting as pl
 from matplotlib.gridspec import GridSpec
 import base as b 
 import GEO as gg 
@@ -33,14 +30,14 @@ def plot_meridian_and_apex(year = 2013):
     
     ax1 = plt.subplot(gs2[0:2, 0:2])
     
-    plot_apex_vs_latitude(ax1)
+    pl.plot_apex_vs_latitude(ax1)
     
     
     ax2 = plt.subplot(
         gs2[0:2, 2:],  projection = ccrs.PlateCarree()
         )
     
-    plot_mag_meridians(ax2, year)
+    pl.plot_mag_meridians(ax2, year)
     
     lons, lats = gg.stations_coordinates(
         year, distance = 10)

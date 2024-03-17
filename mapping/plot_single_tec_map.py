@@ -96,7 +96,7 @@ def plot_tec_map(
         degress = None
         )
     
-    # gg.plot_rectangles_regions(ax, dn.year)
+    gg.plot_rectangles_regions(ax, dn.year)
     lon, lat = gg.terminator2(dn, 18)
     
     ax.scatter(lon, lat, c = 'k', s = 5)
@@ -114,10 +114,12 @@ def plot_tec_map(
 
 def main():
     
-    dn = dt.datetime(2022, 8, 28, 3, 0)
+    dn = dt.datetime(2022, 1, 1, 1, 0)
     
-    df = load_tec(b.get_path(dn))
+    # df = load_tec(b.get_path(dn))
     
     fig = plot_tec_map(dn, ax = None)
 
 # main()
+
+
