@@ -1,6 +1,8 @@
 import core as c
 import matplotlib.pyplot as plt
 import base as b 
+import PlasmaBubbles as pb 
+
 
 b.config_labels(fontsize = 25)
 
@@ -33,8 +35,16 @@ def plot_annualy_variation(ds, years):
     
     
 
-def plot_annually_events_count(ds):
+def plot_annually_events_count(ds, typing = 'sunset'):
     
+    e_year = ds.index[-1].year
+    s_year = ds.index[0].year
+
+    
+    if typing == 'sunset':
+        typing = 'pós pôr do Sol'
+    else:
+        typing = 'pós meia noite'
     
     fig, ax = plt.subplots(
         dpi = 300, 
@@ -44,7 +54,7 @@ def plot_annually_events_count(ds):
     
     plt.subplots_adjust(hspace = 0.1)
     
-    df = c.CountAllOccurences(ds).year
+    df = c.count_occurences(ds).year
         
     df.plot(
         kind = 'bar', 
@@ -55,7 +65,7 @@ def plot_annually_events_count(ds):
     plt.xticks(rotation = 0)
     
     ax.set(
-        ylabel = 'Noites com EPB',
+        ylabel = 'Número de casos',
         xlabel = 'Anos'
         )
         
@@ -64,23 +74,26 @@ def plot_annually_events_count(ds):
     ax.legend(
         t,
         ncol = 5, 
-        title = 'Setores longitudinais e eventos de EPBs (2013 - 2022)',
+        title = f'Eventos de EPBs {typing} ({s_year} - {e_year})',
         bbox_to_anchor = (.5, 1.3), 
         loc = "upper center", 
         columnspacing = 0.6
         )
     return fig
 
-typing = 'sunset'
-# typing = 'postmidnight'
-path = f'database/epbs/{typing}_events3.txt'
-ds = b.load(path)
-
-fig = plot_annually_events_count(ds)
-
-# FigureName = 'annualy_midnight_sunset'
-
-# fig.savefig(
-#     b.LATEX(FigureName, folder = 'bars'),
-#     dpi = 400
-#     )
+def main():
+    
+    typing = 'sunset'
+     
+    df = b.load('events_2013_2023_2')
+    
+    ds = pb.sel_sunset(df, typing = typing)
+    
+    fig = plot_annually_events_count(ds, typing)
+    
+    FigureName = f'annual_{typing}'
+      
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'bars'),
+          dpi = 400
+          )

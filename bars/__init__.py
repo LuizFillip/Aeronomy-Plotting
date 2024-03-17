@@ -1,7 +1,1 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 15 11:50:17 2024
-
-@author: Luiz
-"""
-
+from .plot_annually_epbs_and_indices import plot_F107, plot_Kp
