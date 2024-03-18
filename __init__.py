@@ -5,3 +5,4 @@ from .FluxTube import *
 from .ionosonde import *
 from .demo import *
 from .correlations import *
+from .bars import *
