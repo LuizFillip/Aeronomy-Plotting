@@ -6,8 +6,15 @@ b.config_labels(fontsize = 25)
 
 def plot_annualy_kp_level(
         df,
-        kp_level = 3
+        kp_level = 3,
+        translate = True
         ):
+    
+    if translate:
+        ylabel = 'Número de casos'
+    else:
+        ylabel = 'Number of nights'
+        
     
     fig, ax = plt.subplots(
         nrows = 2, 
@@ -31,19 +38,18 @@ def plot_annualy_kp_level(
     
     for i, dataset in enumerate(levels):
         
-        ds = c.non_and_occurrences(dataset).yearly()
+        ds = c.count_occurences(dataset).year
      
-        ds['epb'].plot(
+        ds.plot(
             kind = 'bar',
             ax = ax[i], 
-            color = 'gray',
             legend = False, 
             edgecolor = 'k'
             )
     
         ax[i].set(
             ylim = [0, 200],
-            ylabel = 'Number of nights',
+            ylabel =  ylabel,
             xlabel = 'Years'
             )
         

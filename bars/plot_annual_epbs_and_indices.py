@@ -32,59 +32,72 @@ def plot_EPBs(ax, df, col = -50):
         xticklabels = []
         )
     
-def plot_F107(ax, df, solar_level = 84.33):
+def plot_F107(ax, df, solar_level = 84.33, translate = True):
     
-
+    if translate:
+        label = 'Média de 81 dias'
+    else:
+        label = '81 days average'
+        
+        
     ax.plot(df['f107'])
         
     ax.plot(
         df['f107a'], 
         lw = 2, 
-        label = '81 days average'
+        label = label
         )
     
-    ax.axhline(
-        solar_level, 
-        color = 'r',
-        lw = 2, 
-        label = f'{solar_level} sfu'
-        )
-    
+    if solar_level is not None:
+        ax.axhline(
+            solar_level, 
+            color = 'r',
+            lw = 2, 
+            label = f'{solar_level} sfu'
+            )
+        
     ax.set(
-        xlim = [df.index[0], df.index[-1]],
+        # xlim = [df.index[0], df.index[-1]],
         ylabel = '$F_{10.7}$ (sfu)', 
         ylim = [50, 300],
         yticks = list(range(50, 350, 50)),
-        xticklabels = []
+        # xticklabels = []
         )
     
     ax.legend(ncol= 2, loc = 'upper right')
 
-def plot_Kp(ax, df, kp_level = 3):
+def plot_Kp(ax, df, kp_level = 3, translate = True):
+    
+    if translate:
+        label = 'Média mensal'
+        ylabel = 'Índice Kp'
+    else:
+        label = 'Monthly average'
+        ylabel = 'Índice Kp'
     
     ax.bar(df.index, 
            df['kp'], 
-           width = 0.01,
+           width = 1,
            alpha= 0.7, 
            color = 'gray'
            )
     
-    mean = b.running(df['kp'], 30)
+    mean = df['kp'].rolling('30D').mean()
     
     ax.set(
-        xlim = [df.index[0], df.index[-1]],
-        xticks = np.arange(2013, 2023, 1),
-        ylabel = 'Kp index', 
-        xlabel = 'Years',
-        yticks = list(range(0, 12, 3))
+        ylabel = ylabel, 
+        yticks = list(range(0, 12, 3)
+                      )
         )
     
-    ax.axhline(kp_level, color = 'r', lw = 2)
+    if kp_level is not None:
+        ax.axhline(kp_level, color = 'r', lw = 2)
+    
     
     ax.plot(
-        df.index, 
-        mean, label = 'Monthly average',
-        lw = 3, color = 'k')
+        mean, label = label,
+        lw = 3, 
+        color = 'k')
     
 
     ax.legend(ncol = 2, loc = 'upper right')
@@ -119,7 +132,6 @@ def plot_annually_epbs_and_indices(
 
 
 # df = c.epbs(col = -50, geo = True, eyear = 2022)
-
 
 # fig = plot_annually_epbs_and_indices(df)
 

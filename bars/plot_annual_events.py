@@ -7,31 +7,6 @@ import PlasmaBubbles as pb
 b.config_labels(fontsize = 25)
 
 
-def plot_annualy_variation(ds, years):
-    
-    import matplotlib.pyplot as plt
-    
-    fig, ax = plt.subplots(
-        nrows = 2,
-        ncols = len(years) // 2,
-        dpi = 300, 
-        sharex = True,
-        sharey = True,
-        figsize = (14, 8)
-        )
-    
-    plt.subplots_adjust(hspace = 0.1)
-    
-    for i, ax in enumerate(ax.flat):
-        year = years[i]
-        # ds1 = locate_sector_year(ds, year, long = -80)
-        ds.plot(kind = 'bar', ax = ax)
-        
-        ax.text(0.5, 0.8, year, transform = ax.transAxes)
-        
-        ax.set(ylabel = 'Noites com EPBs')
-        
-    return fig
     
     
 
@@ -55,6 +30,8 @@ def plot_annually_events_count(ds, typing = 'sunset'):
     plt.subplots_adjust(hspace = 0.1)
     
     df = c.count_occurences(ds).year
+    
+    df = df[df.columns[::-1]]
         
     df.plot(
         kind = 'bar', 
@@ -69,7 +46,7 @@ def plot_annually_events_count(ds, typing = 'sunset'):
         xlabel = 'Anos'
         )
         
-    t = [f'{col}° ({vl})' for col, vl in zip(ds.columns, df.sum().values)]
+    t = [f'{col}° ({vl})' for col, vl in zip(df.columns, df.sum().values)]
     
     ax.legend(
         t,
@@ -83,17 +60,19 @@ def plot_annually_events_count(ds, typing = 'sunset'):
 
 def main():
     
-    typing = 'sunset'
+    for typing in ['sunset', 'midnight']:
      
-    df = b.load('events_2013_2023_2')
-    
-    ds = pb.sel_sunset(df, typing = typing)
-    
-    fig = plot_annually_events_count(ds, typing)
-    
-    FigureName = f'annual_{typing}'
-      
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'bars'),
-          dpi = 400
-          )
+        df = b.load('events_2013_2023_2')
+        
+        ds = pb.sel_sunset(df, typing = typing)
+        
+        fig = plot_annually_events_count(ds, typing)
+        
+        FigureName = f'annual_{typing}'
+          
+        fig.savefig(
+              b.LATEX(FigureName, folder = 'bars'),
+              dpi = 400
+              )
+        
+# main()

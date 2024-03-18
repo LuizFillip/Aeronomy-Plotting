@@ -29,7 +29,8 @@ def plot_seasonal_occurrence(ds, typing = 'sunset'):
     plt.subplots_adjust(hspace = 0.1)
         
     df = c.count_occurences(ds).month
-        
+    df = df[df.columns[::-1]]
+    
     df.plot(kind = 'bar', ax = ax, legend = False)
 
     plt.xticks(rotation = 0)
@@ -41,7 +42,7 @@ def plot_seasonal_occurrence(ds, typing = 'sunset'):
         )
         
     t = [f'{col}° ({vl})' for col, vl in 
-         zip(ds.columns, df.sum().values)]
+         zip(df.columns, df.sum().values)]
     
     ax.legend(
         t,
@@ -59,17 +60,19 @@ def plot_seasonal_occurrence(ds, typing = 'sunset'):
 
 def main():
 
-    typing = 'midnight'
+    for typing in ['sunset', 'midnight']:
      
-    df = b.load('events_2013_2023_2')
+        df = b.load('events_2013_2023_2')
+        
+        ds = pb.sel_sunset(df, typing)
+        
+        fig = plot_seasonal_occurrence(ds, typing)
+        
+        FigureName = f'seasonal_{typing}'
+          
+        fig.savefig(
+              b.LATEX(FigureName, folder = 'bars'),
+              dpi = 400
+              )
     
-    ds = pb.sel_sunset(df, typing)
-    
-    fig = plot_seasonal_occurrence(ds, typing)
-    
-    FigureName = f'seasonal_{typing}'
-      
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'bars'),
-          dpi = 400
-          )
+main()
