@@ -32,8 +32,9 @@ def plot_roti_solar_magnetic_activity():
     pl.plot_Kp(ax[0], idx, kp_level = None)
     ax[2].plot(ds['-50'])
 
-    ax[2].set(xlim = [ds.index[0], ds.index[-1]], 
-              xlabel = 'Anos', ylabel = 'ROTI (TECU/min)')
+    ax[2].set(
+        xlim = [ds.index[0], ds.index[-1]], 
+        xlabel = 'Anos', ylabel = 'ROTI (TECU/min)')
 
     b.plot_letters(ax, y = 0.8, x = 0.02)
     

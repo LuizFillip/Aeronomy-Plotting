@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Feb 27 16:27:11 2024
-
-@author: Luiz
-"""
-
 import matplotlib.pyplot as plt 
 import base as b 
 import datetime as dt
