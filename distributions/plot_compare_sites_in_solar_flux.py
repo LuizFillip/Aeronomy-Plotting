@@ -6,8 +6,8 @@ import plotting as pl
 b.config_labels(fontsize = 25)
 
 def plot_compare_sites_in_solar_flux(
-        df, 
-        parameter = 'gamma'
+        parameter = 'gamma', 
+        translate = True
         ):
     fig, ax = plt.subplots(
         dpi = 300, 
@@ -69,16 +69,15 @@ def plot_compare_sites_in_solar_flux(
     return fig 
 
 def main():
-    df = c.concat_sites('saa')
     
-    fig = plot_compare_sites_in_solar_flux(df)
+    fig = plot_compare_sites_in_solar_flux()
     
     FigureName = 'compare_jic_saa'
       
-    # fig.savefig(
-    #       b.LATEX(FigureName, 
-    #               folder = 'distributions/pt/'),
-    #       dpi = 400
-    #       )
+    fig.savefig(
+          b.LATEX(FigureName, 
+                  folder = 'distributions/pt/'),
+          dpi = 400
+          )
     
 main()

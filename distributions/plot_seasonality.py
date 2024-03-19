@@ -128,11 +128,11 @@ def main():
         folder = 'distributions/en/'
         
     
-    fig.savefig(
-        b.LATEX(FigureName, folder),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder),
+    #     dpi = 400
+    #     )
     
 
     
-# main()
+main()

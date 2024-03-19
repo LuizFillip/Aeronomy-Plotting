@@ -10,6 +10,7 @@ def plot_compare_sites_in_season(
         parameter = 'gamma', 
         translate = True
         ):
+    
     fig, ax = plt.subplots(
           ncols = 2,
           nrows = 4,
@@ -59,16 +60,20 @@ def plot_compare_sites_in_season(
             total_day.append(days)
                     
             ax[row, index].text(
-                0.07, 0.82,
+                0.07, 0.82, 
                 f'{df_season.name}',
                 transform = ax[row, index].transAxes
                 )
             
-            ax[row, index].set(ylim = [0, 300])
+            ax[row, index].set(ylim = [0, 400])
         
         LIST = [total_epb, total_day]
         
-        pl.plot_events_infos(ax, row, LIST, translate = translate)
+        pl.plot_events_infos(
+            ax, row, 
+            LIST, x = 0.55, 
+            translate = translate
+            )
         
     pl.FigureLabels(
             fig, 
@@ -93,3 +98,4 @@ def main():
           )
 
 
+# main()
