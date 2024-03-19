@@ -43,13 +43,17 @@ args = dict(
 
 
 
-def plot_info(ax, df, parameter):
+def plot_info(ax, df, parameter, translate = True):
     
     vls = df[parameter]
-    mu = round(vls.mean(), 1)
-    sigma = round(vls.std(), 1)
+    mu = round(vls.mean(), 2)
+    sigma = round(vls.std(), 2)
     
-    info =  f'$\mu = $ {mu} horas\n$\sigma = $ {sigma} horas'
+    if translate:
+        unit = 'hours'
+    else:
+        unit = 'horas'
+    info =  f'$\mu = $ {mu} {unit}\n$\sigma = $ {sigma} {unit}'
     
     ax.text(0.5, 0.7, info, transform = ax.transAxes)
     
@@ -64,13 +68,10 @@ def bins(df, parameter = 'start', n = 10):
 def plot_epbs_stats(
         ds, 
         parameter = 'start', 
-        fontsize = 30
+        fontsize = 30, 
+        n = 24
         ):
     
-    if parameter == 'start':
-        n = 24
-    else:
-        n = 50
         
     fig, ax = plt.subplots(
         ncols = 2,
@@ -104,7 +105,7 @@ def plot_epbs_stats(
         
         ax.set( 
             ylabel = '',
-            ylim = [0, 1000],
+            ylim = [0, 400],
             xticks = bins(df, parameter, 5)
             )
     
@@ -120,15 +121,50 @@ def plot_epbs_stats(
       
     return fig
 
+def main():
+    parameter = 'duration'
+    df = b.load('events_2013_2023_2' )
+    df = df.loc[~(df['duration'] == 0)|
+                  (df['start'] < 21)]
+    
+    fig = plot_epbs_stats(
+        df, parameter)
+    
+    FigureName = f'{parameter}_occurrence'
+    
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'histograms'), 
+                dpi = 400)
 
-df = b.load('events_2013_2023_2')
 
-fig = plot_epbs_stats(df, fontsize = 30, parameter = 'duration')
 
-# FigureName = 'start_hour_occurrence'
+def plot_single_histogram(
+        df, parameter = 'start',   n = 30):
 
-# fig.savefig(b.LATEX(FigureName, folder = 'histograms'), 
-#             dpi = 400)
-
-# bins = np.arange(-1, 12, 0.5)
-
+    
+    df = df.loc[~((df['duration'] == 0) |
+                  (df['start'] < 21))]
+    
+    
+    fig, ax = plt.subplots(
+        figsize = (8, 8),
+        dpi = 300,
+        sharex = True, 
+        sharey = True
+    
+        )
+    ds = df.loc[df['lon'] == -50]
+    
+    ds[parameter].plot(
+        kind = 'hist', 
+        ax = ax, 
+        bins = bins(ds, parameter, n), 
+        **args
+        )
+    
+    plot_info(ax, ds, parameter)
+    ax.set(xlabel = 'Universal time', 
+           title = 'EPBs start time',
+           xticks = np.arange(20, 33, 2))
+    
+    return fig
