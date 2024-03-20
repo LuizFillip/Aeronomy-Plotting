@@ -111,7 +111,7 @@ def main():
     translate = True
 
     parameter = 'gamma'
-    df = c.concat_results('saa')
+    df = c.load_results('saa')
     limit = c.limits_on_parts(df['f107a'])
     
     fig = plot_distributions_seasons(
