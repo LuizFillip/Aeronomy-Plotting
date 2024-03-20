@@ -62,17 +62,18 @@ def main():
 
     for typing in ['sunset', 'midnight']:
      
-        df = b.load('events_2013_2023_2')
+        df = b.load('core/data/epb_class')
         
-        ds = pb.sel_sunset(df, typing)
+        ds = pb.bubble_class(df, typing = 'midnight')
+
         
         fig = plot_seasonal_occurrence(ds, typing)
         
         FigureName = f'seasonal_{typing}'
           
-        fig.savefig(
-              b.LATEX(FigureName, folder = 'bars'),
-              dpi = 400
-              )
+        # fig.savefig(
+        #       b.LATEX(FigureName, folder = 'bars'),
+        #       dpi = 400
+        #       )
     
 main()
