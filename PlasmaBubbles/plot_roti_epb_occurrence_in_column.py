@@ -5,13 +5,13 @@ import datetime as dt
 
 b.config_labels(fontsize = 25)
 
-def load_dataset(dn, hours = 12):
+def load_dataset(dn, hours = 12, num = 2):
     
     out = []
-    for folder in [ 'events2', 'long2']:
+    for folder in [f'events{num}', f'long{num}']:
         ds = b.load(
             pb.epb_path(
-                dn.year, root = 'D:\\', folder = folder)
+                f'{dn.year}.txt', root = 'D:\\', folder = folder)
             )
         
         out.append(b.sel_times(ds, dn, hours = hours))
@@ -19,7 +19,8 @@ def load_dataset(dn, hours = 12):
     return tuple(out)
 
 
-def plot_roti_epb_occurrence_in_column(df, ds):
+def plot_roti_epb_occurrence_in_column(
+        df, ds, fontsize = 30):
     
     fig, ax = plt.subplots(
         nrows = 4,
@@ -30,37 +31,62 @@ def plot_roti_epb_occurrence_in_column(df, ds):
         figsize = (18, 10)
         )
 
-    plt.subplots_adjust(hspace = 0.05)
+    plt.subplots_adjust(hspace = 0.1, wspace = 0.2)
 
     dn = df.index[0]
     
     for i, col in enumerate(df.columns):
+        
+        terminator = pb.terminator(int(col), dn, float_fmt = False)
+        
+        ds.loc[ds.index < terminator] = 0
     
         ax[i, 0].plot(df[col])
         ax[i, 1].plot(ds[col])
         
         ax[i, 0].axhline(0.25, lw = 2, color = 'r')
         
-        terminator = pb.get_term(int(col), dn, float_fmt = False)
+        terminator = pb.terminator(int(col), dn, float_fmt = False)
         
         ax[i, 1].axvline(terminator, color = 'k', lw = 2)
         ax[i, 0].axvline(terminator, color = 'k', lw = 2)
         
+        l = b.chars()[i]
         ax[i, 0].text(
-            0.1, 0.85, col, 
+            0.01, 0.8, f'({l}) {col}°', 
+            transform = ax[i, 0].transAxes
+            )
+        
+        ax[i, 1].text(
+            0.01, 0.8, f'({l}) {col}°', 
             transform = ax[i, 0].transAxes
             )
     
-        ax[i, 0].set(ylim = [0, 4])
+        ax[i, 0].set(ylim = [0, 3])
         
     b.format_time_axes(ax[-1, 0])
     b.format_time_axes(ax[-1, 1])
     
+          
+    fig.text(
+        0.07, 0.33, 
+        'ROTI (TECU/min)', 
+        fontsize = fontsize, 
+        rotation = 'vertical'
+        )
+    
+    fig.text(
+        0.5, 0.39, 
+        'Ocorrência', 
+        fontsize = fontsize, 
+        rotation = 'vertical'
+        )
+    
     return fig 
 
 
-dn = dt.datetime(2013, 5, 15, 20)
+dn = dt.datetime(2014, 2, 9, 20) 
 
-ds, df = load_dataset(dn, hours = 12)
+# ds, df = load_dataset(dn, hours = 12)
 
-fig = plot_roti_epb_occurrence_in_column(df, ds)
+# fig = plot_roti_epb_occurrence_in_column(df, ds)
