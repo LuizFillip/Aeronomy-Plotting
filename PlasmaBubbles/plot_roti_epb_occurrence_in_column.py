@@ -2,16 +2,21 @@ import matplotlib.pyplot as plt
 import base as b 
 import PlasmaBubbles as pb 
 import datetime as dt
+import numpy as np 
+
 
 b.config_labels(fontsize = 25)
 
-def load_dataset(dn, hours = 12, num = 2):
+def load_dataset(dn, hours = 12, num = 3, root = 'D:\\'):
     
     out = []
     for folder in [f'events{num}', f'long{num}']:
         ds = b.load(
             pb.epb_path(
-                f'{dn.year}.txt', root = 'D:\\', folder = folder)
+                f'{dn.year}', 
+                root = root, 
+                folder = folder
+                )
             )
         
         out.append(b.sel_times(ds, dn, hours = hours))
@@ -34,6 +39,7 @@ def plot_roti_epb_occurrence_in_column(
     plt.subplots_adjust(hspace = 0.1, wspace = 0.2)
 
     dn = df.index[0]
+    vmax = np.ceil(df.values.max())
     
     for i, col in enumerate(df.columns):
         
@@ -62,7 +68,7 @@ def plot_roti_epb_occurrence_in_column(
             transform = ax[i, 0].transAxes
             )
     
-        ax[i, 0].set(ylim = [0, 3])
+        ax[i, 0].set(ylim = [0, vmax])
         
     b.format_time_axes(ax[-1, 0])
     b.format_time_axes(ax[-1, 1])
@@ -85,8 +91,8 @@ def plot_roti_epb_occurrence_in_column(
     return fig 
 
 
-dn = dt.datetime(2014, 2, 9, 20) 
+dn = dt.datetime(2013, 3, 29, 20) 
 
-# ds, df = load_dataset(dn, hours = 12)
+ds, df = load_dataset(dn, hours = 12)
 
-# fig = plot_roti_epb_occurrence_in_column(df, ds)
+fig = plot_roti_epb_occurrence_in_column(df, ds)

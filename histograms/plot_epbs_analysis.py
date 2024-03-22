@@ -127,8 +127,7 @@ def main():
     df = df.loc[~(df['duration'] == 0)|
                   (df['start'] < 21)]
     
-    fig = plot_epbs_stats(
-        df, parameter)
+    fig = plot_epbs_stats(df, parameter)
     
     FigureName = f'{parameter}_occurrence'
     
@@ -139,7 +138,10 @@ def main():
 
 
 def plot_single_histogram(
-        df, parameter = 'start',   n = 30):
+        df, 
+        parameter = 'start',
+        n = 30
+        ):
 
     
     df = df.loc[~((df['duration'] == 0) |
