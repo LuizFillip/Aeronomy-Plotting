@@ -8,16 +8,17 @@ b.config_labels(fontsize = 25)
 
 
 
-def plot_seasonal_occurrence(ds, typing = 'sunset'):
+def plot_seasonal_occurrence(ds, typing = 'sunset', translate = False):
     
     e_year = ds.index[-1].year
     s_year = ds.index[0].year
 
     
     if typing == 'sunset':
-        typing = 'pós pôr do Sol'
+        
+        name = 'pós pôr do Sol'
     else:
-        typing = 'pós meia noite'
+        name = 'pós meia noite'
     
     fig, ax = plt.subplots(
         dpi = 300, 
@@ -47,7 +48,7 @@ def plot_seasonal_occurrence(ds, typing = 'sunset'):
     ax.legend(
         t,
         ncol = 5, 
-        title = f'Eventos de EPBs {typing} ({s_year} - {e_year})',
+        title = f'Eventos de EPBs {name} ({s_year} - {e_year})',
         bbox_to_anchor = (.5, 1.3), 
         loc = "upper center", 
         columnspacing = 0.6
@@ -59,12 +60,13 @@ def plot_seasonal_occurrence(ds, typing = 'sunset'):
     
 
 def main():
-
+    infile = 'core/data/epb_class'
+    infile = 'events_class'
     for typing in ['sunset', 'midnight']:
      
-        df = b.load('core/data/epb_class')
+        df = b.load(infile)
         
-        ds = pb.bubble_class(df, typing = 'midnight')
+        ds = pb.sel_typing(df, typing = typing)
 
         
         fig = plot_seasonal_occurrence(ds, typing)
@@ -77,3 +79,9 @@ def main():
         #       )
     
 main()
+# infile = 'events_class'
+# df = b.load(infile)
+
+# ds = pb.sel_typing(df, typing = 'sunset')
+
+# ds 
