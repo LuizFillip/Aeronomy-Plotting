@@ -7,10 +7,9 @@ import PlasmaBubbles as pb
 b.config_labels(fontsize = 25)
 
 
-    
-    
-
-def plot_annually_events_count(ds, typing = 'sunset'):
+def plot_annually_events_count(
+        ds, 
+        typing = 'sunset'):
     
     e_year = ds.index[-1].year
     s_year = ds.index[0].year
@@ -18,13 +17,15 @@ def plot_annually_events_count(ds, typing = 'sunset'):
     
     if typing == 'sunset':
         typing = 'pós pôr do Sol'
+        vmax = 300
     else:
         typing = 'pós meia noite'
+        vmax = 150
     
     fig, ax = plt.subplots(
         dpi = 300, 
         sharex = True,
-        figsize = (14, 6)
+        figsize = (16, 6)
         )
     
     plt.subplots_adjust(hspace = 0.1)
@@ -43,10 +44,12 @@ def plot_annually_events_count(ds, typing = 'sunset'):
     
     ax.set(
         ylabel = 'Número de casos',
-        xlabel = 'Anos'
+        xlabel = 'Anos',
+        ylim = [0, vmax]
         )
         
-    t = [f'{col}° ({vl})' for col, vl in zip(df.columns, df.sum().values)]
+    t = [f'Setor {i} ({vl})' for i, vl in 
+         enumerate(df.sum().values, start = 1)]
     
     ax.legend(
         t,
@@ -62,17 +65,17 @@ def main():
     
     for typing in ['sunset', 'midnight']:
      
-        df = b.load('events_2013_2023_2')
+        df = b.load('events_class')
         
-        ds = pb.sel_sunset(df, typing = typing)
+        ds = pb.sel_typing(df, typing = typing)
         
         fig = plot_annually_events_count(ds, typing)
         
         FigureName = f'annual_{typing}'
           
-        fig.savefig(
-              b.LATEX(FigureName, folder = 'bars'),
-              dpi = 400
-              )
+        # fig.savefig(
+        #       b.LATEX(FigureName, folder = 'bars'),
+        #       dpi = 400
+        #       )
         
-# main()
+main()

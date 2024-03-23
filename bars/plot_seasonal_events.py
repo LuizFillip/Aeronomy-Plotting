@@ -8,7 +8,11 @@ b.config_labels(fontsize = 25)
 
 
 
-def plot_seasonal_occurrence(ds, typing = 'sunset', translate = False):
+def plot_seasonal_occurrence(
+        ds, 
+        typing = 'sunset', 
+        translate = False
+        ):
     
     e_year = ds.index[-1].year
     s_year = ds.index[0].year
@@ -17,14 +21,16 @@ def plot_seasonal_occurrence(ds, typing = 'sunset', translate = False):
     if typing == 'sunset':
         
         name = 'pós pôr do Sol'
+        vmax = 400
     else:
         name = 'pós meia noite'
+        vmax = 200
     
     fig, ax = plt.subplots(
         dpi = 300, 
         nrows = 1,
         sharex = True,
-        figsize = (14, 6)
+        figsize = (16, 6)
         )
     
     plt.subplots_adjust(hspace = 0.1)
@@ -39,11 +45,12 @@ def plot_seasonal_occurrence(ds, typing = 'sunset', translate = False):
     ax.set(
         ylabel = 'Número de casos',
         xlabel = 'Meses',
-        xticklabels = b.number_to_months()
+        xticklabels = b.month_names(sort = True),
+        ylim = [0, vmax]
         )
         
-    t = [f'{col}° ({vl})' for col, vl in 
-         zip(df.columns, df.sum().values)]
+    t = [f'Setor {i} ({vl})' for i, vl in 
+         enumerate(df.sum().values, start = 1)]
     
     ax.legend(
         t,
