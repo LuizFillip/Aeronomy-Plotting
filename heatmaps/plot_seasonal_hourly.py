@@ -3,32 +3,24 @@ import base as b
 import numpy as np
 import matplotlib.pyplot as plt 
 import pandas as pd 
+import core as c 
 
-def change_format():
-    ds = b.load('events_class')
-    
-    df = pb.pivot_data(ds, values = 'dusk')
-    
-    df = df.loc[df.index.year == 2013, -60]
-    
-    df = df.resample('1M').asfreq()
-    
-    df.index = df.index.month 
-    
-    return df
+
+PATH_INDEX = 'database/indices/omni_pro.txt'
+
+
 
 def plot_heatmap(
         ax, 
-        ds, 
-        col = '-50', 
+        values, 
         percent = True, 
-        colorbar = True
+        colorbar = True,
+        step = 1
         ):
   
     yticks = np.arange(1, 13, 1)
-    xticks = np.arange(20, 35, 1)
- 
-    
+    xticks = np.arange(20, 32 + step, step)
+     
     if percent:
         factor = 100
         units = ' (\%)'
@@ -40,20 +32,19 @@ def plot_heatmap(
  
     
     img = ax.imshow(
-        ds.to_numpy() * factor,
+        values,
         aspect = 'auto', 
         extent = [
-            xticks[0], xticks[-1], 
-            yticks[0], yticks[-1]],
-        cmap = 'mako', 
-        vmax = 1 *factor, 
-        vmin = 0
+            20, 32, 
+            12, 0
+            ],
+        cmap = 'mako'
         )
     
-    ax.axes.invert_yaxis()
+    # ax.axes.invert_yaxis()
     
-    # xticks = np.where(xticks >= 24, xticks - 24, xticks)
-    # yticks = b.month_names(sort = True)
+    xticklabels = np.where(xticks >= 24, xticks - 24, xticks)
+    yticklabels = b.month_names(sort = True)
     
     if colorbar:
         b.colorbar(
@@ -62,82 +53,87 @@ def plot_heatmap(
             ticks = ticks, 
             label = f"Ocorrência{units}"
             )
-    df = change_format()
-
-    ax.plot(df.values, df.index , lw = 3, color = 'w')
+   
    
     ax.set(
         xticks = xticks, 
-        yticks = yticks[::-1],
-       
+        yticks = yticks - 0.5,
+        # ylim = [yticks[-1], yticks[0]], 
+        xticklabels = xticklabels, 
+        yticklabels = yticklabels
         )
     
-    if not colorbar:
-        ax.set(
-            ylabel = 'Meses', 
-            xlabel = 'Hora universal'
-            )
+    # if not colorbar:
+    #     ax.set(
+    #         ylabel = 'Meses', 
+    #         xlabel = 'Hora universal'
+    #         )
     
     return 
 
 
-def indices():
-    PATH_INDEX = 'database/indices/omni_hourly.txt'
-
-    ds = b.load(PATH_INDEX)[['kp', 'dst']]
+def get_dusk(ds, col):
     
-    ds = ds.loc[(ds.index.year >= 2013) & 
-                (ds.index.year <= 2023)]
+    df = pb.pivot_data(ds, values = 'dusk')
     
-    return ds.resample('60s').asfreq().interpolate()
+    df = df.loc[df.index.year == 2013, col]
+    
+    df = df.resample('30D').asfreq()
+    
+    df.index = df.index.month + df.index.day / 31
+    
+    return df
 
 
-
-def plot_seasonal_hourly(col = '-60'):
+def plot_seasonal_hourly(df, dusk):
     
  
     fig, ax = plt.subplots(
-        ncols = 2, 
-        dpi = 300, 
-        sharex = True, 
-        sharey = True,
-        figsize = (16, 6)
-        )
+          nrows = 3, 
+          dpi = 300, 
+          sharex = True, 
+          sharey = True,
+          figsize = (10, 16)
+          )
+
+    plt.subplots_adjust(hspace = 0.1)
+    cond = [
+        df['kp'] <= 3, 
+        (df['kp'] > 3) & (df['kp'] <= 6), 
+        df['kp'] > 6]
     
-    plt.subplots_adjust(wspace = 0.1)
-    df = pd.concat(
-        [b.load('test'), indices()], axis = 1).dropna()
-    
-    ds = pb.concat_months(df.loc[df['kp'] <= 3], col)
-    
-    plot_heatmap(ax[0], ds, col = col, colorbar=False)
-    
-    ds = pb.concat_months(df.loc[df['kp'] > 3], col)
+    for i, ax in enumerate(ax.flat):
+        
+        ds = pb.hourly_distribution(df.loc[cond[i]])
 
-    plot_heatmap(ax[1], ds, col = col)
+        plot_heatmap(ax, ds, colorbar = False)
+        
+        ax.plot(dusk.values, dusk.index - 1, lw = 3, 
+                color = 'w')
     
     
 
-# plot_seasonal_hourly()
+col = -80
 
-# df = pd.concat(
-#      [b.load('test'),   indices()], axis = 1).dropna()
-
-col = '-60'
-
-
-# ds = pb.concat_months(df.loc[df['kp'] > 3], col)
-
-
-# plt.imshow(ds.values )
-
+typing = 'midnight'
 
 ds = b.load('events_class')
 
-df = pb.pivot_data(ds, values = 'start')
+dusk = get_dusk(ds, col)
 
-PATH_INDEX = 'database/indices/omni_hourly.txt'
+ds = ds.loc[(ds['type'] == typing) & 
+            (ds['drift'] == 'fresh')]
 
-ds = b.load(PATH_INDEX)[['kp', 'dst']]
+epbs = ds.loc[ds['lon'] == col, ['start']]
 
-df
+idx = c.geo_index()
+
+df = pd.concat([epbs, idx], axis = 1)
+
+
+plot_seasonal_hourly(df, dusk)
+
+
+
+
+
