@@ -33,13 +33,13 @@ def plot_distributions_seasons(
         df, 
         parameter = 'gamma',
         limit = 86, 
-        translate = False
+        translate = False,
+        outliner = 10
         ):
     
     fig, ax = FigureAxes()
 
     names = ['march', 'june', 'september', 'december']
-    
     
     for row, name in enumerate(names):
         
@@ -63,7 +63,7 @@ def plot_distributions_seasons(
                     df_level, 
                     parameter,
                     label = F107_labels[index],
-                    drop_ones = True, 
+                    outliner = outliner, 
                     translate = translate
                     )
             
@@ -100,6 +100,7 @@ def plot_distributions_seasons(
     pl.FigureLabels(
         fig, 
         translate = translate, 
+        parameter = parameter,
         fontsize = 30
         )
     
@@ -109,8 +110,7 @@ def plot_distributions_seasons(
 def main():
     
     translate = True
-
-    parameter = 'gamma'
+    parameter = 'vp'
     df = c.load_results('saa')
     limit = c.limits_on_parts(df['f107a'])
     
@@ -118,8 +118,10 @@ def main():
             df, 
             parameter = parameter,
             limit = limit,
-            translate = translate
+            translate = translate,
+            outliner = None
             )
+    
     FigureName = f'seasonal_{parameter}'
     
     if translate:
@@ -135,4 +137,5 @@ def main():
     
 
     
-main()
+# main()
+

@@ -12,7 +12,8 @@ def plot_distributions_solar_flux(
         df, 
         parameter = 'gamma',
         level = 86, 
-        translate = False
+        translate = False,
+        outliner = 10
         ):
     
     fig, ax = plt.subplots(
@@ -41,7 +42,7 @@ def plot_distributions_solar_flux(
                 parameter = parameter,
                 label = label,
                 axis_label = True,
-                drop_ones = True, 
+                outliner = outliner, 
                 translate = translate
             )
         
@@ -93,17 +94,20 @@ def plot_distributions_solar_flux(
 def main():
     
     translate = True
-    df = c.concat_results('saa')
+    df = c.load_results('saa', eyear = 2022)
+    
+    # print(df)
 
     limit = c.limits_on_parts(
         df['f107a'], parts = 2
         )
     parameter = 'gamma'
+    
     fig = plot_distributions_solar_flux(
             df, 
             parameter,
             level = limit, 
-            translate= translate
+            translate = translate
             )
     
     if translate:
@@ -113,10 +117,10 @@ def main():
         
     FigureName = f'solar_flux_{parameter}'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder),
+    #     dpi = 400
+    #     )
 
 
 

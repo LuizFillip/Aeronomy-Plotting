@@ -38,9 +38,7 @@ def plot_infos(
     return None 
 
     
-    
-    
-    
+
 def plot_events_infos(
         ax, row, LIST, 
         translate = True, 
@@ -89,8 +87,10 @@ def FigureLabels(
     
     if parameter == 'vp':
         xlabel = b.y_label('vp')
+        x = 0.47
     else:
         xlabel = b.y_label('gamma')
+        x = 0.45
         
     if translate:
         ylabel1 = "Probabilidade de ocorrência (\%)"
@@ -115,7 +115,7 @@ def FigureLabels(
         )
     
     fig.text(
-        0.45, 0.07, 
+        x, 0.07, 
         xlabel, 
         fontsize = fontsize
         )

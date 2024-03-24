@@ -15,9 +15,11 @@ def plot_cumullative(ax, ds, color):
                color = color
                )
      
-     ax1.set(ylim = [0, 1.2], 
-             yticks = np.arange(0, 1.2, 0.25), 
-             ylabel = 'Cumulated frequency')
+     ax1.set(
+         ylim = [0, 1.2], 
+        yticks = np.arange(0, 1.2, 0.25), 
+        ylabel = 'Cumulated frequency'
+        )
      
      
 def plot_histogram(
@@ -84,17 +86,17 @@ def plot_distribution(
         count = False,
         axis_label = False,
         translate = False,
-        drop_ones = False,
+        outliner = None,
         percent = True,
         season = ''
         ):
 
-    ds = c.probability_distribution(df, parameter)    
-    
-    if drop_ones:
-        ds = ds.loc[~(ds['days'] < 10) ].dropna()
-
-    
+    ds = c.probability_distribution(
+        df, 
+        parameter, 
+        outliner = outliner
+        )    
+ 
     epbs = ds['epbs'].sum()
     
     if count:
