@@ -5,6 +5,78 @@ import base as b
 
 b.config_labels()
 
+def plot_infos(ax, fit):
+    intercept = round(fit.intercept, 3)
+    slope = round(fit.slope[0], 3)
+    
+    equation = f'$\\gamma_{{RT}} = {slope}V_p + {intercept}$'
+    ax.text(
+        0.35, 0.08, 
+        equation, 
+        transform = ax.transAxes
+        )
+    
+    ax.text(
+        0.05, 0.85, 
+        f'$R^2$ = {fit.r2_score}', 
+        transform = ax.transAxes
+        )
+
+def plot_scattering(ax, df, col = 'gamma', color = 'k'):
+    
+    if color == 'k':
+        label = 'without EPB'
+    else:
+        label = 'with EPB'
+        
+    x_vls, y_vls = df['vp'].values, df[col].values
+    
+    ax.scatter(x_vls, y_vls, s = 20, c = color, label = label)
+    
+    return x_vls, y_vls
+
+
+def plot_labels(fig, fontsize = 30):
+    
+
+    fig.text(
+         0.04, 0.4, 
+         b.y_label('gamma'), 
+         fontsize = fontsize, 
+         rotation = 'vertical'
+         )
+     
+    fig.text(
+         0.45, 0.05, 
+         b.y_label('vp'), 
+         fontsize = fontsize
+         )
+    
+    
+def plot_legend(fontsize = 30):
+    s = 150
+    
+    l1 = plt.scatter(
+        [], [], color = 'red', marker = 'o', s = s)
+    l2 = plt.scatter(
+        [], [], color = 'black', marker = 'o', s = s)
+
+    labels = ["with EPB", "without EPB"]
+
+    plt.legend(
+        [l1, l2], 
+        labels, 
+        ncol = 2, 
+        fontsize = fontsize,
+        bbox_to_anchor = (0, 2.7),
+        handlelength = 2,
+        loc = 'upper center',
+        borderpad = 1.8,
+        handletextpad = 1, 
+        scatterpoints = 1
+        )
+
+
 def plot_single_correlation(
         df, 
         ax = None, 
@@ -13,42 +85,35 @@ def plot_single_correlation(
     
     
     if ax is None:
-        fig, ax = plt.subplots(dpi = 300)
+        fig, ax = plt.subplots(
+            dpi = 300)
         ax.set(ylabel = b.y_label('gamma'), 
                xlabel = b.y_label('vp'))
     
     
-    x_vls, y_vls = df['vp'].values, df[col].values
+    ds = df.loc[df['epb'] == 1.0]
+    x_vls, y_vls = plot_scattering(ax, ds, color = 'k')
+    
+    # ds = df.loc[df['epb'] == 0.0]
+    # plot_scattering(ax, ds, color = 'k')
     
     fit = b.linear_fit(x_vls, y_vls)
     
-    ax.scatter(x_vls, y_vls, s = 10, c = 'k')
+    ax.plot(x_vls, fit.y_pred, lw = 3, color = 'r')
     
-    ax.plot(x_vls, fit.y_pred, lw = 2, color = 'red')
-    
-    a1, b1 = fit.coeficients
-    a1, b1 = round(a1, 2), round(b1, 2)
-    
-    info = f'$\\gamma_{{RT}} = {a1}V_p + {b1}$'
-    ax.text(
-        0.4, 0.1, info, 
-        transform = ax.transAxes
-        )
-    
-    ax.text(
-        0.05, 0.85, f'$R^2$ = {fit.r2_score}', 
-        transform = ax.transAxes)
-    
+
+    plot_infos(ax, fit)
+      
     if ax is None:
         return fig
 
 def plot_seasonal_gamma_vs_pre(df, col = 'gamma'):
 
     fig, ax = plt.subplots(
-        sharey= 'row', 
         figsize = (14, 12),
         dpi = 300,
-        sharex = 'col',
+        sharex = True,
+        sharey = True,
         nrows = 2, 
         ncols = 2
         )
@@ -64,28 +129,16 @@ def plot_seasonal_gamma_vs_pre(df, col = 'gamma'):
         name = names[i]
         
         ds_split = c.SeasonsSplit(df, name)
-        
-        plot_single_correlation(
-            ds_split.sel_season, ax = ax)
+                
+        plot_single_correlation(ds_split.sel_season, ax = ax)
     
         ax.set(title = ds_split.name)
-    
-    fontsize = 30
-    fig.text(
-         0.04, 0.4, 
-         b.y_label('gamma'), 
-         fontsize = fontsize, 
-         rotation = 'vertical'
-         )
      
-    fig.text(
-         0.45, 0.05, 
-         b.y_label('vp'), 
-         fontsize = fontsize
-         )
     
-    
-    
+    # plot_legend(fontsize = 30)
+            
+    plot_labels(fig, fontsize = 30)
+            
     return fig  
 
 
@@ -93,16 +146,20 @@ def plot_seasonal_gamma_vs_pre(df, col = 'gamma'):
 
 
 def main():
-    df = c.concat_results('saa')
+    df = c.load_results('saa')
     
     fig = plot_seasonal_gamma_vs_pre(df, col = 'gamma')
     
     FigureName = 'seasonal_vp_and_gamma'
      
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'correlations'),
-          dpi = 400
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'correlations'),
+    #       dpi = 400
+    #       )
 
 
-# main()
+main()
+
+# df = c.load_results('saa')
+
+# df
