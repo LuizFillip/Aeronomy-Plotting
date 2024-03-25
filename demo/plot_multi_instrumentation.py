@@ -35,10 +35,10 @@ def plot_imager(ax_img, PATH_SKY, file, index):
     
     return dn 
 
-def plot_ionogram(ax2, target, col, site, PATH_IONO):
+def plot_ionogram(ax2, PATH_IONO, target, col, site):
     
-    dn = closest_iono(PATH_IONO, target)
-    file = dn.strftime(f'{site}_%Y%m%d(%j)%H%M%S.PNG')
+    
+    file = target.strftime(f'{site}_%Y%m%d(%j)%H%M%S.PNG')
             
     img = io.imread(os.path.join(PATH_IONO, file))
     
@@ -58,7 +58,7 @@ def plot_ionogram(ax2, target, col, site, PATH_IONO):
         )
     
     
-    title = dn.strftime(f'({col + 1}) %H:%M')
+    title = target.strftime(f'({col + 1}) %H:%M')
     
     ax2.set(title = title)
     
@@ -70,20 +70,7 @@ def plot_ionogram(ax2, target, col, site, PATH_IONO):
     if col == 0:
         ax2.set(ylabel = 'Virtual Height (km)')
 
-    return dn
-
-
-
-args = dict(
-     marker = 'o', 
-     markersize = 5,
-     linestyle = 'none', 
-     color = 'gray', 
-     alpha = 0.7, 
-     )
-
-
-
+    
 def plot_roti_curves(ax, dn):
     
     ds = pb.concat_files(dn, root = os.getcwd())
@@ -95,47 +82,83 @@ def plot_roti_curves(ax, dn):
     #             (ds['lat'] > -5) & 
     #             (ds['lat'] < -1 )]
     
-    # ds = ds[~ds['prn'].str.contains('R')]
+    ds = ds[~ds['prn'].str.contains('R')]
         
-    ax.plot(ds['roti'], **args, 
-            label = 'ROTI points')
+    ax.plot(
+        ds['roti'], 
+        marker = 'o', 
+        markersize = 1,
+        linestyle = 'none', 
+        color = 'gray', 
+        alpha = 0.3)
     
     times = pb.time_range(ds)
-    
-    
+
     df1 = pb.maximum_in_time_window(ds, 'max', times)
     
-    ax.plot(df1, 
-            color = 'k',
-            marker = 'o', 
-            markersize = 5, 
-            linestyle = 'none',
-            label = 'Maximum value')
+    ax.plot(
+        df1, 
+        color = 'k',
+        marker = 'o', 
+        markersize = 5, 
+        linestyle = 'none'
+        )
+
     
-    ax.axhline(0.25, color = 'red', lw = 2, 
-                label = '0.25 TECU/min')
-    
-    
-    ax.set(yticks = list(range(0, 7)), 
-           ylabel = 'ROTI (TECU/min)', 
-           xlim = [df1.index[0], df1.index[-1]])
-    ax.legend(loc = 'upper right')
+    ax.set(
+        ylim = [0, 5], 
+        yticks = range(0, 6, 1),
+        ylabel = 'ROTI (TECU/min)', 
+        xlim = [df1.index[0], df1.index[-1]]
+        )
+ 
+    def plot_legend(fontsize = 30, s = 100):
+        l1 = plt.scatter(
+            [], [], color = 'gray', marker = 'o', s = s)
+        l2 = plt.scatter(
+            [], [], color = 'black', marker = 'o', s = s)
+        
+        l3 = ax.axhline(
+            0.25, color = 'red', lw = 2, 
+                    label = '0.25 TECU/min')
+        
+
+        labels = ['ROTI points', 'Maximum value', '0.25 TECU/min']
+
+        plt.legend(
+            [l1, l2, l3], 
+            labels, 
+            ncol = 1, 
+            fontsize = fontsize,
+            bbox_to_anchor = (1.07, 1.2),
+            handlelength = 2,
+            loc = 'upper right',
+            borderpad = 1.8,
+            handletextpad = 1, 
+            scatterpoints = 1
+            )
+
+
+
+    plot_legend(fontsize = 25)
     
     b.format_time_axes(ax)
     
+    return None
     
-def plot_shades(ax1, n, index):
+    
+def plot_shades(ax1, n, index, y = 4.5):
     
     delta = dt.timedelta(minutes = 10)
     
     ax1.text(
-        n, 5.5, index, 
+        n, y, index, 
         transform = ax1.transData
         )
     
     ax1.axvspan(
         n, n + delta,
-        alpha = 0.7, 
+        alpha = 0.5, 
         color = 'gray',
         edgecolor = 'k', 
         lw = 2
@@ -143,7 +166,8 @@ def plot_shades(ax1, n, index):
     
 def closest_iono(PATH_IONO, target):
     iono_times = [
-        dg.ionosonde_fname(f) for f in os.listdir(PATH_IONO) 
+        dg.ionosonde_fname(f) 
+        for f in os.listdir(PATH_IONO) 
                   if 'PNG' in f ]
     
     dn = b.closest_datetime(iono_times, target)
@@ -151,7 +175,7 @@ def closest_iono(PATH_IONO, target):
     return dn
   
     
-def plot_multi_instrumentation(fn_skys, site =  'SAA0K'):
+def plot_multi_instrumentation(fn_skys, site =  'SAA0K', letter= 'a'):
     
     dn = get_datetime_from_file(fn_skys[0])
 
@@ -161,6 +185,10 @@ def plot_multi_instrumentation(fn_skys, site =  'SAA0K'):
         layout = "constrained"
         )
     # site =  'FZA0M'
+    
+    fig.text(
+        0.07, 0.9, f'({letter})', 
+        fontsize = 45)
     
     folder_img = dn.strftime('CA_%Y_%m%d')
     folder_ion = dn.strftime('%Y%m%d')
@@ -180,21 +208,25 @@ def plot_multi_instrumentation(fn_skys, site =  'SAA0K'):
                 
         ax1 = plt.subplot(gs2[0, col])
         
-        target = plot_imager(ax1, PATH_SKY, fn_sky, col + 1)
+        time_imager = plot_imager(ax1, PATH_SKY, fn_sky, col + 1)
         
         ax2 = plt.subplot(gs2[1, col])
         
-        dn1 = plot_ionogram(ax2, target, col, site, PATH_IONO)
+        target = closest_iono(PATH_IONO, time_imager)
         
-        plot_shades(ax3, dn1, col + 1)
+        plot_ionogram(ax2, PATH_IONO, target, col, site)
+        
+        plot_shades(ax3, target, col + 1)
     
     
+    
+  
     
     
     return fig
 
 FigureName = 'non_EPB_occurrence'
-no_epb_occurrence = [ 
+files2 = [ 
     'O6_CA_20130610_220827.tif',
     'O6_CA_20130610_225828.tif', 
     'O6_CA_20130611_001329.tif', 
@@ -203,16 +235,16 @@ no_epb_occurrence = [
 
 # FigureName = 'EPB_occurrence'
 
-# fn_skys = [
-#     'O6_CA_20130114_224619.tif', 
-#     'O6_CA_20130114_231829.tif',
-#     'O6_CA_20130114_234329.tif', 
-#     'O6_CA_20130115_020958.tif']
+files1 = [
+    'O6_CA_20130114_224619.tif', 
+    'O6_CA_20130114_231829.tif',
+    'O6_CA_20130114_234329.tif', 
+    'O6_CA_20130115_020958.tif'
+    ]
 
 
 
 
-# fig = plot_multi_instrumentation(fn_skys) 
 
 
 
@@ -225,3 +257,40 @@ no_epb_occurrence = [
 
         
 # b.get_var_name(FigureName)
+
+def save_img_buffer(figure):
+    from io import BytesIO
+
+    # Save fig1 to an in-memory buffer
+    buffer1 = BytesIO()
+    figure.savefig(buffer1, format='png')
+    buffer1.seek(0)
+    image = plt.imread(buffer1)
+    
+    return image
+
+def join_images(figure_1, figure_2):
+    figure_all, ax = plt.subplots(
+        figsize = (11, 6), 
+        ncols = 2,
+        dpi = 300
+        )
+    
+    plt.subplots_adjust(wspace = 0)
+    
+    
+    ax[0].imshow(save_img_buffer(figure_1))
+    ax[0].set_axis_off()  #
+    
+    ax[1].imshow(save_img_buffer(figure_2))
+    ax[1].set_axis_off()
+  
+  
+    return figure_all
+
+figure_1  = plot_multi_instrumentation(files1) 
+figure_2  = plot_multi_instrumentation(files2, letter = 'b') 
+
+fig = join_images(figure_1, figure_2)
+
+# fig.savefig('validation_roti_paper', dpi = 400)
