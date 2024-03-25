@@ -32,18 +32,23 @@ def plot_meridian_and_apex(year = 2013):
     
     pl.plot_apex_vs_latitude(ax1)
     
-    
     ax2 = plt.subplot(
         gs2[0:2, 2:],  projection = ccrs.PlateCarree()
         )
+    gg.plot_square_area(
+        ax2,
+        lat_min = -10,
+        lon_min = -50,
+        lat_max = 5, 
+        lon_max = -40
+        )
+    
+    
     
     pl.plot_mag_meridians(ax2, year)
     
     lons, lats = gg.stations_coordinates(
         year, distance = 10)
-    
-    ax2.axvline(-50, linestyle = '--')
-    ax2.axvline(-40, linestyle = '--')
     
     glat, glon = gg.sites['car']['coords']
     
