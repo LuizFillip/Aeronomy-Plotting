@@ -5,9 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd 
 import core as c 
 
-
-PATH_INDEX = 'database/indices/omni_pro.txt'
-
+b.config_labels()
 
 
 def plot_heatmap(
@@ -34,15 +32,10 @@ def plot_heatmap(
     img = ax.imshow(
         values,
         aspect = 'auto', 
-        extent = [
-            20, 32, 
-            12, 0
-            ],
-        cmap = 'mako'
+        extent = [20, 32, 12, 0],
+        cmap = 'magma'
         )
-    
-    # ax.axes.invert_yaxis()
-    
+        
     xticklabels = np.where(xticks >= 24, xticks - 24, xticks)
     yticklabels = b.month_names(sort = True)
     
@@ -58,16 +51,9 @@ def plot_heatmap(
     ax.set(
         xticks = xticks, 
         yticks = yticks - 0.5,
-        # ylim = [yticks[-1], yticks[0]], 
         xticklabels = xticklabels, 
         yticklabels = yticklabels
         )
-    
-    # if not colorbar:
-    #     ax.set(
-    #         ylabel = 'Meses', 
-    #         xlabel = 'Hora universal'
-    #         )
     
     return 
 
@@ -75,25 +61,21 @@ def plot_heatmap(
 def get_dusk(ds, col):
     
     df = pb.pivot_data(ds, values = 'dusk')
+  
+    df['day'] = (df.index.month + df.index.day / 31) - 1
     
-    df = df.loc[df.index.year == 2013, col]
-    
-    df = df.resample('30D').asfreq()
-    
-    df.index = df.index.month + df.index.day / 31
-    
-    return df
+    return df[[col, 'day']].rename(columns = {col: 'dusk'})
 
 
-def plot_seasonal_hourly(df, dusk):
+def plot_seasonal_hourly(df):
     
  
     fig, ax = plt.subplots(
-          nrows = 3, 
+          ncols = 3, 
           dpi = 300, 
           sharex = True, 
           sharey = True,
-          figsize = (10, 16)
+          figsize = (16, 8)
           )
 
     plt.subplots_adjust(hspace = 0.1)
@@ -104,35 +86,56 @@ def plot_seasonal_hourly(df, dusk):
     
     for i, ax in enumerate(ax.flat):
         
-        ds = pb.hourly_distribution(df.loc[cond[i]])
+        ds = pb.hourly_distribution(df.loc[cond[i]], step = 0.5)
 
         plot_heatmap(ax, ds, colorbar = False)
         
-        ax.plot(dusk.values, dusk.index - 1, lw = 3, 
-                color = 'w')
-    
+        df1 = df.loc[df.index.year == 2020]
+        
+        ax.plot(
+            df1['dusk'], df1['day'],
+            lw = 3, 
+            color = 'w')
+        
+        
+    b.fig_colorbar(
+            fig,
+            vmin = 0, 
+            vmax = 100, 
+            cmap = 'magma',
+            fontsize = 25,
+            step = 10,
+            y = 0.97,
+            label = 'Ocorrência (\%)'
+            )
+    return fig
     
 
-col = -80
+
+
+
+def sel_epb_typing(col, typing):
+    ds = b.load('events_class2')
+    
+    dusk = get_dusk(ds, col)
+    
+    epbs  = ds.loc[
+        (ds['type'] == typing) &
+        (ds['lon'] == col)  &
+        (ds['drift'] == 'fresh'), ['start']
+        ]
+        
+    idx = c.geo_index()
+    
+    return pd.concat([epbs, idx, dusk], axis = 1)
+
+col = -70
 
 typing = 'midnight'
 
-ds = b.load('events_class')
+df = sel_epb_typing(col, typing)
 
-dusk = get_dusk(ds, col)
-
-ds = ds.loc[(ds['type'] == typing) & 
-            (ds['drift'] == 'fresh')]
-
-epbs = ds.loc[ds['lon'] == col, ['start']]
-
-idx = c.geo_index()
-
-df = pd.concat([epbs, idx], axis = 1)
-
-
-plot_seasonal_hourly(df, dusk)
-
+fig = plot_seasonal_hourly(df)
 
 
 

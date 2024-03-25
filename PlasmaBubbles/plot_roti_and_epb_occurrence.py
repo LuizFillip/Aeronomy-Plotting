@@ -183,13 +183,13 @@ def save_frames(year):
         plt.close()
         
         
-dn = dt.datetime(2015, 1, 8, 20)
+# dn = dt.datetime(2015, 1, 8, 20)
 
-fig = single_plot(
-        dn, 
-        cols = [8], 
-        hours = 11
-        )
+# fig = single_plot(
+#         dn, 
+#         cols = [8], 
+#         hours = 11
+#         )
 
 # plt.show()
 

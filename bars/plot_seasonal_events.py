@@ -24,7 +24,7 @@ def plot_seasonal_occurrence(
         vmax = 400
     else:
         name = 'pós meia noite'
-        vmax = 200
+        vmax = 150
     
     fig, ax = plt.subplots(
         dpi = 300, 
@@ -68,7 +68,7 @@ def plot_seasonal_occurrence(
 
 def main():
     infile = 'core/data/epb_class'
-    infile = 'events_class'
+    infile = 'events_class2'
     for typing in ['sunset', 'midnight']:
      
         df = b.load(infile)

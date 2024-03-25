@@ -65,7 +65,7 @@ def main():
     
     for typing in ['sunset', 'midnight']:
      
-        df = b.load('events_class')
+        df = b.load('events_class2')
         
         ds = pb.sel_typing(df, typing = typing)
         
@@ -76,6 +76,6 @@ def main():
         # fig.savefig(
         #       b.LATEX(FigureName, folder = 'bars'),
         #       dpi = 400
-        #       )
+        #       )s
         
-main()
+# main()

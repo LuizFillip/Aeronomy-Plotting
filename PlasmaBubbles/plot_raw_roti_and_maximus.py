@@ -140,7 +140,7 @@ def plot_row_roti_in_sectors(
         
         ds = plot_roti_points(
                 ax[row, 0], ds, 
-                threshold = 0.25,
+                threshold = threshold,
                 label = False, 
                 points_max = True
                 )
@@ -184,7 +184,7 @@ def plot_row_roti_in_sectors(
     fig.text(0.93, 0.42, 'Ocorrência', 
         fontsize = fontsize, 
         rotation = 'vertical'
-        )
+        ) 
     
     return fig 
 

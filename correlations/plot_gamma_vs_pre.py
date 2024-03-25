@@ -53,28 +53,6 @@ def plot_labels(fig, fontsize = 30):
          )
     
     
-def plot_legend(fontsize = 30):
-    s = 150
-    
-    l1 = plt.scatter(
-        [], [], color = 'red', marker = 'o', s = s)
-    l2 = plt.scatter(
-        [], [], color = 'black', marker = 'o', s = s)
-
-    labels = ["with EPB", "without EPB"]
-
-    plt.legend(
-        [l1, l2], 
-        labels, 
-        ncol = 2, 
-        fontsize = fontsize,
-        bbox_to_anchor = (0, 2.7),
-        handlelength = 2,
-        loc = 'upper center',
-        borderpad = 1.8,
-        handletextpad = 1, 
-        scatterpoints = 1
-        )
 
 
 def plot_single_correlation(
@@ -133,10 +111,7 @@ def plot_seasonal_gamma_vs_pre(df, col = 'gamma'):
         plot_single_correlation(ds_split.sel_season, ax = ax)
     
         ax.set(title = ds_split.name)
-     
-    
-    # plot_legend(fontsize = 30)
-            
+                 
     plot_labels(fig, fontsize = 30)
             
     return fig  
@@ -152,14 +127,10 @@ def main():
     
     FigureName = 'seasonal_vp_and_gamma'
      
-    # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'correlations'),
-    #       dpi = 400
-    #       )
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'correlations'),
+          dpi = 400
+          )
 
 
 main()
-
-# df = c.load_results('saa')
-
-# df

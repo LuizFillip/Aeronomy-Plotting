@@ -66,14 +66,17 @@ def plot_histogram(
     
     plt.xticks(rotation = 0)
     
-    vmin, vmax, step = c.limits(parameter)
-    
-    ax.set(
-        xlim = [vmin, vmax],
-        xticks = np.arange(
-            vmin, vmax + step, step*2
-            )
-        )
+    vls =  ds['start'].values
+    step = vls[1] - vls[0]
+    vmin, vmax = vls.min(), ds['end'].max()
+
+    # print(vmin, vmax)
+    # ax.set(
+    #     xlim = [vmin, vmax],
+    #     xticks = np.arange(
+    #         vmin, vmax + step, step*2
+    #         )
+    #     )
     
     
     return days
@@ -88,13 +91,14 @@ def plot_distribution(
         translate = False,
         outliner = None,
         percent = True,
-        season = ''
+        limit = None
         ):
 
     ds = c.probability_distribution(
         df, 
         parameter, 
-        outliner = outliner
+        outliner = outliner,
+        limit = limit
         )    
  
     epbs = ds['epbs'].sum()
@@ -120,8 +124,12 @@ def plot_distribution(
         **args
         )
     
-    vmin, vmax, step = c.limits(parameter)
+    if limit is None:
+        vmin, vmax, step = c.input_limits(parameter)
+    else:
+        vmin, vmax, step = c.compute_limits(df, parameter)
     
+   
     if parameter == 'vp':
         xlabel = b.y_label('vp')
     else:

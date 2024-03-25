@@ -32,9 +32,10 @@ def FigureAxes(nrows = 4):
 def plot_distributions_seasons(
         df, 
         parameter = 'gamma',
-        limit = 86, 
+        solar_limit = 86, 
         translate = False,
-        outliner = 10
+        outliner = 10,
+        limit = None
         ):
     
     fig, ax = FigureAxes()
@@ -54,9 +55,9 @@ def plot_distributions_seasons(
         
         df_index = c.DisturbedLevels(df_season.sel_season)
         
-        F107_labels = df_index.solar_labels(limit)
+        F107_labels = df_index.solar_labels(solar_limit)
         
-        for index, df_level in enumerate(df_index.F107(limit)):
+        for index, df_level in enumerate(df_index.F107(solar_limit)):
     
             data, epb = pl.plot_distribution(
                     ax[row, 0], 
@@ -64,7 +65,8 @@ def plot_distributions_seasons(
                     parameter,
                     label = F107_labels[index],
                     outliner = outliner, 
-                    translate = translate
+                    translate = translate,
+                    limit = limit
                     )
             
             total_epb.append(epb)
@@ -110,16 +112,17 @@ def plot_distributions_seasons(
 def main():
     
     translate = True
-    parameter = 'vp'
+    parameter = 'gamma'
     df = c.load_results('saa')
-    limit = c.limits_on_parts(df['f107a'])
+    solar_limit = c.limits_on_parts(df['f107a'])
     
     fig = plot_distributions_seasons(
             df, 
             parameter = parameter,
-            limit = limit,
+            solar_level = solar_limit,
             translate = translate,
-            outliner = None
+            outliner = 10,
+            limit = False
             )
     
     FigureName = f'seasonal_{parameter}'
