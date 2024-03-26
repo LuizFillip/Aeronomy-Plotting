@@ -127,7 +127,7 @@ def plot_distribution(
         ylim = [-0.2* factor, 1.4* factor], 
         yticks = np.arange(0, 1.2* factor, 0.25* factor),
         xticks = np.arange(
-            vmin, vmax + step, step
+            vmin, vmax + step, step*2
             ),
        
         )

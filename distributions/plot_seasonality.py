@@ -16,7 +16,7 @@ def FigureAxes(nrows = 4):
           nrows = nrows,
           figsize = (20, 14), 
           dpi = 300, 
-          sharex = 'col', 
+          sharex = True, 
           sharey = 'col'
         )
     
@@ -81,10 +81,13 @@ def plot_distributions_seasons(
             
             total_day.append(days)
             
-            ax[row, 1].set(ylim = [0, 300])
+            ax[row, 1].set(
+                ylim = [0, 350], 
+                yticks = list(range(0, 400, 100))
+                )
                     
             ax[row, index].text(
-                0.07, 0.82,
+                0.35, 0.82,
                 f'{df_season.name}',
                 transform = ax[row, index].transAxes
                 )
@@ -93,7 +96,7 @@ def plot_distributions_seasons(
         LIST = [total_epb, total_day]
         pl.plot_events_infos(
             ax, row, LIST, 
-            x = 0.55,
+            x = 0.65,
             translate = translate
             )
             
@@ -111,7 +114,7 @@ def plot_distributions_seasons(
 def main():
     
     translate = False
-    parameter = 'gamma'
+    parameter = 'vp'
     df = c.load_results('saa')
     solar_limit = c.limits_on_parts(df['f107a'])
     
@@ -121,7 +124,7 @@ def main():
             solar_level = solar_limit,
             translate = translate,
             outliner = 10,
-            limit = False
+            limit = True
             )
     
     FigureName = f'seasonal_{parameter}2'
@@ -132,10 +135,10 @@ def main():
         folder = 'distributions/en/'
         
     
-    fig.savefig(
-        b.LATEX(FigureName, folder),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder),
+    #     dpi = 400
+    #     )
     
 
     
