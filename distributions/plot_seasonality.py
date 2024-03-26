@@ -32,7 +32,7 @@ def FigureAxes(nrows = 4):
 def plot_distributions_seasons(
         df, 
         parameter = 'gamma',
-        solar_limit = 86, 
+        solar_level = 86, 
         translate = False,
         outliner = 10,
         limit = None
@@ -55,9 +55,9 @@ def plot_distributions_seasons(
         
         df_index = c.DisturbedLevels(df_season.sel_season)
         
-        F107_labels = df_index.solar_labels(solar_limit)
+        F107_labels = df_index.solar_labels(solar_level)
         
-        for index, df_level in enumerate(df_index.F107(solar_limit)):
+        for index, df_level in enumerate(df_index.F107(solar_level)):
     
             data, epb = pl.plot_distribution(
                     ax[row, 0], 
@@ -89,8 +89,7 @@ def plot_distributions_seasons(
                 transform = ax[row, index].transAxes
                 )
             
-        
-        
+
         LIST = [total_epb, total_day]
         pl.plot_events_infos(
             ax, row, LIST, 
@@ -111,7 +110,7 @@ def plot_distributions_seasons(
 
 def main():
     
-    translate = True
+    translate = False
     parameter = 'gamma'
     df = c.load_results('saa')
     solar_limit = c.limits_on_parts(df['f107a'])
@@ -125,7 +124,7 @@ def main():
             limit = False
             )
     
-    FigureName = f'seasonal_{parameter}'
+    FigureName = f'seasonal_{parameter}2'
     
     if translate:
         folder = 'distributions/pt/'
@@ -133,12 +132,12 @@ def main():
         folder = 'distributions/en/'
         
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder),
+        dpi = 400
+        )
     
 
     
-# main()
+main()
 

@@ -65,20 +65,7 @@ def plot_histogram(
             )
     
     plt.xticks(rotation = 0)
-    
-    vls =  ds['start'].values
-    step = vls[1] - vls[0]
-    vmin, vmax = vls.min(), ds['end'].max()
 
-    # print(vmin, vmax)
-    # ax.set(
-    #     xlim = [vmin, vmax],
-    #     xticks = np.arange(
-    #         vmin, vmax + step, step*2
-    #         )
-    #     )
-    
-    
     return days
 
 def plot_distribution(
@@ -91,7 +78,7 @@ def plot_distribution(
         translate = False,
         outliner = None,
         percent = True,
-        limit = None
+        limit = True
         ):
 
     ds = c.probability_distribution(
@@ -124,7 +111,7 @@ def plot_distribution(
         **args
         )
     
-    if limit is None:
+    if limit:
         vmin, vmax, step = c.input_limits(parameter)
     else:
         vmin, vmax, step = c.compute_limits(df, parameter)
@@ -140,7 +127,7 @@ def plot_distribution(
         ylim = [-0.2* factor, 1.4* factor], 
         yticks = np.arange(0, 1.2* factor, 0.25* factor),
         xticks = np.arange(
-            vmin, vmax + step, step*2
+            vmin, vmax + step, step
             ),
        
         )

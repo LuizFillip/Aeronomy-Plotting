@@ -13,7 +13,8 @@ def plot_distributions_solar_flux(
         parameter = 'gamma',
         level = 86, 
         translate = False,
-        outliner = 10
+        outliner = 10,
+        limit = None
         ):
     
     fig, ax = plt.subplots(
@@ -43,7 +44,8 @@ def plot_distributions_solar_flux(
                 label = label,
                 axis_label = True,
                 outliner = outliner, 
-                translate = translate
+                translate = translate,
+                limit = limit
             )
         
         days = pl.plot_histogram(
@@ -70,44 +72,50 @@ def plot_distributions_solar_flux(
             fontsize = 30
             )
         
-    x = 0.67
-    y = 0.2
+    x = 0.7
+    y = 0.17
     
     ax[1].legend(ncol = 2, loc = 'upper center')
     ax[0].legend(ncol = 2, loc = 'upper center')
     
-    pl.plot_infos(ax[0], x = x, y = y, 
-                  translate = translate, 
-                  values = total_epb)
+    pl.plot_infos(
+        ax[0], 
+        x = x, 
+        y = y, 
+        translate = translate, 
+        values = total_epb
+        )
     
-    pl.plot_infos(ax[1], 
-                  x = x + 0.05, 
-                  y = y,
-                  values = total_day, 
-                  epb_title = False, 
-                  translate = translate)
+    pl.plot_infos(
+        ax[1], 
+        x = x , #+ 0.05
+        y = y,
+        values = total_day, 
+        epb_title = False, 
+        translate = translate
+        )
     
+    # print(sum(total_epb))
     return fig
 
 
 
 def main():
     
-    translate = True
+    translate = False
     df = c.load_results('saa', eyear = 2022)
-    
-    # print(df)
+    #print(df['epb'].sum())
+    limit = c.limits_on_parts(df['f107a'], parts = 2 )
 
-    limit = c.limits_on_parts(
-        df['f107a'], parts = 2
-        )
     parameter = 'gamma'
     
     fig = plot_distributions_solar_flux(
             df, 
             parameter,
             level = limit, 
-            translate = translate
+            translate = translate, 
+            outliner = 10,
+            limit = True
             )
     
     if translate:
@@ -115,12 +123,12 @@ def main():
     else:
         folder = 'distributions/en/'
         
-    FigureName = f'solar_flux_{parameter}'
+    FigureName = f'solar_flux_{parameter}2'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder),
+        dpi = 400
+        )
 
 
 
