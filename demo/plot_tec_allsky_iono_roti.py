@@ -12,7 +12,7 @@ import cartopy.crs as ccrs
 from skimage import io
 import GEO as gg
 
-b.config_labels(fontsize = 20)
+b.config_labels(fontsize = 25)
 
 
 
@@ -42,8 +42,6 @@ def plot_images(file, ax_img):
     
     new_img= AllSky.bright
     
-    # if hori_flip: new_img = np.fliplr(new_img)
-    # if vert_flip: new_img = np.flipud(new_img)
     # new_img = np.fliplr(np.flipud(new_img))
     AllSky.display(ax_img, new_img)
             
@@ -83,12 +81,12 @@ def plot_ionogram(target, ax, site = 'FZA0M'):
     
     
     
-def plot_shades(ax1, n, index):
+def plot_shades(ax1, n, index, y = 4):
     
     delta = dt.timedelta(minutes = 10)
     
     ax1.text(
-        n, 4, 
+        n, y, 
         index, 
         transform = ax1.transData
         )
@@ -105,36 +103,59 @@ def title(ax, dn, index):
     title = dn.strftime(f'({index}) %Hh%M')
     ax.set(title = title)
  
+def plot_roti_timeseries(ax_rot, dn, ref_long = -50):
+     
+     df = roti_limit(dn)
+     
+     pl.plot_roti_points(
+             ax_rot, df , 
+             threshold = 0.25,
+             label = True
+             )
+     vmax = np.ceil(df['roti'].max()) 
+     
+     ax_rot.set(
+         ylim = [0, vmax + 1], 
+         xlim = [df.index[0], df.index[-1]],
+         yticks = np.arange(0, vmax + 1, 1)
+         )
+     
+     
+     dusk = pb.terminator(ref_long, dn, float_fmt = False)
+     
+     ax_rot.axvline(dusk, lw = 2)
+     
+     midnight = gg.local_midnight(dn, ref_long + 5, delta_day = 1)
+     
+     ax_rot.axvline(midnight, lw = 2, color = 'b')
+     
+     y = vmax + 1.1
+     
+     ax_rot.text(dusk, y, 'Pôr do Sol (300 km)', 
+                 transform = ax_rot.transData)
+         
+     ax_rot.text(midnight, y, 'Meia noite local', 
+             color = 'b',
+             transform = ax_rot.transData)
+     
+     b.format_time_axes(ax_rot, translate = True)
+     return vmax
 
-
-def TEC_6300_IONOGRAM_ROTI(files, dn, site = 'FZA0M'):
+def TEC_6300_IONOGRAM_ROTI(files, dn, site = 'FZA0M', tec_max = 40):
     
     fig = plt.figure(
         dpi = 300,
-        figsize = (11,  14),
+        figsize = (11,  16),
         layout = 'constrained'
         )
     
     gs2 = GridSpec(len(files), len(files))
     
-    gs2.update(hspace = 0.3, wspace = 0)
+    gs2.update(hspace = 0.45, wspace = 0)
     
     ax_rot = plt.subplot(gs2[-1, :])
     
-    df = roti_limit(dn)
-    pl.plot_roti_points(
-            ax_rot, df , 
-            threshold = 0.25,
-            label = True
-            )
-    vmax = np.ceil(df['roti'].max()) + 1
-    ax_rot.set(
-        ylim = [0, vmax], 
-        xlim = [df.index[0], df.index[-1]],
-        yticks = np.arange(0, vmax + 1, 1)
-        )
-    
-    b.format_time_axes(ax_rot, translate = True)
+    vmax = plot_roti_timeseries(ax_rot, dn)
     
     for col, file in enumerate(files):
         index = col + 1
@@ -151,12 +172,12 @@ def TEC_6300_IONOGRAM_ROTI(files, dn, site = 'FZA0M'):
         
         title(ax_ion, dn, index)
         
-        ax_tec = plt.subplot(
-            gs2[2, col], projection = ccrs.PlateCarree())
+        ax_tec = plt.subplot(gs2[2, col], projection = ccrs.PlateCarree())
         
         
         
         if index == 2:
+            
             ax_ion.text(
                 0.6, -0.1, 'Frequência (MHz)',
                 transform = ax_ion.transAxes
@@ -166,7 +187,7 @@ def TEC_6300_IONOGRAM_ROTI(files, dn, site = 'FZA0M'):
                 transform = ax_tec.transAxes
             )
         
-        tec_max = 40
+        
         if index == 4:
             pl.plot_tec_map(
                 target, ax_tec, 
@@ -204,10 +225,10 @@ def TEC_6300_IONOGRAM_ROTI(files, dn, site = 'FZA0M'):
         
         title(ax_tec, dn, index)
         
-        plot_shades(ax_rot, target, index)
+        plot_shades(ax_rot, target, index, y = vmax + 0.5)
     
     ax_img.text(
-        -3.3, 1.1, '(b)', 
+        -3.3, 1.1, '(a)', 
         fontsize = 35,
         transform = ax_img.transAxes
         )
@@ -224,15 +245,15 @@ files = [
     'O6_CA_20131225_024146.tif'
     ]
 
-dn = dt.datetime(2013, 6, 10, 20)
+# dn = dt.datetime(2013, 6, 10, 20)
 
-files = [ 
+# files = [ 
         
-    'O6_CA_20130610_220827.tif',
-    'O6_CA_20130610_225828.tif', 
-    'O6_CA_20130611_001329.tif', 
-    'O6_CA_20130611_010516.tif'
-    ]
+#     'O6_CA_20130610_220827.tif',
+#     'O6_CA_20130610_225828.tif', 
+#     'O6_CA_20130611_001329.tif', 
+#     'O6_CA_20130611_010516.tif'
+#     ]
 
 # dn = dt.datetime(2022, 7, 24, 20)
 
@@ -244,7 +265,7 @@ files = [
 #     ]
 
 site =  'FZA0M'
-site =  'SAA0K'
+# site =  'SAA0K'
 folder_img = dn.strftime('CA_%Y_%m%d')
 folder_ion = dn.strftime('%Y%m%d')
 PATH_SKY = f'database/images/{folder_img}/'
@@ -252,10 +273,10 @@ PATH_IONO = f'database/ionogram/{folder_ion}{site[0]}/'
 
 
 
-fig  = TEC_6300_IONOGRAM_ROTI(files, dn, site)
+fig  = TEC_6300_IONOGRAM_ROTI(files, dn, site, tec_max = 80)
 
 # FigureName = 'Midnight_validation'
-fig.savefig(
-    b.LATEX(folder_ion, folder = 'products'),
-    dpi = 400
-    )
+# fig.savefig(
+#     b.LATEX(folder_ion, folder = 'products'),
+#     dpi = 400
+#     )
