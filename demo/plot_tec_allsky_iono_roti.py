@@ -16,34 +16,27 @@ b.config_labels(fontsize = 25)
 
 
 
-def roti_limit(dn):
+def roti_limit(dn, sector = -50):
     
-
     df = pb.concat_files(dn, root = 'D:\\')
 
     df = b.sel_times(df, dn, hours = 11)
     
-    lon_min = -48
-    
-    sector = -50
-
     coords = gg.set_coords(dn.year, radius = 10)
 
     return pb.filter_coords(df, sector, coords)
-    # return pb.longitude_sector(df, long)
-    
-    # return df.loc[(df['lon'] > lon_min) ]
+   
 
 def plot_images(file, ax_img):
      
-    AllSky = im.processing_img(
+    all_sky = im.processing_img(
         os.path.join(PATH_SKY, file)
         )
     
-    new_img= AllSky.bright
+    new_img = all_sky.bright
     
     # new_img = np.fliplr(np.flipud(new_img))
-    AllSky.display(ax_img, new_img)
+    all_sky.display(ax_img, new_img)
             
     return im.fn2datetime(file)
 
