@@ -1,4 +1,3 @@
-import GEO as gg
 import datetime as dt 
 import plotting as pl
 import base as b
@@ -10,30 +9,25 @@ def range_time(start, mi):
         
     return start + dt.timedelta(minutes = mi)
 
-
-
-
 def plot_roti_tec_variation(
         df, 
         start, 
-        dn, vmax = 9.5):
+        dn, 
+        vmax = 100
+        ):
     
     fig, ax_map, axes = b.multi_layout(nrows = 4)
     
-    pl.plot_tec_map(
-        dn, ax = ax_map, vmax = vmax)
-    
-    local_terminator = gg.first_edge(
-        year = dn.year)
-    
+    pl.plot_tec_map(dn, ax = ax_map, vmax = vmax)
+        
     pl.plot_roti_timeseries(
         axes, 
         df, 
         dn, 
         start,  
-        local_terminator,
         right_ticks = True
         )
+    
 
     fig.text(
         0.93, 0.3, "ROTI (TECU/min)", 
@@ -45,7 +39,7 @@ def plot_roti_tec_variation(
 
 def main():
     
-    start = dt.datetime(2022, 7, 25, 0)
+    start = dt.datetime(2014, 2, 9, 21)
     
     df =  pb.concat_files(
         start, 
@@ -56,8 +50,8 @@ def main():
   
     dn = range_time(start, 200)
     
-    plot_roti_tec_variation(df, start, dn)
- 
+    fig = plot_roti_tec_variation(df, start, dn)
+    
     
     
 # main()

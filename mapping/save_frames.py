@@ -4,8 +4,7 @@ import plotting as pl
 import datetime as dt 
 from tqdm import tqdm 
 import PlasmaBubbles as pb 
-import pandas as pd 
-import os 
+
 
 def range_time(start, mi):
         
@@ -71,27 +70,14 @@ def run(start):
     b.images_to_movie(
             path_in = path_in(start), 
             path_out = 'movies/',
-            fps = 12
+            fps = 20
             )
     # except:
     #     print(start)
     #     pass
 
-def main():
-    
-    file = open('dias_tecmap.txt').readlines()
-    
-    files = [pd.to_datetime(f[15:]) for f in file]
-    
-    
-    folder_created = os.listdir(path_in())
-    
-    for file in files:
-        folder_name = file.strftime('%Y%m%d')
-        
-        if folder_name not in folder_created:
-            run(file, midnight = True)
+
             
             
-# start = dt.datetime(2022, 7, 25)
+# start = dt.datetime(2014, 2, 9, 21)
 # run(start)

@@ -12,9 +12,10 @@ b.config_labels(fontsize = 25)
 
 
 
-def plot_ipp_on_map(ax, ds, corners, colorbar = False):
+def plot_ipp_on_map(ax, ds, year, colorbar = False):
     
-        
+    corners = gg.set_coords(year)
+    
     for i, key in enumerate(corners.keys()):
         
         xlim, ylim = corners[key]
@@ -39,11 +40,11 @@ def plot_ipp_on_map(ax, ds, corners, colorbar = False):
         ticks = np.arange(0, 2, 0.2)
         b.colorbar(img, ax, ticks)
         
- 
+import PlasmaBubbles as pb 
+
 def plot_lines( 
         axes, 
         start,  
-        local_term,
         plot_term =False,
         y = 4.8
         ):
@@ -53,23 +54,17 @@ def plot_lines(
     
     """
     
-    key = list(local_term.keys())
+    key = np.arange(-80, -40, 10)[::-1]
     
     for i, ax in enumerate(axes):
         
         ref_long = key[i]
-        llon, llat = local_term[ref_long]
-
-        dusk = gg.dusk_time(
-                start,  
-                lat = llat, 
-                lon = llon, 
-                twilight = 18
-                )
+        
+        dusk = pb.terminator(ref_long, start, float_fmt = False)
         
         ax.axvline(dusk, lw = 2)
-
-        midnight = gg.local_midnight(start, ref_long + 5)
+        
+        midnight = gg.local_midnight(start, ref_long + 5, delta_day = 1)
         
         ax.axvline(
             midnight, 
@@ -78,8 +73,7 @@ def plot_lines(
             )
         
         if i == 0:
-            if plot_term:
-                ax.text(dusk, y, 'Terminator', 
+            ax.text(dusk, y, 'Terminator', 
                         transform = ax.transData)
                 
             ax.text(midnight, y, 'midnight', 
@@ -89,13 +83,14 @@ def plot_lines(
                 
 def plot_roti_timeseries(
         axes, 
-        df, dn, 
+        df, 
+        dn, 
         start,  
-        local_term,
-        right_ticks = False
+        right_ticks = False, 
+        vmax  = 2
         ):
     
-    vmax  = 2
+   
         
     if len(np.unique(df.index.date)) == 1:
         plot_term = False
@@ -103,15 +98,11 @@ def plot_roti_timeseries(
         plot_term = True
         
     corners = gg.set_coords( dn.year)
+    
     key = list(corners.keys())
     
-    plot_lines( 
-            axes, 
-            start,  
-            local_term,
-            plot_term,
-            y = vmax 
-            )
+    plot_lines( axes, start, y = vmax + 1.2)
+    
     
     for i, ax in enumerate(axes):
         
@@ -133,8 +124,8 @@ def plot_roti_timeseries(
         pl.plot_roti_points(ax, sel)
         
         ax.set(
-            ylim = [0, vmax], 
-            yticks = list(range(0, vmax + 1)), 
+            ylim = [0, vmax + 1], 
+            yticks = list(range(0, vmax + 1, 1)), 
             xlim = [df.index[0], df.index[-1]]
             )
         
@@ -168,37 +159,34 @@ def plot_roti_timeseries(
 def plot_ipp_variation(df, start, dn, twilight = 12):
     
     fig, ax_map, axes = b.multi_layout(
-        nrows = 4, year = start.year)
+        nrows = 4)
     
-   
-    eq_lon, eq_lat = pl.plot_terminator_and_equator(
-            ax_map, dn, twilight)
     
-    corners = pl.plot_corners(
-            ax_map,
-            start.year,
-            radius = 10,
-            label = True
-            )
+    eq_lon, eq_lat = gg.terminator2(dn, 18)
     
-    local_term = pl.first_of_terminator(
-            ax_map, 
-            corners, 
-            eq_lon, 
-            eq_lat
-            )
+    ax_map.scatter(eq_lon, eq_lat, c = 'k', s = 5)
     
-    plot_lines( 
-            axes, 
-            start,  
-            local_term)
     
-    plot_roti_timeseries(
-        axes, df, dn,
-        corners
+
+    
+    gg.plot_rectangles_regions(ax_map, dn.year)
+    
+    
+    gg.map_attrs(
+        ax_map, 
+        dn.year, 
+        grid = False,
+        degress = None
         )
     
-    plot_ipp_on_map(ax_map, df, corners)
+
+    plot_roti_timeseries( axes, 
+     df, 
+     dn, 
+     start
+        )
+    
+    plot_ipp_on_map(ax_map, df, dn.year)
 
     fig.suptitle(
         dn.strftime('%d/%m/%Y %H:%M (UT)'),
@@ -229,5 +217,8 @@ def single_view(start):
     plt.show()
     
     return fig
+
+# start = dt.datetime(2014, 2, 9, 21)
+# fig = single_view(start)
 
 

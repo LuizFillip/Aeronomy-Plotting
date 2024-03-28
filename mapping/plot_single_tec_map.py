@@ -67,7 +67,8 @@ def plot_tec_map(
         ax = None, 
         step = 1,
         vmax = 60, 
-        colorbar = True
+        colorbar = True, 
+        boxes = False
         ):
     
     if ax is None:
@@ -96,7 +97,8 @@ def plot_tec_map(
         degress = None
         )
     
-    gg.plot_rectangles_regions(ax, dn.year)
+    if boxes:
+        gg.plot_rectangles_regions(ax, dn.year)
     lon, lat = gg.terminator2(dn, 18)
     
     ax.scatter(lon, lat, c = 'k', s = 5)
