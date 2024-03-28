@@ -23,12 +23,13 @@ def plot_roti_points(
         ax, ds, 
         threshold = 0.25,
         label = False, 
-        points_max = True
+        points_max = True,
+        vmax = 3
         ):
         
     ax.plot(ds['roti'], **args, label = 'Pontos de ROTI')
     
-    vmax = 3
+    
 
     if len(ds) != 0:
         times = pb.time_range(ds)
