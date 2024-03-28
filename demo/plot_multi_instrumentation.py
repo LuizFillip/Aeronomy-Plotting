@@ -70,6 +70,32 @@ def plot_ionogram(ax2, PATH_IONO, target, col, site):
     if col == 0:
         ax2.set(ylabel = 'Virtual Height (km)')
 
+def plot_legend(ax, fontsize = 30, s = 100):
+    l1 = plt.scatter(
+        [], [], color = 'gray', marker = 'o', s = s)
+    l2 = plt.scatter(
+        [], [], color = 'black', marker = 'o', s = s)
+    
+    l3 = ax.axhline(
+        0.25, color = 'red', lw = 2, 
+                label = '0.25 TECU/min')
+    
+
+    labels = ['ROTI points', 'Maximum value', '0.25 TECU/min']
+
+    plt.legend(
+        [l1, l2, l3], 
+        labels, 
+        ncol = 1, 
+        fontsize = fontsize,
+        bbox_to_anchor = (1.07, 1.2),
+        handlelength = 2,
+        loc = 'upper right',
+        borderpad = 1.8,
+        handletextpad = 1, 
+        scatterpoints = 1
+        )
+
     
 def plot_roti_curves(ax, dn):
     
@@ -112,35 +138,7 @@ def plot_roti_curves(ax, dn):
         xlim = [df1.index[0], df1.index[-1]]
         )
  
-    def plot_legend(fontsize = 30, s = 100):
-        l1 = plt.scatter(
-            [], [], color = 'gray', marker = 'o', s = s)
-        l2 = plt.scatter(
-            [], [], color = 'black', marker = 'o', s = s)
-        
-        l3 = ax.axhline(
-            0.25, color = 'red', lw = 2, 
-                    label = '0.25 TECU/min')
-        
-
-        labels = ['ROTI points', 'Maximum value', '0.25 TECU/min']
-
-        plt.legend(
-            [l1, l2, l3], 
-            labels, 
-            ncol = 1, 
-            fontsize = fontsize,
-            bbox_to_anchor = (1.07, 1.2),
-            handlelength = 2,
-            loc = 'upper right',
-            borderpad = 1.8,
-            handletextpad = 1, 
-            scatterpoints = 1
-            )
-
-
-
-    plot_legend(fontsize = 25)
+    plot_legend(ax, fontsize = 25)
     
     b.format_time_axes(ax)
     
