@@ -75,17 +75,16 @@ def main():
         
         ds = pb.sel_typing(df, typing = typing)
 
-        
         fig = plot_seasonal_occurrence(ds, typing)
         
         FigureName = f'seasonal_{typing}'
           
-        # fig.savefig(
-        #       b.LATEX(FigureName, folder = 'bars'),
-        #       dpi = 400
-        #       )
+        fig.savefig(
+              b.LATEX(FigureName, folder = 'bars'),
+              dpi = 400
+              )
     
-main()
+# main()
 # infile = 'events_class'
 # df = b.load(infile)
 

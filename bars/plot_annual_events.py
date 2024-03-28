@@ -9,7 +9,8 @@ b.config_labels(fontsize = 25)
 
 def plot_annually_events_count(
         ds, 
-        typing = 'sunset'):
+        typing = 'sunset'
+        ):
     
     e_year = ds.index[-1].year
     s_year = ds.index[0].year
@@ -73,9 +74,9 @@ def main():
         
         FigureName = f'annual_{typing}'
           
-        # fig.savefig(
-        #       b.LATEX(FigureName, folder = 'bars'),
-        #       dpi = 400
-        #       )s
+        fig.savefig(
+              b.LATEX(FigureName, folder = 'bars'),
+              dpi = 400
+              )
         
-# main()
+main()

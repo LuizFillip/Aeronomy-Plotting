@@ -12,7 +12,7 @@ b.config_labels(fontsize = 25)
 def plot_EPBs(ax, df, col = -50, translate = True):
     
     ds = c.count_occurences(df).year 
-    
+    print(ds.values.sum())
     ax.bar(
         ds.index + 0.5, 
         ds[col], 
@@ -37,7 +37,8 @@ def plot_EPBs(ax, df, col = -50, translate = True):
     return ax.get_xlim()
     
     
-def plot_F107(ax, df, solar_level = 84.33, translate = True, xlim = None):
+def plot_F107(ax, df, solar_level = 84.33, 
+              translate = True, xlim = None):
     
     if translate:
         label = 'Média de 81 dias'
@@ -152,7 +153,12 @@ def plot_annually_epbs_and_indices(
 
 df = c.epbs(col = -50, geo = True, eyear = 2022)
 
-fig = plot_annually_epbs_and_indices(df)
+# fig = plot_annually_epbs_and_indices(df)
 
 
-fig.savefig(b.LATEX('annual_variation', folder = 'bars'))
+# fig.savefig(b.LATEX('annual_variation', folder = 'bars'))
+
+
+ds = c.count_occurences(df).year 
+
+# ds['epb'].sum(), df['epb'].sum()
