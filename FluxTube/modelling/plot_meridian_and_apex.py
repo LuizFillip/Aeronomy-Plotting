@@ -67,8 +67,6 @@ def plot_meridian_and_apex(year = 2013):
         label = 'GNSS receivers'
         )
     
-   
-    
     ax2.legend(loc = 'upper right')
     
     for i, a in enumerate([ax1, ax2]):
@@ -82,7 +80,7 @@ def plot_meridian_and_apex(year = 2013):
         
     return fig
 
-# fig = plot_meridian_and_apex()
+fig = plot_meridian_and_apex()
 
-# FigureName = b.LATEX('apex_meridian', folder = 'modeling')
-# fig.savefig(FigureName, dpi = 400)
+fig.savefig(b.LATEX('apex_meridian', folder = 'modeling'), dpi = 400)
+plt.show()

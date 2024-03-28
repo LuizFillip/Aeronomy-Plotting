@@ -21,7 +21,7 @@ def plot_meridian(
     for i, site in enumerate([ "saa"]): 
     
         glat, glon = gg.sites[site]['coords']  
-        # print(glat, glon)
+     
         ax.scatter(glon, glat,  s = 300, 
                     marker = '^', c = 'b', 
                     label = 'São Luís (ionosonde)')
@@ -67,7 +67,7 @@ def plot_mag_meridians(
             )
     
     lat_lims = dict(min = -20, max = 20, stp = 5)
-    lon_lims = dict(min = -60, max = -25, stp = 5) 
+    lon_lims = dict(min = -60, max = -20, stp = 5) 
 
     gg.map_attrs(
         ax, year, 
@@ -93,5 +93,4 @@ def plot_mag_meridians(
     if ax is None:
         return fig
 
-# fig = plot_mag_meridians( year = 2013
-#         )
+fig = plot_mag_meridians( year = 2013)
