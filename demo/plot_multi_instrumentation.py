@@ -248,10 +248,6 @@ files1 = [
 
 
 
-# fig.savefig(
-#     b.LATEX(FigureName, 
-#     folder = 'modeling'), dpi = 400)
-#
 
 
 
@@ -289,8 +285,12 @@ def join_images(figure_1, figure_2):
     return figure_all
 
 figure_1  = plot_multi_instrumentation(files1) 
-figure_2  = plot_multi_instrumentation(files2, letter = 'b') 
+# figure_2  = plot_multi_instrumentation(files2, letter = 'b') 
 
-fig = join_images(figure_1, figure_2)
+# fig = join_images(figure_1, figure_2)
 
-# fig.savefig('validation_roti_paper', dpi = 400)
+FigureName = 'validation_roti_paper'
+# fig.savefig(
+#     b.LATEX(FigureName, 
+#     folder = 'modeling'), dpi = 400)
+#
