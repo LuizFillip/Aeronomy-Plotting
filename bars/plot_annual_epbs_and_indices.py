@@ -11,12 +11,17 @@ b.config_labels(fontsize = 25)
 
 def plot_EPBs(ax, df, col = -50, translate = True):
     
-    ds = c.count_occurences(df).year 
-    print(ds.values.sum())
+    # ds = c.count_occurences(df).year 
+    ds = c.seasonal_yearly_occurrence(
+            df, 
+            col = col
+            )
+    ds.index = ds.index.map(gg.year_fraction)
+
     ax.bar(
         ds.index + 0.5, 
         ds[col], 
-        width = 0.5,
+        width = 0.08,
         edgecolor = 'black', 
         color = 'gray', 
         alpha = 0.7,
@@ -31,7 +36,7 @@ def plot_EPBs(ax, df, col = -50, translate = True):
         
     ax.set(
         ylabel = ylabel, 
-        yticks = list(range(0, 350, 100))
+        yticks = list(range(0, 45, 5)), #list(range(0, 350, 100))
         )
         
     return ax.get_xlim()
@@ -130,18 +135,27 @@ def plot_annually_epbs_and_indices(
         )
     
     plt.subplots_adjust(hspace = 0.1)
-   
+ 
     xlim = plot_EPBs(ax[0], df, col = col, translate = translate)
     
     df['Kpmean'] = df['kp'].rolling('30D').mean()
     df.index = df.index.map(gg.year_fraction)
     
-    plot_F107(ax[1], df, 
-              solar_level = f107_level,
-              translate = translate, xlim = xlim)
-    plot_Kp(ax[2], df, 
-            kp_level = kp_level, 
-            translate = translate, xlim = xlim)
+    plot_F107(
+        ax[1], 
+        df, 
+        solar_level = f107_level,
+        translate = translate, 
+        xlim = xlim
+        )
+    
+    plot_Kp(
+        ax[2], 
+        df, 
+        kp_level = kp_level, 
+        translate = translate, 
+        xlim = xlim
+        )
 
     ax[2].set(xlabel = 'Years')
     b.plot_letters(ax, y = 0.83, x = 0.02)
@@ -153,12 +167,11 @@ def plot_annually_epbs_and_indices(
 
 df = c.epbs(col = -50, geo = True, eyear = 2022)
 
-# fig = plot_annually_epbs_and_indices(df)
+fig = plot_annually_epbs_and_indices(df)
 
 
 # fig.savefig(b.LATEX('annual_variation', folder = 'bars'))
 
 
-ds = c.count_occurences(df).year 
+# ds = c.count_occurences(df).year 
 
-# ds['epb'].sum(), df['epb'].sum()
