@@ -27,28 +27,9 @@ def roti_limit(dn, sector = -50):
     return pb.filter_coords(df, sector, coords)
    
 
-def plot_images(file, ax_img):
-     
-    all_sky = im.processing_img(
-        os.path.join(PATH_SKY, file)
-        )
-    
-    new_img = all_sky.bright
-    
-    # new_img = np.fliplr(np.flipud(new_img))
-    all_sky.display(ax_img, new_img)
-            
-    return im.fn2datetime(file)
 
 
-def closest_iono(target):
-    iono_times = [dg.ionosonde_fname(f) for 
-                  f in os.listdir(PATH_IONO) 
-                  if 'PNG' in f ]
-    
-    dn = b.closest_datetime(iono_times, target)
-    
-    return dn
+
 
 def plot_ionogram(target, ax, site = 'FZA0M'):
             
@@ -113,24 +94,7 @@ def plot_roti_timeseries(ax_rot, dn, ref_long = -50):
          yticks = np.arange(0, vmax + 1, 1)
          )
      
-     
-     dusk = pb.terminator(ref_long, dn, float_fmt = False)
-     
-     ax_rot.axvline(dusk, lw = 2)
-     
-     midnight = gg.local_midnight(dn, ref_long + 5, delta_day = 1)
-     
-     ax_rot.axvline(midnight, lw = 2, color = 'b')
-     
-     y = vmax + 1.1
-     
-     ax_rot.text(dusk, y, 'Pôr do Sol (300 km)', 
-                 transform = ax_rot.transData)
-         
-     ax_rot.text(midnight, y, 'Meia noite local', 
-             color = 'b',
-             transform = ax_rot.transData)
-     
+
      b.format_time_axes(ax_rot, translate = True)
      return vmax
 
@@ -155,7 +119,7 @@ def TEC_6300_IONOGRAM_ROTI(files, dn, site = 'FZA0M', tec_max = 40):
         
         ax_img = plt.subplot(gs2[0, col])
         
-        target = plot_images(file, ax_img)
+        target = im.plot_images(file, ax_img)
         
         title(ax_img, target, index)
         
@@ -259,10 +223,14 @@ files = [
 
 site =  'FZA0M'
 # site =  'SAA0K'
-folder_img = dn.strftime('CA_%Y_%m%d')
-folder_ion = dn.strftime('%Y%m%d')
-PATH_SKY = f'database/images/{folder_img}/'
-PATH_IONO = f'database/ionogram/{folder_ion}{site[0]}/'
+
+
+
+
+PATH_SKY = im.path_all_sky(dn)
+PATH_IONO = dg.path_ionogram(dn, site = 'SAA0K')
+
+
 
 
 

@@ -162,7 +162,7 @@ def plot_roti_curves(ax, dn):
  
     plot_legend(ax, fontsize = 25)
     
-    b.format_time_axes(ax)
+    b.format_time_axes(ax, pad = 65)
     
     return None
     
