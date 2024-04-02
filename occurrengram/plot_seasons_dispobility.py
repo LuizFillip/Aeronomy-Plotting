@@ -104,8 +104,8 @@ def plot_seasons_disponibility(
     
     return fig
 
-df = c.concat_results('saa')
+# df = c.concat_results('saa')
 
-df['doy'] = df.index.day_of_year.copy()
-fig = plot_seasons_disponibility(df)
+# df['doy'] = df.index.day_of_year.copy()
+# fig = plot_seasons_disponibility(df)
 

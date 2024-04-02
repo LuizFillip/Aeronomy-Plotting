@@ -1,36 +1,72 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import core as c 
 
-# Example confusion matrix data
-conf_matrix = np.array([[20, 5],
-                        [2, 25]])
+
+def plot_matrix(ax, conf_matrix):
+    
+# Plotting the confusion matrix
+    ax.imshow(conf_matrix, cmap= 'magma')
+    
+    
+    # Add annotations
+    for i in range(conf_matrix.shape[0]):
+        for j in range(conf_matrix.shape[1]):
+            if i == 1 and j == 1:
+                color = 'k'
+            else:
+                color = 'w'
+            ax.text(j, i, str(conf_matrix[i, j]),
+                    horizontalalignment='center', 
+                     verticalalignment='center', 
+                     color= color, fontsize = 50)
+    
+    ax.set(ylabel = 'Observação', xlabel = 'Previsão', 
+           xticks = np.arange(conf_matrix.shape[1]), 
+           yticks = np.arange(conf_matrix.shape[0]), 
+           xticklabels = forecast_labels, 
+            yticklabels = observation_labels)
+    
+    
+    # ax.tick_params(axis='x', labeltop=True, labelbottom=False)
+    
+    
 
 # Define labels for observations and forecast indices
-observation_labels = ['sim', 'não']
-forecast_labels = ['sim', 'não']
+observation_labels = ['Com EPB', 'Sem EPB']
+forecast_labels = ['Com EPB', 'Sem EPB']
 
-# Plotting the confusion matrix
-plt.imshow(conf_matrix, interpolation='nearest', cmap=plt.cm.Blues)
+fig, ax = plt.subplots(
+    dpi = 300, 
+    figsize = (14, 10),
+    ncols = 2)
 
-plt.colorbar()
-
-# Add annotations
-for i in range(conf_matrix.shape[0]):
-    for j in range(conf_matrix.shape[1]):
-        plt.text(j, i, str(conf_matrix[i, j]), horizontalalignment='center', verticalalignment='center', color='white')
+plt.subplots_adjust(wspace = 0.5)
 
 
-plt.xticks(np.arange(conf_matrix.shape[1]), forecast_labels)
-plt.yticks(np.arange(conf_matrix.shape[0]), observation_labels)
+def plot_results(ax, precision = True):
+    
+    fore = c.forecast_epbs(year_threshold = 2023, parameter= 'vp')
+    
+    if precision:
+        precision = fore.accuracy_score
+        
+        ax.set(title = '$V_P$ - ' + f'Precisão {precision} \%')
+    
+    conf_matrix = fore.confusion_matrix
+    
+    plot_matrix(ax, conf_matrix)
 
-plt.ylabel('Observação')
-plt.xlabel('Previsão')
 
-plt.tick_params(axis='x', labeltop=True, labelbottom=False)
+fore = c.forecast_epbs(year_threshold = 2023, parameter= 'gamma')
 
-plt.gca().xaxis.set_label_position('top')
+conf_matrix = fore.confusion_matrix
+precision =  round(fore.accuracy_score, 2) * 100
 
 
-plt.show()
+ax[1].set(title = '$\gamma_{RT}$ - ' + f'Precisão {precision} \%')
+
+
+plot_matrix(ax[1], conf_matrix)
 

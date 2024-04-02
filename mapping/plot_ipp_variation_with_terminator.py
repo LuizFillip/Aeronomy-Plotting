@@ -40,7 +40,6 @@ def plot_ipp_on_map(ax, ds, year, colorbar = False):
         ticks = np.arange(0, 2, 0.2)
         b.colorbar(img, ax, ticks)
         
-import PlasmaBubbles as pb 
 
 def plot_lines( 
         axes, 
@@ -97,31 +96,24 @@ def plot_roti_timeseries(
     else:
         plot_term = True
         
-    corners = gg.set_coords( dn.year)
     
-    key = list(corners.keys())
     
+    sectors = np.arange(-80, -40, 10)[::-1]    
     plot_lines( axes, start, y = vmax + 1.2)
     
     
     for i, ax in enumerate(axes):
         
-        xlim, ylim = corners[key[i]]
-       
-        sel = df.loc[
-            (df.index < dn) & 
-            (df.lon > xlim[0]) & 
-            (df.lon < xlim[1]) & 
-            (df.lat > ylim[0]) & 
-            (df.lat < ylim[1])
-            ]
+        sector = sectors[i]
+        
+        sel = pb.filter_region(df, dn, sector)
+        
+        pl.plot_roti_points(ax, sel)
         
         ax.text(
             0.03, 0.75, f'Box {i + 1}', 
             transform = ax.transAxes
             )
-    
-        pl.plot_roti_points(ax, sel)
         
         ax.set(
             ylim = [0, vmax + 1], 

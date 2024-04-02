@@ -20,18 +20,7 @@ def redefine_ticks(ax, img):
     ax.set_xticks(x_positions, xticks)
     ax.set_yticks(y_positions, yticks)
         
- # img = io.imread(infile)
- # y, h = 300, 560
- # x, w = 188, 559
- 
- # img = img[y: y + h, x: x + w]
 
- # ax.imshow(img)
- 
- # ax.set(
- #     xticks = [], 
- #     yticks = []
- #     )
     
 def crop_region_E(img):
     
@@ -42,7 +31,11 @@ def crop_region_E(img):
     
     return img[y: y + h, x: x + w]
 
-def plot_single_ionogram(fname, ax = None, label = False):
+def plot_single_ionogram(fname, ax = None, label = False, 
+                         aspect = 'auto'):
+    
+    xticklabels = [ 0,  '',  4,  '',  
+                   8,  '', 12, '', 16]
     if ax is None:
         fig, ax = plt.subplots(
             figsize = (10, 8),
@@ -50,13 +43,14 @@ def plot_single_ionogram(fname, ax = None, label = False):
     
     img = io.imread(fname)
     img = crop_region_E(img)
-    ax.imshow(img)
+    ax.imshow(img, aspect = aspect)
+    ax.invert_yaxis()
         
     if label:
         redefine_ticks(ax, img)
-        ax.invert_yaxis()
+        
         ax.set(
-            xticklabels = [ 0,  '',  4,  '',  8,  '', 12, '', 16],
+            xticklabels = xticklabels,
             ylabel = 'Altitude (km)', 
             xlabel = 'Frequency (MHz)'
             )
@@ -74,5 +68,4 @@ def plot_single_ionogram(fname, ax = None, label = False):
 
 # fig = plot_single_ionogram(fname)
 
-xx = np.arange(0, 16, 2)
 

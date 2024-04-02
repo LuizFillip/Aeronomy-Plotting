@@ -6,7 +6,7 @@ import numpy as np
 
 b.config_labels()
 
-lbs = b.Labels().infos
+lbs = b.labels
 
 
 def plot_gamma(ax, df):
@@ -92,7 +92,7 @@ def plot_gravity(ax, df):
     
     ax.set(
         ylim = [0, 30], 
-        ylabel = b.y_label('gravity_L')
+        ylabel = b.y_label('g_nui_eff')
         )
      
     
@@ -153,7 +153,7 @@ def plot_annual_GRT(df):
         sharex = True,
         dpi = 300, 
         nrows = 6, 
-        figsize = (12, 16), 
+        figsize = (12, 18), 
         )
     
     plt.subplots_adjust(hspace = 0.1)
@@ -167,22 +167,26 @@ def plot_annual_GRT(df):
     
     plot_gamma(ax[5], df['gamma'])
     
-    ax[0].set(title = df.columns.name)
+    ax[0].set(title = 2023)
     
+    b.format_month_axes(ax[-1])
     
     b.plot_letters(ax, y = 0.8, x = 0.02, 
                    fontsize = 20)
     return fig
 
+import core as c
 
 def main():
-    PATH_GAMMA = 'database/gamma/p_saa.txt'
+    PATH_GAMMA = 'database/gamma/p1_saa.txt'
     
     df = b.load(PATH_GAMMA)
 
-    df = df.loc[(df.index.time == dt.time(22, 0)) &
-                (df.index.year == 2019)]
     
+    
+    # df = c.load_results('saa')
+    df = df.loc[(df.index.time == dt.time(22, 0)) &
+                (df.index.year == 2023)]
     fig = plot_annual_GRT(df)
     
     FigureName = 'annual_grt_parameters'
@@ -195,7 +199,7 @@ def main():
 
 main()
 
-
+plt.show()
 # df = df.loc[df.index.time == dt.time(22, 0)]
 
 

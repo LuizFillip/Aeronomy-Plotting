@@ -114,7 +114,7 @@ def plot_distributions_seasons(
 def main():
     
     translate = False
-    parameter = 'vp'
+    parameter = 'gamma'
     df = c.load_results('saa')
     solar_limit = c.limits_on_parts(df['f107a'])
     
@@ -135,12 +135,12 @@ def main():
         folder = 'distributions/en/'
         
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder),
+        dpi = 400
+        )
     
 
     
-main()
+# main()
 

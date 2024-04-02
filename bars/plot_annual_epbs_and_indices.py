@@ -36,14 +36,19 @@ def plot_EPBs(ax, df, col = -50, translate = True):
         
     ax.set(
         ylabel = ylabel, 
-        yticks = list(range(0, 45, 5)), #list(range(0, 350, 100))
+        yticks = list(range(0, 45, 10)), #list(range(0, 350, 100))
         )
         
     return ax.get_xlim()
     
     
-def plot_F107(ax, df, solar_level = 84.33, 
-              translate = True, xlim = None):
+def plot_F107(
+        ax, 
+        df, 
+        solar_level = 84.33, 
+        translate = True, 
+        xlim = None
+        ):
     
     if translate:
         label = 'Média de 81 dias'
@@ -81,7 +86,13 @@ def plot_F107(ax, df, solar_level = 84.33,
 
 
 
-def plot_Kp(ax, df, kp_level = 3, translate = True, xlim = None):
+def plot_Kp(
+        ax, 
+        df, 
+        kp_level = 3, 
+        translate = True, 
+        xlim = None
+        ):
     
     if translate:
         label = 'Média mensal'
@@ -164,14 +175,11 @@ def plot_annually_epbs_and_indices(
 
 
 
+def main():
+    df = c.epbs(col = -50, geo = True, eyear = 2022)
+    
+    fig = plot_annually_epbs_and_indices(df)
+    
+    fig.savefig(b.LATEX('annual_variation2', folder = 'bars'))
 
-df = c.epbs(col = -50, geo = True, eyear = 2022)
-
-fig = plot_annually_epbs_and_indices(df)
-
-
-# fig.savefig(b.LATEX('annual_variation', folder = 'bars'))
-
-
-# ds = c.count_occurences(df).year 
 

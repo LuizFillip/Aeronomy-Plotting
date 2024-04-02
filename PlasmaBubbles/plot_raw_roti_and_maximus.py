@@ -17,18 +17,43 @@ args = dict(
      alpha = 0.2, 
      )
     
-
+def plot_occurrence_events(ax, ds, threshold = 0.4):
+    
+    events = pb.events_by_longitude(ds, threshold)
+    
+    ax.plot(
+          events, 
+          marker = 'o',
+          markersize = 3,
+          color = 'k'
+        )
+    
+    ax.set(
+        yticks = [0, 1], 
+        xlim = [ds.index[0], ds.index[-1]],
+        ylim = [-0.2, 1.4]
+        )
+    
+    for limit in [0, 1]:
+        ax.axhline(
+            limit, 
+            color = 'k', 
+            linestyle = '--'
+            )
+        
+    return events
+        
 
 def plot_roti_points(
         ax, ds, 
         threshold = 0.25,
         label = False, 
         points_max = True,
-        vmax = 3
+        vmax = 3,
+        occurrence = False
         ):
         
     ax.plot(ds['roti'], **args, label = 'Pontos de ROTI')
-    
     
 
     if len(ds) != 0:
@@ -57,41 +82,22 @@ def plot_roti_points(
             label = 'Valor máximo',
             **extra_args
             )
-        
-        ax.set(yticks = np.arange(0, vmax + 2, 1))
-        
+                
         
         if label:
             ax.set(ylabel = 'ROTI (TECU/min)')
     
-        return df1['max']
+        ds = df1['max']
+        
+        if occurrence:
+        
+            ax1 = ax.twinx()
+            plot_occurrence_events(ax1, ds, threshold = 0.21)
+            
+            ax1.set(ylabel = 'Occurrence')
+        else:
+            return ds
 
-def plot_occurrence_events(ax, ds, threshold = 0.4):
-    
-    events = pb.events_by_longitude(ds, threshold)
-    
-    ax.plot(
-          events, 
-          marker = 'o',
-          markersize = 3,
-          color = 'k'
-        )
-    
-    ax.set(
-        yticks = [0, 1], 
-        xlim = [ds.index[0], ds.index[-1]],
-        ylim = [-0.2, 1.4]
-        )
-    
-    for limit in [0, 1]:
-        ax.axhline(
-            limit, 
-            color = 'k', 
-            linestyle = '--'
-            )
-        
-    return events
-        
 
 
 def plot_infos(ax, infos):
@@ -109,12 +115,12 @@ def plot_infos(ax, infos):
         
         ax[0, col].text(
             infos[0] + delta, y, 'Anoitecer', 
-            transform = ax[0, col].transData
+            transform = ax[0, col].transAxes
             )
         
         ax[0, col].text(
             infos[1] + delta, y, 'Meia noite local', 
-            transform = ax[0, col].transData
+            transform = ax[0, col].transAxes
             )
 
 def plot_row_roti_in_sectors(
@@ -126,6 +132,7 @@ def plot_row_roti_in_sectors(
         dpi = 300, 
         nrows = 4,
         ncols = 2, 
+        sharey = 'col',
         sharex = True,
         figsize = (18, 12)
         )
@@ -171,7 +178,7 @@ def plot_row_roti_in_sectors(
         if row == 0:
             out_infos.extend([terminator, midnight])
   
-    plot_infos(ax, out_infos)
+    # plot_infos(ax, out_infos)
     
     b.format_time_axes(ax[-1, 0], translate = True)
     b.format_time_axes(ax[-1, 1], translate = True)
@@ -192,17 +199,17 @@ def plot_row_roti_in_sectors(
 
 
 def main():
-    dn = dt.datetime(2014, 2, 9, 21)
+    dn = dt.datetime(2015, 3, 17, 21)
     
     
     df = pb.concat_files(
         dn, 
         days = 2, 
-        root = os.getcwd(), 
+        root = 'D:\\', #os.getcwd(), 
         hours = 12
         )
     
-    df = df.loc[~df['sts'].isin(['mabb'])] 
+    # df = df.loc[~df['sts'].isin(['mabb', 'impz', 'mapa'])] 
     
     fig = plot_row_roti_in_sectors(
             df, dn, threshold = 0.25,
@@ -211,10 +218,11 @@ def main():
     
     FigureName = dn.strftime('%Y%m%d_midnight_event')
      
-    fig.savefig(
-          b.LATEX(FigureName, 
-          folder = 'timeseries'),
-          dpi = 400
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, 
+    #       folder = 'timeseries'),
+    #       dpi = 400
+    #       )
     
 # main()
+

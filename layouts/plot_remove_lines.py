@@ -71,15 +71,17 @@ def main():
     
     for num in scopes:
         
-        fig, ax = plt.subplots(figsize = (6, 6), 
-                               sharex = True, 
-                               sharey = True,
-                               nrows = num[0], 
-                               ncols = num[1])
-        
+        fig, ax = plt.subplots(
+            figsize = (6, 6), 
+            sharex = True, 
+            sharey = True,
+            nrows = num[0], 
+            ncols = num[1]
+            )
+ 
         plt.subplots_adjust(hspace = 0, wspace = 0)
         
         remove_lines(ax, nrows = num[0], ncols = num[1])
         
         
-main()
+# main()

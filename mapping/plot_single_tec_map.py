@@ -68,7 +68,8 @@ def plot_tec_map(
         step = 1,
         vmax = 60, 
         colorbar = True, 
-        boxes = False
+        boxes = False,
+        title = False
         ):
     
     if ax is None:
@@ -99,16 +100,19 @@ def plot_tec_map(
     
     if boxes:
         gg.plot_rectangles_regions(ax, dn.year)
+        
     lon, lat = gg.terminator2(dn, 18)
     
     ax.scatter(lon, lat, c = 'k', s = 5)
     
-    ax.set(title = dn.strftime('%Y/%m/%d %Hh%M (UT)'))
+    if title:
+        ax.set(title = dn.strftime('%Y/%m/%d %Hh%M (UT)'))
     
     if ax is None:
         
         return fig
     else:
+        
         if colorbar:
             return img
        

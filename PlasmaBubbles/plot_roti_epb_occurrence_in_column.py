@@ -24,8 +24,14 @@ def load_dataset(dn, hours = 12, num = 3, root = 'D:\\'):
     return tuple(out)
 
 
+def plot_occurregram(ax):
+    
+    return 
+
 def plot_roti_epb_occurrence_in_column(
-        df, ds, fontsize = 30):
+        df, 
+        ds, 
+        fontsize = 30):
     
     fig, ax = plt.subplots(
         nrows = 4,
@@ -43,7 +49,11 @@ def plot_roti_epb_occurrence_in_column(
     
     for i, col in enumerate(df.columns):
         
-        terminator = pb.terminator(int(col), dn, float_fmt = False)
+        terminator = pb.terminator(
+            int(col), 
+            dn, 
+            float_fmt = False
+            )
         
         ds.loc[ds.index < terminator] = 0
     
@@ -51,27 +61,25 @@ def plot_roti_epb_occurrence_in_column(
         ax[i, 1].plot(ds[col])
         
         ax[i, 0].axhline(0.25, lw = 2, color = 'r')
-        
-        terminator = pb.terminator(int(col), dn, float_fmt = False)
-        
-        ax[i, 1].axvline(terminator, color = 'k', lw = 2)
-        ax[i, 0].axvline(terminator, color = 'k', lw = 2)
-        
+         
         l = b.chars()[i]
-        ax[i, 0].text(
-            0.01, 0.8, f'({l}) {col}°', 
-            transform = ax[i, 0].transAxes
-            )
+       
+        for col in [0, 1]:
+            ax[i, col].text(
+                0.01, 0.8, f'({l}) Setor {i + 1}°', 
+                transform = ax[i, col].transAxes
+                )
+            ax[i, col].axvline(
+                terminator, color = 'k', lw = 2)
+            
+            b.format_time_axes(ax[-1, col])
+            
+        ax[i, 0].set(ylim = [0, vmax + 1])
         
-        ax[i, 1].text(
-            0.01, 0.8, f'({l}) {col}°', 
-            transform = ax[i, 0].transAxes
-            )
-    
-        ax[i, 0].set(ylim = [0, vmax])
+        ax[i, 1].set(ylim = [-0.1, 1.1])
         
     b.format_time_axes(ax[-1, 0])
-    b.format_time_axes(ax[-1, 1])
+    
     
           
     fig.text(
@@ -91,9 +99,11 @@ def plot_roti_epb_occurrence_in_column(
     return fig 
 
 
-
-dn = dt.datetime(2015, 10, 29, 20) 
+dn = dt.datetime(2022, 7, 24, 21)
 
 ds, df = load_dataset(dn, hours = 12)
 
 fig = plot_roti_epb_occurrence_in_column(df, ds)
+
+
+# ds

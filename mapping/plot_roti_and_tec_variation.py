@@ -20,14 +20,7 @@ def plot_roti_tec_variation(
     
     pl.plot_tec_map(dn, ax = ax_map, vmax = vmax)
         
-    pl.plot_roti_timeseries(
-        axes, 
-        df, 
-        dn, 
-        start,  
-        right_ticks = True
-        )
-    
+    pl.plot_roti_timeseries(axes, df, dn, start)
 
     fig.text(
         0.93, 0.3, "ROTI (TECU/min)", 
@@ -39,7 +32,7 @@ def plot_roti_tec_variation(
 
 def main():
     
-    start = dt.datetime(2014, 2, 9, 21)
+    start = dt.datetime(2022, 2, 9, 21)
     
     df =  pb.concat_files(
         start, 
@@ -50,7 +43,7 @@ def main():
   
     dn = range_time(start, 200)
     
-    fig = plot_roti_tec_variation(df, start, dn)
+    fig = plot_roti_tec_variation(df, start, dn, vmax = 12)
     
     
     

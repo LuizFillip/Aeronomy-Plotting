@@ -181,13 +181,13 @@ def plot_night_day_ratio(dates):
     return fig
 
 
-dates = [
-         dt.datetime(2013, 3, 17, 12),
-         dt.datetime(2019, 1, 11, 12),
-         dt.datetime(2013, 6, 1, 12),
-         dt.datetime(2019, 6, 1, 12)
+# dates = [
+#          dt.datetime(2013, 3, 17, 12),
+#          dt.datetime(2019, 1, 11, 12),
+#          dt.datetime(2013, 6, 1, 12),
+#          dt.datetime(2019, 6, 1, 12)
          
-         ]
+#          ]
 
 
-fig = plot_night_day_ratio(dates)
+# fig = plot_night_day_ratio(dates)

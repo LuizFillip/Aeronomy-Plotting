@@ -17,8 +17,8 @@ def plot_heatmap(
         ):
   
     yticks = np.arange(1, 13, 1)
-    xticks = np.arange(20, 32 + step, step)
-     
+    xticks = np.arange(20, 32 + step, step*2)
+    
     if percent:
         factor = 100
         units = ' (\%)'
@@ -67,7 +67,7 @@ def get_dusk(ds, col):
     return df[[col, 'day']].rename(columns = {col: 'dusk'})
 
 
-def plot_seasonal_hourly(df):
+def plot_seasonal_hourly(df, fontsize = 35):
     
  
     fig, ax = plt.subplots(
@@ -75,18 +75,25 @@ def plot_seasonal_hourly(df):
           dpi = 300, 
           sharex = True, 
           sharey = True,
-          figsize = (16, 8)
+          figsize = (16, 6)
           )
 
-    plt.subplots_adjust(hspace = 0.1)
+    plt.subplots_adjust(wspace = 0.1)
     cond = [
         df['kp'] <= 3, 
-        (df['kp'] > 3) & (df['kp'] <= 6), 
+        (df['kp'] > 3) & 
+        (df['kp'] <= 6), 
         df['kp'] > 6]
+    
+    labels = [
+    '$Kp \\leq 3$', '$ 3 < Kp \\leq  6$', "$Kp > 6$"
+    ]    
+    
     
     for i, ax in enumerate(ax.flat):
         
-        ds = pb.hourly_distribution(df.loc[cond[i]], step = 0.5)
+        ds = pb.hourly_distribution(
+            df.loc[cond[i]], step = 0.5)
 
         plot_heatmap(ax, ds, colorbar = False)
         
@@ -97,7 +104,19 @@ def plot_seasonal_hourly(df):
             lw = 3, 
             color = 'w')
         
+        ax.set(title = labels[i])
         
+        if i == 0:
+            ax.set_ylabel('Meses', fontsize = fontsize)
+        
+    
+    fig.text(
+        0.4, 0.01, 
+        'Hora universal', 
+        fontsize = fontsize
+        )
+    
+    
     b.fig_colorbar(
             fig,
             vmin = 0, 
@@ -105,7 +124,7 @@ def plot_seasonal_hourly(df):
             cmap = 'magma',
             fontsize = 25,
             step = 10,
-            y = 0.97,
+            y = 1.1,
             label = 'Ocorrência (\%)'
             )
     return fig
@@ -129,14 +148,15 @@ def sel_epb_typing(col, typing):
     
     return pd.concat([epbs, idx, dusk], axis = 1)
 
-col = -70
 
-typing = 'midnight'
-
-df = sel_epb_typing(col, typing)
-
-fig = plot_seasonal_hourly(df)
-
-
-
-
+def main():
+    col = -50
+    
+    typing = 'sunset'
+    
+    df = sel_epb_typing(col, typing)
+    
+    plot_seasonal_hourly(df)
+    
+    plt.show()
+    
