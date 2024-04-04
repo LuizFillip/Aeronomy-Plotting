@@ -63,7 +63,9 @@ def plot_lines(
         
         ax.axvline(dusk, lw = 2)
         
-        midnight = gg.local_midnight(start, ref_long + 5, delta_day = 1)
+        midnight = gg.local_midnight(
+            start, 
+            ref_long + 5, delta_day = 1)
         
         ax.axvline(
             midnight, 
@@ -71,13 +73,13 @@ def plot_lines(
             color = 'b',
             )
         
-        if i == 0:
-            ax.text(dusk, y, 'Terminator', 
-                        transform = ax.transData)
+        # if i == 0:
+        #     ax.text(dusk, y, 'Terminator', 
+        #                 transform = ax.transData)
                 
-            ax.text(midnight, y, 'midnight', 
-                    color = 'b',
-                    transform = ax.transData)
+        #     ax.text(midnight, y, 'midnight', 
+        #             color = 'b',
+        #             transform = ax.transData)
         
                 
 def plot_roti_timeseries(
@@ -88,16 +90,7 @@ def plot_roti_timeseries(
         right_ticks = False, 
         vmax  = 2
         ):
-    
-   
         
-    if len(np.unique(df.index.date)) == 1:
-        plot_term = False
-    else:
-        plot_term = True
-        
-    
-    
     sectors = np.arange(-80, -40, 10)[::-1]    
     plot_lines( axes, start, y = vmax + 1.2)
     

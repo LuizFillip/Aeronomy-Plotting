@@ -50,7 +50,7 @@ def plot_roti_points(
         label = False, 
         points_max = True,
         vmax = 3,
-        occurrence = False
+        occurrence = True
         ):
         
     ax.plot(ds['roti'], **args, label = 'Pontos de ROTI')
@@ -94,7 +94,7 @@ def plot_roti_points(
             ax1 = ax.twinx()
             plot_occurrence_events(ax1, ds, threshold = 0.21)
             
-            ax1.set(ylabel = 'Occurrence')
+            # ax1.set(ylabel = 'Occurrence')
         else:
             return ds
 
