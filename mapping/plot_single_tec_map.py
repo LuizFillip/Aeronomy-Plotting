@@ -85,6 +85,7 @@ def plot_tec_map(
              subplot_kw = 
              {'projection': ccrs.PlateCarree()}
              )
+        ax.set(title = dn.strftime('%Y/%m/%d %Hh%M (UT)'))
     
     dn_min = b.closest_datetime(b.tec_dates(dn), dn)
     
@@ -140,26 +141,18 @@ def plot_tec_map(
     
     ax.scatter(lon, lat, c = 'k', s = 5)
     
+    return img 
         
-    
-    
-    if ax is None:
-        
-        return fig
-    else:
-        # ax.set(title = dn.strftime('%Y/%m/%d %Hh%M (UT)'))
-        return img
-      
-       
 
 
 def main():
     
-    dn = dt.datetime(2016, 10, 4, 2, 20)
-    
+    dn = dt.datetime(2016, 10, 4, 4, 0)
+    dn = dt.datetime(2017, 9, 18, 2)
+
     # df = load_tec(b.get_path(dn))
     
-    fig = plot_tec_map(dn, ax = None, vmax = 25, invert_axis=False)
+    plot_tec_map(dn, ax = None, vmax = 25, invert_axis=False)
 
 # main()
 
