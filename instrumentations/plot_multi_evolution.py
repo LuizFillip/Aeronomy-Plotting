@@ -13,7 +13,7 @@ def save_image(fig, target, dn):
 
     name = target.strftime('%Y%m%d%H%M%S')
     
-    fig.savefig(f'{folder}/{name}')
+    fig.savefig(f'movies/{folder}/{name}')
 
 
 
@@ -99,7 +99,19 @@ def plot_time_evolution(
 
 
 
-def run(df, dn, save = True, vmax = 10):
+def run(folder, save = True, vmax = 10):
+    
+    dn = im.get_datetime(folder)
+    
+    df =  pb.concat_files(
+          dn, 
+          root = 'D:\\'
+          )
+    
+    
+    folder_in = dn.strftime('%Y%m%d')
+    b.make_dir(folder_in)
+    
 
     files = os.listdir(im.path_all_sky(dn)) 
     
@@ -119,67 +131,46 @@ def run(df, dn, save = True, vmax = 10):
 
 
 
-def test_single(dn):
+def test_single(dn,  vmax = 25):
     
-    
-    # # main()
-    # folder = 'CA_2019_0502'
-    
-    # dn = get_datetime(folder)
-    # dn = round_date(target)
-    df =  pb.concat_files(
-          dn, 
-          root = 'D:\\'
-          )
-    # file = im.get_closest(target)
-    # target1 = im.get_closest(target, file_like = False)
-    
-    file = 'O6_CA_20161004_014908.tif'
-    ds = b.sel_times(df, dn, hours = 11)
-    
-    plot_time_evolution(file, dn, ds, vmax = 20)
-    
-
-
-
-
-def main(folder, vmax = 40):
-    
-    dn = im.get_datetime(folder)
+    start = im.round_date(dn)
     
     df =  pb.concat_files(
-          dn, 
+          start, 
           root = 'D:\\'
           )
+    file = im.get_closest(dn, file_like = True)
     
+    ds = b.sel_times(df, start, hours = 11)
     
-    folder_in = dn.strftime('%Y%m%d')
-    b.make_dir(folder_in)
+    plot_time_evolution(file, start, ds, vmax = vmax)
     
-    
-    run(df, dn, vmax = vmax)
-    
-    b.images_to_movie(
-            path_in = folder_in, 
-            path_out = '',
-            movie_name = folder_in,
-            fps = 12
-            )
 
 
+dn = dt.datetime(2013, 12, 24, 21)
 dn = dt.datetime(2016, 2, 11, 21)
+dn = dt.datetime(2016, 5, 27, 21)
+dn = dt.datetime(2016, 10, 3, 21)
+dn = dt.datetime(2017, 9, 17, 21)
 
-folder = f'CA_{dn.year}_{dn.month}{dn.day}'
-main(folder, vmax = 60)
+def main(dn, vmax = 40):
+    folder_img = f'CA_{dn.year}_{dn.month}{dn.day}'
+    run(folder_img, vmax = vmax)
+    folder_in = dn.strftime('%Y%m%d')
+    b.images_to_gif(
+        name =  folder_in, 
+        path_out = 'movies',
+        path_in = f'movies/{folder_in}/', 
+        fps = 20
+        )
 
 
-# b.images_to_movie(
-#           path_in = folder_in, 
-#           path_out = '',
-#           movie_name = folder_in,
-#           fps = 12
-#           )
 
-# folder = '20170917'
-folder = dn.strftime('%Y%m%d')
-b.images_to_gif(name =  folder, path_in = f'{folder}/')
+# test_single(dn)
+
+
+# dn = dt.datetime(2016, 5, 27, 23, 50)
+dn = dt.datetime(2017, 9, 18, 3, 20)
+test_single(dn, vmax = 9)
+
+# 
