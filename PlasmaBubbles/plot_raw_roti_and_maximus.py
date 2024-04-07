@@ -86,15 +86,12 @@ def plot_roti_points(
         
         if label:
             ax.set(ylabel = 'ROTI (TECU/min)')
-    
-        ds = df1['max']
-        
+            
         if occurrence:
         
             ax1 = ax.twinx()
-            plot_occurrence_events(ax1, ds, threshold = 0.21)
+            plot_occurrence_events(ax1, df1['max'], threshold)
             
-            # ax1.set(ylabel = 'Occurrence')
         else:
             return ds
 
