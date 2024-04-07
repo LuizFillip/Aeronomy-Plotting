@@ -28,11 +28,23 @@ def plot_infos(
     
     out = []
     for i, val in enumerate(values):
-        out.append(fmt(i + 1, val) + event)
         
-    infos = (f'{title}\n' + '\n'.join(out))
+        info = fmt(i + 1, val) + event
         
-    ax.text(x, y, infos, transform = ax.transAxes)
+        if i == 0:
+            
+            ax.text(x, y, f'{title}\n{info}', 
+                    transform = ax.transAxes, 
+                    color = 'k') 
+        else:
+            ax.text(x, y - 0.1, f'{info}', 
+                    transform = ax.transAxes, 
+                    color = '#0C5DA5') 
+        #
+        
+    # infos = (f'{title}\n' + '\n'.join(out))
+        
+   
 
 
     return None 

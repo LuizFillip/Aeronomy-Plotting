@@ -78,8 +78,8 @@ def plot_distribution(
         translate = False,
         outliner = None,
         percent = True,
-        limit = True
-        ):
+        limit = True,
+        ylim = [0.2, 1.4]):
 
     ds = c.probability_distribution(
         df, 
@@ -124,7 +124,7 @@ def plot_distribution(
     
     ax.set(
         xlim = [vmin, vmax],
-        ylim = [-0.2* factor, 1.4* factor], 
+        ylim = [-ylim[0]* factor, ylim[-1]* factor], 
         yticks = np.arange(0, 1.2* factor, 0.25* factor),
         xticks = np.arange(
             vmin, vmax + step, step*2

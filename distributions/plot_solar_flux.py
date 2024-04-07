@@ -47,7 +47,7 @@ def plot_distributions_solar_flux(
                 translate = translate,
                 limit = limit
             )
-        
+                
         days = pl.plot_histogram(
                 ax[1], 
                 data, 
@@ -73,10 +73,13 @@ def plot_distributions_solar_flux(
             )
         
     x = 0.7
-    y = 0.17
+    y = 0.3
     
-    ax[1].legend(ncol = 2, loc = 'upper center')
-    ax[0].legend(ncol = 2, loc = 'upper center')
+    ax[1].legend(ncol = 2, 
+                 loc = 'upper center', 
+                 labelcolor='linecolor')
+    ax[0].legend(ncol = 2, loc = 'upper center', 
+                 labelcolor='linecolor')
     
     pl.plot_infos(
         ax[0], 
@@ -102,7 +105,7 @@ def plot_distributions_solar_flux(
 
 def main():
     
-    translate = False
+    translate = True
     df = c.load_results('saa', eyear = 2022)
     #print(df['epb'].sum())
     limit = c.limits_on_parts(df['f107a'], parts = 2 )
@@ -125,10 +128,10 @@ def main():
         
     FigureName = f'solar_flux_{parameter}2'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder),
+    #     dpi = 400
+    #     )
 
 
 
