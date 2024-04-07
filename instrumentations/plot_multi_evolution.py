@@ -16,6 +16,22 @@ def save_image(fig, target, dn):
     fig.savefig(f'movies/{folder}/{name}')
 
 
+def title(dn):
+    return dn.strftime('%Y/%m/%d %Hh%M (UT)')
+
+def update_vmax(dn):
+    d = dn.hour
+
+    if (d >= 0) and (d <= 3):
+        vmax = 10
+    
+    elif (d > 3) and (d <= 8): 
+        vmax = 5
+        
+    else:
+        vmax = 30
+        
+    return vmax 
 
 def plot_time_evolution(
         file, 
@@ -24,7 +40,8 @@ def plot_time_evolution(
         target = None,
         vmax = 10, 
         site = 'SAA0K',
-        save = False
+        save = False,
+        threshold = 0.2
         ):
 
     fig, ax_img, ax_ion, ax_tec, axes = b.layout4(
@@ -38,20 +55,16 @@ def plot_time_evolution(
         im.path_all_sky(dn), file
         )
     
-    if target is None:
-        target = im.plot_images(
-            path_of_image, ax_img,
-            flip = False)
-    else:
-        im.plot_images(
-            path_of_image, ax_img,
-            flip = False)
+    target = im.plot_images(
+        path_of_image, ax_img,
+        flip = False)
     
+    fig.suptitle(title(target), y = 1.0)
     
-    fig.suptitle(
-        target.strftime('%Y/%m/%d %Hh%M (UT)'), 
-                 y = 1.0)
-    
+    if vmax is None:
+        vmax = update_vmax(target)
+        
+        
     pl.plot_tec_map(
         target, 
         ax = ax_tec, 
@@ -76,7 +89,8 @@ def plot_time_evolution(
         target, 
         dn, 
         vmax = 2, 
-        right_ticks = False
+        right_ticks = False,
+        threshold = 0.2
         )
     
         
@@ -109,13 +123,13 @@ def run(folder, save = True, vmax = 10):
           )
     
     
-    folder_in = dn.strftime('%Y%m%d')
-    b.make_dir(folder_in)
+    date_name = dn.strftime('%Y%m%d')
+    b.make_dir(f'movies/{date_name}')
     
 
     files = os.listdir(im.path_all_sky(dn)) 
     
-    for file in tqdm(files, dn.strftime('%Y%m%d')):
+    for file in tqdm(files, date_name):
     
         plt.ioff()
         plot_time_evolution(
@@ -125,10 +139,6 @@ def run(folder, save = True, vmax = 10):
         plt.clf()   
         plt.close()   
  
-
-
-
-
 
 
 def test_single(dn,  vmax = 25):
@@ -148,10 +158,13 @@ def test_single(dn,  vmax = 25):
 
 
 dn = dt.datetime(2013, 12, 24, 21)
-dn = dt.datetime(2016, 2, 11, 21)
-dn = dt.datetime(2016, 5, 27, 21)
-dn = dt.datetime(2016, 10, 3, 21)
-dn = dt.datetime(2017, 9, 17, 21)
+# dn = dt.datetime(2016, 2, 11, 21)
+# dn = dt.datetime(2016, 5, 27, 21)
+# dn = dt.datetime(2016, 10, 3, 21)
+# dn = dt.datetime(2017, 9, 17, 21)
+# dn = dt.datetime(2019, 2, 24, 21)
+# dn = dt.datetime(2019, 5, 2, 21)
+# dn = dt.datetime(2019, 9, 6, 21)
 
 def main(dn, vmax = 40):
     folder_img = f'CA_{dn.year}_{dn.month}{dn.day}'
@@ -164,13 +177,19 @@ def main(dn, vmax = 40):
         fps = 20
         )
 
-
-
-# test_single(dn)
-
-
-# dn = dt.datetime(2016, 5, 27, 23, 50)
-dn = dt.datetime(2017, 9, 18, 3, 20)
-test_single(dn, vmax = 9)
-
+main(dn, vmax = 60)
 # 
+
+# # test_single(dn)
+# folder_in = dn.strftime('%Y%m%d')
+# b.images_to_gif(
+#       name =  folder_in, 
+#       path_out = 'movies',
+#       path_in = f'movies/{folder_in}/', 
+#       fps = 20
+#       )
+
+# dn = dt.datetime(2019, 9, 7, 2, 40)
+# test_single(dn, vmax = 30)
+
+# plt.show()

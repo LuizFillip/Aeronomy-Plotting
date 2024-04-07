@@ -8,7 +8,7 @@ import base as b
 import datetime as dt 
 import PlasmaBubbles as pb 
 
-b.config_labels(fontsize = 30)
+b.config_labels(fontsize = 35)
 
 def get_datetime_from_file(fn):
     date_obj = im.fn2datetime(fn).date() 
@@ -43,16 +43,18 @@ def plot_ionogram(ax2, PATH_IONO, target, col, site):
             
     img = io.imread(os.path.join(PATH_IONO, file))
     
+    # if target.month == 6:
+        
+    #     y, h = 80, 450
+    #     x, w = 170, 450
+    # else:
+        
     y, h = 300, 560
     x, w = 188, 559
-    
-    # img = io.imread(infile)
     
     img = img[y: y + h, x: x + w]
    
     ax2.imshow(img)
-    
-    # ax2.imshow(dg.crop_image(img, y, h, x, w))
     
     ax2.tick_params(
         labelbottom = False, 
@@ -64,7 +66,7 @@ def plot_ionogram(ax2, PATH_IONO, target, col, site):
     ax2.set(title = title)
     
     if col == 1:
-        ax2.text(0.6, -0.1, 'Frequency (MHz)',
+        ax2.text(0.6, -0.2, 'Frequency (MHz)',
         transform = ax2.transAxes
         )
     
@@ -121,7 +123,7 @@ def plot_legend(
     
 def plot_roti_curves(ax, dn):
     
-    ds = pb.concat_files(dn, root = os.getcwd())
+    ds = pb.concat_files(dn, root = 'D:\\') #os.getcwd()
 
     ds = b.sel_times(ds, dn)
     
@@ -162,7 +164,7 @@ def plot_roti_curves(ax, dn):
  
     plot_legend(ax, fontsize = 25)
     
-    b.format_time_axes(ax, pad = 65)
+    b.format_time_axes(ax, pad = 80)
     
     return None
     
@@ -204,7 +206,7 @@ def plot_multi_instrumentation(
 
     fig = plt.figure(
         dpi = 300,
-        figsize = (12, 14),
+        figsize = (12, 16),
         layout = "constrained"
         )
 
@@ -219,7 +221,7 @@ def plot_multi_instrumentation(
 
     gs2 = GridSpec(3, len(images_files))
     
-    gs2.update(hspace = 0.2, wspace = 0)
+    gs2.update(hspace = 0.1, wspace = 0)
         
     ax3 = plt.subplot(gs2[-1, :])
 
@@ -256,16 +258,27 @@ with_epbs = [
     ]
 
 
+# with_epbs = [
+#     # 'O6_CA_20131224_222810.tif', 
+#     'O6_CA_20131224_231957.tif',
+#     'O6_CA_20131225_011602.tif',
+#     'O6_CA_20131225_021645.tif',
+#     'O6_CA_20131225_024146.tif'
+#     ]
 
+def main():
 
-
-figure_1  = plot_multi_instrumentation(with_epbs) 
-# figure_2  = plot_multi_instrumentation(files2, letter = 'b') 
-
-# fig = b.join_images(figure_1, figure_2)
-
-FigureName = 'validation_roti_paper'
-# fig.savefig(
-#     b.LATEX(FigureName, 
-#     folder = 'modeling'), dpi = 400)
-#
+    figure_1  = plot_multi_instrumentation(with_epbs) 
+    figure_2  = plot_multi_instrumentation(non_epbs, letter = 'b') 
+    
+    fig = b.join_images(figure_1, figure_2)
+    
+    FigureName = 'validation_roti_paper'
+    
+    
+    
+    fig.savefig(
+        b.LATEX(FigureName, 
+        folder = 'products'),
+        dpi = 400)
+    
