@@ -112,7 +112,7 @@ def plot_roti_timeseries(
             )
             
         ax.text(
-            0.03, 0.75, f'Box {i + 1}', 
+            0.01, 1.05, f'Box {i + 1}', 
             transform = ax.transAxes
             )
         

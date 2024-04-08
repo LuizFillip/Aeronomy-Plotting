@@ -44,6 +44,9 @@ def plot_matrix(
     
     levels = np.arange(0, vmax + step, step*0.5)
     levels = np.linspace(0, vmax + step, 16)
+    
+    values = np.where(values > vmax, vmax, values)
+    
     img = ax.contourf(
         lon, lat, 
         values, 
@@ -75,7 +78,7 @@ def plot_tec_map(
         boxes = False,
         title = False,
         site = 'SAKK', 
-        invert_axis = True
+        invert_axis = False
         ):
     
     if ax is None:
@@ -98,38 +101,47 @@ def plot_tec_map(
         colorbar = colorbar
         )
     
-    ticks = np.arange(0, vmax + 2, 2)
+    ticks = np.arange(0, vmax + 2, 2).round(0)
+    # b.colorbar(
+    #         img, 
+    #         ax, 
+    #         ticks, 
+    #         label = 'TECU ($16^{16}/m^2$)', 
+    #         height = "100%", 
+    #         width = "3%",
+    #         orientation = "vertical", 
+    #         anchor = (.25, 0., 1, 1)
+    #         )
     b.colorbar(
             img, 
             ax, 
             ticks, 
-            label = 'TECU ($16^{16}/m^2$)', 
-            height = "100%", 
-            width = "3%",
-            orientation = "vertical", 
-            anchor = (.25, 0., 1, 1)
+            label = 'TECU ($10^{16}/m^2$)', 
+            height = '5%' , 
+            width = "80%",
+            orientation = "horizontal", 
+            anchor = (-0.26, 0.7, 1.26, 0.5)
             )
-    
     gg.map_attrs(
         ax, dn.year, 
         grid = False,
         degress = None
         )
     
-    if invert_axis:
-        ax.tick_params(
-            top = True,
-            right = True,
-            left = False,
-            bottom = False,
-            labelright = True,
-            labelleft = False,
-            labeltop = True, 
-            labelbottom = False, 
+    # if invert_axis:
+    #     ax.tick_params(
+    #         top = True,
+    #         right = True,
+    #         left = False,
+    #         bottom = False,
+    #         labelright = True,
+    #         labelleft = False,
+    #         labeltop = True, 
+    #         labelbottom = False, 
             
-            )
-        ax.yaxis.set_label_position("right")
-        ax.xaxis.set_label_position("top")
+    #         )
+    #     ax.yaxis.set_label_position("right")
+    #     ax.xaxis.set_label_position("top")
     
     # ax.set(title = 'Longitude (°)', xlabel = '')
     
@@ -148,12 +160,17 @@ def plot_tec_map(
 def main():
     
     dn = dt.datetime(2016, 10, 4, 4, 0)
-    dn = dt.datetime(2017, 9, 18, 2)
+    dn = dt.datetime(2017, 9, 18, 3)
 
     # df = load_tec(b.get_path(dn))
     
-    plot_tec_map(dn, ax = None, vmax = 25, invert_axis=False)
+    plot_tec_map(dn, ax = None, vmax = 12, invert_axis=False)
+    plt.show()
 
 # main()
 
 
+
+levels = np.linspace(0, 12, 16).round(0)
+
+levels 
