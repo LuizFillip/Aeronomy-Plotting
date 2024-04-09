@@ -34,16 +34,15 @@ def load_tec(infile, values = True):
         return df
 
 def plot_matrix(
-        ax, infile, 
-        step = 5, 
-        vmax = 100,
-        colorbar = True
+        ax, 
+        infile, 
+        vmax = 30,
+        colorbar = True,
         ):
     
     lon, lat, values = load_tec(infile)
     
-    levels = np.arange(0, vmax + step, step*0.5)
-    levels = np.linspace(0, vmax + step, 16)
+    levels = np.linspace(0, vmax, 16)
     
     values = np.where(values > vmax, vmax, values)
     
@@ -53,16 +52,31 @@ def plot_matrix(
         levels = levels,
         cmap = 'jet'
         )
-    
-    # if colorbar:
-        # ticks = np.arange(0, vmax, 15)
-        # b.colorbar(
-        #     img, ax, ticks, 
-        #     width = '5%',
-        #     label = r'TEC ($10^{16} / m^2$)'
-        #     )
+    step = vmax / 5
+    ticks = np.arange(0, vmax + step, step).round(0)
+    if colorbar:
+        b.colorbar(
+                img, 
+                ax, 
+                ticks, 
+                label = 'TECU ($10^{16}/m^2$)', 
+                height = '5%' , 
+                width = "80%",
+                orientation = "horizontal", 
+                anchor = (-0.26, 0.7, 1.26, 0.5)
+                )
         
-       
+        # b.colorbar(
+        #         img, 
+        #         ax, 
+        #         ticks, 
+        #         label = 'TECU ($16^{16}/m^2$)', 
+        #         height = "100%", 
+        #         width = "3%",
+        #         orientation = "vertical", 
+        #         anchor = (.25, 0., 1, 1)
+        #         )
+        
     
     return img
 
@@ -72,7 +86,6 @@ def plot_matrix(
 def plot_tec_map(
         dn, 
         ax = None, 
-        step = 1,
         vmax = 60, 
         colorbar = True, 
         boxes = False,
@@ -96,55 +109,31 @@ def plot_tec_map(
      
     img = plot_matrix(
         ax, path,
-        step = step, 
         vmax = vmax, 
         colorbar = colorbar
         )
-    
-    ticks = np.arange(0, vmax + 2, 2).round(0)
-    # b.colorbar(
-    #         img, 
-    #         ax, 
-    #         ticks, 
-    #         label = 'TECU ($16^{16}/m^2$)', 
-    #         height = "100%", 
-    #         width = "3%",
-    #         orientation = "vertical", 
-    #         anchor = (.25, 0., 1, 1)
-    #         )
-    b.colorbar(
-            img, 
-            ax, 
-            ticks, 
-            label = 'TECU ($10^{16}/m^2$)', 
-            height = '5%' , 
-            width = "80%",
-            orientation = "horizontal", 
-            anchor = (-0.26, 0.7, 1.26, 0.5)
-            )
+
     gg.map_attrs(
         ax, dn.year, 
         grid = False,
         degress = None
         )
     
-    # if invert_axis:
-    #     ax.tick_params(
-    #         top = True,
-    #         right = True,
-    #         left = False,
-    #         bottom = False,
-    #         labelright = True,
-    #         labelleft = False,
-    #         labeltop = True, 
-    #         labelbottom = False, 
+    if invert_axis:
+        ax.tick_params(
+            top = True,
+            right = True,
+            left = False,
+            bottom = False,
+            labelright = True,
+            labelleft = False,
+            labeltop = True, 
+            labelbottom = False, 
             
-    #         )
-    #     ax.yaxis.set_label_position("right")
-    #     ax.xaxis.set_label_position("top")
-    
-    # ax.set(title = 'Longitude (°)', xlabel = '')
-    
+            )
+        ax.yaxis.set_label_position("right")
+        ax.xaxis.set_label_position("top")
+        
     
     if boxes:
         gg.plot_rectangles_regions(ax, dn.year)
@@ -166,11 +155,3 @@ def main():
     
     plot_tec_map(dn, ax = None, vmax = 12, invert_axis=False)
     plt.show()
-
-# main()
-
-
-
-levels = np.linspace(0, 12, 16).round(0)
-
-levels 

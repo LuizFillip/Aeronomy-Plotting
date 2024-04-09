@@ -59,29 +59,27 @@ def plot_lines(
         
         ref_long = key[i]
         
-        dusk = pb.terminator(ref_long, start, float_fmt = False)
+        dusk = pb.terminator(
+            ref_long, 
+            start, 
+            float_fmt = False
+            )
         
         ax.axvline(dusk, lw = 2)
         
         midnight = gg.local_midnight(
             start, 
-            ref_long + 5, delta_day = 1)
+            ref_long + 5, 
+            delta_day = 1
+            )
         
         ax.axvline(
             midnight, 
             lw = 2,
-            color = 'b',
+            color = 'k',
+            linestyle = '--'
             )
         
-        # if i == 0:
-        #     ax.text(dusk, y, 'Terminator', 
-        #                 transform = ax.transData)
-                
-        #     ax.text(midnight, y, 'midnight', 
-        #             color = 'b',
-        #             transform = ax.transData)
-        
-                
 def plot_roti_timeseries(
         axes, 
         df, 
@@ -100,7 +98,7 @@ def plot_roti_timeseries(
         
         sector = sectors[i]
         
-        sel = pb.filter_region(df, dn, sector)
+        sel = pb.filter_region_and_dn(df, dn, sector)
         
         pl.plot_roti_points(
             ax, sel, 
@@ -110,7 +108,7 @@ def plot_roti_timeseries(
             vmax = vmax,
             occurrence = True
             )
-            
+                
         ax.text(
             0.01, 1.05, f'Box {i + 1}', 
             transform = ax.transAxes
@@ -136,31 +134,18 @@ def plot_roti_timeseries(
             ax.set(xticklabels = [])
             
     
-        
-        # if i == 0:
-        #     ax.legend(
-        #         bbox_to_anchor = (.5, 1.5), 
-        #         loc = "upper center", 
-        #         ncol = 2,
-        #         columnspacing = 0.7
-        #         )
-        
+    
     b.format_time_axes(axes[-1])
 
 
 
 def plot_ipp_variation(df, start, dn, twilight = 12):
     
-    fig, ax_map, axes = b.multi_layout(
-        nrows = 4)
-    
-    
+    fig, ax_map, axes = b.multi_layout(nrows = 4)
+
     eq_lon, eq_lat = gg.terminator2(dn, 18)
     
     ax_map.scatter(eq_lon, eq_lat, c = 'k', s = 5)
-    
-    
-
     
     gg.plot_rectangles_regions(ax_map, dn.year)
     
@@ -173,12 +158,13 @@ def plot_ipp_variation(df, start, dn, twilight = 12):
         )
     
 
-    plot_roti_timeseries( axes, 
-     df, 
-     dn, 
-     start
-        )
-    
+    plot_roti_timeseries( 
+        axes, 
+         df, 
+         dn, 
+         start
+            )
+        
     plot_ipp_on_map(ax_map, df, dn.year)
 
     fig.suptitle(
