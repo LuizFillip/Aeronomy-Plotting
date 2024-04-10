@@ -52,7 +52,9 @@ def plot_time_evolution(
         vmax = 10, 
         site = 'SAA0K',
         save = False,
-        threshold = 0.2
+        threshold = 0.20, 
+        fontsize = 30, 
+        root_tec = 'D:\\'
         ):
 
     fig, ax_img, ax_ion, ax_tec, axes = b.layout4(
@@ -80,7 +82,8 @@ def plot_time_evolution(
         vmax = vmax, 
         colorbar = True, 
         boxes = True,
-        site = site
+        site = site, 
+        root = root_tec
         )
    
     
@@ -102,11 +105,10 @@ def plot_time_evolution(
         dn, 
         vmax = 3, 
         right_ticks = False,
-        threshold = 0.25
+        threshold = threshold
         )
     
-    fontsize = 30
-    
+
     fig.text(
         0.03, 0.23, 'ROTI (TECU/min)', 
         fontsize = fontsize, 
@@ -119,6 +121,7 @@ def plot_time_evolution(
         rotation = 'vertical',
         color = 'b'
         )
+
     
     if save:
         save_image(fig, target, dn)
@@ -127,67 +130,77 @@ def plot_time_evolution(
 
 
 
-def run(dn, save = True, vmax = 10):
+def run(
+        dn, 
+        save = True,
+        vmax = 10, 
+        remove_noise = True,
+        root_tec = 'D:\\'
+        ):
         
     df =  pb.concat_files(
           dn, 
           root = 'D:\\', 
-          remove_noise = False
+          remove_noise = remove_noise
           )
     
     date_name = dn.strftime('%Y%m%d')
     b.make_dir(f'movies/{date_name}')
     
-
     files = os.listdir(im.path_all_sky(dn)) 
     
     for file in tqdm(files, date_name):
     
         plt.ioff()
         plot_time_evolution(
-            file, dn, df, vmax = vmax, save = save)
+            file, dn, df, 
+            vmax = vmax, 
+            save = save, 
+            root_tec = root_tec
+            )
         
-       
         plt.clf()   
         plt.close()   
  
 
 
-def test_single(dn,  vmax = 25):
+def test_single(dn,  vmax = 25, remove_noise = True):
     
     start = im.round_date(dn)
     
     df =  pb.concat_files(
           start, 
           root = 'D:\\', 
-          remove_noise = False
+          remove_noise = remove_noise
           )
-    file = im.get_closest(dn, file_like = True)
     
-    ds = b.sel_times(df, start, hours = 11)
     
-    plot_time_evolution(file, start, ds, vmax = vmax)
+    ds = b.sel_times(df, start, hours = 12)
+    
+    try:
+        file = im.get_closest(
+            dn, 
+            file_like = True, 
+            ext = '.png'
+            )
+    
+        plot_time_evolution(file, start, ds, vmax = vmax)
+    except:
+        file = im.get_closest(
+            dn, 
+            file_like = True, 
+            ext = '.tif'
+            )
+    
+        plot_time_evolution(file, start, ds, vmax = vmax)
     
     plt.show()
 
     
 
 
-# dn = dt.datetime(2013, 12, 24, 21)
-# dn = dt.datetime(2013, 1, 14, 21)
-# dn = dt.datetime(2016, 2, 11, 21)
-# dn = dt.datetime(2016, 5, 27, 21)
-# dn = dt.datetime(2016, 10, 3, 21)
-# dn = dt.datetime(2017, 9, 17, 21)
-# dn = dt.datetime(2019, 2, 24, 21)
-# dn = dt.datetime(2019, 5, 2, 21)
-# dn = dt.datetime(2019, 9, 6, 21)
-# dn = dt.datetime(2018, 3, 19, 21)
-
-# dn = dt.datetime(2020, 3, 30, 21)
-# dn = dt.datetime(2020, 8, 20, 21)
-
-
+# 
+# dn = 
 def main(dn, vmax = 40, site = 'CA'):
     
     run(dn, vmax = vmax)
@@ -200,18 +213,52 @@ def main(dn, vmax = 40, site = 'CA'):
         path_in = f'movies/{folder_in}/', 
         fps = 20
         )
+    
+# im.save_fool_images('CA_2017_0830', last = False)
 
-dates = [dt.datetime(2016, 2, 11, 21), 
-         dt.datetime(2016, 5, 27, 21), 
-         dt.datetime(2016, 10, 3, 21),
-         dt.datetime(2017, 9, 17, 21), 
-         dt.datetime(2019, 2, 24, 21), 
-         dt.datetime(2019, 5, 2, 21), 
-         dt.datetime(2019, 9, 6, 21), 
-         dt.datetime(2018, 3, 19, 21),
-         dt.datetime(2020, 3, 30, 21),
-         dt.datetime(2020, 8, 20, 21)
-]
 
-for dn in dates:
-    run(dn, vmax = 12)
+dates = {
+    dt.datetime(2013, 12, 24, 21): 60,
+    dt.datetime(2013, 1, 14, 21): 60,
+    dt.datetime(2016, 2, 11, 21): 60,
+    dt.datetime(2016, 10, 3, 21): 30,
+    dt.datetime(2016, 5, 27, 21): 12, 
+    dt.datetime(2017, 9, 17, 21): 12, 
+    dt.datetime(2017, 3, 2, 21): 40, 
+    dt.datetime(2017, 8, 30, 21): 10, 
+    dt.datetime(2018, 3, 19, 21): 12, 
+    dt.datetime(2019, 2, 24, 21): 10, 
+    dt.datetime(2019, 5, 2, 21): 10, 
+    dt.datetime(2019, 9, 6, 21): 8, 
+    dt.datetime(2020, 3, 30, 21): 8,
+    dt.datetime(2018, 3, 19, 21): 8,
+    dt.datetime(2020, 3, 30, 21): 10,
+    dt.datetime(2020, 8, 20, 21): 6,
+    dt.datetime(2022, 7, 24, 21): 10
+    }
+
+# vmaxs = list(dates.keys())
+
+# vmax = vmaxs[0]
+# dn = dates[vmax]
+dn = dt.datetime(2022, 7, 24, 21)
+vmax = 10
+
+run(dn, vmax = vmax, 
+    remove_noise = False,
+    root_tec = 'F:\\')
+# test_single(dn, vmax = vmax )
+
+
+
+# for dn, vmax in dates.items():
+#     # run(dn, vmax = vmax)
+    
+#     folder_in = dn.strftime('%Y%m%d')
+    
+#     b.images_to_gif(
+#         name =  folder_in, 
+#         path_out = 'movies',
+#         path_in = f'movies/{folder_in}/', 
+#         fps = 20
+#         )
