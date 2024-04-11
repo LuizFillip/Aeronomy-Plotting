@@ -1,127 +1,59 @@
 import matplotlib.pyplot as plt
-import RayleighTaylor as rt
-from common import plot_roti, plot_terminators
+import datetime as dt 
+import core as c 
+import base as b
 
 
 
 
-def plot_gamma(
-        ax, 
-        ds, 
-        cols, 
-        sign = -1, 
-        recom = False,
-        hem = "north",
-        drift = "vz"
-        ):
+df = b.load('database/longitudes_all_years.txt')
+
+
+s = dt.datetime(2013, 3, 14, 20)
+e = dt.datetime(2013, 3, 20, 8)
+ds = b.sel_dates(df, s, e)
+
+b.config_labels()
+ds1 = c.gamma(time = None)
+
+fig, ax = plt.subplots(
+       dpi = 300, 
+       nrows = 2, 
+       figsize = (12, 8), 
+       sharex = True 
+       )
+
+plt.subplots_adjust(hspace = 0.1)
+ds1 = b.sel_dates(ds1, s, e )
+
+color = 'k'
+ax[0].plot(ds1['gamma'], color = color)
+
+ax[1].plot(ds['-50'], color = color)
+
+
+points = ds1.loc[ds1.index.time == dt.time(22, 0)]
+x = points.index.values
+y = points.gamma.values
+ax[0].scatter(x, y, c = 'r')
+
+ax[0].set(ylim = [0, 3], 
+          ylabel = '$\\gamma_{RT}~(10^{-3}s^{-1})$')
+
+b.format_days_axes(ax[1])
+ax[1].set(ylim = [0, 2], 
+          ylabel = 'ROTI (TECU/min)', 
+          xlabel = 'Days')
+
+
+for i, line in enumerate([max(y), min(y)]):
     
-    if hem == "north":
-        hem = "Norte"
-    else:
-        hem = "Sul"
-        
+    ax[0].axhline(line, color = color)
+    
+    # b.dark_background(
+    #         fig, 
+    #         ax[i], 
+    #         background_col = 'xkcd:black', 
+    #         face_col = (0.06, 0.06, 0.06)
+    #         )
 
-
-    for wd in cols:
-                    
-        gamma = rt.all_effects(
-                ds, 
-                wind = wd,
-                drift = drift, 
-                sign_wd = sign, 
-                recom = recom)
-      
-        if "ef" in wd:
-            label = f"Efetivo ({hem})"
-        else:
-            label = f"Geográfico ({hem})"
-        
-        ax.plot(gamma * 1e4, label = label)
-        
-    
-    ax.axhline(0, linestyle = "--")
-        
-    ax.set(ylim = [-20, 20], 
-           xlim = [ds.index[0], 
-                   ds.index[-1]]
-           )
-    return ax
-
-
-def plot_all_effects(df, recom, drift = "vz", station = "salu"):
-
-
-    fig, ax = plt.subplots(
-           figsize = (14, 12), 
-           sharex = True,
-           nrows = 5, 
-           dpi = 300
-        )
-    
-    plt.subplots_adjust(hspace = 0.4)
-    
-    eq = rt.EquationsFT()
-    
-    for hem in ["north", "south"]:
-        
-        ds = df.loc[df["hem"] == hem]
-        
-        cols = [("zon", 1), ("zon", -1),
-                ("mer", 1), ("mer", -1)]
-           
-        for row, col in enumerate(cols):
-            
-            wd, sign = col
-        
-            cols = [wd, f"{wd}_ef"]
-            
-            ax[row].set(title =eq.complete(
-                wind_sign = sign, 
-                recom = recom ))
-        
-        
-            plot_gamma(ax[row], ds, cols, 
-                          sign = sign, 
-                          recom = recom, 
-                          drift = drift,
-                          hem = hem)
-            
-            if "zon" in cols:
-                coord =  "Zonal"
-            else:
-                coord = "Meridional"
-                
-                
-            ax[row].text(0.01, 0.8, coord, 
-                         transform = ax[row].transAxes)
-
-    plot_roti(ax[4], ds, station = station)
-    
-    ax[0].legend(
-        ncol = 4, 
-        bbox_to_anchor = (0.5, 1.7),
-        loc = "upper center")
-    
-    
-    for ax in ax.flat:
-        plot_terminators(ax, ds)
-        
-    if recom:
-        r = "com"
-    else:
-        r = "sem"
-        
-    fig.suptitle(f"Efeitos devido aos ventos neutros, $V_P = ${drift} e {r} recombinação")
-
-    return fig
-
-def main():
-    infile = "database/RayleighTaylor/reduced/300.txt"
-    df = rt.load_process(infile, apex = 300)
-    
-    ds = rt.split_by_freq(df, freq_per_split = "10D")[0]
-    recom  = False
-    plot_all_effects(ds, recom, drift = "vzp")
-    
-    
-# 

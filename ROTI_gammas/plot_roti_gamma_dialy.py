@@ -3,6 +3,7 @@ import base as b
 from indices import INDEX_HR
 import os
 import datetime as dt 
+import core as c 
 
 def plot_roti(ax, ds):
     
@@ -83,10 +84,10 @@ def plot_roti_and_index(path, files):
     return fig 
 
 
-path = 'temp2/'
-files = os.listdir(path)[5:10]
+# path = 'temp2/'
+# files = os.listdir(path)[5:10]
 
-fig = plot_roti_and_index(path, files)
+# fig = plot_roti_and_index(path, files)
 
 # FigureName = 'supression_events_2'
 
@@ -94,3 +95,4 @@ fig = plot_roti_and_index(path, files)
 #     b.LATEX(FigureName, folder = 'maps'),
 #     dpi = 400
 #     )
+
