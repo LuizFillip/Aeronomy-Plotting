@@ -91,7 +91,8 @@ def plot_tec_map(
         boxes = False,
         title = False,
         site = 'SAKK', 
-        invert_axis = False
+        invert_axis = False,
+        root = 'D:\\'
         ):
     
     if ax is None:
@@ -103,9 +104,9 @@ def plot_tec_map(
              )
         ax.set(title = dn.strftime('%Y/%m/%d %Hh%M (UT)'))
     
-    dn_min = b.closest_datetime(b.tec_dates(dn), dn)
+    dn_min = b.closest_datetime(b.tec_dates(dn, root = root), dn)
     
-    path = b.get_path(dn_min)
+    path = b.get_path(dn_min, root = root)
      
     img = plot_matrix(
         ax, path,
