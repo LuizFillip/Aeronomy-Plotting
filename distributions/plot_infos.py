@@ -9,7 +9,8 @@ def plot_infos(
         x = 0.70, 
         y = 0.20,
         translate = False,
-        epb_title = True
+        epb_title = True, 
+        offset_y = 0.15
         ):
     
     if isinstance(translate, str):
@@ -26,7 +27,7 @@ def plot_infos(
     if not epb_title:       
         title = '$\gamma_{RT}$ total'
     
-    out = []
+
     for i, val in enumerate(values):
         
         info = fmt(i + 1, val) + event
@@ -37,15 +38,9 @@ def plot_infos(
                     transform = ax.transAxes, 
                     color = 'k') 
         else:
-            ax.text(x, y - 0.1, f'{info}', 
+            ax.text(x, y - offset_y, f'{info}', 
                     transform = ax.transAxes, 
-                    color = '#0C5DA5') 
-        #
-        
-    # infos = (f'{title}\n' + '\n'.join(out))
-        
-   
-
+                    color = 'b') #'#0C5DA5'
 
     return None 
 
@@ -80,7 +75,8 @@ def plot_events_infos(
         ax[0, col].legend(
             ncol = 2, 
             bbox_to_anchor = (0.5, 1.3),
-            loc = "upper center"
+            loc = "upper center", 
+            labelcolor = 'linecolor'
             )
         l = b.chars()[col]
         

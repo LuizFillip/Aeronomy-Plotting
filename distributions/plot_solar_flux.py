@@ -6,7 +6,25 @@ import plotting as pl
 
 b.config_labels(fontsize = 25)
 
+legend_args = dict(
+    ncol = 2, 
+    loc = 'upper center', 
+    labelcolor = 'linecolor'
+    
+    )
 
+def plot_epbs_number(ax, data, color = 'k'):
+    if color == 'k':
+        offset = -12
+        
+    else:
+        offset = 5
+    for x, y, z in data[['start', 'rate', 'epbs']].values:
+        
+        ax.text(x - 0.05, (y *100) + offset, 
+                int(z),
+                transform = ax.transData, 
+                color = color)
         
 def plot_distributions_solar_flux(
         df, 
@@ -16,6 +34,7 @@ def plot_distributions_solar_flux(
         outliner = 10,
         limit = None
         ):
+    
     
     fig, ax = plt.subplots(
         dpi = 300, 
@@ -32,8 +51,9 @@ def plot_distributions_solar_flux(
      
     total_epb = []
     total_day = []
-    
+    colors = ['k', 'b']
     for i, ds in enumerate(df_index.F107(level)):
+        
         index = i + 1
         label = f'({index}) {F107_labels[i]}'
     
@@ -47,11 +67,13 @@ def plot_distributions_solar_flux(
                 translate = translate,
                 limit = limit
             )
-                
+        
+        # plot_epbs_number(ax[0], data, color = colors[i])
+                        
         days = pl.plot_histogram(
                 ax[1], 
                 data, 
-                index, 
+                i, 
                 label, 
                 parameter = parameter,
                 axis_label = True,
@@ -73,13 +95,10 @@ def plot_distributions_solar_flux(
             )
         
     x = 0.7
-    y = 0.3
+    y = 0.25
     
-    ax[1].legend(ncol = 2, 
-                 loc = 'upper center', 
-                 labelcolor='linecolor')
-    ax[0].legend(ncol = 2, loc = 'upper center', 
-                 labelcolor='linecolor')
+    ax[1].legend(**legend_args)
+    ax[0].legend(**legend_args)
     
     pl.plot_infos(
         ax[0], 
@@ -98,16 +117,15 @@ def plot_distributions_solar_flux(
         translate = translate
         )
     
-    # print(sum(total_epb))
     return fig
 
 
 
 def main():
     
-    translate = True
+    translate = False
     df = c.load_results('saa', eyear = 2022)
-    #print(df['epb'].sum())
+    # df = df.loc[df['kp'] <= 3]
     limit = c.limits_on_parts(df['f107a'], parts = 2 )
 
     parameter = 'gamma'
@@ -121,6 +139,8 @@ def main():
             limit = True
             )
     
+    # fig.suptitle('$Kp <= 3$')
+    
     if translate:
         folder = 'distributions/pt/'
     else:
@@ -128,12 +148,13 @@ def main():
         
     FigureName = f'solar_flux_{parameter}2'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder),
+        dpi = 400
+        )
 
 
-
+    plt.show()
+    
 main()
 

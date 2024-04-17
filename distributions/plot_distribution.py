@@ -2,6 +2,7 @@ import core as c
 import numpy as np
 import base as b 
 import matplotlib.pyplot as plt 
+from matplotlib.ticker import AutoMinorLocator
 
 args = dict(capsize = 3, marker = 's')
 
@@ -41,15 +42,21 @@ def plot_histogram(
         width = 0.015
     else:
         xlabel = b.y_label('gamma')
-        width = 0.07
+        width = 0.05
             
     days = int(ds['days'].sum())
+    
+    if index == 0:
+        offset = (width / 2)
+    else:
+        offset = - (width / 2)
         
     ax.bar(
-        ds['start'] + (width * index),
+        ds['start'] + offset,
         ds['days'], 
         width = width, 
-        label = label
+        label = label, 
+        # fill = False
         )
      
     if axis_label:
@@ -101,12 +108,13 @@ def plot_distribution(
     else:
         factor = 1
         symbol = ''
-        
+    
+    ds['erro'] = (ds['epb_i'] + ds['epb_s'].abs()) / 2
     ax.errorbar(
         ds['start'], 
         ds['rate'] * factor, 
         xerr = ds['std'],
-        yerr = ds['epb_error'] * factor,
+        yerr = ds['erro'] * factor,
         label = LABEL,
         **args
         )
@@ -123,14 +131,14 @@ def plot_distribution(
         xlabel = b.y_label('gamma')
     
     ax.set(
-        xlim = [vmin, vmax],
+        xlim = [vmin - 0.1, vmax],
         ylim = [-ylim[0]* factor, ylim[-1]* factor], 
         yticks = np.arange(0, 1.2* factor, 0.25* factor),
-        xticks = np.arange(
-            vmin, vmax + step, step*2
-            ),
+        xticks = np.arange(vmin, vmax + step, step*2),
        
         )
+    
+    plt.gca().xaxis.set_minor_locator(AutoMinorLocator(n=2))
     
     if translate:
         ylabel = 'Probalidade de ocorrência' + symbol

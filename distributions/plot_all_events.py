@@ -33,7 +33,6 @@ data, epbs = pl.plot_distribution(
 
 def plot_epbs_number(ax, data):
     for x, y, z in data[['start', 'rate', 'epbs']].values:
-        
         ax.text(x - 0.05, (y *100) + 5, int(z), transform = ax.transData)
         
 plot_epbs_number(ax[0], data)
