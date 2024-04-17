@@ -33,7 +33,7 @@ def roti_limit(dn, sector = -50):
 
 def plot_ionogram(target, ax, site = 'FZA0M'):
             
-    dn = closest_iono(target)
+    dn = dg.closest_iono(target)
     file = dn.strftime(f'{site}_%Y%m%d(%j)%H%M%S.PNG')
     
     infile = os.path.join(PATH_IONO, file)

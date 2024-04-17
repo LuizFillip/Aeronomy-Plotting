@@ -3,8 +3,7 @@ import base as b
 import datetime as dt  
 import PlasmaBubbles as pb 
 import GEO as gg 
-import numpy as np
-import os 
+
 
 b.config_labels()
 
@@ -17,16 +16,23 @@ args = dict(
      alpha = 0.2, 
      )
     
-def plot_occurrence_events(ax, ds, threshold = 0.4):
+def plot_occurrence_events(ax, ds, threshold = 0.25):
     
     events = pb.events_by_longitude(ds, threshold)
     
-    ax.plot(
+    line, = ax.plot(
           events, 
           marker = 'o',
           markersize = 3,
-          color = 'k'
+          color = 'b'
         )
+    
+    b.change_axes_color(
+            ax, 
+            color = 'b',
+            axis = "y", 
+            position = "right"
+            )
     
     ax.set(
         yticks = [0, 1], 
@@ -37,7 +43,7 @@ def plot_occurrence_events(ax, ds, threshold = 0.4):
     for limit in [0, 1]:
         ax.axhline(
             limit, 
-            color = 'k', 
+            color = 'b', 
             linestyle = '--'
             )
         
@@ -61,7 +67,8 @@ def plot_roti_points(
         
         ax.axhline(
             threshold, 
-            color = 'red', lw = 2, 
+            color = 'red', 
+            lw = 2, 
             label = f'{threshold} TECU/min'
             )
         
@@ -87,13 +94,19 @@ def plot_roti_points(
         if label:
             ax.set(ylabel = 'ROTI (TECU/min)')
             
-        if occurrence:
+        # if occurrence:
         
-            ax1 = ax.twinx()
-            plot_occurrence_events(ax1, df1['max'], threshold)
+        ax1 = ax.twinx()
+        plot_occurrence_events(
+            ax1, df1['max'], threshold)
+        
+        ax1.spines['right'].set_color('blue') 
+        ax1.spines['left'].set_color('blue') 
+        
+        
+        # else:
             
-        else:
-            return ds
+        return ax1
 
 
 
@@ -102,6 +115,7 @@ def plot_infos(ax, infos):
     delta = dt.timedelta(minutes = 10)
     
     for col, y in enumerate([3, 1.03]): 
+        
         l = b.chars()[col]
         
         ax[0, col].text(

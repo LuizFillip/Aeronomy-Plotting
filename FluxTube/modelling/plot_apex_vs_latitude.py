@@ -16,8 +16,8 @@ def plot_hlines(ax, label = False, x = -18):
         ax.axhline(
             height, 
             color = colors[i], 
-            lw = 2,
-            linestyle = "--"
+            lw = 1,
+            linestyle = "-"
             )
         if label:
             
@@ -67,7 +67,7 @@ def plot_apex_vs_latitude(
     heights = np.arange(base, max_height, step )
      
    
-    for h in heights:
+    for h in [300]:
         
         apx = Apex(h) 
         lats =  apx.latitude_range(
@@ -85,7 +85,7 @@ def plot_apex_vs_latitude(
             color = '#0C5DA5'
         
             
-        args = dict(color = color, lw = 2)
+        args = dict(color = color, lw = 2, linestyle = '--')
         ax.plot(np.degrees(lats), apex, **args)    
     
     if translate:

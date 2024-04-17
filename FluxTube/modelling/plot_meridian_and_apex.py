@@ -44,11 +44,9 @@ def plot_meridian_and_apex(year = 2013):
         )
     
     
-    
     pl.plot_mag_meridians(ax2, year)
     
-    lons, lats = gg.stations_coordinates(
-        year, distance = 10)
+    lons, lats = gg.stations_coordinates(year, distance = 10)
     
     glat, glon = gg.sites['car']['coords']
     
@@ -80,7 +78,7 @@ def plot_meridian_and_apex(year = 2013):
         
     return fig
 
-# fig = plot_meridian_and_apex()
+fig = plot_meridian_and_apex()
 
-# fig.savefig(b.LATEX('apex_meridian', folder = 'modeling'), dpi = 400)
-# plt.show()
+fig.savefig(b.LATEX('apex_meridian', folder = 'modeling'), dpi = 400)
+plt.show()

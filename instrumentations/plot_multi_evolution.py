@@ -65,13 +65,8 @@ def plot_time_evolution(
     
       
     path_of_image = os.path.join(im.path_all_sky(dn), file)
-    
-    if dn.year <= 2019:
-        flip = False
-    else:
-        flip = True
-        
-    target = im.plot_images(path_of_image, ax_ion, flip = flip)
+ 
+    target = im.plot_images(path_of_image, ax_ion)
     
     fig.suptitle(title(target), y = 0.95)
 
@@ -242,23 +237,59 @@ dates = {
 # vmax = vmaxs[0]
 # dn = dates[vmax]
 dn = dt.datetime(2022, 7, 24, 21)
-vmax = 10
+vmax = 60
 
-run(dn, vmax = vmax, 
-    remove_noise = False,
-    root_tec = 'F:\\')
-# test_single(dn, vmax = vmax )
+dates = [
+    '2015-01-19',
+    '2015-01-22',
+    '2017-08-20', 
+    '2017-08-21', 
+    '2017-08-22', 
+    '2017-09-16',
+    '2017-09-21',
+    '2017-10-17', 
+    '2017-10-20', 
+    '2017-10-22', 
+    '2019-06-01', 
+    '2019-08-29',
+    '2019-08-30'
+    ]
 
+delta = dt.timedelta(hours = 21)
 
-
-# for dn, vmax in dates.items():
-#     # run(dn, vmax = vmax)
+# for dn in pd.to_datetime(dates):
     
-#     folder_in = dn.strftime('%Y%m%d')
+#         folder_in = dn.strftime('%Y%m%d')
+        
+#         b.images_to_gif(
+#             name =  folder_in, 
+#             path_out = 'movies',
+#             path_in = f'movies/{folder_in}/', 
+#             fps = 20
+#             )
+
+            
+    # run(dn + delta, 
+    #     vmax = vmax, 
+    #     remove_noise = False,
+    #     root_tec = 'F:\\')
+
+
+dn= dt.datetime(2016, 10, 3)
     
-#     b.images_to_gif(
-#         name =  folder_in, 
-#         path_out = 'movies',
-#         path_in = f'movies/{folder_in}/', 
-#         fps = 20
-#         )
+folder_in = dn.strftime('%Y%m%d')
+
+
+# b.images_to_gif(
+#      name =  folder_in, 
+#      path_out = 'movies',
+#      path_in = f'movies/{folder_in}/', 
+#      fps = 20
+#      )
+
+b.images_to_movie(
+        path_in = f'movies/{folder_in}/', 
+        path_out =  'movies/',
+        movie_name = folder_in,
+        fps = 5
+        )

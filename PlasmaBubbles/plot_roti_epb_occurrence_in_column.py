@@ -101,18 +101,12 @@ def plot_roti_epb_occurrence_in_column(
             title = get_infos(ds, lon = int(lon))
             )
         
-        # ax1.set(ylim = [-0.1, 1.1])
+        ax1.set(ylim = [-0.1, 1.1])
         
         if i == 3:
             b.format_time_axes(ax)
         
-    # for i, ax in enumerate(ax.flat):
-    #     df.plot(subplots = True, ax = ax)
-        
-    #     ax1 = ax.twinx()
-    #     ds.plot(subplots = True, ax = ax1, legend = False)
-        
-        
+  
         
           
     fig.text(

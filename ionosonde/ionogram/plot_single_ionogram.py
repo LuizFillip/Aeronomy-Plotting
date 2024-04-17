@@ -5,7 +5,7 @@ import numpy as np
 
 def redefine_ticks(ax, img):
     
-    xticks = np.arange(0, 17, 2)
+    xticks = np.arange(0, 16, 2)
     yticks = np.arange(150, 1350, 150)
 
     x_positions = np.linspace(
@@ -26,16 +26,15 @@ def crop_region_E(img):
     
     img = np.flipud(img)
     
-    y, h = 128, 761
-    x, w = 188, 559
-    
+    y, h = 130, 750
+    x, w = 186, 560
     return img[y: y + h, x: x + w]
 
 def plot_single_ionogram(fname, ax = None, label = False, 
                          aspect = 'auto'):
     
-    xticklabels = [ 0,  '',  4,  '',  
-                   8,  '', 12, '', 16]
+    # xticklabels = [ 0,  '',  4,  '',  
+                   # 8,  '', 12, '', 16]
     if ax is None:
         fig, ax = plt.subplots(
             figsize = (10, 8),
@@ -45,18 +44,34 @@ def plot_single_ionogram(fname, ax = None, label = False,
     img = crop_region_E(img)
     ax.imshow(img, aspect = aspect)
     ax.invert_yaxis()
-        
+    
+    
     if label:
         redefine_ticks(ax, img)
         
         ax.set(
-            xticklabels = xticklabels,
+            # xticklabels = xticklabels,
             ylabel = 'Altitude (km)', 
             xlabel = 'Frequency (MHz)'
             )
         
+        ax.tick_params(
+            top = True,
+            right = True,
+            left = False,
+            bottom = False,
+            labelright = True,
+            labelleft = False,
+            # labeltop = True, 
+            # labelbottom = False, 
+            # 
+            )
+        ax.yaxis.set_label_position("right")
+        
     else:
         ax.axis('off')
+    
+  
     
     
     if ax is None:
@@ -65,7 +80,8 @@ def plot_single_ionogram(fname, ax = None, label = False,
     else:
         return ax
 
+# fname = 'database/ionogram/20130610S/SAA0K_20130610(161)211000.PNG'
+# fig = plot_single_ionogram(fname, label = True)
 
-# fig = plot_single_ionogram(fname)
 
-
+# plt.show()

@@ -3,6 +3,7 @@ import base as b
 import core as c
 import GEO as gg 
 import numpy as np 
+from matplotlib.ticker import AutoMinorLocator
 
 b.config_labels(fontsize = 25)
 
@@ -19,7 +20,7 @@ def plot_EPBs(ax, df, col = -50, translate = True):
     ds.index = ds.index.map(gg.year_fraction)
 
     ax.bar(
-        ds.index + 0.5, 
+        ds.index + 0.1, 
         ds[col], 
         width = 0.08,
         edgecolor = 'black', 
@@ -36,7 +37,8 @@ def plot_EPBs(ax, df, col = -50, translate = True):
         
     ax.set(
         ylabel = ylabel, 
-        yticks = list(range(0, 45, 10)), #list(range(0, 350, 100))
+        yticks = list(range(0, 45, 10)), 
+        xlim = [ds.index[0], ds.index[-1]]
         )
         
     return ax.get_xlim()
@@ -73,11 +75,10 @@ def plot_F107(
             )
         
     ax.set(
-        xlim = xlim,
+        # xlim = xlim,
         ylabel = '$F_{10.7}$ (sfu)', 
-        ylim = [50, 300],
-        yticks = list(range(50, 350, 50)),
-        xticks = np.arange(2013, 2023, 1),
+        ylim = [40, 300],
+        yticks = np.arange(50, 350, 50),
         )
        
     ax.legend(ncol= 2, loc = 'upper right')
@@ -122,10 +123,7 @@ def plot_Kp(
         
     ax.set(
         ylabel = ylabel, 
-        yticks = list(range(0, 12, 3)),
-        xticks = np.arange(2013, 2023, 1) + 0.5, 
-        xticklabels = np.arange(2013, 2023, 1), 
-        xlim = [df.index[0], df.index[-1]]
+        yticks = list(range(0, 12, 3))
         )
     
     ax.legend(ncol = 2, loc = 'upper right')
@@ -139,7 +137,7 @@ def plot_annually_epbs_and_indices(
         ):
     
     fig, ax = plt.subplots(
-        nrows = 3, 
+        nrows = 2, 
         dpi = 300, 
         sharex = True,
         figsize = (14, 12)
@@ -160,16 +158,24 @@ def plot_annually_epbs_and_indices(
         xlim = xlim
         )
     
-    plot_Kp(
-        ax[2], 
-        df, 
-        kp_level = kp_level, 
-        translate = translate, 
-        xlim = xlim
-        )
+    # plot_Kp(
+    #     ax[2], 
+    #     df, 
+    #     kp_level = kp_level, 
+    #     translate = translate, 
+    #     xlim = xlim
+    #     )
 
-    ax[2].set(xlabel = 'Years')
-    b.plot_letters(ax, y = 0.83, x = 0.02)
+    ax[1].set(
+        xlabel = 'Years',
+       
+            xticks = np.arange(2013, 2024, 1), 
+            xticklabels = np.arange(2013, 2024, 1), 
+            # xlim = [df.index[0], df.index[-1]]
+    )
+    
+    plt.gca().xaxis.set_minor_locator(AutoMinorLocator(n=11))
+    b.plot_letters(ax, y = 0.88, x = 0.02)
     
     return fig
 
@@ -183,3 +189,6 @@ def main():
     fig.savefig(b.LATEX('annual_variation2', folder = 'bars'))
 
 
+# main()
+
+# plt.show()

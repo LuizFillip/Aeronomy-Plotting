@@ -102,7 +102,7 @@ def plot_tec_map(
              subplot_kw = 
              {'projection': ccrs.PlateCarree()}
              )
-        ax.set(title = dn.strftime('%Y/%m/%d %Hh%M (UT)'))
+        ax.set(title = dn.strftime('%B %d, %Y %Hh%M (UT)'))
     
     dn_min = b.closest_datetime(b.tec_dates(dn, root = root), dn)
     
@@ -143,7 +143,7 @@ def plot_tec_map(
     
     ax.scatter(lon, lat, c = 'k', s = 5)
     
-    return img 
+    # return fig
         
 
 
@@ -156,3 +156,28 @@ def main():
     
     plot_tec_map(dn, ax = None, vmax = 12, invert_axis=False)
     plt.show()
+
+import os 
+
+
+# for i in range(0, 4):
+    
+    # delta = dt.timedelta(days = 1)
+    
+def run():
+    start = dt.datetime(2016, 1, 14, 21, 0) #+ delta
+    
+    end = dt.datetime(2016, 1, 15, 0, 0) #+ delta
+    
+    times = pd.date_range(start, end, freq= '10min')
+    infile = 'G:\\Meu Drive\\Python\\data-analysis\\database\\tec_maps\\'
+    for dn in times:
+        
+        fig = plot_tec_map(dn, ax = None, vmax = 50, invert_axis=False,
+        root = os.getcwd())
+        plt.ioff()
+        FigureName = dn.strftime('%Y%m%d%H%M')
+        fig.savefig(infile + FigureName)
+        print(dn)    
+        plt.clf()   
+        plt.close()    
