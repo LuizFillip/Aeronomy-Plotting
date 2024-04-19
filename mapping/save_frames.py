@@ -72,12 +72,3 @@ def run(start):
             path_out = 'movies/',
             fps = 20
             )
-    # except:
-    #     print(start)
-    #     pass
-
-
-            
-            
-# start = dt.datetime(2014, 2, 9, 21)
-# run(start)

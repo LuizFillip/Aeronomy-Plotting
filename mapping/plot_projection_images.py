@@ -67,6 +67,6 @@ path_of_image = 'database/images/CA_2013_1224/O6_CA_20131224_224601.tif'
 
 all_sky = im.processing_img(path_of_image)
 
-img = all_sky.linear( all_sky.bright)
+img = all_sky.linear(all_sky.bright())
 
 fig = plot_images_projection(img)
