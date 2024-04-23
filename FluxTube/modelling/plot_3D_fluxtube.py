@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import settings as s
+import base as s
 import numpy as np
 import pandas as pd
 import datetime as dt
@@ -55,14 +55,16 @@ def plot_scatter_fluxtube(ax, df,
     
     ticks = np.arange(vmin, vmax, 1)
     
-    s.colorbar_setting(img, ax, ticks, 
-                       height = "3%", 
-                       width = "100%", 
-                       loc = "upper right",
-                       label = "log10 Ne ($cm^{-3}$)", 
-                       color='white',
-                       bbox_to_anchor = (0.2, 0.05, 0.4, 0.8)
-                       )
+    s.colorbar(
+        img, ax,
+        ticks, 
+        height = "100%", 
+        width = "3%", 
+        # loc = "upper right",
+        label = "log10 Ne ($cm^{-3}$)", 
+        # color='k',
+        anchor = (0.2, 0.05, 0.4, 0.8)
+        )
     middle = len(lons) // 2 
     ax.text(lons[middle - 10], lats[middle], 320, 
             "Tubo de\nFluxo", color = color)
@@ -70,7 +72,8 @@ def plot_scatter_fluxtube(ax, df,
 def plot_local_profile(ax,
         dn = dt.datetime(2013, 1, 1, 21), 
         glon = -44, 
-        glat = -4, color = "black"):
+        glat = -4, 
+        color = "black"):
 
 
     ds = altrange_iri(dn, glat, glon, 
@@ -90,13 +93,21 @@ def plot_local_profile(ax,
     ax.text(glon + 0.5, glat, 400, 
             "Perfil local", color = color)
         
-def plot_meridian(ax, df, color = "black"):
+def plot_meridian(
+        ax, df, color = "black", 
+                  translate = True):
     
     base = np.zeros(len(df)) + 80
     ax.plot3D(df.lon, df.lat, base)
+    if translate:
+        label = "Meridiano\nmagnético"
+    else:
+        label = 'Magnetic meridian'
     
-    ax.text(-45, -12, 75, 
-            "Meridiano\nmagnético", color = color)
+    ax.text(
+        -45, -12, 75, 
+          label , 
+          color = color)
    
    
 def plot_surface_region(ax, df):
@@ -106,7 +117,7 @@ def plot_surface_region(ax, df):
      
     Z = X * 0 + 150
     
-    ax.plot_surface(X, Y, Z, color = "b", alpha = 0.3)
+    ax.plot_surface(X, Y, Z, color = "b", alpha = 0.6)
     
     ax.text(-42, -2, 150, "Região E", 
             color = "b", alpha = 0.8)
@@ -140,17 +151,15 @@ def load_data(infile, apex = 300):
     return df1.loc[df1["apex"] == apex]
 
 
-def plot_3D_fluxtube():
+def plot_3D_fluxtube(color = "k"):
     fig = plt.figure(figsize= (12, 8), dpi = 300)
     ax = plt.axes(projection = "3d")
     
-    infile = "201301012100.txt"
+    infile = "FluxTube/data/20131224.txt"
     
     
     df = load_data(infile, apex = 300)
     df = df.iloc[::3, :]
-    
-    color = "white"
     
     plot_scatter_fluxtube(ax, df, color = color)
     
@@ -173,4 +182,4 @@ def plot_3D_fluxtube():
 fig = plot_3D_fluxtube()
 
 
-fig.savefig("name.png", transparent=True)
+# fig.savefig("name.png", transparent=True)

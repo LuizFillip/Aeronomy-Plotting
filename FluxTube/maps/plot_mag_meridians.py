@@ -62,7 +62,7 @@ def plot_mag_meridians(
     if ax is None:
         fig, ax = plt.subplots(
             dpi = 300,
-            figsize = (10, 10),
+            figsize = (12,12),
             subplot_kw = {'projection': ccrs.PlateCarree()}
             )
     
@@ -93,4 +93,4 @@ def plot_mag_meridians(
     if ax is None:
         return fig
 
-fig = plot_mag_meridians( year = 2013)
+# fig = plot_mag_meridians( year = 2013)

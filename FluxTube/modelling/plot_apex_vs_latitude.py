@@ -51,6 +51,7 @@ def sel_height(h, height = 300):
     return args
 
 def plot_apex_vs_latitude(
+        ref_height = 300, 
         ax = None, 
         lim = 15,
         max_height = 500, 
@@ -79,7 +80,7 @@ def plot_apex_vs_latitude(
             base = base
             )
         
-        if h == 300:
+        if h == ref_height:
             color = 'black'
         else:
             color = '#0C5DA5'
@@ -109,9 +110,9 @@ def plot_apex_vs_latitude(
     if ax is None:
         return fig 
 
-
-# fig = plot_apex_vs_latitude()
-
-# FigureName = 'magnetic_lines'
-
-# fig.savefig(b.LATEX(FigureName, folder = 'modeling'), dpi = 400)
+def main():
+    fig = plot_apex_vs_latitude()
+    # 
+    FigureName = 'magnetic_lines'
+    
+    fig.savefig(b.LATEX(FigureName, folder = 'modeling'), dpi = 400)
