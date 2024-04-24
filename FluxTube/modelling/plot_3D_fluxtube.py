@@ -140,6 +140,7 @@ def plot_vertical_line(ax, df):
     
     
 def load_data(infile, apex = 300):
+    
     df1 =  pd.read_csv(infile, index_col = 0)
     
     df1.rename(columns = {"alt": "zeq",

@@ -2,6 +2,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import core as c 
+import base as b
+
+b.config_labels()
 
 
 def plot_matrix(ax, conf_matrix):
@@ -22,7 +25,7 @@ def plot_matrix(ax, conf_matrix):
                      verticalalignment='center', 
                      color= color, fontsize = 50)
     
-    ax.set(ylabel = 'Observação', xlabel = 'Previsão', 
+    ax.set(ylabel = 'Observation', xlabel = 'Prediction', 
            xticks = np.arange(conf_matrix.shape[1]), 
            yticks = np.arange(conf_matrix.shape[0]), 
            xticklabels = forecast_labels, 
@@ -34,13 +37,13 @@ def plot_matrix(ax, conf_matrix):
     
 
 # Define labels for observations and forecast indices
-observation_labels = ['Com EPB', 'Sem EPB']
-forecast_labels = ['Com EPB', 'Sem EPB']
+observation_labels = ['With EPB', 'Without EPB']
+forecast_labels = ['With EPB', 'Without EPB']
 
 fig, ax = plt.subplots(
     dpi = 300, 
     figsize = (14, 10),
-    ncols = 2)
+    ncols = 1)
 
 plt.subplots_adjust(wspace = 0.5)
 
@@ -52,7 +55,7 @@ def plot_results(ax, precision = True):
     if precision:
         precision = fore.accuracy_score
         
-        ax.set(title = '$V_P$ - ' + f'Precisão {precision} \%')
+        ax.set(title = '$V_P$ - ' + f'Precision {precision} \%')
     
     conf_matrix = fore.confusion_matrix
     
@@ -62,11 +65,11 @@ def plot_results(ax, precision = True):
 fore = c.forecast_epbs(year_threshold = 2023, parameter= 'gamma')
 
 conf_matrix = fore.confusion_matrix
-precision =  round(fore.accuracy_score, 2) * 100
+precision =  round(fore.accuracy_score, 2) #* 100
 
 
-ax[1].set(title = '$\gamma_{RT}$ - ' + f'Precisão {precision} \%')
+ax.set(title = '$\gamma_{RT}$ - ' + f'Precision {precision} \%')
 
 
-plot_matrix(ax[1], conf_matrix)
+plot_matrix(ax, conf_matrix)
 

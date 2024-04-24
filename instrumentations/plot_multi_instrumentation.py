@@ -27,7 +27,7 @@ def plot_imager(ax_img, PATH_SKY, file, index):
         os.path.join(PATH_SKY, file)
         )
     
-    new_img = all_sky.bright
+    new_img = all_sky.bright()
     
     all_sky.display(ax_img, new_img)
     dn = im.fn2datetime(file)
@@ -61,7 +61,7 @@ def plot_ionogram(ax2, PATH_IONO, target, col, site):
         labelleft = False
         )
     
-    title = target.strftime(f'({col + 1}) %H:%M')
+    title = target.strftime(f'({col + 1}) %Hh%M')
     
     ax2.set(title = title)
     
@@ -282,3 +282,4 @@ def main():
         folder = 'products'),
         dpi = 400)
     
+main()
