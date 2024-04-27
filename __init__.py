@@ -6,3 +6,4 @@ from .ionosonde import *
 from .demo import *
 from .correlations import *
 from .bars import *
+from .instrumentations import *
