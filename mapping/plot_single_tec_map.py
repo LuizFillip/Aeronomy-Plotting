@@ -25,6 +25,7 @@ def load_tec(infile, values = True):
         ).replace(-1, np.nan)
     
     xmax, ymax = df.values.shape
+   
     df.columns = np.arange(0, ymax)*0.5 - 90
     df.index = np.arange(0, xmax)*0.5 - 60
     
@@ -149,35 +150,12 @@ def plot_tec_map(
 
 def main():
     
-    dn = dt.datetime(2016, 10, 4, 4, 0)
-    dn = dt.datetime(2017, 9, 18, 3)
+    dn = dt.datetime(2016, 1, 13, 23, 30)
+    # dn = dt.datetime(2017, 9, 18, 3)
 
     # df = load_tec(b.get_path(dn))
     
     plot_tec_map(dn, ax = None, vmax = 12, invert_axis=False)
     plt.show()
 
-import os 
 
-
-# for i in range(0, 4):
-    
-    # delta = dt.timedelta(days = 1)
-    
-def run():
-    start = dt.datetime(2016, 1, 14, 21, 0) #+ delta
-    
-    end = dt.datetime(2016, 1, 15, 0, 0) #+ delta
-    
-    times = pd.date_range(start, end, freq= '10min')
-    infile = 'G:\\Meu Drive\\Python\\data-analysis\\database\\tec_maps\\'
-    for dn in times:
-        
-        fig = plot_tec_map(dn, ax = None, vmax = 50, invert_axis=False,
-        root = os.getcwd())
-        plt.ioff()
-        FigureName = dn.strftime('%Y%m%d%H%M')
-        fig.savefig(infile + FigureName)
-        print(dn)    
-        plt.clf()   
-        plt.close()    
