@@ -89,8 +89,9 @@ def plot_single_ionogram(
         time = dg.ionosonde_fname(fname)
 
         ax.set(title = time.strftime('%Y-%m-%d %Hh%M'))
-
-    return fig
+    
+    if ax is None:
+        return fig
 
 infile = 'database/ionogram/20130114S/'
 

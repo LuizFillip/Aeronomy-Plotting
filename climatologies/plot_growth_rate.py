@@ -200,7 +200,3 @@ def main():
 main()
 
 plt.show()
-# df = df.loc[df.index.time == dt.time(22, 0)]
-
-
-# df['ratio']

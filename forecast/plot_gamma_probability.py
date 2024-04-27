@@ -1,15 +1,50 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Apr 26 10:02:51 2024
-
-@author: Luiz
-"""
-
 import matplotlib.pyplot as plt 
 import core as c 
 import base as b 
 
 b.config_labels()
+
+
+
+def plot_gamma_predict_epbs(obs, pred):
+    
+    fig, ax = plt.subplots(
+        dpi = 300, 
+        nrows = 3,
+        sharex=True,
+        figsize = (12, 10)
+        )
+    
+    plt.subplots_adjust(hspace = 0.1)
+    
+    ax[0].plot(obs['gamma'])
+    
+    ax[1].plot(pred *100, color = 'k')
+    
+    ax[2].plot(obs['epb'], color = 'k')
+    
+    ax[1].set(
+        ylabel = 'Probability (\%)', 
+        ylim = [-20, 120], 
+        yticks = list(range(0, 125, 25))
+        )
+  
+    ax[0].set(
+        ylabel = '$\gamma_{RT}$', 
+        yticks = list(range(0, 4, 1))
+        )
+    
+    ax[2].set(
+        ylabel = 'EPB observed', 
+        ylim = [-0.2, 1.2], 
+        yticks = [0, 1]
+        )
+    b.format_month_axes(ax[2])
+    
+    for line in [0, 1]:
+        
+        ax[1].axhline(line * 100, lw = 0.5, linestyle = '--') 
+        ax[2].axhline(line, lw = 0.5, linestyle = '--')
 
 parameter = 'gamma'
 
@@ -20,21 +55,4 @@ pred = c.forecast_epbs(
     parameter= 'gamma')
 pred = pred.data['predict']
 
-def plot_gamma_predict_epbs(obs, pred):
-    
-    fig, ax = plt.subplots(
-        nrows = 2,
-        sharex=True,
-        figsize = (12, 10)
-        )
-    
-    ax[0].plot(obs, label = ['$\gamma_{RT}$','EPBs'])
-    
-    ax[0].set(ylabel = '$\gamma_{RT}$')
-    ax[0].legend()
-    
-    ax[1].plot(pred *100, color = 'g')
-    
-    ax[1].set(ylabel = 'Probability (\%)')
-    
-    b.format_month_axes(ax[1])
+plot_gamma_predict_epbs(obs, pred)

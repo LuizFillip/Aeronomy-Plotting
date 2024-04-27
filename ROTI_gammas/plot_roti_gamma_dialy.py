@@ -84,15 +84,3 @@ def plot_roti_and_index(path, files):
     return fig 
 
 
-# path = 'temp2/'
-# files = os.listdir(path)[5:10]
-
-# fig = plot_roti_and_index(path, files)
-
-# FigureName = 'supression_events_2'
-
-# fig.savefig(
-#     b.LATEX(FigureName, folder = 'maps'),
-#     dpi = 400
-#     )
-
