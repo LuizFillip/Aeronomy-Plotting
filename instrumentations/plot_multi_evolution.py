@@ -37,7 +37,7 @@ def save_image(fig, target, dn):
 
     name = target.strftime('%Y%m%d%H%M%S')
     
-    fig.savefig(f'movies/{folder}/{name}')
+    fig.savefig(f'movies/{folder}/{name}', dpi = 100)
 
 
 def title(dn):
@@ -51,7 +51,7 @@ def plot_time_evolution(
         target = None,
         vmax = 10, 
         site = 'SAA0K',
-        save = False,
+        save = True,
         threshold = 0.20, 
         fontsize = 30, 
         root_tec = 'D:\\'
@@ -90,7 +90,9 @@ def plot_time_evolution(
         path_of_ionogram, 
         ax = ax_img, 
         aspect = 'auto',
-        label = True
+        label = True,
+        ylabel_position = 'right',
+        title = False
         )
         
     pl.plot_roti_timeseries(
@@ -159,18 +161,25 @@ def run(
  
 
 
-def test_single(dn,  vmax = 25, remove_noise = True):
+def test_single(dn, start = None, vmax = 60, remove_noise = True):
+    #if start is None:
     
     start = im.round_date(dn)
     
     df =  pb.concat_files(
           start, 
           root = 'D:\\', 
-          remove_noise = remove_noise
+          remove_noise = True
           )
     
     
     ds = b.sel_times(df, start, hours = 12)
+    
+    file = im.get_closest(
+        dn, 
+        file_like = True, 
+        ext = '.tif'
+        )
     
     try:
         file = im.get_closest(
@@ -188,14 +197,11 @@ def test_single(dn,  vmax = 25, remove_noise = True):
             )
     
         plot_time_evolution(file, start, ds, vmax = vmax)
-    
+        
     plt.show()
 
     
 
-
-# 
-# dn = 
 def main(dn, vmax = 40, site = 'CA'):
     
     run(dn, vmax = vmax)
@@ -232,12 +238,7 @@ dates = {
     dt.datetime(2022, 7, 24, 21): 10
     }
 
-# vmaxs = list(dates.keys())
 
-# vmax = vmaxs[0]
-# dn = dates[vmax]
-dn = dt.datetime(2022, 7, 24, 21)
-vmax = 60
 
 dates = [
     '2015-01-19',
@@ -255,29 +256,34 @@ dates = [
     '2019-08-30'
     ]
 
-delta = dt.timedelta(hours = 21)
-
-# for dn in pd.to_datetime(dates):
+def run_all_dates(dates):
+    import pandas as pd 
     
-#         folder_in = dn.strftime('%Y%m%d')
+    delta = dt.timedelta(hours = 21)
+    
+    for dn in pd.to_datetime(dates):
         
-#         b.images_to_gif(
-#             name =  folder_in, 
-#             path_out = 'movies',
-#             path_in = f'movies/{folder_in}/', 
-#             fps = 20
-#             )
-
+        folder_in = dn.strftime('%Y%m%d')
             
-    # run(dn + delta, 
-    #     vmax = vmax, 
-    #     remove_noise = False,
-    #     root_tec = 'F:\\')
+        b.images_to_gif(
+                name =  folder_in, 
+                path_out = 'movies',
+                path_in = f'movies/{folder_in}/', 
+                fps = 20
+                )
+    
+                
+        run(dn + delta, 
+            vmax = vmax, 
+            remove_noise = False,
+            root_tec = 'F:\\')
 
 
-dn= dt.datetime(2016, 10, 3)
+dn = dt.datetime(2013, 12, 24, 21)
     
 folder_in = dn.strftime('%Y%m%d')
+
+main(dn, vmax = 60, site = 'CA')
 
 
 # b.images_to_gif(
@@ -287,9 +293,12 @@ folder_in = dn.strftime('%Y%m%d')
 #      fps = 20
 #      )
 
-b.images_to_movie(
-        path_in = f'movies/{folder_in}/', 
-        path_out =  'movies/',
-        movie_name = folder_in,
-        fps = 5
-        )
+# b.images_to_movie(
+#         path_in = f'movies/{folder_in}/', 
+#         path_out =  'movies/',
+#         movie_name = folder_in,
+#         fps = 5
+#         )
+# start = dt.datetime(2013, 12, 25, 1)
+
+# test_single(dn, start = None, vmax = 60, remove_noise = True)
