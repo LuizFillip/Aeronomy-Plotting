@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import base as b 
 import PlasmaBubbles as pb 
 import GEO as gg 
+import plotting as pl 
 
 b.config_labels(fontsize = 25)
 
@@ -67,14 +68,14 @@ def plot_terminator_shift(ax, dusk, occur):
         ha = 'center'
         )
     
-def plot_shift(ax, ds, col):
+def plot_shift(ax, ds, col, lon = -50):
     
     dn = ds.index[0]
     occur = ds[ds[col] == 1].index.min()
     
-    ds = pb.track_time_diff(ds, col, floatType = False)
+    ds = pb.track_time_diff(ds, 'max', floatType = False)
   
-    plot_terminator_shift(ax, dusk(dn, col), occur)
+    plot_terminator_shift(ax, dusk(dn, lon), occur)
     
     for i in range(len(ds)):
         sel = ds.iloc[i, :]
@@ -85,9 +86,9 @@ def plot_shift(ax, ds, col):
         plot_arrow_and_note(ax, start, end, time)
 
 
-def plot_occurrencegram(ax, ds, threshold = 0.25):
+def plot_occurrencegram(ax, ds, lon = -50, threshold = 0.25):
     dn = ds.index[0]
-    col = ds.name
+   
     ds1 = pb.events_by_longitude(ds, threshold)
     
     ax.plot(
@@ -95,27 +96,39 @@ def plot_occurrencegram(ax, ds, threshold = 0.25):
          marker = 'o',
          markersize = 3,
          color = 'k', 
-         label = f'{col}°'
+         label = f'{lon}°'
         )
         
     ax.axvline(
-        dusk(dn, col), 
+        dusk(dn, lon), 
         linestyle = '--',
         color = 'k', 
         )
+    
+    for limit in [0, 1]:
+        ax.axhline(
+            limit, 
+            color = 'k', 
+            linestyle = '--'
+            )
     
     b.format_time_axes(ax, translate = True)
     
     return ds1
 
 
-def plot_roti_max(ax, ds, threshold = 0.25):
+def plot_roti_max(ax, ds, lon = -50, threshold = 0.25):
     
-    col = ds.name
-    ax.plot(ds)
+    ds1 = pl.plot_roti_points(
+            ax, ds, 
+            threshold = threshold,
+            label = True, 
+            points_max = True, 
+            occurrence = False
+            )
     
     ax.axvline(
-        dusk(dn, col), 
+        dusk(dn, lon), 
         linestyle = '--',
         color = 'k', 
         )
@@ -125,6 +138,8 @@ def plot_roti_max(ax, ds, threshold = 0.25):
          color = 'red', lw = 2, 
          label = f'{threshold} TECU/min'
          )
+    
+    return ds1
 
 
 
@@ -141,20 +156,24 @@ def plot_epb_time_feadtures(ds,  col = '-50'):
       
     plt.subplots_adjust(hspace = 0.05)
 
-    plot_roti_max(ax[0], ds[col])
+    ds1 = plot_roti_max(ax[0], ds)
     
-    events = plot_occurrencegram(ax[1], ds[col])
+    events = plot_occurrencegram(ax[1], ds1['max'])
     
-    
-    plot_shift(ax[1], events, col)
+    plot_shift(ax[1], events, col = 'max')
     return fig
 
-df = b.load('database/longitudes_all_years.txt')
+import os 
 
 
-dn = dt.datetime(2013, 2, 2, 20)
+dn = dt.datetime(2013, 1, 14, 20)
 
+df = pb.concat_files(
+     dn, 
+     days = 2, 
+     root = os.getcwd(), 
+     hours = 12
+     )
 
-ds = b.sel_times(df, dn, hours = 11)
+fig = plot_epb_time_feadtures(df,  col = '-50')
 
-fig = plot_epb_time_feadtures(ds,  col = '-50')
