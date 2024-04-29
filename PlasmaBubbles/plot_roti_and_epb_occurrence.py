@@ -3,7 +3,6 @@ import base as b
 import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
 import GEO as gg 
-from tqdm import tqdm 
 
 
 args = dict(
@@ -148,50 +147,3 @@ def single_plot(
     return fig
 
 
-def save_img(fig, save_in):
-    
-    
-   
-    
-    return 
-
-
-
-def save_frames(year):
-    
-    save_in = f'D:\\img\\{year}\\'
-    
-    for day in tqdm(range(330, 366, 1), str(year)):
-    
-        delta = dt.timedelta(days = day)
-        
-        plt.ioff()
-        
-        dn = dt.datetime(year, 1, 1, 20) + delta
-        
-        fig = single_plot(
-                dn, 
-                cols = [8], 
-                hours = 14
-                )
-        
-        name = dn.strftime('%j')
-
-        save_img(fig, f'{save_in}{name}')
-        
-        plt.clf()   
-        plt.close()
-        
-        
-# dn = dt.datetime(2015, 1, 8, 20)
-
-# fig = single_plot(
-#         dn, 
-#         cols = [8], 
-#         hours = 11
-#         )
-
-# plt.show()
-
-
-# save_frames(2013)

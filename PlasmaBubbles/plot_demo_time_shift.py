@@ -85,7 +85,28 @@ def plot_shift(ax, ds, col, lon = -50):
             
         plot_arrow_and_note(ax, start, end, time)
 
-
+def plot_terminator_line(ax, dn, lon, vmax = 5, label = False):
+    
+    delta = dt.timedelta(minutes = 30)
+    dusk_time = dusk(dn, lon)  - delta
+    
+    ax.axvline(
+        dusk_time, 
+        linestyle = '--',
+        color = 'k', 
+        lw = 2
+        )
+    
+    if label:
+      
+        ax.text(
+            dusk_time, 
+            vmax,
+            'Solar terminator (300 km)',
+            transform = ax.transData
+            )
+    
+    return 
 def plot_occurrencegram(ax, ds, lon = -50, threshold = 0.25):
     dn = ds.index[0]
    
@@ -98,12 +119,9 @@ def plot_occurrencegram(ax, ds, lon = -50, threshold = 0.25):
          color = 'k', 
          label = f'{lon}°'
         )
-        
-    ax.axvline(
-        dusk(dn, lon), 
-        linestyle = '--',
-        color = 'k', 
-        )
+    
+    
+    plot_terminator_line(ax, dn, lon, label = False)
     
     for limit in [0, 1]:
         ax.axhline(
@@ -112,7 +130,14 @@ def plot_occurrencegram(ax, ds, lon = -50, threshold = 0.25):
             linestyle = '--'
             )
     
-    b.format_time_axes(ax, translate = True)
+    ax.set(
+        ylabel = 'EPBs occurrence', 
+        yticks = [0, 1], 
+        xlim = [ds.index[0], ds.index[-1]],
+        ylim = [-0.2, 1.2]
+        )
+    
+    b.format_time_axes(ax, translate = False)
     
     return ds1
 
@@ -127,17 +152,15 @@ def plot_roti_max(ax, ds, lon = -50, threshold = 0.25):
             occurrence = False
             )
     
-    ax.axvline(
-        dusk(dn, lon), 
-        linestyle = '--',
-        color = 'k', 
-        )
+    plot_terminator_line(ax, dn, lon, label = True)
     
     ax.axhline(
          threshold, 
          color = 'red', lw = 2, 
          label = f'{threshold} TECU/min'
          )
+    
+    pl.legend_max_points_roti(ax, fontsize = 25)
     
     return ds1
 
@@ -156,9 +179,10 @@ def plot_epb_time_feadtures(ds,  col = '-50'):
       
     plt.subplots_adjust(hspace = 0.05)
 
-    ds1 = plot_roti_max(ax[0], ds)
+
+    ds1 = plot_roti_max(ax[0], ds, lon = -50)
     
-    events = plot_occurrencegram(ax[1], ds1['max'])
+    events = plot_occurrencegram(ax[1], ds1['max'], lon = -50)
     
     plot_shift(ax[1], events, col = 'max')
     return fig

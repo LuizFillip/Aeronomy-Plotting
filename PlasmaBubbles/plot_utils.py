@@ -4,7 +4,8 @@ def legend_max_points_roti(
         ax, 
         fontsize = 30, 
         s = 100, 
-        threshold = 0.25
+        threshold = 0.25,
+        y = 2
         ):
     
     l1 = plt.scatter(
@@ -39,10 +40,14 @@ def legend_max_points_roti(
         labels, 
         ncol = 1, 
         fontsize = fontsize,
-        bbox_to_anchor = (1.07, 1.2),
+        bbox_to_anchor = (1.07, y),
         handlelength = 2,
         loc = 'upper right',
         borderpad = 1.8,
         handletextpad = 1, 
         scatterpoints = 1
         )
+    
+def plot_termintor():
+    
+    return 

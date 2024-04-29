@@ -94,19 +94,16 @@ def plot_roti_points(
         if label:
             ax.set(ylabel = 'ROTI (TECU/min)')
             
-        # if occurrence:
+        if occurrence:
         
-        ax1 = ax.twinx()
-        plot_occurrence_events(
-            ax1, df1['max'], threshold)
+            ax1 = ax.twinx()
+            plot_occurrence_events(
+                ax1, 
+                df1['max'], 
+                threshold)
         
-        ax1.spines['right'].set_color('blue') 
-        ax1.spines['left'].set_color('blue') 
-        
-        
-        # else:
-            
-        return ax1
+        if not occurrence:
+            return df1 
 
 
 
@@ -210,13 +207,14 @@ def plot_row_roti_in_sectors(
 
 
 def main():
-    dn = dt.datetime(2015, 3, 17, 21)
+    import os 
+    dn = dt.datetime(2013, 1, 14, 21)
     
     
     df = pb.concat_files(
         dn, 
         days = 2, 
-        root = 'D:\\', #os.getcwd(), 
+        root = os.getcwd(), 
         hours = 12
         )
     
