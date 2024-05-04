@@ -54,7 +54,9 @@ def plot_matrix(
         cmap = 'jet'
         )
     step = vmax / 5
+    
     ticks = np.arange(0, vmax + step, step).round(0)
+    
     if colorbar:
         b.colorbar(
                 img, 

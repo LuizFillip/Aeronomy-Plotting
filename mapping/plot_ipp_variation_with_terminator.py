@@ -59,7 +59,7 @@ def plot_lines(
         
         ref_long = key[i]
         
-        dusk = pb.terminator(
+        dusk = gg.terminator(
             ref_long, 
             start, 
             float_fmt = False
@@ -72,6 +72,18 @@ def plot_lines(
             ref_long + 5, 
             delta_day = 1
             )
+        
+        # ax.text(dusk, 0.5,
+        #     'Local terminator',
+        #     transform = ax.transData
+        #     )
+
+
+
+        # ax.text(midnight, 0.5,
+        #     'Local midnight',
+        #     transform = ax.transData
+        #     )
         
         ax.axvline(
             midnight, 
@@ -139,7 +151,12 @@ def plot_roti_timeseries(
 
 
 
-def plot_ipp_variation(df, start, dn, twilight = 12):
+def plot_ipp_variation(
+        df, 
+        start, 
+        dn, 
+        twilight = 12
+        ):
     
     fig, ax_map, axes = b.multi_layout(nrows = 4)
 
