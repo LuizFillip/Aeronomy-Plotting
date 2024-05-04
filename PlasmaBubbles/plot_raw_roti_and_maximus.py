@@ -1,9 +1,7 @@
-import matplotlib.pyplot as plt 
 import base as b
-import datetime as dt  
 import PlasmaBubbles as pb 
-import GEO as gg 
-
+import GEO as gg
+import numpy as np 
 
 b.config_labels()
 
@@ -18,7 +16,7 @@ args = dict(
     
 def plot_occurrence_events(ax, ds, threshold = 0.25):
     
-    events = pb.events_by_longitude(ds, threshold)
+    events = pb.events_by_longitude(ds['max'], threshold)
     
     line, = ax.plot(
           events, 
@@ -59,7 +57,7 @@ def plot_roti_points(
         occurrence = True
         ):
         
-    ax.plot(ds['roti'], **args, label = 'Pontos de ROTI')
+    ax.plot(ds['roti'], **args, label = 'ROTI points')
     
 
     if len(ds) != 0:
@@ -99,139 +97,123 @@ def plot_roti_points(
             ax1 = ax.twinx()
             plot_occurrence_events(
                 ax1, 
-                df1['max'], 
-                threshold)
-        
-        if not occurrence:
-            return df1 
-
-
-
-def plot_infos(ax, infos):
-    
-    delta = dt.timedelta(minutes = 10)
-    
-    for col, y in enumerate([3, 1.03]): 
-        
-        l = b.chars()[col]
-        
-        ax[0, col].text(
-            -0.1, 1.3, f'({l})', 
-            transform = ax[0, col].transAxes, 
-            fontsize = 35
-            )
-        
-        ax[0, col].text(
-            infos[0] + delta, y, 'Anoitecer', 
-            transform = ax[0, col].transAxes
-            )
-        
-        ax[0, col].text(
-            infos[1] + delta, y, 'Meia noite local', 
-            transform = ax[0, col].transAxes
-            )
-
-def plot_row_roti_in_sectors(
-        df, dn, 
-        threshold = 0.25,
-        fontsize = 30):
-    
-    fig, ax = plt.subplots(
-        dpi = 300, 
-        nrows = 4,
-        ncols = 2, 
-        sharey = 'col',
-        sharex = True,
-        figsize = (18, 12)
-        )
-    
-    plt.subplots_adjust(hspace = 0.3, wspace = 0.03)
-    
-    coords = gg.set_coords(dn.year)
-    
-    out_infos = []
-    for row, sector in enumerate(coords.keys()):
-    
-        ds = pb.filter_coords(df, sector, coords)
-        
-        ds = plot_roti_points(
-                ax[row, 0], ds, 
-                threshold = threshold,
-                label = False, 
-                points_max = True
+                df1, 
+                threshold
                 )
         
-        terminator = pb.terminator(sector, dn, float_fmt = False)
+        if occurrence:
+            return df1 
+    
+
+
+
+
+def plot_lines( 
+        axes, 
+        start,  
+        plot_term = False,
+        y = 4.8, 
+        label_top = False
+        ):
+    """
+    Plot terminator of the first occurrence in 
+    the region and find the local midnight 
+    
+    """
+    
+    key = np.arange(-80, -40, 10)[::-1]
+    
+    for i, ax in enumerate(axes):
         
-        ax[row, 1].axvline(terminator, color = 'k', lw = 2)
-        ax[row, 0].axvline(terminator, color = 'k', lw = 2)
+        ref_long = key[i]
         
-        plot_occurrence_events(ax[row, 1], ds, threshold)
-        
-        ax[row, 1].yaxis.tick_right()
-        
-        info = f'Setor {row + 1} ({sector}°)'
-        
-        ax[row, 0].text(
-            0.9, 1.1, info, 
-            transform = ax[row, 0].transAxes
+        dusk = gg.terminator(
+            ref_long, 
+            start, 
+            float_fmt = False
             )
         
-        delta = dt.timedelta(hours = 3)
-        midnight = gg.local_midnight(dn + delta, sector)
+        ax.axvline(dusk, lw = 2)
         
-        ax[row, 1].axvline(midnight, color = 'b', lw = 2)
-        ax[row, 0].axvline(midnight, color = 'b', lw = 2)
+        midnight = gg.local_midnight(
+            start, 
+            ref_long + 5, 
+            delta_day = 1
+            )
         
-        if row == 0:
-            out_infos.extend([terminator, midnight])
-  
-    # plot_infos(ax, out_infos)
-    
-    b.format_time_axes(ax[-1, 0], translate = True)
-    b.format_time_axes(ax[-1, 1], translate = True)
+        if label_top:
+            ax.text(dusk, 0.5,
+                'Local terminator',
+                transform = ax.transData
+                )
     
     
-    fig.text(0.07, 0.33, 'ROTI (TECU/min)', 
-        fontsize = fontsize, 
-        rotation = 'vertical'
-        )
     
-    fig.text(0.93, 0.42, 'Ocorrência', 
-        fontsize = fontsize, 
-        rotation = 'vertical'
-        ) 
-    
-    return fig 
-
-
-
-def main():
-    import os 
-    dn = dt.datetime(2013, 1, 14, 21)
-    
-    
-    df = pb.concat_files(
+            ax.text(midnight, 0.5,
+                'Local midnight',
+                transform = ax.transData
+                )
+            
+        ax.axvline(
+            midnight, 
+            lw = 2,
+            color = 'k',
+            linestyle = '--'
+            )
+        
+def plot_roti_timeseries(
+        axes, 
+        df, 
         dn, 
-        days = 2, 
-        root = os.getcwd(), 
-        hours = 12
-        )
-    
-    # df = df.loc[~df['sts'].isin(['mabb', 'impz', 'mapa'])] 
-    
-    fig = plot_row_roti_in_sectors(
-            df, dn, threshold = 0.25,
-            fontsize = 30)
+        start,  
+        right_ticks = False, 
+        vmax  = 2, 
+        threshold = 0.25
+        ):
+        
+    sectors = np.arange(-80, -40, 10)[::-1]    
+    plot_lines( axes, start, y = vmax + 1.2)
     
     
-    FigureName = dn.strftime('%Y%m%d_midnight_event')
-     
-    # fig.savefig(
-    #       b.LATEX(FigureName, 
-    #       folder = 'timeseries'),
-    #       dpi = 400
-    #       )
+    for i, ax in enumerate(axes):
+        
+        sector = sectors[i]
+        
+        sel = pb.filter_region_and_dn(df, dn, sector)
+        
+        pl.plot_roti_points(
+            ax, sel, 
+            threshold,
+            label = False, 
+            points_max = True,
+            vmax = vmax,
+            occurrence = True
+            )
+                
+        ax.text(
+            0.01, 1.05, f'Box {i + 1}', 
+            transform = ax.transAxes
+            )
+        
+        ax.set(
+            ylim = [0, vmax + 1], 
+            yticks = list(range(0, vmax + 1, 1)), 
+            xlim = [df.index[0], df.index[-1]]
+            )
+        
+        if right_ticks:
+            ax.tick_params(
+                axis='y', 
+                labelright = True, 
+                labelleft = False, 
+                right = True, 
+                left = False
+                )
+            
+        
+        if i != -1:
+            ax.set(xticklabels = [])
+            
     
-# main()
-
+    
+    b.format_time_axes(axes[-1])
