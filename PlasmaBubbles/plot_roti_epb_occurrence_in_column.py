@@ -3,11 +3,16 @@ import base as b
 import PlasmaBubbles as pb 
 import datetime as dt
 import numpy as np 
-
+import GEO as gg 
 
 b.config_labels(fontsize = 25)
 
-def load_dataset(dn, hours = 12, num = 3, root = 'D:\\'):
+def load_dataset(
+        dn, 
+        hours = 12, 
+        num = 3, 
+        root = 'D:\\'
+        ):
     
     out = []
     for folder in [f'events{num}', f'long{num}']:
@@ -25,9 +30,9 @@ def load_dataset(dn, hours = 12, num = 3, root = 'D:\\'):
 
 
 def get_infos(ds, lon):
-    df1 = pb.BubbleFeatures(ds)
+    df1 = pb.bubble_features(ds)
     
-    infos = df1.loc[df1.index.get_level_values(1) == lon, 
+    infos = df1.loc[df1.index == lon, 
                    ['type', 'drift']].values.ravel()
     
     Type = infos[0]
@@ -66,7 +71,7 @@ def plot_roti_epb_occurrence_in_column(
         
         lon = lons[i]
         
-        terminator = pb.terminator(
+        terminator = gg.terminator(
             int(lon), 
             dn, 
             float_fmt = False
@@ -105,10 +110,7 @@ def plot_roti_epb_occurrence_in_column(
         
         if i == 3:
             b.format_time_axes(ax)
-        
-  
-        
-          
+    
     fig.text(
         0.04, 0.33, 
         'ROTI (TECU/min)', 
@@ -126,12 +128,7 @@ def plot_roti_epb_occurrence_in_column(
     return fig 
 
 
-
-# ds
-dn = dt.datetime(2016, 5, 27, 21)
-dn = dt.datetime(2016, 10, 4, 4, 0)
-dn = dt.datetime(2018, 3, 19, 21)
-
+dn = dt.datetime(2014, 2, 9, 21)
 
 fig = plot_roti_epb_occurrence_in_column(dn)
 

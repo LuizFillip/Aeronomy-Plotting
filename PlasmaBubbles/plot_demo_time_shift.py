@@ -29,7 +29,7 @@ def plot_arrow_and_note(ax, start, end, time):
         )
     
     ax.annotate(
-        f'{round(time, 2)}',
+        f'{round(time, 2)} hrs',
         xy = (middle, 0.55), 
         xycoords = 'data',
         fontsize = 30.0,
@@ -57,10 +57,11 @@ def plot_terminator_shift(ax, dusk, occur):
         )
     
     middle = middle_time(occur, dusk)
-    dtime = round((occur - dusk).total_seconds() / 3600, 2)
+    dtime = abs(round(
+        (occur - dusk).total_seconds() / 3600, 2))
         
     ax.annotate(
-        f'{dtime}',
+        f'{dtime} hrs',
         xy = (middle, 0.55), 
         xycoords = 'data',
         fontsize = 30.0,
@@ -85,7 +86,12 @@ def plot_shift(ax, ds, col, lon = -50):
             
         plot_arrow_and_note(ax, start, end, time)
 
-def plot_terminator_line(ax, dn, lon, vmax = 5, label = False):
+def plot_terminator_line(
+        ax, 
+        dn, 
+        lon, 
+        vmax = 5, 
+        label = False):
     
     delta = dt.timedelta(minutes = 30)
     dusk_time = dusk(dn, lon)  - delta
@@ -107,9 +113,14 @@ def plot_terminator_line(ax, dn, lon, vmax = 5, label = False):
             )
     
     return 
-def plot_occurrencegram(ax, ds, lon = -50, threshold = 0.25):
+def plot_occurrencegram(
+        ax, 
+        ds, 
+        lon = -50, 
+        threshold = 0.25
+        ):
+    
     dn = ds.index[0]
-   
     ds1 = pb.events_by_longitude(ds, threshold)
     
     ax.plot(
@@ -143,6 +154,8 @@ def plot_occurrencegram(ax, ds, lon = -50, threshold = 0.25):
 
 
 def plot_roti_max(ax, ds, lon = -50, threshold = 0.25):
+    
+    dn = ds.index[0]
     
     ds1 = pl.plot_roti_points(
             ax, ds, 
@@ -185,19 +198,23 @@ def plot_epb_time_feadtures(ds,  col = '-50'):
     events = plot_occurrencegram(ax[1], ds1['max'], lon = -50)
     
     plot_shift(ax[1], events, col = 'max')
+    
+    b.plot_letters(ax, y = 0.8, x = 0.02)
     return fig
 
-import os 
 
+def main():
+    import os 
+    
+    dn = dt.datetime(2013, 1, 14, 20)
+    
+    df = pb.concat_files(
+         dn, 
+         days = 2, 
+         root = os.getcwd(), 
+         hours = 12
+         )
+    
+    fig = plot_epb_time_feadtures(df,  col = '-50')
 
-dn = dt.datetime(2013, 1, 14, 20)
-
-df = pb.concat_files(
-     dn, 
-     days = 2, 
-     root = os.getcwd(), 
-     hours = 12
-     )
-
-fig = plot_epb_time_feadtures(df,  col = '-50')
-
+main()

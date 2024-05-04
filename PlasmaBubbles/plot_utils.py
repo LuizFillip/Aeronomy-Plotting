@@ -48,6 +48,6 @@ def legend_max_points_roti(
         scatterpoints = 1
         )
     
-def plot_termintor():
+def plot_terminator():
     
     return 
