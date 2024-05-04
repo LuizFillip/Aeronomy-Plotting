@@ -6,16 +6,18 @@ import datetime as dt
 
 
 b.config_labels(fontsize = 25)
+FREQ_PATH = 'digisonde/data/chars/freqs/'
+
 
 def plot_terminators(ax, dn):
          
      dusk = gg.dusk_from_site(
              dn, 
-             site = 'jic',
+             site = 'saa',
              twilight_angle = 18
              )
      
-     delta = dt.timedelta(minutes = 30)
+     delta = dt.timedelta(minutes = 60)
      
      for row in range(2):
          
@@ -29,38 +31,77 @@ def plot_terminators(ax, dn):
              
          ax[row].axvline(
              dusk, 
-             linestyle = '--',
+             linestyle = '-',
+             lw = 2,
              color = 'k'
              )
  
 
      return dusk
 
-def plot_infos(ax, vz, dn):
+def plot_infos(ax, vz, site):
+
+    data = dg.time_between_terminator(vz, site = site)
+
+    ax.axvline(data['time'], label = 'Vp')
     
-    data = dg.time_between_terminator(vz, dn)
-    idx = data['time']
-    vmax = data['vp']
+    time = data['time'].strftime('%Hh%M')
     
-    ax.axvline(idx, label = 'Vp')
+    vmax = round(data['vp'], 2)
     
-    idx = idx.strftime('%Hh%M')
-    
-    vmax = round(vmax, 2)
-    
-    ax.text(0.05, 0.1,
-            f'Vp = {vmax} m/s ({idx} UT)',
-            transform = ax.transAxes)
+    ax.text(
+        0.55, 0.82,
+        f'$V_p =$ {vmax} m/s ({time} UT)',
+        transform = ax.transAxes
+        )
     
     ax.axhline(0, linestyle = '--')
     
-    ax.legend(loc = 'upper right')
+
+class labels:
     
-def plot_vz_and_frequencies(df, vz, dn):
+    def __init__(self, language = 'pt'):
+        if language == 'pt':
+            self.vz = "Deriva vertical (m/s)"
+            self.freq = 'Frequências fixas'
+        else:
+            self.vz = 'Vertical drift (m/s)'
+            self.freq = 'Fixed frequencies'
+
+
+
+def plot_heights(ax, df, cols):
     
-    df = df.iloc[1:]
-    # vz = vz.dropna().iloc[1:]
+    ax.plot(df[cols], label = cols)
+
+    ax.set(
+        ylabel = "Altitude (km)", 
+        ylim = [100, 700])
     
+    ax.legend(
+        ncol = 2, 
+        loc = "upper right", 
+        )
+
+def plot_drift(ax, vz, cols, vmax = 70):
+    
+    lb = labels('en')
+    
+    ax.plot(vz[cols])
+    ax.set(
+          ylabel = lb.vz, 
+          ylim = [-vmax, vmax], 
+          xlim = [vz.index[0], vz.index[-1]]
+          )
+
+    ax.axhline(0, linestyle = '--')
+    plot_infos(ax, vz, site)
+    
+    
+def plot_vz_and_frequencies(df, vz, site):
+    
+    dn = df.index[0]
+
     fig, ax = plt.subplots(
         figsize = (12, 8), 
         nrows = 2, 
@@ -70,75 +111,51 @@ def plot_vz_and_frequencies(df, vz, dn):
     
     plt.subplots_adjust(hspace = 0.05)
     
-    ax[1].plot(vz['vz'], lw = 2, 
-               linestyle = '--',
-               color = 'k', 
-               label = 'Média')
+    cols = df.columns[1:]
     
-    for num, col in enumerate(df.columns):
-        
-        if col != 'time':
-            
-            ax[0].plot(df[col], label = f'{col}')
-            
-            ax[1].plot(vz[col])
-            
-    
+    plot_heights(ax[0], df, cols)
+    plot_drift(ax[1], vz, cols, vmax = 70)
+    b.format_time_axes(ax[1], translate = False)
 
-    ax[0].set(ylabel = "Altitude (km)", 
-              ylim = [100, 700])
-    
-    vmax = 70
-    
-    ax[1].set(
-              ylabel = "Deriva vertical (m/s)", 
-              ylim = [-vmax, vmax], 
-              xlim = [df.index[0], df.index[-1]]
-              )
-     
-    b.format_time_axes(ax[1], translate = True)
-    
-    ax[0].legend(
-        bbox_to_anchor = (.5, 1.45), 
-        ncol = 5, 
-        loc = "upper center", 
-        title = "Frequências fixas"
-        )
-    
     plot_terminators(ax, dn)
     
     b.plot_letters(ax, y = 0.85, x = 0.03)
     
-    plot_infos(ax[1], vz, dn)
+    ax[0].set(title = gg.sites[site]['name'])
+    
+    plt.show()
 
     return fig
 
 
-import numpy as np
 
 
 
-        
-def main():
-        
-    infile = 'digisonde/data/jic_freqs.txt'
 
-    df = b.load(infile)
-    df = df.drop(columns = ['8', '9'])
-    dn = dt.datetime(2019, 1, 2, 20)
 
-    ds = b.sel_times(df, dn, hours = 7).interpolate()
 
+file = 'FZA0M_20140209(040).TXT'
+file = 'SAA0K_20180319(078).TXT'
+def pipe_data(file):
+    df = dg.freq_fixed(FREQ_PATH + file)
+    del df[9]
+    site, dn = dg.site_datetime_from_file(file, hours = 18)
+    
+    ds = b.sel_times(df, dn, hours = 12).interpolate()
+    
+    ds = ds.iloc[1:]
     vz = dg.vertical_drift(ds)
     
-    vz = vz.replace(0, np.nan)
-        
-    fig = plot_vz_and_frequencies(ds, vz, dn)
+    vz = vz.replace(0, float('nan'))
     
-# main()
-# plt.show()
-# infile = 'digisonde/data/jic_freqs.txt'
+    return ds, vz, site
 
-# df = b.load(infile)
 
-# df
+
+
+ds, vz, site = pipe_data(file)
+
+fig = plot_vz_and_frequencies(ds, vz, site)
+
+# df = dg.pipeline_char(PATH_CHAR + fn)
+

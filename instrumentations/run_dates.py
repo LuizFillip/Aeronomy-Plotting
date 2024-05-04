@@ -50,7 +50,7 @@ def main(dn, vmax = 40, site = 'CA'):
         name =  folder_in, 
         path_out = 'movies',
         path_in = f'movies/{folder_in}/', 
-        fps = 20
+        fps = 7
         )
    
 dates = {
@@ -58,50 +58,86 @@ dates = {
     dt.datetime(2015, 1, 19, 21): 60,
     dt.datetime(2015, 1, 22, 21): 60,
     dt.datetime(2016, 2, 11, 21): 60,
-    dt.datetime(2016, 10, 3, 21): 30,
-    dt.datetime(2016, 5, 27, 21): 12, 
+    dt.datetime(2016, 10, 3, 21): 20, #mid in 1
     dt.datetime(2017, 9, 17, 21): 12, 
     dt.datetime(2017, 3, 2, 21): 40, 
-    dt.datetime(2017, 8, 20, 21): 12, 
-    dt.datetime(2017, 8, 21, 21): 12, 
-    dt.datetime(2017, 8, 30, 21): 10, 
-    dt.datetime(2017, 9, 16, 21): 12, 
-    dt.datetime(2017, 9, 21, 21): 12, 
-    dt.datetime(2017, 10, 17, 21): 30, 
+    dt.datetime(2017, 8, 20, 21): 6, 
+    dt.datetime(2017, 8, 21, 21): 6, 
+    dt.datetime(2017, 8, 30, 21): 6, 
+    dt.datetime(2017, 9, 16, 21): 6, 
+    dt.datetime(2017, 9, 21, 21): 6, 
+    dt.datetime(2017, 10, 17, 21): 20, 
     dt.datetime(2017, 10, 20, 21): 20, 
     dt.datetime(2017, 10, 22, 21): 50,
-    dt.datetime(2018, 3, 19, 21): 12, 
-    dt.datetime(2019, 2, 24, 21): 10, 
-    dt.datetime(2019, 5, 2, 21): 10, 
-    dt.datetime(2019, 9, 6, 21): 8, 
-    dt.datetime(2019, 6, 1, 21): 12,
-    dt.datetime(2019, 8, 29, 21): 12,
-    dt.datetime(2019, 8, 30, 21): 8,
-    dt.datetime(2020, 3, 30, 21): 8,
-    dt.datetime(2018, 3, 19, 21): 8,
-    dt.datetime(2020, 3, 30, 21): 10,
+    dt.datetime(2018, 3, 19, 21): 6, 
+    dt.datetime(2019, 2, 24, 21): 6, 
+    dt.datetime(2019, 5, 2, 21): 6, 
+    dt.datetime(2019, 9, 6, 21): 6, 
+    dt.datetime(2019, 6, 1, 21): 6,
+    dt.datetime(2019, 8, 29, 21): 6,
+    dt.datetime(2019, 8, 30, 21): 6,
+    dt.datetime(2020, 3, 30, 21): 6,
+    dt.datetime(2018, 3, 19, 21): 6,
+    dt.datetime(2020, 3, 30, 21): 6,
     dt.datetime(2020, 8, 20, 21): 6,
-    dt.datetime(2022, 7, 24, 21): 10
+    dt.datetime(2022, 7, 24, 21): 6
     }
 
 
-def run_all_dates(dates, vmax):
+def run_all_dates(dates):
 
 
     for dn, vmax in dates.items():
         folder_in = dn.strftime('%Y%m%d')
-            
-        b.images_to_gif(
-                name =  folder_in, 
-                path_out = 'movies',
-                path_in = f'movies/{folder_in}/', 
-                fps = 20
+        
+        try:
+            run(
+                dn, 
+                vmax = vmax, 
+                remove_noise = True,
+                root_tec = 'F:\\'
                 )
-    
-                
-        run(
-            dn, 
-            vmax = vmax, 
-            remove_noise = False,
-            root_tec = 'F:\\'
-            )
+            
+            b.images_to_gif(
+                    name =  folder_in, 
+                    path_out = 'movies',
+                    path_in = f'movies/{folder_in}/', 
+                    fps = 5
+                    )
+            
+            b.images_to_movie(
+                    path_in = f'movies/{folder_in}/', 
+                    path_out = 'movies/',
+                    movie_name = folder_in,
+                    fps = 5
+                    )
+        except:
+            print('doest work', dn)
+            continue
+        
+run_all_dates(dates)
+
+# dn = dt.datetime(2016, 10, 3, 21)
+# folder_in = dn.strftime('%Y%m%d')
+# vmax = 25
+
+# # run(
+# #     dn, 
+# #     vmax = vmax, 
+# #     remove_noise = True,
+# #     root_tec = 'F:\\'
+# #     )
+
+# # b.images_to_gif(
+# #         name =  folder_in, 
+# #         path_out = 'movies',
+# #         path_in = f'movies/{folder_in}/', 
+# #         fps = 5
+# #         )
+
+# # b.images_to_movie(
+# #         path_in = f'movies/{folder_in}/', 
+# #         path_out = 'movies/',
+# #         movie_name = folder_in,
+# #         fps = 5
+# #         )

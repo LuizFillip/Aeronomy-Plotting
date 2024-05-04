@@ -65,7 +65,8 @@ def plot_terminators(
         ax, 
         df, 
         site = 'boa',
-        color = 'k'):
+        color = 'k'
+        ):
     
     dn = df.index[0]
     
