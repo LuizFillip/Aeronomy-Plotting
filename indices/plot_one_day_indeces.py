@@ -3,63 +3,91 @@ import base as b
 import datetime as dt
 import numpy as np
 
+b.config_labels()
+PATH = 'database/indices/omni_hourly.txt'
 
-KP_PATH = 'database/indices/Kp_hourly.txt'
-DST_PATH = 'database/indices/kyoto2000.txt'
-
-def plot_kp(ax, dn):
-    
-    df = b.load(KP_PATH)
-    ds = b.sel_times(df, dn, hours = 14)
+def plot_kp(ax, ds):
+    ds = ds.resample('3H').mean()
     ax.bar(
         ds.index, 
-        ds['Kp'], 
-        width = 0.1
+        ds['kp'], 
+        width = 0.09,
+        color = 'gray',
+        alpha = 0.5, 
+        edgecolor = 'k'
         )
     ax.set(
         ylabel = 'Kp', 
         ylim = [0, 10], 
-        yticks = np.arange(0, 11, 2),
+        yticks = np.arange(0, 10, 2),
         xlim = [ds.index[0], ds.index[-1]]
         )
     
-    ax.axhline(4, lw = 2, color = 'r')
+    ax.axhline(3, lw = 2, color = 'k', linestyle = '--')
+    
 
-def plot_dst(ax, dn):
+def plot_dst(ax, ds):
     
-    df = b.load(DST_PATH)
-    ds = b.sel_times(df, dn, hours = 14)
     
-    ax.plot(ds)
+    ax.plot(ds['dst'])
     
     ax.set(
         xlim = [ds.index[0], ds.index[-1]], 
-        ylim = [-100, 50],
-        ylabel = "Dst (nT)"
+        ylim = [-200, 50],
+        yticks = np.arange(-200, 100, 50),
+        ylabel = "Dst (nT)", 
+        xlabel = 'Days'
         )
     
-    for limit in [-50, -100]:
-        ax.axhline(limit, lw = 2, color = 'r')
+    ax.axhline(0, lw = 1, color = 'k', linestyle = '-')
+    
+    for limit in [-50, -150]:
+        ax.axhline(
+            limit, 
+            lw = 2, 
+            color = 'k', 
+            linestyle = '--'
+            )
         
+def range_dates(dn):
+    delta = dt.timedelta(days = 2)
+    
+    ds = b.load(PATH)
+    
+    return b.sel_dates(ds, dn - delta, dn + delta)
 
-def plot_one_day_indices():
+def plot_one_day_indices(dn):
     
     fig, ax = plt.subplots(
         dpi = 300,
-        figsize = (10, 4), 
+        figsize = (10, 8), 
         nrows = 2, 
         sharex = True
         )
     
     plt.subplots_adjust(hspace = 0.1)
     
+    ds = range_dates(dn)
+     
+    plot_kp(ax[0], ds)
+    plot_dst(ax[1], ds)
     
-    dn = dt.datetime(2016, 4, 3, 18)
     
-    plot_kp(ax[0], dn)
-    plot_dst(ax[1], dn)
+    b.format_days_axes(ax[1])
     
-    b.format_time_axes(ax[1], hour_locator = 1)
+    delta = dt.timedelta(hours = 12)
+    for i in range(2):
+        ax[i].axvspan(
+            dn, dn + delta, 
+            ymin = 0, ymax = 1,
+            alpha = 0.2, 
+            color = 'gray'
+            )
+        
+    b.plot_letters(ax, y = 0.85, x = 0.03)
 
 
 
+dn = dt.datetime(2014, 2, 9, 21)
+
+plot_one_day_indices(dn)
