@@ -10,144 +10,33 @@ import numpy as np
 b.config_labels(fontsize = 25)
 
 
-
-
-def plot_ipp_on_map(ax, ds, year, colorbar = False):
+def plot_ipp_on_map(ax, ds, dn, colorbar = False):
     
-    corners = gg.set_coords(year)
+    corners = gg.set_coords(dn.year)
     
-    for i, key in enumerate(corners.keys()):
+    for i, sector in enumerate(corners.keys()):
+                
+        sel = pb.filter_region_and_dn(ds, dn, sector)
         
-        xlim, ylim = corners[key]
-        
-        sel = ds.loc[
-            (ds.lon > xlim[0]) & 
-            (ds.lon < xlim[1]) & 
-            (ds.lat > ylim[0]) & 
-            (ds.lat < ylim[1])
-            ]
+        ticks = np.arange(0, 2, 0.5)
         
         img = ax.scatter(
             sel.lon,
             sel.lat, 
             c = sel.roti, 
-            s =  30, 
-            vmin = 0, 
-            vmax = 2,
+            s =  20, 
+            vmin = ticks[0], 
+            vmax = ticks[-1],
             cmap = 'jet'
             )
         
-        ticks = np.arange(0, 2, 0.2)
-        b.colorbar(img, ax, ticks)
+        
+        b.colorbar(
+            img, ax, ticks, 
+            anchor = (.05, 0., 1, 1)
+            )
         
 
-def plot_lines( 
-        axes, 
-        start,  
-        plot_term =False,
-        y = 4.8
-        ):
-    """
-    Plot terminator of the first occurrence in 
-    the region and find the local midnight 
-    
-    """
-    
-    key = np.arange(-80, -40, 10)[::-1]
-    
-    for i, ax in enumerate(axes):
-        
-        ref_long = key[i]
-        
-        dusk = gg.terminator(
-            ref_long, 
-            start, 
-            float_fmt = False
-            )
-        
-        ax.axvline(dusk, lw = 2)
-        
-        midnight = gg.local_midnight(
-            start, 
-            ref_long + 5, 
-            delta_day = 1
-            )
-        
-        # ax.text(dusk, 0.5,
-        #     'Local terminator',
-        #     transform = ax.transData
-        #     )
-
-
-
-        # ax.text(midnight, 0.5,
-        #     'Local midnight',
-        #     transform = ax.transData
-        #     )
-        
-        ax.axvline(
-            midnight, 
-            lw = 2,
-            color = 'k',
-            linestyle = '--'
-            )
-        
-def plot_roti_timeseries(
-        axes, 
-        df, 
-        dn, 
-        start,  
-        right_ticks = False, 
-        vmax  = 2, 
-        threshold = 0.25
-        ):
-        
-    sectors = np.arange(-80, -40, 10)[::-1]    
-    plot_lines( axes, start, y = vmax + 1.2)
-    
-    
-    for i, ax in enumerate(axes):
-        
-        sector = sectors[i]
-        
-        sel = pb.filter_region_and_dn(df, dn, sector)
-        
-        pl.plot_roti_points(
-            ax, sel, 
-            threshold,
-            label = False, 
-            points_max = True,
-            vmax = vmax,
-            occurrence = True
-            )
-                
-        ax.text(
-            0.01, 1.05, f'Box {i + 1}', 
-            transform = ax.transAxes
-            )
-        
-        ax.set(
-            ylim = [0, vmax + 1], 
-            yticks = list(range(0, vmax + 1, 1)), 
-            xlim = [df.index[0], df.index[-1]]
-            )
-        
-        if right_ticks:
-            ax.tick_params(
-                axis='y', 
-                labelright = True, 
-                labelleft = False, 
-                right = True, 
-                left = False
-                )
-            
-        
-        if i != -1:
-            ax.set(xticklabels = [])
-            
-    
-    
-    b.format_time_axes(axes[-1])
 
 
 
@@ -175,14 +64,15 @@ def plot_ipp_variation(
         )
     
 
-    plot_roti_timeseries( 
+    pl.plot_roti_timeseries( 
         axes, 
          df, 
          dn, 
-         start
+         start,
+         occurrence = False
             )
         
-    plot_ipp_on_map(ax_map, df, dn.year)
+    plot_ipp_on_map(ax_map, df, dn)
 
     fig.suptitle(
         dn.strftime('%d/%m/%Y %H:%M (UT)'),
@@ -201,12 +91,13 @@ def single_view(start):
     
     df =  pb.concat_files(
         start, 
-        root = os.getcwd()
+        root = os.getcwd(), 
+        hours = 12
         )
     
     df = b.sel_times(df, start)
             
-    dn = range_time(start, 10)
+    dn = range_time(start, 200)
     
     fig = plot_ipp_variation(df, start, dn)
     
@@ -214,7 +105,7 @@ def single_view(start):
     
     return fig
 
-# start = dt.datetime(2014, 2, 9, 21)
+# start = dt.datetime(2014, 1, 1, 21)
 # fig = single_view(start)
 
 
