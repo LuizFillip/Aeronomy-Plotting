@@ -40,7 +40,7 @@ def plot_ipp_on_map(ax, ds, dn, colorbar = False):
 
 
 
-def plot_ipp_variation(
+def plot_ipp_map_and_timeseries(
         df, 
         start, 
         dn, 
@@ -99,7 +99,7 @@ def single_view(start):
             
     dn = range_time(start, 200)
     
-    fig = plot_ipp_variation(df, start, dn)
+    fig = plot_ipp_map_and_timeseries(df, start, dn)
     
     plt.show()
     
