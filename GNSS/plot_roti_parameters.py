@@ -24,7 +24,7 @@ def plot_rot(ax, tec, prn):
         
 def plot_roti(ax, path, prn, station = 'salu'):
     
-    df = b.load(path.fn_roti)
+    df = b.load(path.fn_roti())
     
     df = df.loc[(df['sts'] == station) & 
                 (df['prn'] == prn)]
@@ -72,13 +72,13 @@ def plot_shades(ax, start, end):
         lw = 2
     )
     
-    
+
 def plot_roti_parameters(dn, station, prn):
     
     fig, ax = plt.subplots(
         figsize = (10, 12),
         dpi = 300,
-        nrows = 4,
+        nrows = 3,
         sharex = True
         )
     
@@ -88,14 +88,15 @@ def plot_roti_parameters(dn, station, prn):
     
     path = gs.paths(dn.year, doy, root = 'D:\\')
     
-    tec = plot_stec(ax[1], path, station, prn)
+    tec = plot_stec(ax[0], path, station, prn)
     
-    plot_rot(ax[2], tec, prn)
+    plot_rot(ax[1], tec, prn)
     
-    el = plot_roti(ax[3], path, prn)
+    el = plot_roti(ax[2], path, prn)
     
-    plot_elevation(ax[0], el)
-    ax[0].set(title = f'Estação: {station.upper()} - PRN: {prn}')
+    # plot_elevation(ax[0], el)
+    ax[0].set(
+        title = f'Station: {station.upper()} - PRN: {prn}')
     
     b.format_time_axes(ax[-1])
     
@@ -123,3 +124,4 @@ def main():
         dpi = 400
         )
     
+# main()

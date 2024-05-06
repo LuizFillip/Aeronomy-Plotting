@@ -6,7 +6,9 @@ import imager as im
 import os 
 import digisonde as dg
 import GEO as gg 
- 
+import matplotlib.pyplot as plt 
+
+
 def plot_regions(ax_tec, site):
      
      lat, lon = gg.sites['car']['coords']
@@ -30,12 +32,15 @@ def plot_regions(ax_tec, site):
              radius = 230, 
              edgecolor = "w"
              )
+     
+     
 def save_image(fig, target, dn):
     folder = dn.strftime('%Y%m%d')
-
+    path_to_save = f'movies/{folder}'
+    b.make_dir(path_to_save)
     name = target.strftime('%Y%m%d%H%M%S')
     
-    fig.savefig(f'movies/{folder}/{name}', dpi = 100)
+    fig.savefig(f'{path_to_save}/{name}', dpi = 100)
 
 
 def title(dn):
@@ -61,8 +66,8 @@ def plot_time_evolution(
         wspace = 0.3
         )
     
-      
-    path_of_image = os.path.join(im.path_all_sky(dn), file)
+    path_of_image = os.path.join(
+        im.path_all_sky(dn), file)
  
     target = im.plot_images(
         path_of_image, 
@@ -82,10 +87,10 @@ def plot_time_evolution(
         site = site, 
         root = root_tec
         )
-   
-    plot_regions(ax_tec, site)
     
     site, path_of_ionogram = dg.path_ionogram(dn, target)
+    
+    plot_regions(ax_tec, site)
     
     pl.plot_single_ionogram(
         path_of_ionogram, 
@@ -141,20 +146,37 @@ def test_single(
           root = 'D:\\', 
           remove_noise =  remove_noise
           )
-    
-    
+
     ds = b.sel_times(df, start, hours = 12)
     
-    de = dt.timedelta(hours = 8)
+    de = dt.timedelta(hours = offset)
     file = im.get_closest(
         dn + de, 
-        file_like = True, 
-        ext = '.tif'
+        file_like = True
         )
 
-    plot_time_evolution(file, start, ds, vmax = vmax)
-        
+    plot_time_evolution(
+        file, 
+        start, 
+        ds, 
+        vmax = vmax
+        )
+    plt.show()
     
-dn = dt.datetime(2017, 8, 30, 21)
+    return None 
+    
 
-test_single(dn, start = None, vmax = 6, remove_noise = True)
+# dn =  dt.datetime(2017, 9, 17, 21)
+# dn = dt.datetime(2019, 5, 2, 21)
+# dn =  dt.datetime(2014, 2, 9, 21)
+
+# test_single(
+#     dn, 
+#     start = None, 
+#     vmax = 60, 
+#     offset = 6.5, 
+#     remove_noise = True
+#     )
+
+# dn.timetuple().tm_yday
+

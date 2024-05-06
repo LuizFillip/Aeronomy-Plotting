@@ -12,7 +12,7 @@ def range_time(start, mi):
 
 
 def path_in(start = None):
-    root = 'database/TEC/'
+    root = 'database/'
     
    
     if start is None:
@@ -38,12 +38,12 @@ def save_frames(df, start, hours):
         plt.ioff()
         dn = range_time(start, minute)
         
-        # fig = pl.plot_ipp_variation(df, start, dn )
+        fig = pl.plot_ipp_map_and_timeseries(df, start, dn )
         
-        fig = pl.plot_roti_tec_variation(df, start, dn)
+        # fig = pl.plot_roti_tec_variation(df, start, dn)
         name = dn.strftime('%Y%m%d%H%M')
                 
-        fig.savefig(f'{folder}/{name}')
+        fig.savefig(f'{folder}/{name}', dpi = 100)
             
         plt.clf()   
         plt.close()    
@@ -56,19 +56,23 @@ def run(start):
     # try:
     df =  pb.concat_files(
         start, 
-        root = 'D:\\'
+        root = 'F:\\'
         )
     if start.hour == 0:
         hours = 10
     else:
         hours = 12
         
-    df = b.sel_times(df, start, hours = hours)
+    df = b.sel_times(df, start, hours = 12)
     
     save_frames(df, start, hours)
 
     b.images_to_movie(
             path_in = path_in(start), 
             path_out = 'movies/',
-            fps = 20
+            fps = 5
             )
+
+# start = dt.datetime(2014, 1, 2, 21)
+# 
+# run(start)

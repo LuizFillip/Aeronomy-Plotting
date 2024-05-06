@@ -7,7 +7,7 @@ import datetime as dt
 
 b.config_labels(fontsize = 25)
 FREQ_PATH = 'digisonde/data/chars/freqs/'
-
+CHAR_PATH = 'digisonde/data/chars/midnight/'
 
 def plot_terminators(ax, dn):
          
@@ -21,13 +21,13 @@ def plot_terminators(ax, dn):
      
      for row in range(2):
          
-         ax[row].axvspan(
-             dusk - delta,
-             dusk + delta,
-             alpha = 0.2, 
-             color = 'gray',
-             lw = 2
-         )
+         # ax[row].axvspan(
+         #     dusk - delta,
+         #     dusk + delta,
+         #     alpha = 0.2, 
+         #     color = 'gray',
+         #     lw = 2
+         # )
              
          ax[row].axvline(
              dusk, 
@@ -41,7 +41,8 @@ def plot_terminators(ax, dn):
 
 def plot_infos(ax, vz, site):
 
-    data = dg.time_between_terminator(vz, site = site)
+    data = dg.time_between_terminator(
+        vz, site = site)
 
     ax.axvline(data['time'], label = 'Vp')
     
@@ -81,9 +82,10 @@ def plot_heights(ax, df, cols):
     ax.legend(
         ncol = 2, 
         loc = "upper right", 
+        title = 'Frequencies (MHz)'
         )
 
-def plot_drift(ax, vz, cols, vmax = 70):
+def plot_drift(ax, vz, cols, site, vmax = 70):
     
     lb = labels('en')
     
@@ -96,9 +98,20 @@ def plot_drift(ax, vz, cols, vmax = 70):
 
     ax.axhline(0, linestyle = '--')
     plot_infos(ax, vz, site)
+
+
+def plot_QF(ax, df):
     
+    ax.bar(df.index, df["QF"],
+           width = 0.009, alpha = 0.5)
     
-def plot_vz_and_frequencies(df, vz, site):
+    ax.set(
+        ylim = [0, 80], 
+        ylabel = "QF (Km)"
+        )
+
+    
+def plot_vz_and_frequencies(df, vz, char, site):
     
     dn = df.index[0]
 
@@ -114,7 +127,7 @@ def plot_vz_and_frequencies(df, vz, site):
     cols = df.columns[1:]
     
     plot_heights(ax[0], df, cols)
-    plot_drift(ax[1], vz, cols, vmax = 70)
+    plot_drift(ax[1], vz, cols, site)
     b.format_time_axes(ax[1], translate = False)
 
     plot_terminators(ax, dn)
@@ -122,6 +135,9 @@ def plot_vz_and_frequencies(df, vz, site):
     b.plot_letters(ax, y = 0.85, x = 0.03)
     
     ax[0].set(title = gg.sites[site]['name'])
+    
+    ax1 = ax[1].twinx()
+    plot_QF(ax1, char)
     
     plt.show()
 
@@ -131,11 +147,6 @@ def plot_vz_and_frequencies(df, vz, site):
 
 
 
-
-
-
-file = 'FZA0M_20140209(040).TXT'
-file = 'SAA0K_20180319(078).TXT'
 def pipe_data(file):
     df = dg.freq_fixed(FREQ_PATH + file)
     del df[9]
@@ -150,12 +161,13 @@ def pipe_data(file):
     
     return ds, vz, site
 
+def main():
+    file = 'SAA0K_20170830(242).TXT'
 
-
-
-ds, vz, site = pipe_data(file)
-
-fig = plot_vz_and_frequencies(ds, vz, site)
-
-# df = dg.pipeline_char(PATH_CHAR + fn)
-
+    char = dg.chars(CHAR_PATH + file)
+    
+    ds, vz, site = pipe_data(file)
+    
+    fig = plot_vz_and_frequencies(ds, vz, char, site)
+    
+# main()

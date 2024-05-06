@@ -7,12 +7,7 @@ import GEO as gg
 
 b.config_labels(fontsize = 25)
 
-def load_dataset(
-        dn, 
-        hours = 12, 
-        num = 3, 
-        root = 'D:\\'
-        ):
+def load_dataset(dn, hours = 12, num = 3, root = 'D:\\'):
     
     out = []
     for folder in [f'events{num}', f'long{num}']:
@@ -30,9 +25,9 @@ def load_dataset(
 
 
 def get_infos(ds, lon):
-    df1 = pb.bubble_features(ds)
+    df1 = pb.BubbleFeatures(ds)
     
-    infos = df1.loc[df1.index == lon, 
+    infos = df1.loc[df1.index.get_level_values(1) == lon, 
                    ['type', 'drift']].values.ravel()
     
     Type = infos[0]
@@ -103,7 +98,7 @@ def plot_roti_epb_occurrence_in_column(
         ax.set(
             ylim = [0, vmax + 1], 
             xlim = [df.index[0], df.index[-1]],
-            title = get_infos(ds, lon = int(lon))
+            # title = get_infos(ds, lon = int(lon)) 
             )
         
         ax1.set(ylim = [-0.1, 1.1])

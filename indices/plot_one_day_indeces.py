@@ -20,14 +20,14 @@ def plot_kp(ax, ds):
         ylabel = 'Kp', 
         ylim = [0, 10], 
         yticks = np.arange(0, 10, 2),
-        xlim = [ds.index[0], ds.index[-1]]
+        xlim = [ds.index[0], ds.index[-1]], 
+        xlabel = 'Days'
         )
     
     ax.axhline(3, lw = 2, color = 'k', linestyle = '--')
     
 
 def plot_dst(ax, ds):
-    
     
     ax.plot(ds['dst'])
     
@@ -49,25 +49,25 @@ def plot_dst(ax, ds):
             linestyle = '--'
             )
         
-def range_dates(dn):
-    delta = dt.timedelta(days = 2)
+def range_dates(dn, days = 2):
+    delta = dt.timedelta(days = days)
     
     ds = b.load(PATH)
     
     return b.sel_dates(ds, dn - delta, dn + delta)
 
-def plot_one_day_indices(dn):
+def plot_one_day_indices(dn, days = 2):
     
     fig, ax = plt.subplots(
         dpi = 300,
-        figsize = (10, 8), 
-        nrows = 2, 
+        figsize = (14, 4), 
+        ncols = 2, 
         sharex = True
         )
     
-    plt.subplots_adjust(hspace = 0.1)
+    plt.subplots_adjust(wspace = 0.3)
     
-    ds = range_dates(dn)
+    ds = range_dates(dn, days = days)
      
     plot_kp(ax[0], ds)
     plot_dst(ax[1], ds)
@@ -89,5 +89,23 @@ def plot_one_day_indices(dn):
 
 
 dn = dt.datetime(2014, 2, 9, 21)
+dn = dt.datetime(2019, 3, 19, 21)
+dn = dt.datetime(2017, 9, 17, 21)
+dn = dt.datetime(2019, 5, 2, 21)
+dn = dt.datetime(2022, 7, 24, 21)
+dn = dt.datetime(2016, 10, 3, 21)
+dn = dt.datetime(2017, 8, 30, 21)
+dn = dt.datetime(2014, 1, 2, 21)
 
-plot_one_day_indices(dn)
+dn = dt.datetime(2013, 3, 17, 21)
+
+
+days = 8
+df = range_dates(dn, days = days)
+
+plot_one_day_indices(dn, days = days)
+
+vls = df['dst'].values 
+
+
+vls.min()

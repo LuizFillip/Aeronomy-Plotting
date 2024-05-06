@@ -45,10 +45,7 @@ def plot_grad(ax, df):
     
     df = df * 1e5
 
-    ax.plot(
-        df, 
-        lw = 2
-        )
+    ax.plot(df, lw = 2)
 
     ax.set(
     
@@ -61,10 +58,7 @@ def plot_grad(ax, df):
     
 def plot_ratio(ax, df):
     
-    ax.plot(
-        df, 
-        lw = 2
-        )
+    ax.plot(df, lw = 2)
     
     ax.axhline(1, linestyle = '--')
     
@@ -77,12 +71,7 @@ def plot_ratio(ax, df):
     
 def plot_gravity(ax, df):
     
-    ax.scatter(
-        df.index, df, 
-        s = 30,
-        alpha = 0.4, 
-        color = 'gray'
-        )
+    ax.scatter(df.index, df, s = 30, alpha = 0.4, color = 'gray')
     
     ax.plot(
         df.index, 
@@ -116,9 +105,7 @@ def plot_vzp(ax, df):
         yticks = np.arange(0, 100, 20),
         ylabel = b.y_label('vp')
         )
-    
-    # ax.axhline(df.max(), linestyle = '--')
-    # ax.axhline(df.min(), linestyle = '--')
+    return None 
     
 def plot_wind(ax, df):
     
@@ -169,13 +156,12 @@ def plot_annual_GRT(df):
     
     ax[0].set(title = 2023)
     
-    b.format_month_axes(ax[-1])
+    # b.format_month_axes(ax[-1])
     
     b.plot_letters(ax, y = 0.8, x = 0.02, 
                    fontsize = 20)
     return fig
 
-import core as c
 
 def main():
     PATH_GAMMA = 'database/gamma/p1_saa.txt'
@@ -185,8 +171,12 @@ def main():
     
     
     # df = c.load_results('saa')
-    df = df.loc[(df.index.time == dt.time(22, 0)) &
-                (df.index.year == 2023)]
+    df = df.loc[(df.index.time == dt.time(22, 0)) ]#&
+    #             (df.index.year == 2015)]
+    
+    df['gr'] = df['ge'] / df['nui']
+    print(df.describe()[['mer_perp', 'vp', 
+                         'K', 'gr', 'gamma']])
     fig = plot_annual_GRT(df)
     
     FigureName = 'annual_grt_parameters'
@@ -197,6 +187,6 @@ def main():
 
 
 
-main()
+# main()
 
-plt.show()
+# plt.show()

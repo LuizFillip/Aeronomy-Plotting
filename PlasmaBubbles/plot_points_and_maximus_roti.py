@@ -103,7 +103,7 @@ def main():
     df = pb.concat_files(
         dn, 
         days = 2, 
-        root = 'D:\\',#os.getcwd(), 
+        root = 'D:\\',#os.getcwd(),
         hours = 12
         )
     
@@ -118,15 +118,6 @@ def main():
     
     plt.show()
     
+    
+    
 # main()
-dn = dt.datetime(2014, 2, 8, 21)
-
-
-df = pb.concat_files(
-    dn, 
-    days = 2, 
-    root = 'D:\\',#os.getcwd(), 
-    hours = 12
-    )
-
-df

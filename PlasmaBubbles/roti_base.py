@@ -168,7 +168,8 @@ def plot_roti_timeseries(
         start,  
         right_ticks = False, 
         vmax  = 2, 
-        threshold = 0.25
+        threshold = 0.25,
+        occurrence = True
         ):
         
     sectors = np.arange(-80, -40, 10)[::-1]    
@@ -181,13 +182,13 @@ def plot_roti_timeseries(
         
         sel = pb.filter_region_and_dn(df, dn, sector)
         
-        pl.plot_roti_points(
+        plot_roti_points(
             ax, sel, 
             threshold,
             label = False, 
             points_max = True,
             vmax = vmax,
-            occurrence = True
+            occurrence = occurrence
             )
                 
         ax.text(

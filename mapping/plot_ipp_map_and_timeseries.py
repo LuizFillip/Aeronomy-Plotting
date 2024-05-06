@@ -36,10 +36,6 @@ def plot_ipp_on_map(ax, ds, dn, colorbar = False):
             anchor = (.05, 0., 1, 1)
             )
         
-
-
-
-
 def plot_ipp_map_and_timeseries(
         df, 
         start, 
@@ -70,14 +66,21 @@ def plot_ipp_map_and_timeseries(
          dn, 
          start,
          occurrence = False
-            )
+         )
         
     plot_ipp_on_map(ax_map, df, dn)
-
-    fig.suptitle(
-        dn.strftime('%d/%m/%Y %H:%M (UT)'),
-        y = 1.01
-        )
+    
+    pl.legend_max_points_roti(
+            axes[0], 
+            fontsize = 25, 
+            s = 100, 
+            threshold = 0.25,
+            anchor = (0.5, 1.4), 
+            ncol = 3
+            )
+    
+    ax_map.set(title = dn.strftime('%d/%m/%Y %H:%M (UT)'))
+  
     
     return fig
     

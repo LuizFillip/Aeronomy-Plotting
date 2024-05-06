@@ -19,12 +19,19 @@ def plot_seasonal_occurrence(
 
     
     if typing == 'sunset':
+        vmax = 300
+        if translate:
+            typing = 'pós pôr do Sol'
+        else:
+            typing = 'Sunset'
         
-        name = 'pós pôr do Sol'
-        vmax = 400
     else:
-        name = 'pós meia noite'
         vmax = 150
+        if translate:
+            typing = 'pós meia noite'
+        else:
+            typing = 'post-midnight'
+        
     
     fig, ax = plt.subplots(
         dpi = 300, 
@@ -42,20 +49,33 @@ def plot_seasonal_occurrence(
 
     plt.xticks(rotation = 0)
     
+    if translate:
+        ylabel = 'Número de casos'
+        xlabel = 'Anos'
+        sector = 'Setor'
+        title = f'Eventos de EPBs {typing} ({s_year} - {e_year})'
+        language = 'pt'
+    else:
+        ylabel = 'Number of cases'
+        xlabel = 'Years'
+        sector = 'Sector'
+        title = f'Events of {typing} EPBs ({s_year} - {e_year})'
+        language = 'en'
+    
     ax.set(
-        ylabel = 'Número de casos',
-        xlabel = 'Meses',
-        xticklabels = b.month_names(sort = True),
+        ylabel = ylabel,
+        xlabel = xlabel,
+        xticklabels = b.month_names(sort = True, language = language),
         ylim = [0, vmax]
         )
         
-    t = [f'Setor {i} ({vl})' for i, vl in 
+    t = [f'{sector} {i} ({vl})' for i, vl in 
          enumerate(df.sum().values, start = 1)]
     
     ax.legend(
         t,
         ncol = 5, 
-        title = f'Eventos de EPBs {name} ({s_year} - {e_year})',
+        title = title,
         bbox_to_anchor = (.5, 1.3), 
         loc = "upper center", 
         columnspacing = 0.6
@@ -67,8 +87,8 @@ def plot_seasonal_occurrence(
     
 
 def main():
-    infile = 'core/data/epb_class'
-    infile = 'events_class2'
+    # infile = 'core/data/epb_class'
+    infile = 'events_class'
     for typing in ['sunset', 'midnight']:
      
         df = b.load(infile)
@@ -79,12 +99,12 @@ def main():
         
         FigureName = f'seasonal_{typing}'
           
-        fig.savefig(
-              b.LATEX(FigureName, folder = 'bars'),
-              dpi = 400
-              )
+        # fig.savefig(
+        #       b.LATEX(FigureName, folder = 'bars'),
+        #       dpi = 400
+        #       )
     
-# main()
+main()
 # infile = 'events_class'
 # df = b.load(infile)
 

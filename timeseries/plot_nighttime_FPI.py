@@ -1,14 +1,10 @@
 import matplotlib.pyplot as plt
 import FabryPerot as fp
-import base as s
-import models as m
+import base as b
+import numpy as np 
 
-
-def plot_directions(
-        ax, 
-        path, 
-        parameter = "vnu"
-        ):
+b.config_labels()
+def plot_directions(ax, path, parameter = "vnu"):
     
     if parameter == "vnu":
         df = fp.FPI(path).wind
@@ -22,16 +18,8 @@ def plot_directions(
     
     names = ["zonal", "meridional"]
     
-    infile = 'FabryPerot/data/winds_bjl'
-    ds1 = s.load(infile)
-    
-    dn = df.index[-1].date()
-    
-    ds1 = ds1.loc[ds1.index.date == dn]
-    
     for i, coord in enumerate(coords.keys()):
         
-        ax[i].plot(ds1[coord], lw = 2, label = "HWM-14 (250 km)")
        
         for direction in coords[coord]:
             
@@ -44,10 +32,13 @@ def plot_directions(
                 label = direction, 
                 capsize = 5
                 )
-        ax[i].legend(loc = "lower left", ncol = 3)
-        ax[i].set(ylabel = f"{names[i]} wind (m/s)", 
-                  ylim = [-100, 200], 
-                  xlim = [ds.index[0], ds.index[-1]])
+        ax[i].legend(loc = "upper right", ncol = 2)
+        ax[i].set(
+            ylabel = f"{names[i].title()} (m/s)", 
+            ylim = [-100, 200], 
+            yticks = np.arange(-100, 200, 50),
+            xlim = [ds.index[0], ds.index[-1]]
+            )
         ax[i].axhline(0, color = "k", linestyle = "--")
 
 
@@ -60,7 +51,7 @@ def plot_nighttime_observation(
     
     fig, ax = plt.subplots(
         nrows = 2, 
-        figsize = (10, 8), 
+        figsize = (12, 8), 
         sharex = True, 
         sharey = True, 
         dpi = 300
@@ -71,7 +62,7 @@ def plot_nighttime_observation(
     
     plot_directions(ax, path, parameter = parameter)
     
-    s.format_time_axes(
+    b.format_time_axes(
             ax[1], 
             hour_locator = 1, 
             day_locator = 1, 
@@ -84,14 +75,14 @@ def plot_nighttime_observation(
         ax[0].set_title("Cachoeira Paulista")
     else:
         ax[0].set_title("Cajazeiras")
+        
+    b.plot_letters(ax, y = 0.85, x = 0.03)
    
     return fig
         
-infile = 'FabryPerot/data/FPI/'
-import os 
+# infile = 'FabryPerot/data/FPI/'
+infile = 'database/FabryPerot/car/minime01_car_20140102.cedar.005.txt'
 
-for file in os.listdir(infile):
-    
-    fig = plot_nighttime_observation(infile + file)
-    
-    fig.savefig('FabryPerot/img/' + file.replace('txt', 'png'))
+fig = plot_nighttime_observation(infile)
+
+plt.show()
