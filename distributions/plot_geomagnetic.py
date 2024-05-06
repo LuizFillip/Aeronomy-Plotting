@@ -29,7 +29,7 @@ def plot_epbs_number(ax, data, color = 'k'):
 def plot_distributions_solar_flux(
         df, 
         parameter = 'gamma',
-        level = 86, 
+        # level = 86, 
         translate = False,
         outliner = 10,
         limit = None
@@ -46,16 +46,20 @@ def plot_distributions_solar_flux(
     plt.subplots_adjust(hspace = 0.05)
         
     df_index = c.DisturbedLevels(df)
-    
-    F107_labels = df_index.solar_labels(level)
-     
+    level= 3
+    kp_labels = [
+    '$Kp \\leq $' + f' {level}',
+    '$Kp > $' + f' {level}'
+    ]
+
+
     total_epb = []
     total_day = []
     colors = ['k', 'b']
-    for i, ds in enumerate(df_index.F107(level)):
+    for i, ds in enumerate(df_index.Kp()):
         
         index = i + 1
-        label = f'({index}) {F107_labels[i]}'
+        label = f'({index}) {kp_labels[i]}'
     
         data, epbs = pl.plot_distribution(
                 ax[0], 
@@ -125,15 +129,12 @@ def main():
     
     translate = False
     df = c.load_results('saa', eyear = 2022)
-    # df = df.loc[df['kp'] <= 3]
-    limit = c.limits_on_parts(df['f107a'], parts = 2 )
-
     parameter = 'gamma'
     
     fig = plot_distributions_solar_flux(
             df, 
             parameter,
-            level = limit, 
+            # level = limit, 
             translate = translate, 
             outliner = 10,
             limit = True
