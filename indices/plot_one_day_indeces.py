@@ -49,7 +49,7 @@ def plot_dst(ax, ds):
             linestyle = '--'
             )
         
-def range_dates(dn, days = 2):
+def range_dates(dn, PATH, days = 2):
     delta = dt.timedelta(days = days)
     
     ds = b.load(PATH)
@@ -67,7 +67,7 @@ def plot_one_day_indices(dn, days = 2):
     
     plt.subplots_adjust(wspace = 0.3)
     
-    ds = range_dates(dn, days = days)
+    ds = range_dates(dn, PATH, days = days)
      
     plot_kp(ax[0], ds)
     plot_dst(ax[1], ds)
