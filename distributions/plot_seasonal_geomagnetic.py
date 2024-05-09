@@ -7,25 +7,6 @@ import plotting as pl
 b.config_labels(fontsize = 25)
 
 
-        
-def FigureAxes(nrows = 4):
-    
-    fig, ax = plt.subplots(
-          ncols = nrows // 2, 
-          nrows = nrows,
-          figsize = (20, 14), 
-          dpi = 300, 
-          sharex = True, 
-          sharey = 'col'
-        )
-    
-    plt.subplots_adjust(
-        hspace = 0.1, 
-        wspace = 0.2
-        )
-    
-    return fig, ax 
-
 def plot_storm_levels_distribution(
         df, 
         parameter = 'gamma',
@@ -35,7 +16,7 @@ def plot_storm_levels_distribution(
         limit =  True
         ):
     
-    fig, ax = FigureAxes()
+    fig, ax = pl.axes_for_seasonal_plot()
     
     names = ['march', 'june', 'september', 'december']
     

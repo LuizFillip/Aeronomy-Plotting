@@ -13,18 +13,7 @@ legend_args = dict(
     
     )
 
-def plot_epbs_number(ax, data, color = 'k'):
-    if color == 'k':
-        offset = -12
-        
-    else:
-        offset = 5
-    for x, y, z in data[['start', 'rate', 'epbs']].values:
-        
-        ax.text(x - 0.05, (y *100) + offset, 
-                int(z),
-                transform = ax.transData, 
-                color = color)
+
         
 def plot_distributions_solar_flux(
         df, 
@@ -51,7 +40,7 @@ def plot_distributions_solar_flux(
      
     total_epb = []
     total_day = []
-    colors = ['k', 'b']
+   
     for i, ds in enumerate(df_index.F107(level)):
         
         index = i + 1
@@ -67,8 +56,7 @@ def plot_distributions_solar_flux(
                 translate = translate,
                 limit = limit
             )
-        
-        # plot_epbs_number(ax[0], data, color = colors[i])
+    
                         
         days = pl.plot_histogram(
                 ax[1], 

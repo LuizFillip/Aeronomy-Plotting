@@ -9,23 +9,7 @@ b.config_labels(fontsize = 25)
 
 
         
-def FigureAxes(nrows = 4):
-    
-    fig, ax = plt.subplots(
-          ncols = nrows // 2, 
-          nrows = nrows,
-          figsize = (20, 14), 
-          dpi = 300, 
-          sharex = True, 
-          sharey = 'col'
-        )
-    
-    plt.subplots_adjust(
-        hspace = 0.1, 
-        wspace = 0.2
-        )
-    
-    return fig, ax 
+
 
 
 
@@ -38,7 +22,7 @@ def plot_distributions_seasons(
         limit = None
         ):
     
-    fig, ax = FigureAxes()
+    fig, ax = axes_for_seasonal_plot()
 
     names = ['march', 'june', 'september', 'december']
     
@@ -96,7 +80,7 @@ def plot_distributions_seasons(
         LIST = [total_epb, total_day]
         pl.plot_events_infos(
             ax, row, LIST, 
-            x = 0.65,
+            x = 0.58,
             y = 0.3,
             translate = translate
             )
