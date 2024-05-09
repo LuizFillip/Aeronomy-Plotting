@@ -96,6 +96,7 @@ def plot_distributions_solar_flux(
         
     x = 0.7
     y = 0.25
+    offset_y = 0.1
     
     ax[1].legend(**legend_args)
     ax[0].legend(**legend_args)
@@ -105,16 +106,18 @@ def plot_distributions_solar_flux(
         x = x, 
         y = y, 
         translate = translate, 
-        values = total_epb
+        values = total_epb, 
+        offset_y = offset_y
         )
     
     pl.plot_infos(
         ax[1], 
-        x = x , #+ 0.05
+        x = x,
         y = y,
         values = total_day, 
         epb_title = False, 
-        translate = translate
+        translate = translate, 
+        offset_y = offset_y
         )
     
     return fig
@@ -123,9 +126,9 @@ def plot_distributions_solar_flux(
 
 def main():
     
-    translate = False
+    translate = True
     df = c.load_results('saa', eyear = 2022)
-    # df = df.loc[df['kp'] <= 3]
+
     limit = c.limits_on_parts(df['f107a'], parts = 2 )
 
     parameter = 'gamma'
@@ -139,8 +142,6 @@ def main():
             limit = True
             )
     
-    # fig.suptitle('$Kp <= 3$')
-    
     if translate:
         folder = 'distributions/pt/'
     else:
@@ -148,10 +149,10 @@ def main():
         
     FigureName = f'solar_flux_{parameter}2'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder),
+        dpi = 400
+        )
 
 
     plt.show()
