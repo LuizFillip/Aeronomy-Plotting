@@ -26,12 +26,12 @@ def plot_epbs_number(ax, data, color = 'k'):
                 transform = ax.transData, 
                 color = color)
         
-def plot_distributions_solar_flux(
+def plot_distributions_geomagnetic(
         df, 
         parameter = 'gamma',
-        # level = 86, 
+        level = -50, 
         translate = False,
-        outliner = 10,
+        outliner = 5,
         limit = None
         ):
     
@@ -46,17 +46,13 @@ def plot_distributions_solar_flux(
     plt.subplots_adjust(hspace = 0.05)
         
     df_index = c.DisturbedLevels(df)
-    level= 3
-    kp_labels = [
-    '$Kp \\leq $' + f' {level}',
-    '$Kp > $' + f' {level}'
-    ]
 
-
+    kp_labels = df_index.geomagnetic_labels(level)
     total_epb = []
     total_day = []
-    colors = ['k', 'b']
-    for i, ds in enumerate(df_index.Kp()):
+   
+    
+    for i, ds in enumerate(df_index.Dst(level)):
         
         index = i + 1
         label = f'({index}) {kp_labels[i]}'
@@ -89,18 +85,19 @@ def plot_distributions_solar_flux(
         total_epb.append(epbs)
         total_day.append(days)
         
-        l = b.chars()[i]
-        
-        ax[i].text(
-            0.03, 0.87,
-            f'({l})',
-            transform = ax[i].transAxes, 
-            fontsize = 30
-            )
-        
+        if i < 2:
+            l = b.chars()[i]
+            
+            ax[i].text(
+                0.03, 0.87,
+                f'({l})',
+                transform = ax[i].transAxes, 
+                fontsize = 30
+                )
+            
     x = 0.7
     y = 0.25
-    
+    offset_y = 0.1
     ax[1].legend(**legend_args)
     ax[0].legend(**legend_args)
     
@@ -109,16 +106,18 @@ def plot_distributions_solar_flux(
         x = x, 
         y = y, 
         translate = translate, 
-        values = total_epb
+        values = total_epb, 
+        offset_y = offset_y 
         )
     
     pl.plot_infos(
         ax[1], 
-        x = x , #+ 0.05
+        x = x, #
         y = y,
         values = total_day, 
         epb_title = False, 
-        translate = translate
+        translate = translate, 
+        offset_y = offset_y 
         )
     
     return fig
@@ -127,32 +126,31 @@ def plot_distributions_solar_flux(
 
 def main():
     
-    translate = False
+    translate = True
     df = c.load_results('saa', eyear = 2022)
     parameter = 'gamma'
     
-    fig = plot_distributions_solar_flux(
+    fig = plot_distributions_geomagnetic(
             df, 
             parameter,
-            # level = limit, 
+            level = -30, 
             translate = translate, 
             outliner = 10,
             limit = True
             )
-    
-    # fig.suptitle('$Kp <= 3$')
     
     if translate:
         folder = 'distributions/pt/'
     else:
         folder = 'distributions/en/'
         
-    FigureName = f'solar_flux_{parameter}2'
+    FigureName = f'geomagnetic_{parameter}'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder),
-    #     dpi = 400
-    #     )
+    # infile = 'G:\\My Drive\\LaTex\\docs\\img\\distributions\\pt\\'
+    fig.savefig(
+        folder,  FigureName,
+        dpi = 400
+        )
 
 
     plt.show()
