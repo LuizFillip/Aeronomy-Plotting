@@ -1,5 +1,7 @@
 import base as b
-    
+import matplotlib.pyplot as plt 
+
+
 def fmt(index, value):
     return f'({index}) {value} '
 
@@ -131,3 +133,35 @@ def FigureLabels(
         xlabel, 
         fontsize = fontsize
         )
+    
+def plot_epbs_number(ax, data, color = 'k'):
+    if color == 'k':
+        offset = -12
+        
+    else:
+        offset = 5
+    for x, y, z in data[['start', 'rate', 'epbs']].values:
+        
+        ax.text(x - 0.05, (y *100) + offset, 
+                int(z),
+                transform = ax.transData, 
+                color = color)
+        
+        
+def axes_for_seasonal_plot(nrows = 4):
+    
+    fig, ax = plt.subplots(
+          ncols = nrows // 2, 
+          nrows = nrows,
+          figsize = (20, 14), 
+          dpi = 300, 
+          sharex = True, 
+          sharey = 'col'
+        )
+    
+    plt.subplots_adjust(
+        hspace = 0.1, 
+        wspace = 0.2
+        )
+    
+    return fig, ax 
