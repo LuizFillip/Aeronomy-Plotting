@@ -29,15 +29,16 @@ def FigureAxes(nrows = 4):
 def plot_storm_levels_distribution(
         df, 
         parameter = 'gamma',
-        level = 4, 
+        level = -50, 
         translate = False,
         outliner = 10,
-        limit = 3
+        limit =  True
         ):
     
     fig, ax = FigureAxes()
     
     names = ['march', 'june', 'september', 'december']
+    
     for row, name in enumerate(names):
         
         total_epb = []
@@ -50,12 +51,9 @@ def plot_storm_levels_distribution(
             )
         
         df_index = c.DisturbedLevels(df_season.sel_season)
-        kp_labels = [
-        '$Kp \\leq $' + f' {level}',
-        '$Kp > $' + f' {level}'
-        ]
+        kp_labels = df_index.geomagnetic_labels(level)
         
-        for index, df_level in enumerate(df_index.Kp(level)):
+        for index, df_level in enumerate(df_index.Dst(level)):
     
             data, epb = pl.plot_distribution(
                     ax[row, 0], 
@@ -74,13 +72,12 @@ def plot_storm_levels_distribution(
                     data, 
                     index,
                     parameter = parameter,
-                    label = kp_labels[index]
+                    label = kp_labels[index], 
+                    # limit = limit
                     )
             
             total_day.append(days)
-            
-    
-    
+        
             ax[row, 1].set(
                 ylim = [0, 350], 
                 yticks = list(range(0, 400, 100))
@@ -95,7 +92,7 @@ def plot_storm_levels_distribution(
         LIST = [total_epb, total_day]
         pl.plot_events_infos(
             ax, row, LIST, 
-            x = 0.65,
+            x = 0.58,
             y = 0.3,
             translate = translate
             )
@@ -112,25 +109,33 @@ def plot_storm_levels_distribution(
 
 
 def main():
+    
+    translate = True
 
     df = c.load_results('saa')
+    parameter ='gamma'
     
-
-        
     fig = plot_storm_levels_distribution(
         df, 
-        level = 3, 
-        translate = False
+        parameter= parameter,
+        level = -30, 
+        translate = translate,
+        limit =  True
         )
     
+    if translate:
+        folder = 'distributions/pt/'
+    else:
+        folder = 'distributions/en/'
+        
+    FigureName = f'geomagnetic_{parameter}'
     
-    FigureName = 'seasonal_quiet_disturbed'
+    FigureName = 'geomagnetic_seasonal'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, 
-    #             folder = 'distributions/pt/'),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder = folder),
+        dpi = 400
+        )
     
     
 main()
