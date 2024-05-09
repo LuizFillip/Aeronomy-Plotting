@@ -7,7 +7,8 @@ b.config_labels(fontsize = 25)
 
 def plot_compare_sites_in_solar_flux(
         parameter = 'gamma', 
-        translate = True
+        translate = True,
+        outliner = 10
         ):
     fig, ax = plt.subplots(
         dpi = 300, 
@@ -23,26 +24,29 @@ def plot_compare_sites_in_solar_flux(
     total_epb = []
     total_day = []
     
-    for i, ds in enumerate(c.get_same_length()):
+    for i, ds in enumerate(c.get_same_length(2015)):
         index = i + 1
         label = f'({index}) {titles[i]}'
+        
+        
         data, epbs = pl.plot_distribution(
                 ax[0], 
                 ds,
                 parameter,
                 label = label,
                 axis_label = True,
-                drop_ones = True,
+                outliner = outliner, 
                 translate = True
             )
         
         days = pl.plot_histogram(
                 ax[1], 
                 data, 
-                index, 
-                label =  label,
+                i, 
+                label, 
                 parameter = parameter,
-                axis_label = True
+                axis_label = True,
+                translate = translate
             )
         
         total_epb.append(epbs)
@@ -74,10 +78,10 @@ def main():
     
     FigureName = 'compare_jic_saa'
       
-    fig.savefig(
-          b.LATEX(FigureName, 
-                  folder = 'distributions/pt/'),
-          dpi = 400
-          )
-    
+    # fig.savefig(
+    #       b.LATEX(FigureName, 
+    #               folder = 'distributions/pt/'),
+    #       dpi = 400
+    #       )
+    # 
 # main()

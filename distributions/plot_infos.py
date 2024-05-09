@@ -34,13 +34,16 @@ def plot_infos(
         
         if i == 0:
             
-            ax.text(x, y, f'{title}\n{info}', 
-                    transform = ax.transAxes, 
-                    color = 'k') 
+            ax.text(
+                x, y, f'{title}\n{info}', 
+                transform = ax.transAxes, 
+                color = 'k'
+                ) 
         else:
-            ax.text(x, y - offset_y, f'{info}', 
-                    transform = ax.transAxes, 
-                    color = 'b') #'#0C5DA5'
+            ax.text(
+                x, y - offset_y, f'{info}', 
+                transform = ax.transAxes, 
+                color = 'b') #'#0C5DA5'
 
     return None 
 
@@ -50,7 +53,8 @@ def plot_events_infos(
         ax, row, LIST, 
         translate = True, 
         epb_title = True,
-        x = 0.68, y = 0.2
+        x = 0.68, 
+        y = 0.2
         ):
     
 
@@ -61,7 +65,7 @@ def plot_events_infos(
             f = 0
         else:
             epb_title = False
-            f =  0.05
+            f =  0.1
             
         plot_infos(
             ax[row, col], 

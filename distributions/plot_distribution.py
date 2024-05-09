@@ -86,7 +86,8 @@ def plot_distribution(
         outliner = None,
         percent = True,
         limit = True,
-        ylim = [0.2, 1.4]):
+        ylim = [0.2, 1.4]
+        ):
 
     ds = c.probability_distribution(
         df, 
@@ -110,6 +111,7 @@ def plot_distribution(
         symbol = ''
     
     ds['erro'] = (ds['epb_i'] + ds['epb_s'].abs()) / 2
+    
     ax.errorbar(
         ds['start'], 
         ds['rate'] * factor, 
