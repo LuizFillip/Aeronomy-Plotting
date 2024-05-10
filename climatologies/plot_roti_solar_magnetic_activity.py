@@ -7,7 +7,7 @@ import core as c
 
 def plot_annual_variation_roti_and_indices():
     
-    df = b.load('core/data/all_maximus')
+    df = b.load('all_maximus2')
     df['mean'] = df.mean(axis = 1)
     
     fig, ax = plt.subplots(
@@ -43,7 +43,7 @@ def plot_annual_variation_roti_and_indices():
     return fig
     
     
-# fig =  plot_annual_variation_roti_and_indices()
+fig =  plot_annual_variation_roti_and_indices()
 
 
 # FigureName = 'annual_variation_roti_and_indices'
