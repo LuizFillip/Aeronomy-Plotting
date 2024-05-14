@@ -1,13 +1,7 @@
 import matplotlib.pyplot as plt
 import FabryPerot as fp
-import os
-import base as s
+import base as b
 import datetime as dt
-from astropy.timeseries import LombScargle
-from scipy.signal import find_peaks
-import numpy as np 
-import pandas as pd 
-from scipy import signal
 
 def get_dn(wd):
     return dt.datetime(
@@ -17,170 +11,66 @@ def get_dn(wd):
         21, 
         0)
 
-def fs(timestamps):
-
-    time_intervals = np.diff(timestamps)
-    
-    # Calculate the mean time interval to estimate fs
-    mean_time_interval = np.mean(time_intervals)
-    
-    # Calculate the sampling frequency (fs) as the inverse of the mean time interval
-    return 1 / mean_time_interval
-
-def dtrend(ds, fs):
-
-    avg = ds.rolling('1H').mean(center = True)
-    
-    ds['dtrend'] = ds - avg
-    
-    y = ds['dtrend'].values
-    
-    lowcut = 1 / 5
-    highcut = 1 / 1.5
-
-
-    nyquist = 0.5 * fs
-    lowcut_normalized = lowcut #/ nyquist
-    highcut_normalized = highcut #/ nyquist
-
-    # Design the filter using scipy.signal
-    b, a = signal.butter(
-        4, [lowcut_normalized, highcut_normalized], 
-        btype='band')
-
-    # Apply the filter to the data
-    filtered_data = signal.lfilter(b, a, y)
-    return filtered_data
-
-def lomb_scargle(ax, t, y):
-    
-    ls = LombScargle(t, y)
-    
-    frequency, power = ls.autopower(
-            minimum_frequency = 1 / 5,
-            maximum_frequency = 1 / 1.5,
-            samples_per_peak = 100
-            )
-        
-    period = 1 / frequency
-    
-    points = find_peaks(power, height = 0.01)
-    
-    ax.plot(period, power)
-    for i in points[0]:
-        
-        ax.scatter(period[i], power[i])
  
+b.config_labels()
     
-def plot_directions(
-        ax, 
-        path, 
-        site = 'car'
-        ):
+def plot_directions( ax, path, site = 'car'):
     
     wd = fp.FPI(path).wind
     tp = fp.FPI(path).temp
             
-    # coords = {
-    #     "zon": ("east", "west"), 
-    #     "mer": ("north", "south")
-    #     }
+    coords = {
+        "Zonal": ("east", "west"), 
+        "Meridional": ("north", "south")
+        }
     
-    coords = ["east", "west", "north", "south"]
-    
-    for coord in coords:
-    
-        ds = wd.loc[(wd["dir"] == coord)]
+    for col, coord in enumerate(coords.keys()):
         
-        ax[0, 0].errorbar(
-            ds.index, 
-            ds['vnu'], 
-            yerr = ds["dvnu"], 
-            label = coord, 
-            capsize = 5
-            )
+        ax[0, col].set(title = coord)
         
-        t = ds['time'].values
-        y = dtrend(ds['vnu'], fs(t))
+        for row, direction in enumerate(coords[coord]):
+            # print(col, dirs)
+            ds = wd.loc[(wd["dir"] == direction)]
+            
+            ax[0, col].errorbar(
+                ds.index, 
+                ds['vnu'], 
+                yerr = ds["dvnu"], 
+                label = direction, 
+                capsize = 5
+                    )
+            
         
-        
-        ax[0, 1].plot(t, y)
-        
-        lomb_scargle(ax[0, 2], t, y)
-        
-        ds = tp.loc[(tp["dir"] == coord)]
-        
-        ax[1, 0].errorbar(
-            ds.index, 
-            ds['tn'], 
-            yerr = ds['dtn'], 
-            label = coord, 
-            capsize = 5
-            )
-        
-        t = ds['time'].values
-        y = dtrend(ds['tn'], fs(t))
-        
-        ax[1, 1].plot(t, y)
-        
-        
-        lomb_scargle(ax[1, 2], t, y)
-        
-       
-        
-    ax[0, 0].legend(
-        ncol = 4, 
-        loc = "upper center",
-        bbox_to_anchor = (1.3, 1.2)
-        )
+            
+           
+            
+            ds = tp.loc[(tp["dir"] == direction)]
+            
+            
+            ax[1, col].errorbar(
+                ds.index, 
+                ds['tn'], 
+                yerr = ds['dtn'], 
+                label = direction, 
+                capsize = 5
+                )
+            
+        b.format_time_axes(ax[1, col])
+         
       
+    ax[0, 0].set(ylabel = "Velocity(m/s)", ylim = [-100, 400])
+    
+    ax[1, 0].set(ylabel = "Temperature (K)", ylim = [600, 1200])
+       
+    for row, name in enumerate(coords.values()):
+        ax[0, row].legend(name,
+             ncol = 2, loc = 'upper center'
+             )
+        ax[1, row].legend(name,
+             ncol = 2, loc = 'upper center'
+             )
         
-    ax[0, 0].set(
-        ylabel = "Velocidade (m/s)", 
-        ylim = [-100, 150]
-        )
-    
-    # ax[0, 1].set(
-    #     ylabel = "Velocidade (m/s)", 
-    #     ylim = [-60, 60]
-    #     )
-    
-    ax[1, 0].set(
-        ylabel = "Temperatura (K)", 
-        ylim = [600, 1200])
-    
-    # ax[1, 1].set(
-    #     xlabel = 'Universal time',
-    #     ylabel = "Temperatura (K)", 
-    #     ylim = [-60, 60]
-    #     )
-    
-    ax[1, 2].set(
-        xlabel = 'period',
-        ylabel = "PSD"
-        )
-
-    ax[0, 0].axhline(0, color = "k", linestyle = "--")
-    
-    ax[0, 1].axhline(0, color = "k", linestyle = "--")
-    ax[1, 1].axhline(0, color = "k", linestyle = "--")
-
-    
-    s.format_time_axes(
-            ax[1, 0], hour_locator = 1, 
-            day_locator = 1, 
-            tz = "UTC"
-            )
-    
-    dn = pd.to_datetime(wd.index.date[0])
-    
-    ds = fp.get_similar()
- 
-    df = ds.loc[ds.index == dn]
-
-    for i, coord in enumerate(['vnu', 'tn']):
-        for vls in df[coord].values:
-            ax[i, 2].axvline(vls)
+        ax[0, row].axhline(0, color = "k", linestyle = "--")
     
 
 
@@ -190,35 +80,37 @@ def plot_nighttime_observation(
     
     fig, ax = plt.subplots(
         nrows = 2, 
-        ncols = 3,
-        figsize = (20, 10), 
-        sharex =  'col', 
+        ncols = 2,
+        figsize = (16, 10), 
+        sharex =  'col',
+        sharey = 'row',
         dpi = 300
         )
     
     plt.subplots_adjust(
-        wspace = 0.2, 
+        wspace = 0.1, 
         hspace = 0.1
         )
     
     if "car" in path:    
-        title = "Cariri"
-        site = 'car'
+        site= "Cariri"
+    elif 'bfp' in path:
+       
+        site = "Cachoeira Paulista"
     else:
-        title = "Cajazeiras"
-        site = 'car'
+        site = "Cajazeiras"
+       
     plot_directions(ax, path, site = site)
         
-    fig.suptitle(title)
+    fig.suptitle(site)
+    
+    b.plot_letters(ax, y = 0.85, x = 0.03)
     return fig
         
 
     
-path = "database/FabryPerot/cariri/2013/"
-
-path = 'database/FabryPerot/cariri/2013/minime01_car_20130422.cedar.005.txt'
+path = 'database/FabryPerot/cj/bfp220724g.7100.txt'
 
 
 
-
-d = plot_nighttime_observation(path)
+fig = plot_nighttime_observation(path)
