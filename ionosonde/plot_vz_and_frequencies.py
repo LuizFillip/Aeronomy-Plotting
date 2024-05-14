@@ -124,7 +124,7 @@ def plot_vz_and_frequencies(df, vz, char, site):
     
     plt.subplots_adjust(hspace = 0.05)
     
-    cols = df.columns[1:]
+    cols = df.columns[3:-3]
     
     plot_heights(ax[0], df, cols)
     plot_drift(ax[1], vz, cols, site)
@@ -163,11 +163,11 @@ def pipe_data(file):
 
 def main():
     file = 'SAA0K_20170830(242).TXT'
-
+    file = 'FZA0M_20220724(205).TXT'
     char = dg.chars(CHAR_PATH + file)
     
     ds, vz, site = pipe_data(file)
     
     fig = plot_vz_and_frequencies(ds, vz, char, site)
     
-# main()
+main()
