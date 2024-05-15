@@ -2,42 +2,14 @@ import matplotlib.pyplot as plt
 import digisonde as dg
 import base as b 
 import GEO as gg 
-import datetime as dt
-
+import plotting as pl 
+import numpy as np
 
 b.config_labels(fontsize = 25)
 FREQ_PATH = 'digisonde/data/chars/freqs/'
 CHAR_PATH = 'digisonde/data/chars/midnight/'
 
-def plot_terminators(ax, dn):
-         
-     dusk = gg.dusk_from_site(
-             dn, 
-             site = 'saa',
-             twilight_angle = 18
-             )
-     
-     delta = dt.timedelta(minutes = 60)
-     
-     for row in range(2):
-         
-         # ax[row].axvspan(
-         #     dusk - delta,
-         #     dusk + delta,
-         #     alpha = 0.2, 
-         #     color = 'gray',
-         #     lw = 2
-         # )
-             
-         ax[row].axvline(
-             dusk, 
-             linestyle = '-',
-             lw = 2,
-             color = 'k'
-             )
- 
 
-     return dusk
 
 def plot_infos(ax, vz, site):
 
@@ -51,23 +23,13 @@ def plot_infos(ax, vz, site):
     vmax = round(data['vp'], 2)
     
     ax.text(
-        0.55, 0.82,
+        0.4, 0.82,
         f'$V_p =$ {vmax} m/s ({time} UT)',
         transform = ax.transAxes
         )
     
     ax.axhline(0, linestyle = '--')
     
-
-class labels:
-    
-    def __init__(self, language = 'pt'):
-        if language == 'pt':
-            self.vz = "Deriva vertical (m/s)"
-            self.freq = 'Frequências fixas'
-        else:
-            self.vz = 'Vertical drift (m/s)'
-            self.freq = 'Fixed frequencies'
 
 
 
@@ -77,22 +39,19 @@ def plot_heights(ax, df, cols):
 
     ax.set(
         ylabel = "Altitude (km)", 
-        ylim = [100, 700])
+        ylim = [100, 400])
     
-    ax.legend(
-        ncol = 2, 
-        loc = "upper right", 
-        title = 'Frequencies (MHz)'
-        )
+ 
 
-def plot_drift(ax, vz, cols, site, vmax = 70):
+def plot_drift(ax, vz, cols, site, vmax = 50):
     
-    lb = labels('en')
+    lb = pl.labels('en')
     
-    ax.plot(vz[cols])
+    ax.plot(vz[cols], label = cols)
     ax.set(
           ylabel = lb.vz, 
           ylim = [-vmax, vmax], 
+          yticks = np.arange(-vmax, vmax + 10, 20),
           xlim = [vz.index[0], vz.index[-1]]
           )
 
@@ -130,7 +89,7 @@ def plot_vz_and_frequencies(df, vz, char, site):
     plot_drift(ax[1], vz, cols, site)
     b.format_time_axes(ax[1], translate = False)
 
-    plot_terminators(ax, dn)
+    pl.plot_terminators(ax, dn)
     
     b.plot_letters(ax, y = 0.85, x = 0.03)
     
@@ -147,27 +106,14 @@ def plot_vz_and_frequencies(df, vz, char, site):
 
 
 
-def pipe_data(file):
-    df = dg.freq_fixed(FREQ_PATH + file)
-    del df[9]
-    site, dn = dg.site_datetime_from_file(file, hours = 18)
-    
-    ds = b.sel_times(df, dn, hours = 12).interpolate()
-    
-    ds = ds.iloc[1:]
-    vz = dg.vertical_drift(ds)
-    
-    vz = vz.replace(0, float('nan'))
-    
-    return ds, vz, site
 
 def main():
     file = 'SAA0K_20170830(242).TXT'
     file = 'FZA0M_20220724(205).TXT'
     char = dg.chars(CHAR_PATH + file)
     
-    ds, vz, site = pipe_data(file)
+    ds, vz, site = pl.pipe_data(file)
     
     fig = plot_vz_and_frequencies(ds, vz, char, site)
     
-main()
+# main()

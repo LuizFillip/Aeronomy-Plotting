@@ -2,10 +2,8 @@ import cv2
 import os
 import matplotlib.pyplot as plt
 import digisonde as dg
-
-PATH_IONOGRAM = 'database/iono/20170329/'
-
-
+import plotting as pl 
+import pandas as pd 
 
 def plot_ionogram(
         ax, 
@@ -38,75 +36,88 @@ def fig_labels(
 
 
     fig.text(
-        .07, 0.4, 
+        .03, 0.4, 
         "Altitude (km)", 
         rotation = "vertical", 
         fontsize = fontsize
         )
     
     fig.text(
-        .4, 0.07, 
-        "Frequência (MHz)",
+        .45, 0.03, 
+        "Frequency (MHz)",
         fontsize = fontsize
         )
     
     fig.suptitle(
         title, 
-        y = 1.03, 
+        y = 0.95, 
         fontsize = fontsize
         )
     
 
-def plot_sequence_of_ionogram():
+
+def plot_sequence_of_ionogram(times):
     
     fig, ax = plt.subplots(
-         figsize = (12, 7), 
+         figsize = (16, 10), 
          dpi = 300, 
-         ncols = 5, 
+          sharex = True,
+        
+         ncols = 4, 
          nrows = 2
          )
     
-    plt.subplots_adjust(wspace = 0)
+    plt.subplots_adjust(wspace = 0.1, hspace = 0.3)
     
-    files = os.listdir(PATH_IONOGRAM)
-    
-    files = sorted([f for f in files if 'PNG' in f])
-    
-    # files = files[2:]
+    site = 'SAA0K'
     for i, ax in enumerate(ax.flat):
         
-        fname = files[i]
-        
-        infile = os.path.join(
+        dn = times[i]
+        filename = dn.strftime(
+            f'{site}_%Y%m%d(%j)%H%M%S.PNG')
+        path_of_ionogram = os.path.join(
             PATH_IONOGRAM, 
-            fname
+            filename
             )
-        
-        dn = plot_ionogram(
-            ax, 
-            infile, 
-            crop = True
+        pl.plot_single_ionogram(
+            path_of_ionogram, 
+            ax = ax, 
+            aspect = 'auto',
+            label = True,
+            ylabel_position = 'left',
+            title = False
             )
+        time = dn.strftime('%Hh%M')
+        ax.set(ylabel = '', xlabel = '', 
+               title = time)
         
-        
-        if 'SAA' in fname:
-            site = "Sao Luis"
-            
-        elif 'BVJ' in fname:
-            site = 'Boa vista'
-            
+        if ((i == 0) or (i == 4)):
+            pass
         else:
-            site = "Fortaleza"
-            
-    date = dn.strftime('%d/%m/%Y')
-    title = f'{site} - {date}'
+            ax.set(yticks = [])
+        
+      
+    # date = dn.strftime('%d/%m/%Y')
+    # title = f'{site} - {date}'
     
     fig_labels(
         fig, 
         fontsize = 30, 
-        title = title
+        title = 'São Luís'
         )
     
     return
 
-plot_sequence_of_ionogram()
+
+def main():
+    PATH_IONOGRAM = 'database/ionogram/20220724S'
+    
+    files = os.listdir(PATH_IONOGRAM)
+      
+    files = sorted([f for f in files if 'PNG' in f])
+    
+    files = files[20:][::3]
+    
+    times = pd.date_range('2022-07-24 23:30:00', freq = '30min', periods = 8)
+    
+    plot_sequence_of_ionogram(times)

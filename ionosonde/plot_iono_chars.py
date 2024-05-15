@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import GEO as gg
 
 
-PATH_CHAR = 'database/iono/midnight/'
+PATH_CHAR = 'digisonde/data/chars/midnight/'
 
 def site_name(fn):
     if 'BVJ' in fn:
@@ -15,7 +15,7 @@ def site_name(fn):
         site = 'saa'
     else:
         name = 'Fortaleza'
-        site = 'for'
+        site = 'fza'
     return name, site
 
 
@@ -49,6 +49,16 @@ def plot_foF2(ax, df, name):
         )
 
 
+def plot_fhF2(ax, df, name):
+    
+    ax.plot(df["fhF2"], label = name)
+    
+    ax.set(
+        ylim = [0, 20], 
+        ylabel = "f(hF2) (MHz)"
+        )
+
+
 def plot_QF(ax, df, name):
     
     ax.bar(df.index, df["QF"],
@@ -72,12 +82,12 @@ def plot_terminators(
     
     glat, glon = gg.sites[site]['coords']
     
-    dusk = gg.dawn_dusk(
-            dn,  
-            lat = glat, 
-            lon = glon, 
-            twilightAngle = 18
+    dusk = gg.dusk_from_site(
+            dn, 
+            site,
+            twilight_angle = 18
             )
+    
     for ax in ax.flat:
         ax.axvline(
             dusk, 
@@ -90,8 +100,8 @@ def plot_iono_chars(dn):
     
     fig, ax = plt.subplots(
         dpi = 300, 
-        figsize = (10, 8), 
-        nrows = 4, 
+        figsize = (12, 10), 
+        nrows = 3, 
         sharex = True
         )
     
@@ -99,11 +109,11 @@ def plot_iono_chars(dn):
     
     out = []
     
-    for site in [ 'BVJ03', 'FZA0M', 'SAA0K']: 
+    for site in [ 'FZA0M', 'SAA0K']: 
         
         fn  = f'{site}_{dn}.TXT'
         
-        df = dg.pipeline_char(PATH_CHAR + fn)
+        df = dg.chars(PATH_CHAR + fn)
         
         name, site = site_name(fn)
         
@@ -114,23 +124,24 @@ def plot_iono_chars(dn):
         plot_hF2(ax[1], df, name)
         
         plot_foF2(ax[2], df, name)
+        ax1 = ax[2].twinx()
+        plot_QF(ax1, df, name)
         
-        plot_QF(ax[3], df, name)
-       
     
     ax[0].legend(
         ncol = 3, 
         loc = 'upper center',
-        title = 'Sites',
-        bbox_to_anchor = (.5, 1.7),
+        bbox_to_anchor = (.5, 1.3),
         )
     
-    b.format_time_axes(ax[3])
+    b.format_time_axes(ax[2])
     color = ['k', '#0C5DA5', '#00B945']
     
     for i, site in enumerate(out):
         plot_terminators(
             ax, df, site, color[i])
+        
+    b.plot_letters(ax, y = 0.83, x = 0.02)
 
 
 dn = '20161003(277)'
@@ -138,6 +149,6 @@ dn = '20170423(113)'
 dn = '20170403(093)'
 dn = '20130327(086)'
 dn = '20150409(099)'
-
+dn = '20220724(205)'
 
 plot_iono_chars(dn)
