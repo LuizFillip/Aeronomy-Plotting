@@ -85,20 +85,20 @@ def plot_annually_events_count(
     return fig
 
 def main():
-    
+    df = b.load('events_class2')
+    translate = True
     for typing in ['sunset', 'midnight']:
-     
-        df = b.load('events_class')
-        
+      
         ds = pb.sel_typing(df, typing = typing)
         
-        fig = plot_annually_events_count(ds, typing, translate=False)
+        fig = plot_annually_events_count(
+            ds, typing, translate=translate)
         
         FigureName = f'annual_{typing}'
           
-        # fig.savefig(
-        #       b.LATEX(FigureName, folder = 'bars'),
-        #       dpi = 400
-        #       )
+        fig.savefig(
+              b.LATEX(FigureName, folder = 'bars'),
+              dpi = 400
+              )
         
-main()
+# main()

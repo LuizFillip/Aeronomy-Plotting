@@ -2,7 +2,6 @@ import PlasmaBubbles as pb
 import base as b 
 import numpy as np
 import matplotlib.pyplot as plt 
-import pandas as pd 
 import core as c 
 
 b.config_labels()
@@ -37,8 +36,8 @@ def plot_heatmap(
         )
         
     xticklabels = np.where(xticks >= 24, xticks - 24, xticks)
-    yticklabels = b.month_names(sort = True)
-    
+    yticklabels = b.month_names(sort = True, language = 'pt')
+   
     if colorbar:
         b.colorbar(
             img, 
@@ -58,27 +57,8 @@ def plot_heatmap(
     return 
 
 
-def get_dusk(ds, col):
+def divide_by_geomgnetic_levels(df):
     
-    df = pb.pivot_data(ds, values = 'dusk')
-  
-    df['day'] = (df.index.month + df.index.day / 31) - 1
-    
-    return df[[col, 'day']].rename(columns = {col: 'dusk'})
-
-
-def plot_seasonal_hourly(df, fontsize = 35):
-    
- 
-    fig, ax = plt.subplots(
-          ncols = 3, 
-          dpi = 300, 
-          sharex = True, 
-          sharey = True,
-          figsize = (16, 6)
-          )
-
-    plt.subplots_adjust(wspace = 0.1)
     cond = [
         df['kp'] <= 3, 
         (df['kp'] > 3) & 
@@ -90,32 +70,78 @@ def plot_seasonal_hourly(df, fontsize = 35):
     ]    
     
     
+    return cond, labels
+
+
+
+def plot_seasonal_hourly(
+        df, 
+        fontsize = 35, 
+        translate = False,
+        sector = 1
+        ):
+    
+    if translate:
+        ylabel = 'Months'
+        xlabel = 'Universal time'
+        
+        zlabel = 'Occurrence (\%)'
+        title = f'Seazonal/hourly occurrence on sector {sector}'
+    else:
+        ylabel = 'Meses'
+        xlabel = 'Hora universal'
+        zlabel = 'Ocorrência (\%)'
+        title = f'Ocorrência sazonal/horária no setor {sector}'
+        
+    fig, ax = plt.subplots(
+          ncols = 4,
+          nrows = 3,
+          dpi = 300, 
+          sharex = True, 
+          sharey = True,
+          figsize = (16, 14)
+          )
+
+    plt.subplots_adjust(wspace = 0.15)
+    
+    years = list(range(2013, 2024, 1))
+
     for i, ax in enumerate(ax.flat):
         
-        ds = pb.hourly_distribution(
-            df.loc[cond[i]], step = 0.5)
-
-        plot_heatmap(ax, ds, colorbar = False)
         
-        df1 = df.loc[df.index.year == 2020]
-        
-        ax.plot(
-            df1['dusk'], df1['day'],
-            lw = 3, 
-            color = 'w')
-        
-        ax.set(title = labels[i])
-        
-        if i == 0:
-            ax.set_ylabel('Meses', fontsize = fontsize)
-        
+        try:
+            year = years[i]
+            sel_year = df.loc[df.index.year == year]
+            
+            ds = pb.hourly_distribution(sel_year, step = 0.5)
     
+            plot_heatmap(ax, ds, colorbar = False)
+            
+            df1 = df.loc[df.index.year == 2020]
+            
+            ax.plot(df1['dusk'], df1['day'], lw = 3, color = 'w')
+            
+            ax.set(title = year)
+        
+        except:
+            ax.axis('off')
+        
+   
     fig.text(
-        0.4, 0.01, 
-        'Hora universal', 
+        0.45, 0.05,
+        xlabel, 
         fontsize = fontsize
         )
     
+    fig.text(
+        0.03, 0.45, 
+        ylabel, 
+        fontsize = fontsize, 
+        rotation = 'vertical'
+        )
+    
+    
+    #sets = [0.3, 0.99, 0.4, 0.02] upper part
     
     b.fig_colorbar(
             fig,
@@ -123,40 +149,39 @@ def plot_seasonal_hourly(df, fontsize = 35):
             vmax = 100, 
             cmap = 'magma',
             fontsize = 25,
-            step = 10,
-            y = 1.1,
-            label = 'Ocorrência (\%)'
+            step = 20,
+            label = zlabel, 
+            sets = [0.77, 0.12, 0.03, 0.23] 
             )
+    
+    fig.suptitle(title)
     return fig
     
 
 
 
 
-def sel_epb_typing(col, typing):
-    ds = b.load('events_class2')
-    
-    dusk = get_dusk(ds, col)
-    
-    epbs  = ds.loc[
-        (ds['type'] == typing) &
-        (ds['lon'] == col)  &
-        (ds['drift'] == 'fresh'), ['start']
-        ]
-        
-    idx = c.geo_index()
-    
-    return pd.concat([epbs, idx, dusk], axis = 1)
-
+sectors = {-50: 1, -60: 2, -70: 3, -80: 4}
 
 def main():
     col = -50
     
-    typing = 'sunset'
     
-    df = sel_epb_typing(col, typing)
+    typing = 'midnight'
     
-    plot_seasonal_hourly(df)
+    for col, sector in sectors.items():
     
-    plt.show()
+        df = c.sel_epb_typing(col, typing)
+        
+        fig = plot_seasonal_hourly(df, sector = sector)
+        
+        
+        FigureName = f'seasonal_hourly_{sector}'
+        
+            
+        fig.savefig(
+            b.LATEX(FigureName, 'climatology'),
+            dpi = 400)
+        plt.show()
     
+main()

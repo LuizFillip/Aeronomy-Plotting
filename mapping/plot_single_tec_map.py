@@ -93,7 +93,6 @@ def plot_tec_map(
         colorbar = True, 
         boxes = False,
         title = False,
-        site = 'SAKK', 
         invert_axis = False,
         root = 'D:\\'
         ):

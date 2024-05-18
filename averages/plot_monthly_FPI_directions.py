@@ -8,7 +8,7 @@ import numpy as np
 
 b.config_labels()
 
-def plot_montly_averages(df, parameter = 'tn'):
+def plot_montly_averages(df, ref_date, parameter = 'tn'):
 
     dirs = fp.DIRECTIONS
     
@@ -24,8 +24,8 @@ def plot_montly_averages(df, parameter = 'tn'):
     
     plt.subplots_adjust(wspace = 0.05)
     
-    dn = dt.datetime(2022, 7, 24, 21)
-    ds1 = b.sel_times(df, dn)
+    
+    ds1 = b.sel_times(df, ref_date)
     
      
     if parameter == 'tn':
@@ -49,13 +49,14 @@ def plot_montly_averages(df, parameter = 'tn'):
             values = col 
             )
         ax.plot(ds1['time'], ds1[col], color = 'r', lw = 2,
-                label = dn.strftime('%Y-%m-%d'))
+                label = ref_date.strftime('%Y-%m-%d'))
         ax.plot(ds, alpha = 0.5, color = 'gray')
         ax.plot(ds.mean(axis = 1), color = 'k', lw = 3)
         
         ax.set(title = dirs[num].capitalize(), 
                ylim = ylim,
-               yticks = yticks
+               yticks = yticks,
+               xlim = [24, 31]
                )
         ax.legend(loc = 'upper right')
         # ax.axhline(0, lw = 1.5, linestyle = '--')
@@ -82,6 +83,10 @@ def plot_montly_averages(df, parameter = 'tn'):
     return fig
 
 infile = 'database/FabryPerot/cj/'
-df = fp.join_days(infile, parameter = 'tn')
+
+parameter = 'vnu'
+dn = dt.datetime(2022, 7, 24, 21)
+
+df = fp.join_days(dn, parameter = parameter )
 df  = df.loc[~(df['west'] > 1500)]
-fig = plot_montly_averages(df, parameter = 'tn')
+fig = plot_montly_averages(df, dn, parameter = parameter )

@@ -9,58 +9,72 @@ CHAR_PATH = 'digisonde/data/chars/midnight/'
 
 def plot_site(ax, col, file):
     
-    
+
     ds, vz, site = pl.pipe_data(file)
+     
+    dn = ds.index[0]
     
     cols = ds.columns[3:-5]
     
-    cols = list(range(3, 7, 1))
-    pl.plot_heights(ax[col, 0], ds, cols)
+    cols = list(range(2, 7, 1))
     
-    pl.plot_drift(ax[col, 1], vz, cols, site)
+    pl.plot_heights(ax[0, col], ds, cols)
     
-    ax[col, 0].set(title = gg.sites[site]['name'])
-    ax[col, 1].set(title = gg.sites[site]['name'])
+    pl.plot_drift(ax[1, col], vz, cols, site)
     
+    for c in cols:
+        x = ds[c].dropna()
+        y = b.filter_frequencies(x.values)
+        ax[2, col].plot(x.index, c * 10 + y)
+        ax[2, col].set(ylim = [0, 100])
+        
+    ax[0, col].set(title = gg.sites[site]['name'])
     
-    if col == 2:
-        b.format_time_axes(ax[2, 0], translate = False)
-        b.format_time_axes(ax[2, 1], translate = False)
+    b.format_time_axes(ax[-1, col], hour_locator = 2)
     
+    d = gg.dusk_from_site(
+            dn, 
+            site = site,
+            twilight_angle = 18
+            )
+    
+    ax[0, col].axvline(d, lw = 2)
+    ax[1, col].axvline(d, lw = 2)
+    ax[2, col].axvline(d, lw = 2)
+    for a in ax.flat:
+        a.set(ylabel = '')
+       
+        
+       
+    ax[-1, 0].set(ylabel = 'd(hF) (km)')
+    ax[0, 0].set(ylabel = 'Altitude (km)')
+    ax[1, 0].set(ylabel = 'Vertical drift (m/s)')
 
  
 def plot_two_ionossonde_parameters():
     
-   
-
     fig, ax = plt.subplots(
-        figsize = (16, 14), 
+        figsize = (18, 14), 
         nrows = 3, 
-        ncols = 2,
-        # sharey = 'col',
+        ncols = 3,
         sharex = True, 
+        sharey = 'row', 
         dpi = 300
         )
 
-    plt.subplots_adjust(hspace = 0.3, wspace= 0.3)
+    plt.subplots_adjust(hspace = 0.05, wspace= 0.05)
 
-
-    file = 'FZA0M_20220724(205).TXT'
-
-    plot_site(ax, 0, file)
+    plot_site(ax, 0, 'FZA0M_20220724(205).TXT')
            
-    file = 'SAA0K_20220724(205).TXT'
+    plot_site(ax, 1, 'SAA0K_20220724(205).TXT')
 
-    plot_site(ax, 1, file)
-
-    file = 'CAJ2M_20220724(205).TXT'
-
-    plot_site(ax, 2, file)
+    plot_site(ax, 2, 'CAJ2M_20220724(205).TXT')
   
     ax[0, 0].legend(
-        ncol = 2, 
+        ncol = 6, 
         loc = "upper right", 
-        title = 'Frequencies (MHz)'
+        title = 'Frequencies (MHz)',
+        bbox_to_anchor = (2.4, 1.6), 
         )
     
     b.plot_letters(ax, y = 0.85, x = 0.03)

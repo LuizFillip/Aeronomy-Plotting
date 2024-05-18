@@ -24,7 +24,7 @@ def plot_infos(ax, vz, site):
     
     ax.text(
         0.4, 0.82,
-        f'$V_p =$ {vmax} m/s ({time} UT)',
+        f'$V_p =$ {vmax} m/s',
         transform = ax.transAxes
         )
     
@@ -83,7 +83,7 @@ def plot_vz_and_frequencies(df, vz, char, site):
     
     plt.subplots_adjust(hspace = 0.05)
     
-    cols = df.columns[3:-3]
+    cols = list(range(3, 7, 1))
     
     plot_heights(ax[0], df, cols)
     plot_drift(ax[1], vz, cols, site)
@@ -110,10 +110,10 @@ def plot_vz_and_frequencies(df, vz, char, site):
 def main():
     file = 'SAA0K_20170830(242).TXT'
     file = 'FZA0M_20220724(205).TXT'
+    file = 'SAA0K_20130516(136).TXT'
     char = dg.chars(CHAR_PATH + file)
     
     ds, vz, site = pl.pipe_data(file)
-    
     fig = plot_vz_and_frequencies(ds, vz, char, site)
     
-# main()
+#main()

@@ -8,7 +8,6 @@ import digisonde as dg
 import GEO as gg 
 import matplotlib.pyplot as plt 
 
-
 def plot_regions(ax_tec, site):
      
      lat, lon = gg.sites['car']['coords']
@@ -47,28 +46,23 @@ def title(dn):
     return dn.strftime('%Y/%m/%d %Hh%M (UT)')
 
 
-def plot_time_evolution(
+def plot_ion_tec_img(
         file, 
         dn, 
-        df, 
-        target = None,
-        vmax = 10, 
-        site = 'SAA0K',
-        save = True,
-        threshold = 0.20, 
-        fontsize = 30, 
-        root_tec = 'D:\\'
-        ):
-
-    fig, ax_img, ax_ion, ax_tec, axes = b.layout4(
-        figsize = (12, 20), 
-        hspace = 0.3, 
-        wspace = 0.3
+        kind = 'With EPB', 
+        title_dn = None):
+        
+    fig, ax_img, ax_ion, ax_tec   = b.layout3(
+        figsize = (19, 8), 
+        wspace = 0.5, 
+        hspace = 0.2
         )
+    
+   
     
     path_of_image = os.path.join(
         im.path_all_sky(dn), file)
- 
+    
     target = im.plot_images(
         path_of_image, 
         ax_ion, 
@@ -76,12 +70,13 @@ def plot_time_evolution(
         fontsize = 15
         )
     
-    fig.suptitle(title(target), y = 0.95)
 
+    fig.suptitle(kind, y = 0.89)
+    
     pl.plot_tec_map(
         target, 
         ax = ax_tec, 
-        vmax = vmax, 
+        vmax = 60, 
         colorbar = True, 
         boxes = True,
         root = root_tec
@@ -99,83 +94,40 @@ def plot_time_evolution(
         ylabel_position = 'right',
         title = False
         )
+    
+    if title_dn is not None:
         
-    pl.plot_roti_timeseries(
-        axes, 
-        df, 
-        target, 
-        dn, 
-        vmax = 3, 
-        right_ticks = False,
-        threshold = threshold
-        )
+        time_title = title(target)
+        
     
+    return fig 
 
-    fig.text(
-        0.03, 0.23, 'ROTI (TECU/min)', 
-        fontsize = fontsize, 
-        rotation = 'vertical'
-        )
-    
-    fig.text(
-        0.95, 0.26, 'Occurrence', 
-        fontsize = fontsize, 
-        rotation = 'vertical',
-        color = 'b'
-        )
+root_tec = 'D:\\'
 
-    
-    if save:
-        save_image(fig, target, dn)
-    
-    return fig
+dn = dt.datetime(2014,1,2,21)
 
-def test_single(
-        dn, 
-        start = None, 
-        vmax = 60, 
-        offset = 8, 
-        remove_noise = True
-        ):
-    
-    start = im.round_date(dn)
-    
-    df =  pb.concat_files(
-          start, 
-          root = 'D:\\', 
-          remove_noise =  remove_noise
-          )
-
-    ds = b.sel_times(df, start, hours = 12)
-    
-    de = dt.timedelta(hours = offset)
-    file = im.get_closest(
-        dn + de, 
-        file_like = True
-        )
-
-    plot_time_evolution(
+delta = dt.timedelta(hours = 8)
+file = im.get_closest(
+    dn + delta, 
+    file_like = True
+    )
+figure_1 = plot_ion_tec_img(
         file, 
-        start, 
-        ds, 
-        vmax = vmax
-        )
-    plt.show()
-    
-    return None 
-    
+        dn, 
+        kind = 'With EPB', 
+        title_dn = None)
 
-# dn =  dt.datetime(2017, 9, 17, 21)
-# dn = dt.datetime(2019, 5, 2, 21)
-# dn =  dt.datetime(2014, 2, 9, 21)
+dn = dt.datetime(2013,6,10,21)
 
-# test_single(
-#     dn, 
-#     start = None, 
-#     vmax = 60, 
-#     offset = 6.5, 
-#     remove_noise = True
-#     )
+delta = dt.timedelta(hours = 8)
+file = im.get_closest(
+    dn + delta, 
+    file_like = True
+    )
+figure_2 = plot_ion_tec_img(
+        file, 
+        dn, 
+        kind = 'Without EPB', 
+        title_dn = None)
 
-# dn.timetuple().tm_yday
-
+fig = b.join_images(figure_1, figure_2)

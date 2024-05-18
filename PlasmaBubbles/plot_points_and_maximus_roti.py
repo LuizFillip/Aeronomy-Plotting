@@ -43,7 +43,7 @@ def plot_points_and_maximus_roti(
     out_infos = []
     for row, sector in enumerate(coords.keys()):
     
-        ds = pb.filter_coords(df, sector, coords)
+        ds = pb.filter_region(df, dn.year, sector)
         
         ds = pl.plot_roti_points(
                 ax[row], ds, 
@@ -72,7 +72,7 @@ def plot_points_and_maximus_roti(
         ax[row].set(
             ylim = [0, 3], 
             xlim = [df.index[0], df.index[-1]],
-            title = get_infos(ds, lon = int(sector))
+            # title = get_infos(ds, lon = int(sector))
             )
         
         if row == 0:
@@ -97,13 +97,13 @@ def plot_points_and_maximus_roti(
 
 def main():
   
-    dn = dt.datetime(2014, 5, 1, 21)
+    dn = dt.datetime(2019, 1, 1, 21)
     
     
     df = pb.concat_files(
         dn, 
         days = 2, 
-        root = 'D:\\',#os.getcwd(),
+        root = 'D:\\', 
         hours = 12
         )
     
@@ -111,13 +111,11 @@ def main():
     fig = plot_points_and_maximus_roti(
             df, 
             dn, 
-            threshold = 0.25,
+            threshold = 0.2,
             fontsize = 30
             )
     
     
     plt.show()
     
-    
-    
-# main()
+

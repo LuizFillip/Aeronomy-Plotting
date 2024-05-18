@@ -81,7 +81,7 @@ def plot_nighttime_observation(
     fig, ax = plt.subplots(
         nrows = 2, 
         ncols = 2,
-        figsize = (16, 10), 
+        figsize = (16, 8), 
         sharex =  'col',
         sharey = 'row',
         dpi = 300
@@ -112,5 +112,12 @@ def plot_nighttime_observation(
 path = 'database/FabryPerot/cj/bfp220724g.7100.txt'
 
 
-
 fig = plot_nighttime_observation(path)
+
+FigureName = 'temp_winds_cajazeiras'
+
+
+fig.savefig(
+      b.LATEX(FigureName, folder = 'paper2'),
+      dpi = 400
+      )

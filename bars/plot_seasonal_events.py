@@ -19,7 +19,7 @@ def plot_seasonal_occurrence(
 
     
     if typing == 'sunset':
-        vmax = 300
+        vmax = 350
         if translate:
             typing = 'pós pôr do Sol'
         else:
@@ -87,27 +87,24 @@ def plot_seasonal_occurrence(
     
 
 def main():
-    # infile = 'core/data/epb_class'
-    infile = 'events_class'
+
+    df = b.load('events_class2')
+    
+    translate = True
+    
     for typing in ['sunset', 'midnight']:
      
-        df = b.load(infile)
         
         ds = pb.sel_typing(df, typing = typing)
 
-        fig = plot_seasonal_occurrence(ds, typing)
+        fig = plot_seasonal_occurrence(
+            ds, typing, translate = translate)
         
         FigureName = f'seasonal_{typing}'
           
-        # fig.savefig(
-        #       b.LATEX(FigureName, folder = 'bars'),
-        #       dpi = 400
-        #       )
+        fig.savefig(
+              b.LATEX(FigureName, folder = 'bars'),
+              dpi = 400
+              )
     
-main()
-# infile = 'events_class'
-# df = b.load(infile)
-
-# ds = pb.sel_typing(df, typing = 'sunset')
-
-# ds 
+# main()

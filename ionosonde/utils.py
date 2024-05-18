@@ -6,18 +6,18 @@ FREQ_PATH = 'digisonde/data/chars/freqs/'
 
 def pipe_data(file):
     df = dg.freq_fixed(FREQ_PATH + file)
-    del df[9]
+    # del df[9]
     site, dn = dg.site_datetime_from_file(file, hours = 18)
     
-    ds = b.sel_times(df, dn, hours = 12).interpolate()
+    # ds = b.sel_times(df, dn, hours = 12).interpolate()
     
-    ds = ds.iloc[1:]
+    ds = df.iloc[1:].interpolate()
     vz = dg.vertical_drift(ds)
+
     
     vz = vz.replace(0, float('nan'))
     
     return ds, vz, site
-
 
 
 class labels:
@@ -30,7 +30,7 @@ class labels:
             self.vz = 'Vertical drift (m/s)'
             self.freq = 'Fixed frequencies'
 
-def plot_terminators(ax, dn, col, shade = False):
+def plot_terminators(ax, dn, col = None, shade = False):
          
      dusk = gg.dusk_from_site(
              dn, 
@@ -49,13 +49,30 @@ def plot_terminators(ax, dn, col, shade = False):
                   color = 'gray',
                   lw = 2
               )
-                 
-         ax[col, row].axvline(
-             dusk, 
-             linestyle = '-',
-             lw = 2,
-             color = 'k'
-             )
- 
+         
+         if col is None:
+                    
+             ax[row].axvline(
+                 dusk, 
+                 linestyle = '-',
+                 lw = 2,
+                 color = 'k'
+                 )
+            
+         else:
+             ax[row, col].axvline(
+                 dusk, 
+                 linestyle = '-',
+                 lw = 2,
+                 color = 'k'
+                 )
 
      return dusk
+ 
+file = 'SAA0K_20130516(136).TXT'
+
+df = dg.freq_fixed(FREQ_PATH + file)
+ds = df.iloc[1:].interpolate()
+vz = dg.vertical_drift(ds)
+
+vz 

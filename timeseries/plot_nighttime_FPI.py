@@ -13,8 +13,8 @@ def plot_directions(ax, path, parameter = "vnu"):
         units = '(m/s)'
     else:
         df = fp.FPI(path).temp
-        ylim = [700, 1400]
-        yticks = np.arange(700, 1500, 100)
+        ylim = [600, 1200]
+        yticks = np.arange(ylim[0], ylim[-1], 100)
         units = '(K)'
                 
     coords = {
@@ -47,7 +47,7 @@ def plot_directions(ax, path, parameter = "vnu"):
             )
         ax[i].axhline(0, color = "k", linestyle = "--")
 
-
+    return None 
 
 
 def plot_nighttime_observation(
@@ -65,15 +65,9 @@ def plot_nighttime_observation(
     
     plt.subplots_adjust(hspace = 0.1)
     
-    
     plot_directions(ax, path, parameter = parameter)
     
-    b.format_time_axes(
-            ax[1], 
-            hour_locator = 1, 
-            day_locator = 1, 
-            tz = "UTC"
-            )
+    b.format_time_axes(ax[1])
     
     if "car" in path:    
         ax[0].set_title("Cariri")
@@ -89,6 +83,9 @@ def plot_nighttime_observation(
 # infile = 'FabryPerot/data/FPI/'
 infile = 'database/FabryPerot/car/minime01_car_20140102.cedar.005.txt'
 infile = 'database/FabryPerot/cj/bfp220724g.7100.txt'
-fig = plot_nighttime_observation(infile, parameter='tn')
+
+infile = 'database/FabryPerot/caj/minime02_caj_20130515.cedar.005.hdf5.txt'
+fig = plot_nighttime_observation(
+    infile, parameter = 'vnu')
 
 plt.show()

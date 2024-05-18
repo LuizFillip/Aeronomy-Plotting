@@ -10,6 +10,9 @@ def site_name(fn):
     if 'BVJ' in fn:
         name = 'Boa vista'
         site = 'boa'
+    elif 'CAJ' in fn:
+        name = 'Cachoeira Paulista'
+        site = 'caj'
     elif 'SAA' in fn:
         name = 'São Luis'
         site = 'saa'
@@ -41,12 +44,14 @@ def plot_hF2(ax, df, name):
     
 def plot_foF2(ax, df, name):
     
-    ax.plot(df["foF2"], label = name)
+    line, = ax.plot(df["foF2"], label = name)
     
     ax.set(
         ylim = [0, 20], 
         ylabel = "foF2 (MHz)"
         )
+    
+    return line.get_color()
 
 
 def plot_fhF2(ax, df, name):
@@ -59,11 +64,14 @@ def plot_fhF2(ax, df, name):
         )
 
 
-def plot_QF(ax, df, name):
+def plot_QF(ax, df, name, color):
     
     ax.bar(df.index, df["QF"],
            width = 0.01, 
-           label = name)
+           color = color,
+           alpha = 0.7,
+           label = name
+           )
     
     ax.set(
         ylim = [0, 40], 
@@ -91,6 +99,7 @@ def plot_terminators(
     for ax in ax.flat:
         ax.axvline(
             dusk, 
+            lw = 2,
             color = color
             )
         
@@ -101,47 +110,46 @@ def plot_iono_chars(dn):
     fig, ax = plt.subplots(
         dpi = 300, 
         figsize = (12, 10), 
-        nrows = 3, 
+        nrows = 4, 
         sharex = True
         )
     
     plt.subplots_adjust(hspace = 0.1)
     
-    out = []
+    out = {}
     
-    for site in [ 'FZA0M', 'SAA0K']: 
+    for site in [ 'FZA0M', 'SAA0K', 'CAJ2M']: 
         
         fn  = f'{site}_{dn}.TXT'
         
         df = dg.chars(PATH_CHAR + fn)
-        
+      
         name, site = site_name(fn)
-        
-        out.append(site)
         
         plot_hmF2(ax[0], df, name)
         
         plot_hF2(ax[1], df, name)
         
-        plot_foF2(ax[2], df, name)
-        ax1 = ax[2].twinx()
-        plot_QF(ax1, df, name)
+        color = plot_foF2(ax[2], df, name)
+     
+        plot_QF(ax[3], df, name, color)
+        
+        out[site] = color
         
     
     ax[0].legend(
         ncol = 3, 
+        columnspacing=0.3,
         loc = 'upper center',
-        bbox_to_anchor = (.5, 1.3),
+        bbox_to_anchor = (.5, 1.4),
         )
     
-    b.format_time_axes(ax[2])
-    color = ['k', '#0C5DA5', '#00B945']
+    b.format_time_axes(ax[-1])
     
-    for i, site in enumerate(out):
-        plot_terminators(
-            ax, df, site, color[i])
+    for site, color in out.items():
+        plot_terminators(ax, df, site, color)
         
-    b.plot_letters(ax, y = 0.83, x = 0.02)
+    b.plot_letters(ax, y = 0.79, x = 0.02)
 
 
 dn = '20161003(277)'

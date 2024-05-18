@@ -7,17 +7,14 @@ import GEO as gg
 
 b.config_labels(fontsize = 25)
 
-def load_dataset(dn, hours = 12, num = 3, root = 'D:\\'):
+def load_dataset(dn, hours = 12, root = 'D:\\'):
+    
     
     out = []
-    for folder in [f'events{num}', f'long{num}']:
-        ds = b.load(
-            pb.epb_path(
-                f'{dn.year}', 
-                root = root, 
-                folder = folder
-                )
-            )
+    for folder in ['events', 'longs']:
+        
+        infile = f'database/epbs/{folder}/{dn.year}'
+        ds = b.load(infile)
         
         out.append(b.sel_times(ds, dn, hours = hours))
         
@@ -123,7 +120,7 @@ def plot_roti_epb_occurrence_in_column(
     return fig 
 
 
-dn = dt.datetime(2014, 2, 9, 21)
+dn = dt.datetime(2013, 5, 15, 21)
 
 fig = plot_roti_epb_occurrence_in_column(dn)
 
