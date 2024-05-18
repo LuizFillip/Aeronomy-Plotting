@@ -57,7 +57,8 @@ def plot_distributions_solar_flux(
                 limit = limit
             )
     
-                        
+        print(data)
+              
         days = pl.plot_histogram(
                 ax[1], 
                 data, 
@@ -89,7 +90,7 @@ def plot_distributions_solar_flux(
     ax[1].legend(**legend_args)
     ax[0].legend(**legend_args)
     
-    pl.plot_infos(
+    pl.plot_infos_in_distribution(
         ax[0], 
         x = x, 
         y = y, 
@@ -98,7 +99,7 @@ def plot_distributions_solar_flux(
         offset_y = offset_y
         )
     
-    pl.plot_infos(
+    pl.plot_infos_in_distribution(
         ax[1], 
         x = x,
         y = y,
@@ -137,10 +138,10 @@ def main():
         
     FigureName = f'solar_flux_{parameter}2'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder),
+    #     dpi = 400
+    #     )
 
 
     plt.show()

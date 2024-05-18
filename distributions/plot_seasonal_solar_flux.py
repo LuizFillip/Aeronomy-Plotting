@@ -7,12 +7,6 @@ import plotting as pl
 
 b.config_labels(fontsize = 25)
 
-
-        
-
-
-
-
 def plot_distributions_seasons(
         df, 
         parameter = 'gamma',
@@ -22,7 +16,7 @@ def plot_distributions_seasons(
         limit = None
         ):
     
-    fig, ax = axes_for_seasonal_plot()
+    fig, ax = pl.axes_for_seasonal_plot()
 
     names = ['march', 'june', 'september', 'december']
     
@@ -99,7 +93,7 @@ def plot_distributions_seasons(
 def main():
     
     translate = True
-    parameter = 'gamma'
+    parameter = 'vp'
     df = c.load_results('saa', eyear = 2022)
     solar_limit = c.limits_on_parts(df['f107a'])
     

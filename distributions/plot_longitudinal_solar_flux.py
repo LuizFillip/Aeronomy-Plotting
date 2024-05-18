@@ -5,7 +5,15 @@ import plotting as pl
 
 b.config_labels(fontsize = 25)
 
+legend_args = dict(
+    ncol = 2, 
+    loc = 'upper center', 
+    labelcolor = 'linecolor'
+    
+    )
+
 def plot_compare_sites_in_solar_flux(
+        year = 2018,
         parameter = 'gamma', 
         translate = True,
         outliner = 10
@@ -24,7 +32,7 @@ def plot_compare_sites_in_solar_flux(
     total_epb = []
     total_day = []
     
-    for i, ds in enumerate(c.get_same_length(2015)):
+    for i, ds in enumerate(c.get_same_length(year)):
         index = i + 1
         label = f'({index}) {titles[i]}'
         
@@ -36,7 +44,8 @@ def plot_compare_sites_in_solar_flux(
                 label = label,
                 axis_label = True,
                 outliner = outliner, 
-                translate = True
+                translate = True, 
+                limit = 1.6
             )
         
         days = pl.plot_histogram(
@@ -52,36 +61,67 @@ def plot_compare_sites_in_solar_flux(
         total_epb.append(epbs)
         total_day.append(days)
         
-        ax[1].set(ylim = [0, 600])
+        ax[1].set(ylim = [0, 200])
         ax[0].set(xlabel = '')
         
         
-    ax[0].legend(loc = 'upper center', ncol = 2)
-    ax[1].legend(loc = 'upper center', ncol = 2)
+    x = 0.7
+    y = 0.25
+    offset_y = 0.1
     
-    x = 0.68
-    pl.plot_infos(ax[0], total_epb, 
-                  x = x, 
-                  translate = True)
-    pl.plot_infos(ax[1], total_day, 
-                  x = x, 
-                  epb_title = False, 
-                  translate = True)
-
-    b.plot_letters(ax, y = 0.87, x = 0.02)
+    ax[1].legend(**legend_args)
+    ax[0].legend(**legend_args)
+    
+    pl.plot_infos(
+        ax[0], 
+        x = x, 
+        y = y, 
+        translate = translate, 
+        values = total_epb, 
+        offset_y = offset_y
+        )
+    
+    pl.plot_infos(
+        ax[1], 
+        x = x,
+        y = y,
+        values = total_day, 
+        epb_title = False, 
+        translate = translate, 
+        offset_y = offset_y
+        )
     
     return fig 
 
 def main():
     
-    fig = plot_compare_sites_in_solar_flux()
     
     FigureName = 'compare_jic_saa'
       
+    translate = True
+
+    parameter ='gamma'
+    year = 2015
+    fig = plot_compare_sites_in_solar_flux(
+        year,
+        parameter = parameter, 
+        translate = translate,
+        outliner = 0
+        )
+    
+    if translate:
+        folder = 'distributions/pt/'
+    else:
+        folder = 'distributions/en/'
+        
+    FigureName = f'longitudinal_{parameter}'
+        
     # fig.savefig(
-    #       b.LATEX(FigureName, 
-    #               folder = 'distributions/pt/'),
-    #       dpi = 400
-    #       )
-    # 
+        # b.LATEX(FigureName, folder = folder),
+        # dpi = 400
+        # )
+    
+    
+    
 # main()
+

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 def fmt(index, value):
     return f'({index}) {value} '
 
-def plot_infos(
+def plot_infos_in_distribution(
         ax, 
         values, 
         x = 0.70, 

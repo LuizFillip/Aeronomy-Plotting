@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import base as b
 import core as c
 import plotting as pl
@@ -45,7 +44,10 @@ def plot_storm_levels_distribution(
                     translate = translate,
                     limit = limit
                     )
-                    
+            
+            if name == 'december':
+                print(data)
+                
             total_epb.append(epb)
             
             days = pl.plot_histogram(
@@ -101,7 +103,8 @@ def main():
         parameter= parameter,
         level = -30, 
         translate = translate,
-        limit =  True
+        limit =  True, 
+        outliner = 5
         )
     
     if translate:
@@ -113,10 +116,10 @@ def main():
     
     FigureName = 'geomagnetic_seasonal'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder = folder),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder = folder),
+    #     dpi = 400
+    #     )
     
     
 main()
