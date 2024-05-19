@@ -92,8 +92,8 @@ def plot_distributions_seasons(
 
 def main():
     
-    translate = True
-    parameter = 'vp'
+    translate = False
+    parameter = 'gamma'
     df = c.load_results('saa', eyear = 2022)
     solar_limit = c.limits_on_parts(df['f107a'])
     

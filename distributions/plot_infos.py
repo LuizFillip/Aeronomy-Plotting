@@ -69,7 +69,7 @@ def plot_events_infos(
             epb_title = False
             f =  0.1
             
-        plot_infos(
+        plot_infos_in_distribution(
             ax[row, col], 
             total, 
             x = x + f, 
@@ -108,11 +108,11 @@ def FigureLabels(
         
     if translate:
         ylabel1 = "Probabilidade de ocorrência (\%)"
-        ylabel2 = "Frequência de ocorrência"
+        ylabel2 = "Número de eventos"
        
     else:
         ylabel1 = "EPB occurrence probability (\%)"
-        ylabel2 = "Frequency of occurrence"
+        ylabel2 = "Number of events"
         
     fig.text(
         0.07, 0.33, 

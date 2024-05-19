@@ -57,8 +57,9 @@ def plot_distributions_solar_flux(
                 limit = limit
             )
     
-        print(data)
-              
+        # print(data) s
+        
+        
         days = pl.plot_histogram(
                 ax[1], 
                 data, 
@@ -115,7 +116,8 @@ def plot_distributions_solar_flux(
 
 def main():
     
-    translate = True
+    translate = False
+
     df = c.load_results('saa', eyear = 2022)
 
     limit = c.limits_on_parts(df['f107a'], parts = 2 )

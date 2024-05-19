@@ -62,9 +62,9 @@ def plot_histogram(
     if axis_label:
         
         if translate:
-            ylabel = 'Frequência de ocorrência'
+            ylabel = 'Número de eventos'
         else:
-            ylabel = 'Frequency of occurrence'
+            ylabel = 'Number of events'
 
         ax.set(
             xlabel = xlabel, 
