@@ -71,11 +71,13 @@ def plot_distributions_seasons(
                 )
             
 
-        LIST = [total_epb, total_day]
+        TOTAL = [total_epb, total_day]
+       
         pl.plot_events_infos(
-            ax, row, LIST, 
+            ax, row, TOTAL, 
             x = 0.58,
             y = 0.3,
+            parameter = parameter,
             translate = translate
             )
             
@@ -93,7 +95,7 @@ def plot_distributions_seasons(
 def main():
     
     translate = False
-    parameter = 'gamma'
+    parameter = 'vp'
     df = c.load_results('saa', eyear = 2022)
     solar_limit = c.limits_on_parts(df['f107a'])
     
@@ -114,10 +116,10 @@ def main():
         folder = 'distributions/en/'
         
         
-    fig.savefig(
-        b.LATEX(FigureName, folder),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder),
+    #     dpi = 400
+    #     )
     
 
     plt.show()
