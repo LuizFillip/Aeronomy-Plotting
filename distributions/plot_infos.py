@@ -5,31 +5,29 @@ import matplotlib.pyplot as plt
 def fmt(index, value):
     return f'({index}) {value} '
 
+
+def titles_infos(parameter):
+    if parameter == 'gamma':
+        return ['EPBs occurrence', '$\gamma_{RT}$ total']
+    else:
+        return ['EPBs occurrence', '$V_P$ total']
+      
+
 def plot_infos_in_distribution(
         ax, 
         values, 
         x = 0.70, 
         y = 0.20,
         translate = False,
-        epb_title = True, 
+        title = '$V_P$', 
         offset_y = 0.15
         ):
     
-    if isinstance(translate, str):
-        title = translate
-        
     if translate:
-        title = 'Ocorrência de EPBs'
         event = 'eventos'
     else:
-        title = 'EPB occurrence'
         event = 'events'
         
-        
-    if not epb_title:       
-        title = '$\gamma_{RT}$ total'
-    
-
     for i, val in enumerate(values):
         
         info = fmt(i + 1, val) + event
@@ -45,7 +43,8 @@ def plot_infos_in_distribution(
             ax.text(
                 x, y - offset_y, f'{info}', 
                 transform = ax.transAxes, 
-                color = 'b') #'#0C5DA5'
+                color = 'b'
+                ) #'#0C5DA5'
 
     return None 
 
@@ -54,19 +53,20 @@ def plot_infos_in_distribution(
 def plot_events_infos(
         ax, row, LIST, 
         translate = True, 
-        epb_title = True,
+        parameter = 'gamma',
         x = 0.68, 
         y = 0.2
         ):
     
-
-    for col, total in enumerate(LIST):    
-        
+    titles = titles_infos(parameter)
+    
+    for col, total in enumerate(LIST):  
+                
         if col == 0:
-            epb_title = True
+          
             f = 0
         else:
-            epb_title = False
+          
             f =  0.1
             
         plot_infos_in_distribution(
@@ -75,7 +75,7 @@ def plot_events_infos(
             x = x + f, 
             y = y,
             translate = translate,
-            epb_title = epb_title
+            title = titles[col], 
             )
                 
         ax[0, col].legend(
