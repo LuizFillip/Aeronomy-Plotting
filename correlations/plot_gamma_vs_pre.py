@@ -24,35 +24,43 @@ def plot_labels(fig, fontsize = 30):
     
     
 
-def plot_infos(ax, fit, i = 0, color = 'k'):
-    intercept = round(fit.intercept, 3)
-    slope = round(fit.slope[0], 3)
+def plot_infos(ax, fit, i = 0, color = 'k', dep = 'vp'):
+    intercept = round(fit.intercept, 2)
+    slope = round(fit.slope[0], 2)
     
-    equation = f'$\\gamma_{{RT}} = {slope}V_p + {intercept}$'
-    ax.text(
-        0.35, 0.18 - i, 
-        equation, 
-        transform = ax.transAxes,
-        color = color
-        )
+    if dep == 'vp':
+        dep = '$V_P$'
+    elif dep == 'K':
+        dep = '$K^F$'
+    else:
+        dep = '$g_e/ \\nu_{eff}^F$'
+
+    if intercept < 0: 
+        equation = '$\gamma_{RT}$' + f'= {slope}{dep}{intercept}'
+    else:
+        equation = '$\gamma_{RT}$' + f'= {slope}{dep} + {intercept}'
     
     ax.text(
-        0.05, 0.85 - i, 
-        f'$R^2$ = {fit.r2_score}', 
+        0.05, 0.65, 
+        f'$R^2$ = {fit.r2_score}\n{equation}', 
         transform = ax.transAxes,
         color = color
         )
 
 def plot_scattering(
-        ax, df, 
-        col = 'gamma', color = 'k', label = ''):
+        ax, 
+        df, 
+        col = 'vp', 
+        color = 'k', 
+        label = ''
+        ):
          
-    x_vls, y_vls = df['vp'].values, df[col].values
+    x_vls, y_vls = df[col].values, df['gamma'].values
     
     ax.scatter(
         x_vls, y_vls, 
         s = 20, 
-        alpha = 0.5, 
+        # alpha = 0.5, 
         c = color, 
         label = label
         )
@@ -76,19 +84,26 @@ def plot_single_correlation(
         fig, ax = plt.subplots(
             dpi = 300)
         ax.set(ylabel = b.y_label('gamma'), 
-               xlabel = b.y_label('vp'))
+               xlabel = b.y_label(col))
     
     
     ds = df.loc[df['epb'] == 1.0]
     x_vls, y_vls = plot_scattering(
-        ax, ds, color = color)
+        ax, ds, col = col, color = color)
     
     fit = b.linear_fit(x_vls, y_vls)
     
-    ax.plot(x_vls, fit.y_pred, lw = 3, color = color, 
+    ax.plot(x_vls, fit.y_pred,
+            lw = 3, color = 'red', 
             label = label)
-
-    plot_infos(ax, fit, i = index, color = color)
+    
+    ax.set(ylim = [0, 5])
+    plot_infos(
+        ax, fit, 
+        i = index, 
+        dep = col,
+        color = color
+        )
       
     if ax is None:
         return fig
@@ -139,47 +154,6 @@ def plot_seasonal_gamma_vs_pre(
             
     return ax
 
-
-def plot_separe_in_solar_activity():
-
-    fig, ax = plt.subplots(
-        figsize = (14, 12),
-        dpi = 300,
-        sharex = True,
-        sharey = True,
-        nrows = 2, 
-        ncols = 2
-        )
-    
-    plt.subplots_adjust(wspace = 0.05, hspace = 0.15)
-    
-    df = c.load_results('saa', eyear = 2022)
-    
-    level = c.limits_on_parts(df['f107a'], parts = 2)
-    
-    df_index = c.DisturbedLevels(df)
-    
-    F107_labels = df_index.solar_labels(level)
-     
-    total_epb = []
-    total_day = []
-    colors = ['k', 'b']
-    
-    for i, ds in enumerate(df_index.F107(level)):
-        
-        label =  f'{F107_labels[i]}'
-        
-        plot_seasonal_gamma_vs_pre(
-            ax, ds, 
-            col = 'gamma', 
-            color = colors[i], 
-            index = i * 0.1, 
-            label = label
-            )
-    
-    plot_labels(fig, fontsize = 30)
-    
-    return fig
  
 
 def main():
