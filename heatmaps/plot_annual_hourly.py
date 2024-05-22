@@ -2,66 +2,60 @@ import PlasmaBubbles as pb
 import base as b 
 import numpy as np
 import matplotlib.pyplot as plt 
-import core as c 
 import pandas as pd 
-
+import datetime as dt
+PATH_INDEX =  'database/indices/omni_pro.txt'
 
 def plot_seasonal_hourly(
+        ax,
         df2, 
         df,
         cmap = 'jet',
         fontsize = 35, 
         translate = False,
-        sector = 1
+        factor = 100,
+        percent = True,
+        heatmap = True
         ):
     
     if translate:
-        ylabel = 'Months'
-        xlabel = 'Universal time'
-        
+        xlabel = 'Years'
+        ylabel = 'Universal time'
         zlabel = 'Occurrence (\%)'
-        title = f'Seazonal/hourly occurrence on sector {sector}'
     else:
-        ylabel = 'Meses'
-        xlabel = 'Hora universal'
+        xlabel = 'Anos'
+        ylabel = 'Hora universal'
         zlabel = 'Ocorrência (\%)'
-        title = f'Ocorrência sazonal/horária no setor {sector}'
    
-
-    fig, ax = plt.subplots(
-          dpi = 300, 
-          sharex = True, 
-          sharey = True,
-          figsize = (12, 6)
-          )
-        
-    
     yticks = df2.index 
     xticks = df2.columns 
-    img = ax.imshow(
-          df2.values,
-          aspect = 'auto', 
-          extent = [xticks[0], xticks[-1], 
-                    yticks[-1], yticks[0]],
-          cmap = cmap
-          )
+    values = df2.values
     
-    percent = True
-    
-    if percent:
-        factor = 100
-        units = ' (\%)'
+    if heatmap:
+        img = ax.imshow(
+              values[::-1],
+              aspect = 'auto', 
+              extent = [xticks[0], xticks[-1], 
+                        yticks[0], yticks[-1]],
+              cmap = cmap
+              )
     else:
-        factor = 1
-        units = ''
-         
+    
+        img = ax.contourf(
+            xticks, 
+            yticks, 
+            values, 
+            60, 
+            cmap = cmap        
+            )
+
     ticks =  np.arange(0, 1.25 * factor, 0.25 * factor)
     
     b.colorbar(
         img, 
         ax,
         ticks = ticks, 
-        label = f"Occurrence{units}", 
+        label = zlabel, 
         anchor = (.08, 0., 1, 1)
         )
     
@@ -69,72 +63,95 @@ def plot_seasonal_hourly(
     ax.axhline(27, lw = 2, color = 'w')
     
     
-    ax.text(0.01, 0.3, 'Local midnight', 
-            color = 'w',
-            transform = ax.transAxes)
+    ax.text(
+        0.01, 0.62, 
+        'Local midnight', 
+        color = 'w',
+        transform = ax.transAxes
+        )
     
-    ax.text(0.01, 0.9, 'Sunset (300 km)', 
-            color = 'w',
-            transform = ax.transAxes)
+    ax.text(
+        0.01, 0.05, 
+        'Sunset (300 km)', 
+        color = 'w',
+        transform = ax.transAxes
+        )
     
-    yticks = np.arange(yticks[0], yticks[-1], 2)
-    yticklabels = np.where(yticks >= 24, yticks - 24, yticks)
-    
+    yticks = np.arange(yticks[0], yticks[-1] + 2, 2)
+ 
+    xticks = pd.date_range(xticks[0], xticks[-1], periods = 10)
+    xticklabels = [t.year for t in xticks]
     ax.set(
            yticks = yticks,
-           yticklabels = yticklabels,
+           xticks = xticks,
            xlim = [xticks[0], xticks[-1]],
-           
-           xlabel = 'Years',
-           ylabel = 'Universal time'
+           xticklabels = xticklabels,
+           xlabel = xlabel,
+           ylabel = ylabel
        )
     return fig
 
 
-def annual_hourly_occurrence(ds, step = 0.5):
+def plot_f107(ax, limit = 83.4):
     
+    df = b.load(PATH_INDEX)
 
-    df = ds.loc[(ds['lon'] == -50) & 
-                (ds.index.year < 2023)] 
+    df["f107a"] = df["f107"].rolling(window = 81).mean(center = True)
     
-    start = df.index[0].year
-    end = df.index[-1].year 
-    
-    out = []
-    for year in range(start, end + 1):
-        
-        out.append(pb.hourly_distribution(
-            df.loc[df.index.year == year], 
-            step = step, 
-            percent  = False))
-        
-        
-    dat = np.concatenate(out).T
-    
-    dat /= dat.max() 
-    dat *= 100
-    
-    dates = pd.date_range(
-        f'{start}-01-01', 
-        f'{end}-12-31', 
-        freq = '1M')
-    
-    
-    times = np.arange(20, 32, step)
-     
-    return df, pd.DataFrame(dat, index = times, columns = dates)
+    df = b.sel_dates(
+        df, 
+        dt.datetime(2013, 1, 1), 
+        dt.datetime(2022, 12, 21)
+        )
 
+
+    ax.plot( df["f107"])
+    ax.plot( df["f107a"], 
+        lw = 3, 
+        color = 'cornflowerblue'
+        )
+        
+    ax.set(
+        ylabel = '$F_{10.7}$ (sfu)', 
+        ylim = [50, 250],
+        yticks = np.arange(50, 350, 50)
+        )
+
+    # for limit in [75, 110]:
+    ax.axhline(
+        limit, 
+        lw = 2, 
+        color = 'r'
+        )
+        
 
 ds = b.load('events_class2')
 
+df = ds.loc[(ds['lon'] == -50) & (ds.index.year < 2023)] 
 
-df, df2 = annual_hourly_occurrence(ds, step = 0.5)
+
+df2 = pb.hourly_annual_distribution(df, step = 1)
+
+
+fig, ax = plt.subplots(
+          dpi = 300, 
+          nrows = 2,
+           sharex = True, 
+          # sharey = True,
+          figsize = (12, 8)
+          )
+
+
+plt.subplots_adjust(hspace = 0.1)
+plot_f107(ax[0])
+
 
 fig = plot_seasonal_hourly(
-        df2, 
-        df,
-        cmap = 'jet',
-        fontsize = 35, 
-        translate = False,
-        sector = 1
-        )
+    ax[1],
+    df2, 
+    df,
+    cmap = 'jet',
+    fontsize = 35, 
+    translate = True,
+    heatmap = True
+    )
