@@ -2,7 +2,10 @@ import imager as im
 import matplotlib.pyplot as plt 
 import base as b 
 import os 
+import pandas as pd
+import datetime as dt 
 
+# 
 
 
 files = [
@@ -19,9 +22,24 @@ files = [
     
     ]
 
+
+files = [
+    'O6_CP_20220724_230910.tif',
+    'O6_CP_20220724_235544.tif',
+    'O6_CP_20220725_004219.tif',
+    'O6_CP_20220725_012025.tif',
+    'O6_CP_20220725_020700.tif',
+    'O6_CP_20220725_030203.tif',
+    'O6_CP_20220725_034837.tif',
+    'O6_CP_20220725_040533.tif',
+    'O6_CP_20220725_044754.tif',
+    'O6_CP_20220725_052147.tif'
+    
+    ]
+
 b.config_labels()
 
-def plot_sequence_of_images(files):
+def plot_sequence_of_images(dn, path):
     
     fig, ax = plt.subplots(
         dpi = 300, 
@@ -31,11 +49,12 @@ def plot_sequence_of_images(files):
         )
     
     plt.subplots_adjust(hspace = 0.02, wspace = 0.01)
-    
-    infile = 'database/images/CA_2022_0724/'
+    times = pd.date_range(dn, freq  = '30min', periods = 8)
     
     for num, ax in enumerate(ax.flat):
-        path_of_image = os.path.join(infile, files[num])
+        
+        file = im.get_closest(times[num], site = 'BJL')
+        path_of_image = os.path.join(path, file)
     
         im.plot_images(
             path_of_image, 
@@ -46,11 +65,21 @@ def plot_sequence_of_images(files):
         
     return fig
 
-fig = plot_sequence_of_images(files)
+infile = 'database/images/BJL_2022_0724/'
+dn= dt.datetime(2022, 7, 25, 0)
 
-FigureName = 'Sequence_images_20220724'
+fig = plot_sequence_of_images(dn, infile)
 
-fig.savefig(
-      b.LATEX(FigureName, folder = 'paper2'),
-      dpi = 400
-      )
+
+
+FigureName = 'Sequence_images_CP_20220724'
+
+# fig.savefig(
+#       b.LATEX(FigureName, folder = 'paper2'),
+#       dpi = 400
+#       )
+
+
+
+
+
