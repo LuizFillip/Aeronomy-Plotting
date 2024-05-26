@@ -32,6 +32,13 @@ def plot_montly_averages(df, ref_date, parameter = 'tn'):
         ylabel = 'Temperature (K)'
         ylim = [700, 1500]
         yticks = np.arange(700, 1600, 200)
+        
+    elif parameter == 'rle':
+        
+        ylabel = 'Relative intensity (R)'
+        ylim = [0, 200]
+        yticks = np.arange(0, 250, 50)
+        
     else:
         ylabel = 'Velocity (m/s)'
         ylim = [-100, 300]
@@ -41,15 +48,20 @@ def plot_montly_averages(df, ref_date, parameter = 'tn'):
     for num, ax in enumerate(ax.flat):
         
         col = dirs[num]
-        # print(col)
+       
         ds = pd.pivot(
             df, 
             columns = 'day', 
             index = 'time', 
             values = col 
             )
-        ax.plot(ds1['time'], ds1[col], color = 'r', lw = 2,
-                label = ref_date.strftime('%Y-%m-%d'))
+        ax.plot(
+            ds1['time'], 
+            ds1[col], 
+            color = 'r', 
+            lw = 2,
+            label = ref_date.strftime('%Y-%m-%d')
+            )
         ax.plot(ds, alpha = 0.5, color = 'gray')
         ax.plot(ds.mean(axis = 1), color = 'k', lw = 3)
         
@@ -58,9 +70,7 @@ def plot_montly_averages(df, ref_date, parameter = 'tn'):
                yticks = yticks,
                xlim = [24, 31]
                )
-        ax.legend(loc = 'upper right')
-        # ax.axhline(0, lw = 1.5, linestyle = '--')
-    
+        ax.legend(loc = 'upper right')    
     fontsize = 30
    
         
@@ -84,7 +94,7 @@ def plot_montly_averages(df, ref_date, parameter = 'tn'):
 
 infile = 'database/FabryPerot/cj/'
 
-parameter = 'vnu'
+parameter = 'rle'
 dn = dt.datetime(2022, 7, 24, 21)
 
 df = fp.join_days(dn, parameter = parameter )
