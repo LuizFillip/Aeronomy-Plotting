@@ -6,16 +6,29 @@ import pandas as pd
 import datetime as dt
 PATH_INDEX =  'database/indices/omni_pro.txt'
 
+def plot_terminator(ax, df):
+    
+    ax.plot(df.index, df['dusk'], lw = 2, color = 'w')
+    ax.axhline(27, lw = 2, color = 'w')
+    
+    
+    ax.text(
+        0.01, 0.62, 
+        'Local midnight', 
+        color = 'w',
+        transform = ax.transAxes
+        )
+
 def plot_seasonal_hourly(
         ax,
         df2, 
-        df,
         cmap = 'jet',
         fontsize = 35, 
         translate = False,
         factor = 100,
         percent = True,
-        heatmap = True
+        heatmap = True, 
+        colorbar = True
         ):
     
     if translate:
@@ -51,24 +64,16 @@ def plot_seasonal_hourly(
 
     ticks =  np.arange(0, 1.25 * factor, 0.25 * factor)
     
-    b.colorbar(
-        img, 
-        ax,
-        ticks = ticks, 
-        label = zlabel, 
-        anchor = (.08, 0., 1, 1)
-        )
-    
-    ax.plot(df.index, df['dusk'], lw = 2, color = 'w')
-    ax.axhline(27, lw = 2, color = 'w')
-    
-    
-    ax.text(
-        0.01, 0.62, 
-        'Local midnight', 
-        color = 'w',
-        transform = ax.transAxes
-        )
+    if colorbar:
+        b.colorbar(
+            img, 
+            ax,
+            ticks = ticks, 
+            label = zlabel, 
+            anchor = (.08, 0., 1, 1)
+            )
+        
+   
     
     ax.text(
         0.01, 0.05, 
@@ -86,13 +91,13 @@ def plot_seasonal_hourly(
            xticks = xticks,
            xlim = [xticks[0], xticks[-1]],
            xticklabels = xticklabels,
-           xlabel = xlabel,
-           ylabel = ylabel
+         #  xlabel = xlabel,
+          # ylabel = ylabel
        )
-    return fig
+    return ax
 
 
-def plot_f107(ax, limit = 83.4):
+def plot_f107(ax, limit = 84.4):
     
     df = b.load(PATH_INDEX)
 
@@ -106,10 +111,7 @@ def plot_f107(ax, limit = 83.4):
 
 
     ax.plot( df["f107"])
-    ax.plot( df["f107a"], 
-        lw = 3, 
-        color = 'cornflowerblue'
-        )
+    ax.plot( df["f107a"], lw = 3, color = 'cornflowerblue')
         
     ax.set(
         ylabel = '$F_{10.7}$ (sfu)', 
@@ -117,7 +119,7 @@ def plot_f107(ax, limit = 83.4):
         yticks = np.arange(50, 350, 50)
         )
 
-    # for limit in [75, 110]:
+
     ax.axhline(
         limit, 
         lw = 2, 
@@ -125,33 +127,51 @@ def plot_f107(ax, limit = 83.4):
         )
         
 
-ds = b.load('events_class2')
-
-df = ds.loc[(ds['lon'] == -50) & (ds.index.year < 2023)] 
 
 
-df2 = pb.hourly_annual_distribution(df, step = 1)
+def plot_annual_hourly(df):
+
+    df2 = pb.hourly_annual_distribution(df, step = 1)
+    
+    
+    fig, ax = plt.subplots(
+              dpi = 300, 
+              nrows = 2,
+               sharex = True, 
+              figsize = (12, 8)
+              )
+    
+    
+    plt.subplots_adjust(hspace = 0.1)
+    plot_f107(ax[0])
+    
+    
+    fig = plot_seasonal_hourly(
+        ax[1],
+        df2, 
+        df,
+        cmap = 'jet',
+        fontsize = 35, 
+        translate = True,
+        heatmap = True
+        )
+    
+    b.plot_letters(
+        ax, y = 0.85, x = 0.03,
+        num2white = 1)
+    
+    return fig
 
 
-fig, ax = plt.subplots(
-          dpi = 300, 
-          nrows = 2,
-           sharex = True, 
-          # sharey = True,
-          figsize = (12, 8)
-          )
+# ds = b.load('events_class2')
 
+# df = ds.loc[(ds['lon'] == -50) & (ds.index.year < 2023)] 
 
-plt.subplots_adjust(hspace = 0.1)
-plot_f107(ax[0])
+# fig = plot_annual_hourly(df)
 
-
-fig = plot_seasonal_hourly(
-    ax[1],
-    df2, 
-    df,
-    cmap = 'jet',
-    fontsize = 35, 
-    translate = True,
-    heatmap = True
-    )
+# FigureName = 'hourly_annual_variation'
+  
+# fig.savefig(
+#         b.LATEX(FigureName, folder = 'paper2'),
+#         dpi = 400
+#         )
