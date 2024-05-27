@@ -70,8 +70,6 @@ dn= dt.datetime(2022, 7, 25, 0)
 
 fig = plot_sequence_of_images(dn, infile)
 
-
-
 FigureName = 'Sequence_images_CP_20220724'
 
 # fig.savefig(
