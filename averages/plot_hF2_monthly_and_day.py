@@ -50,6 +50,19 @@ def day_target(ax, infile):
         label = dn
         )
     
+    ax1 = ax.twinx()
+    ax1.bar(
+        df.index, 
+        df['QF'], 
+        width = 0.15,
+        alpha = 0.7,
+        edgecolor = 'k',
+        color = 'gray'
+        )
+    
+    ax1.set(ylim = [0, 60], 
+            ylabel = 'QF (km)')
+    
     ax.set(
         xlim = [21, 31], 
         ylim = [100, 500],  
@@ -73,9 +86,9 @@ def plot_hF2_monthly_and_target():
     
     plt.subplots_adjust(hspace = 0.2)
     
-    average(ax[0], 'SAA0K_20220701(182).TXT')
+    average(ax[0], 'FZA0M_20220701(182).TXT')
     
-    day_target(ax[0], 'SAA0K_20220724(205).TXT')
+    day_target(ax[0], 'FZA0M_20220724(205).TXT')
     
     average(ax[1], 'CAJ2M_20220701(182).TXT')
     
