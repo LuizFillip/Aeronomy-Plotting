@@ -3,7 +3,7 @@ import base as b
 import numpy as np
 import matplotlib.pyplot as plt 
 import core as c 
-
+import plotting as pl  
 b.config_labels()
 
 
@@ -160,28 +160,47 @@ def plot_seasonal_hourly(
 
 
 
+ds = b.load('events_class2')
+# plot_f107(ax[0])
 
+
+
+
+fig, ax = plt.subplots(
+       ncols = 1,
+       nrows = 4,
+       dpi = 300, 
+       sharex = True, 
+       sharey = True,
+       figsize = (16, 14)
+       )
+
+plt.subplots_adjust(wspace = 0.15)
+ 
 sectors = {-50: 1, -60: 2, -70: 3, -80: 4}
 
-def main():
-    col = -50
+
+for sector, row in sectors.items():
+    
+    df = ds.loc[(ds['lon'] == sector) & (ds.index.year < 2023)] 
+    
+    df2 = pb.hourly_annual_distribution(df, step = 1)
     
     
-    typing = 'midnight'
+    fig = pl.plot_seasonal_hourly(
+        ax[row - 1],
+        df2, 
+        df,
+        cmap = 'jet',
+        fontsize = 35, 
+        translate = True,
+        heatmap = True
+        )
     
-    for col, sector in sectors.items():
+
+FigureName = 'seasonal_hourly_{sector}'
+
     
-        df = c.sel_epb_typing(col, typing)
-        
-        fig = plot_seasonal_hourly(df, sector = sector)
-        
-        
-        FigureName = f'seasonal_hourly_{sector}'
-        
-            
-        fig.savefig(
-            b.LATEX(FigureName, 'climatology'),
-            dpi = 400)
-        plt.show()
-    
-main()
+# fig.savefig(
+#     b.LATEX(FigureName, 'climatology'),
+#     dpi = 400)
