@@ -7,16 +7,21 @@ import datetime as dt
 b.config_labels()
 
 
-path = 'database/images/BJL_2022_0724/'
 
 
-def plot_images(axes, dn, path):
+def plot_images(
+        axes, 
+        dn, 
+        path, 
+        site = 'BJL', 
+        limits = [0.25, 0.90]
+        ):
 
     times = pd.date_range(dn, freq  = '30min', periods = 8)
     
     for num, ax in enumerate(axes):
         
-        file = im.get_closest(times[num], site = 'BJL')
+        file = im.get_closest(times[num], site = site)
         path_of_image = os.path.join(path, file)
     
         im.plot_images(
@@ -74,9 +79,12 @@ def plot_keogram_painels(
 
 
 
-dn = dt.datetime(2022, 7, 25, 0, 10)
 
-def plot_keogram_and_images(dn, path):
+def plot_keogram_and_images(
+        dn, path,
+        site, 
+        limits = [0.3, 0.90]
+        ):
     
     fig, axes, zon_ax, mer_ax = b.layout_keo_and_images(
         figsize = (11, 12), 
@@ -84,24 +92,31 @@ def plot_keogram_and_images(dn, path):
         hspace = 0.)
     
     
-    plot_images(axes, dn, path)
+    plot_images(
+        axes, dn, 
+        path, 
+        site = site, 
+        limits = limits
+        )
     plot_keogram_painels(
         fig, 
         zon_ax, 
         mer_ax, 
-        area_factor = 2
+        area_factor = 2, 
+        limits = limits
         )
     
     return fig 
 
 
+dn = dt.datetime(2022, 7, 25, 0, 10)
 
+site = 'CA'
+path = f'database/images/{site}_2022_0724/'
 
+fig = plot_keogram_and_images(dn, path, site)
 
-fig = plot_keogram_and_images(dn, path)
-
-#%%%
-FigureName = 'keogram_images_bjl_20220724'
+FigureName = f'keogram_images_{site.lower()}_20220724'
 
     
 fig.savefig(
