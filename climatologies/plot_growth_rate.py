@@ -24,7 +24,6 @@ def plot_gamma(ax, df):
         ylim = [0, 4], 
         yticks = np.arange(0, 5, 1),
         ylabel = b.y_label('gamma'),
-        xlabel = 'Anos',
         xlim = [df.index[0], df.index[-1]]
         )
 
@@ -105,7 +104,7 @@ def plot_wind(ax, df, limit = 10, step = 5):
     ax.axhline(0, linestyle = '--')
 
 
-def plot_annual_GRT(df):
+def plot_annual_GRT(df, translate = False):
 
     fig, ax = plt.subplots(
         sharex = True,
@@ -127,6 +126,10 @@ def plot_annual_GRT(df):
 
     b.plot_letters(ax, y = 0.8, x = 0.02, 
                    fontsize = 25)
+    if translate:
+        ax[5].set(xlabel = 'Years')
+    else:
+        ax[5].set(xlabel = 'Anos')
     return fig
 
 
@@ -144,7 +147,7 @@ def main():
     
     fig.savefig(b.LATEX(
         FigureName, 
-        folder = 'timeseries'), dpi = 400)
+        folder = 'paper2'), dpi = 400)
 
 
 

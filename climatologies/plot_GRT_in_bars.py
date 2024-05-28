@@ -39,4 +39,4 @@ def plot():
         ax[i].bar(ds.index, ds[col], width = 1)
     
 
-ds['ratio'].plot()
+ds['ratio']
