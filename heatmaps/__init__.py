@@ -1,2 +1,1 @@
-from .plot_annual_hourly import plot_seasonal_hourly
-
+from .plot_annual_hourly import plot_seasonal_hourly, plot_terminator

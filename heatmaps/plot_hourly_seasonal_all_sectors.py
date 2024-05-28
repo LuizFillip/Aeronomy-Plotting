@@ -1,60 +1,12 @@
 import PlasmaBubbles as pb 
 import base as b 
-import numpy as np
 import matplotlib.pyplot as plt 
 import core as c 
 import plotting as pl  
 b.config_labels()
 
 
-def plot_heatmap(
-        ax, 
-        values, 
-        percent = True, 
-        colorbar = True,
-        step = 1
-        ):
-  
-    yticks = np.arange(1, 13, 1)
-    xticks = np.arange(20, 32 + step, step*2)
-    
-    if percent:
-        factor = 100
-        units = ' (\%)'
-    else:
-        factor = 1
-        units = ''
-        
-    ticks =  np.arange(0, 1.25 * factor, 0.25 * factor)
- 
-    
-    img = ax.imshow(
-        values,
-        aspect = 'auto', 
-        extent = [20, 32, 12, 0],
-        cmap = 'magma'
-        )
-        
-    xticklabels = np.where(xticks >= 24, xticks - 24, xticks)
-    yticklabels = b.month_names(sort = True, language = 'pt')
-   
-    if colorbar:
-        b.colorbar(
-            img, 
-            ax,
-            ticks = ticks, 
-            label = f"Ocorrência{units}"
-            )
-   
-   
-    ax.set(
-        xticks = xticks, 
-        yticks = yticks - 0.5,
-        xticklabels = xticklabels, 
-        yticklabels = yticklabels
-        )
-    
-    return 
+
 
 
 def divide_by_geomgnetic_levels(df):
@@ -104,28 +56,6 @@ def plot_seasonal_hourly(
 
     plt.subplots_adjust(wspace = 0.15)
     
-    years = list(range(2013, 2024, 1))
-
-    for i, ax in enumerate(ax.flat):
-        
-        
-        try:
-            year = years[i]
-            sel_year = df.loc[df.index.year == year]
-            
-            ds = pb.hourly_distribution(sel_year, step = 0.5)
-    
-            plot_heatmap(ax, ds, colorbar = False)
-            
-            df1 = df.loc[df.index.year == 2020]
-            
-            ax.plot(df1['dusk'], df1['day'], lw = 3, color = 'w')
-            
-            ax.set(title = year)
-        
-        except:
-            ax.axis('off')
-        
    
     fig.text(
         0.45, 0.05,
@@ -140,8 +70,6 @@ def plot_seasonal_hourly(
         rotation = 'vertical'
         )
     
-    
-    #sets = [0.3, 0.99, 0.4, 0.02] upper part
     
     b.fig_colorbar(
             fig,
@@ -175,9 +103,10 @@ fig, ax = plt.subplots(
        figsize = (16, 14)
        )
 
-plt.subplots_adjust(wspace = 0.15)
+plt.subplots_adjust(wspace = 0.05)
  
 sectors = {-50: 1, -60: 2, -70: 3, -80: 4}
+
 
 
 for sector, row in sectors.items():
@@ -186,18 +115,19 @@ for sector, row in sectors.items():
     
     df2 = pb.hourly_annual_distribution(df, step = 1)
     
-    
-    fig = pl.plot_seasonal_hourly(
+    pl.plot_seasonal_hourly(
         ax[row - 1],
         df2, 
-        df,
         cmap = 'jet',
         fontsize = 35, 
         translate = True,
-        heatmap = True
+        heatmap = True, 
+        colorbar = False
         )
     
-
+    pl.plot_terminator(ax[row - 1], df, sector)
+    
+    
 FigureName = 'seasonal_hourly_{sector}'
 
     
