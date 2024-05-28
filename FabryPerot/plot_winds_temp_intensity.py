@@ -10,22 +10,22 @@ def get_dn(wd):
     return dt.datetime(
         wd.index[0].year, 
         wd.index[0].month, 
-        wd.index[0].day, 
-        21, 
-        0)
+        wd.index[0].day, 21, 0)
 
 def sel_coord(ax, wd, direction, parameter = 'vnu'):
+    
     ds = wd.loc[(wd["dir"] == direction)]
     
     ax.errorbar(
         ds.index, 
-        ds[ parameter], 
+        ds[parameter], 
         yerr = ds[f'd{parameter}'], 
-        label = direction, 
-        capsize = 5
+        label = f'{direction} (LOS)', 
+        capsize = 5,
+        lw = 2
             )
- 
-def title_site(path):
+        
+def title_site(fig, path):    
     if "car" in path:    
         site= "Cariri"
     elif 'bfp' in path:
@@ -34,6 +34,20 @@ def title_site(path):
         site = "Cajazeiras"
 
     fig.suptitle(site)
+    
+    
+def plot_total_component(ax, dn, parameter = 'VN1'):
+    file = fp.dn_to_filename(dn, site = 'bfp', code = 7101)
+    
+    ds = fp.read_file(PATH_FPI + file, drop = True)
+    ds = ds.loc[:, [parameter, f'D{parameter}']].dropna()
+    ax.errorbar(
+        ds.index, 
+        ds[parameter], 
+        yerr = ds[f'D{parameter}'], 
+        capsize = 5,
+        lw = 2
+            )
     
     
 def plot_directions( ax, path):
@@ -48,42 +62,42 @@ def plot_directions( ax, path):
         }
     
     for col, coord in enumerate(coords.keys()):
-        
-        ax[0, col].set(title = coord)
-        
+                
         for row, direction in enumerate(coords[coord]):
             
             sel_coord(ax[0, col], wd, direction, parameter = 'vnu')
             sel_coord(ax[1, col], tp, direction, parameter = 'tn')
             sel_coord(ax[2, col], rl, direction, parameter = 'rle')
-    
+            
+            ax[0, row].axhline(0, color = "k", linestyle = "--")
+            
         b.format_time_axes(ax[-1, col])
          
       
     ax[0, 0].set(ylabel = "Velocity (m/s)", ylim = [-100, 400])
-    ax[1, 0].set(ylabel = "Temperature (K)", ylim = [800, 1400])
+    ax[1, 0].set(ylabel = "Temperature (K)", ylim = [700, 1200])
     ax[2, 0].set(ylabel = "Relative intensity (R)", ylim = [0, 200])
     
-    ax[0, 0].legend(['east', 'west'],
+    anchor = (0.5, 1.45)
+    ax[0, 0].legend(
          ncol = 2, 
          title = 'Zonal',
-         loc = 'upper center'
+         loc = 'upper center', 
+         bbox_to_anchor = anchor,
+         columnspacing=0.3
          )
     
-    ax[0, 1].legend(['north', 'south'],
+    ax[0, 1].legend(
          ncol = 2, 
          title = 'Meridional',
-         loc = 'upper center'
+         loc = 'upper center', 
+         bbox_to_anchor = anchor,
+         columnspacing=0.3
          )
-    
-    for row, name in enumerate(coords.values()):
-    
-        
-        ax[0, row].axhline(0, color = "k", linestyle = "--")
     
     return None
 
-def plot_nighttime_observation(path):
+def plot_winds_temp_intensity(dn):
     
     fig, ax = plt.subplots(
         nrows = 3, 
@@ -95,28 +109,35 @@ def plot_nighttime_observation(path):
         )
     
     plt.subplots_adjust(
-        wspace = 0.1, 
-        hspace = 0.1
+        wspace = 0.02, 
+        hspace = 0.05
         )
     
+    file = fp.dn_to_filename(dn, site = 'bfp', code = 7100)
+
+    plot_directions(ax, PATH_FPI + file)
     
-        
-    plot_directions(ax, path)
+    plot_total_component(ax[0, 0], dn, parameter = 'VN1')
+    plot_total_component(ax[0, 1], dn, parameter = 'VN2')
     
     b.plot_letters(ax, y = 0.85, x = 0.03)
+    
+    title_site(fig, file)
     return fig
         
 
+def main():
+    PATH_FPI = 'database/FabryPerot/cj/'
     
-path = 'database/FabryPerot/cj/bfp220725g.7100.txt'
+    dn  = dt.datetime(2022, 7, 24)
+    
+    fig = plot_winds_temp_intensity(dn)
+    
+    FigureName = 'temp_winds_cajazeiras'
+    
+    
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'paper2'),
+          dpi = 400
+          )
 
-
-fig = plot_nighttime_observation(path)
-
-FigureName = 'temp_winds_cajazeiras'
-
-
-# fig.savefig(
-#       b.LATEX(FigureName, folder = 'paper2'),
-#       dpi = 400
-#       )
