@@ -33,12 +33,19 @@ def plot_infos(ax, fit, i = 0, color = 'k', dep = 'vp'):
     elif dep == 'K':
         dep = '$K^F$'
     else:
-        dep = '$g_e/ \\nu_{eff}^F$'
+        dep = '$g_e /\\nu_{eff}^F$'
 
     if intercept < 0: 
-        equation = '$\gamma_{RT}$' + f'= {slope}{dep}{intercept}'
+        str_int = f'- {abs(intercept)}'
     else:
-        equation = '$\gamma_{RT}$' + f'= {slope}{dep} + {intercept}'
+        str_int = f'+ {intercept}'
+        
+    if slope < 0:
+        str_slp = f'- {abs(slope)}{dep}'
+    else:
+        str_slp = f'{abs(slope)}{dep}'
+    
+    equation = '$\gamma_{RT}$ = ' + f'{str_slp}{str_int}'
     
     ax.text(
         0.05, 0.65, 
@@ -97,7 +104,7 @@ def plot_single_correlation(
             lw = 3, color = 'red', 
             label = label)
     
-    ax.set(ylim = [0, 5])
+    ax.set(ylim = [0, 6])
     plot_infos(
         ax, fit, 
         i = index, 

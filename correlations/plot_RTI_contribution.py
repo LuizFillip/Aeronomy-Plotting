@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed May 29 12:04:26 2024
+
+@author: Luiz
+"""
+
 import plotting as pl
 import core as c 
 import matplotlib.pyplot as plt 
@@ -9,8 +16,8 @@ b.config_labels()
 def plot_seasonal_RTI_contribution(
         df, fontsize = 35):
     fig, ax = plt.subplots(
-        nrows = 4, 
-        ncols = 3, 
+        nrows = 2, 
+        ncols = 2, 
         sharey = 'row',
         sharex = 'col',
         dpi = 300,
@@ -23,52 +30,26 @@ def plot_seasonal_RTI_contribution(
         )
     
     
-    names = ['march', 'june', 'september', 'december']
+    # names = ['march', 'june', 'september', 'december']
      
     # b.plot_letters(ax, y = 1.04, x = 0.01)
     
-    for i, name in enumerate(names):
-            
-        ds_split = c.SeasonsSplit(df, name)
-                
+    cols = ['vp', 'K', 'gr', 'mer_perp']
+    for i ,a in enumerate(ax.flat):
+                            
         pl.plot_single_correlation(
-            ds_split.sel_season, 
-            ax = ax[i, 0], 
+            df, 
+            ax = a, 
             color = 'k', 
-            col = 'vp',
+            col = cols[i],
             index = 0, 
             label = ''
             )
         
-        pl.plot_single_correlation(
-            ds_split.sel_season, 
-            ax = ax[i, 1], 
-            color = 'k', 
-            col = 'K',
-            index = 0, 
-            label = ''
-            )
-        
-        pl.plot_single_correlation(
-            ds_split.sel_season, 
-            ax = ax[i, 2], 
-            color = 'k', 
-            col = 'gr',
-            index = 0, 
-            label = ''
-            )
-        
-        l = f'({b.chars()[i]})'
-        
-        ax[i, 0].text(
-            0, 1.05, l, fontsize = fontsize,
-                      transform = ax[i, 0].transAxes)
-        ax[i, 1].set(title = ds_split.name)
-     
     
-    ax[-1, 0].set(xlabel = b.y_label('vp'))
-    ax[-1, 1].set(xlabel = b.y_label('K'), xlim = [1, 4.2])
-    ax[-1, 2].set(xlabel = b.y_label('g_nui_eff'), xlim = [0, 30])
+    # ax[-1, 0].set(xlabel = b.y_label('vp'))
+    # ax[-1, 1].set(xlabel = b.y_label('K'), xlim = [1, 4.2])
+    # ax[-1, 2].set(xlabel = b.y_label('g_nui_eff'), xlim = [0, 30])
     
     
     
