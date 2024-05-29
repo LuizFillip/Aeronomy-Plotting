@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed May 29 12:04:26 2024
-
-@author: Luiz
-"""
-
 import plotting as pl
 import core as c 
 import matplotlib.pyplot as plt 
@@ -19,37 +12,32 @@ def plot_seasonal_RTI_contribution(
         nrows = 2, 
         ncols = 2, 
         sharey = 'row',
-        sharex = 'col',
         dpi = 300,
-        figsize = (18, 16)
+        figsize = (14, 12)
         )
     
     plt.subplots_adjust(
         hspace = 0.25,
-        wspace = 0.02
+        wspace = 0.1
         )
     
-    
-    # names = ['march', 'june', 'september', 'december']
-     
-    # b.plot_letters(ax, y = 1.04, x = 0.01)
-    
+   
     cols = ['vp', 'K', 'gr', 'mer_perp']
-    for i ,a in enumerate(ax.flat):
-                            
+ 
+    for i , a in enumerate(ax.flat):
+        
+        vls = cols[i]
         pl.plot_single_correlation(
             df, 
             ax = a, 
             color = 'k', 
-            col = cols[i],
+            col = vls,
             index = 0, 
             label = ''
             )
         
     
-    # ax[-1, 0].set(xlabel = b.y_label('vp'))
-    # ax[-1, 1].set(xlabel = b.y_label('K'), xlim = [1, 4.2])
-    # ax[-1, 2].set(xlabel = b.y_label('g_nui_eff'), xlim = [0, 30])
+        a.set(xlabel = b.y_label(vls))
     
     
     
@@ -60,7 +48,9 @@ def plot_seasonal_RTI_contribution(
           rotation = 'vertical'
           )
     
-    plt.show()
+   
+    
+    b.plot_letters(ax, y = 1.04, x = 0.01, num2white = None)
     return fig
 
 
@@ -79,3 +69,4 @@ def main():
         FigureName, 
         folder = 'correlations'), dpi = 400)
     
+main()

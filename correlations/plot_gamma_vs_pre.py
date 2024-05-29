@@ -48,7 +48,7 @@ def plot_infos(ax, fit, i = 0, color = 'k', dep = 'vp'):
     equation = '$\gamma_{RT}$ = ' + f'{str_slp}{str_int}'
     
     ax.text(
-        0.05, 0.65, 
+        0.05, 0.75, 
         f'$R^2$ = {fit.r2_score}\n{equation}', 
         transform = ax.transAxes,
         color = color
