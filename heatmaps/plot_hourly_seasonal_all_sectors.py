@@ -1,7 +1,6 @@
 import PlasmaBubbles as pb 
 import base as b 
 import matplotlib.pyplot as plt 
-import core as c 
 import plotting as pl  
 b.config_labels()
 
@@ -26,111 +25,107 @@ def divide_by_geomgnetic_levels(df):
 
 
 
-def plot_seasonal_hourly(
+def plot_seasonal_hourly_all_sectors(
         df, 
         fontsize = 35, 
         translate = False,
         sector = 1
         ):
     
-    if translate:
-        ylabel = 'Months'
-        xlabel = 'Universal time'
-        
-        zlabel = 'Occurrence (\%)'
-        title = f'Seazonal/hourly occurrence on sector {sector}'
-    else:
-        ylabel = 'Meses'
-        xlabel = 'Hora universal'
-        zlabel = 'Ocorrência (\%)'
-        title = f'Ocorrência sazonal/horária no setor {sector}'
-        
     fig, ax = plt.subplots(
-          ncols = 4,
-          nrows = 3,
-          dpi = 300, 
-          sharex = True, 
-          sharey = True,
-          figsize = (16, 14)
-          )
+           ncols = 1,
+           nrows = 4,
+           dpi = 300, 
+           sharex = True, 
+           sharey = True,
+           figsize = (16, 14)
+           )
 
-    plt.subplots_adjust(wspace = 0.15)
-    
-   
-    fig.text(
-        0.45, 0.05,
-        xlabel, 
-        fontsize = fontsize
-        )
-    
-    fig.text(
-        0.03, 0.45, 
-        ylabel, 
-        fontsize = fontsize, 
-        rotation = 'vertical'
-        )
-    
-    
+    plt.subplots_adjust(wspace = 0.05)
+     
+    sectors = {-50: 1, -60: 2, -70: 3, -80: 4}
+
+
+    for sector, row in sectors.items():
+        
+        df = ds.loc[(ds['lon'] == sector) ] 
+      
+        df2 = pb.hourly_annual_distribution(df, step = 1)
+        
+        pl.plot_terminator(ax[row - 1], sector)
+        
+        pl.plot_seasonal_hourly(
+            ax[row - 1],
+            df2, 
+            cmap = 'jet',
+            fontsize = 35, 
+            translate = True,
+            heatmap = True, 
+            colorbar = False, 
+            levels = 10
+            )
+        
+        ax[row - 1].set(ylabel = '', title = f'Setor {row}')
+        
+        
+
+    if translate:
+        ylabel = 'Universal time'
+        xlabel = 'Years'
+        zlabel = 'Occurrence (\%)'
+    else:
+        xlabel = 'Anos'
+        ylabel = 'Hora universal'
+        zlabel = 'Ocorrência (\%)'
+
+
     b.fig_colorbar(
             fig,
             vmin = 0, 
             vmax = 100, 
-            cmap = 'magma',
+            cmap = "jet",
             fontsize = 25,
-            step = 20,
+            step = 10,
             label = zlabel, 
-            sets = [0.77, 0.12, 0.03, 0.23] 
+            sets = [0.32, 0.98, 0.4, 0.02], 
+            orientation = 'horizontal', 
+            levels = 30
             )
-    
-    fig.suptitle(title)
+        
+    fig.text(
+        0.5, 0.05,
+        xlabel, 
+        fontsize = fontsize
+        )
+
+    fig.text(
+        0.045, 0.41, 
+        ylabel, 
+        fontsize = fontsize, 
+        rotation = 'vertical'
+        )
+     
     return fig
     
 
+def main():
 
-
-ds = b.load('events_class2')
-# plot_f107(ax[0])
-
-
-
-
-fig, ax = plt.subplots(
-       ncols = 1,
-       nrows = 4,
-       dpi = 300, 
-       sharex = True, 
-       sharey = True,
-       figsize = (16, 14)
-       )
-
-plt.subplots_adjust(wspace = 0.05)
- 
-sectors = {-50: 1, -60: 2, -70: 3, -80: 4}
-
-
-
-for sector, row in sectors.items():
-    
-    df = ds.loc[(ds['lon'] == sector) & (ds.index.year < 2023)] 
-    
-    df2 = pb.hourly_annual_distribution(df, step = 1)
-    
-    pl.plot_seasonal_hourly(
-        ax[row - 1],
-        df2, 
-        cmap = 'jet',
-        fontsize = 35, 
-        translate = True,
-        heatmap = True, 
-        colorbar = False
-        )
-    
-    pl.plot_terminator(ax[row - 1], df, sector)
+    ds = b.load('events_class2')
     
     
-FigureName = 'seasonal_hourly_{sector}'
-
+    ds = ds.loc[(ds['type'] == 'midnight') & 
+                (ds['drift'] == 'fresh')]
     
-# fig.savefig(
-#     b.LATEX(FigureName, 'climatology'),
-#     dpi = 400)
+    fig = plot_seasonal_hourly_all_sectors(
+            ds, 
+            fontsize = 35, 
+            translate = False,
+            sector = 1
+            )
+    
+    FigureName = 'seasonal_hourly_all_sectors'
+    
+    fig.savefig(
+          b.LATEX(FigureName, 'climatology'),
+          dpi = 400)
+    

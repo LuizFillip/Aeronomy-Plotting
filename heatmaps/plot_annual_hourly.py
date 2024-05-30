@@ -8,15 +8,18 @@ import GEO as gg
 
 b.config_labels(fontsize = 22)
 
-PATH_INDEX =  'database/indices/omni_pro.txt'
+PATH_INDEX =  'database/indices/omni_pro2.txt'
 
-def plot_terminator(ax, df, lon):
+def plot_terminator(ax, sector):
     
+    df = b.load('events_class2')
+    
+    df = df.loc[df['lon'] == sector]
     ax.plot(df.index, df['dusk'], lw = 2, color = 'w')
     
     dn = df.index[0]
     
-    midnight = gg.local_midnight(dn, lon, delta_day = None)
+    midnight = gg.local_midnight(dn, sector, delta_day = None)
     midnight = round(b.dn2float(midnight))
     ax.axhline(midnight, lw = 2, color = 'w')
 
@@ -47,18 +50,10 @@ def plot_seasonal_hourly(
         factor = 100,
         percent = True,
         heatmap = True, 
-        colorbar = True
+        colorbar = True,
+        levels = 30
         ):
     
-    if translate:
-        xlabel = 'Years'
-        ylabel = 'Universal time'
-        zlabel = 'Occurrence (\%)'
-    else:
-        xlabel = 'Anos'
-        ylabel = 'Hora universal'
-        zlabel = 'Ocorrência (\%)'
-   
     yticks = df2.index 
     xticks = df2.columns 
     values = df2.values
@@ -77,7 +72,7 @@ def plot_seasonal_hourly(
             xticks, 
             yticks, 
             values, 
-            60, 
+            levels, 
             cmap = cmap        
             )
 
@@ -88,54 +83,43 @@ def plot_seasonal_hourly(
             img, 
             ax,
             ticks = ticks, 
-            label = zlabel, 
+            label = 'Occurrence (\%)', 
             anchor = (.08, 0., 1, 1)
             )
         
-   
-    
-    print(yticks)
-    
     yticks = np.arange(yticks[0], yticks[-1] + 2, 2)
- 
-    xticks = pd.date_range(xticks[0], xticks[-1], periods = 10)
-    xticklabels = [t.year for t in xticks]
+
     ax.set(
            yticks = yticks,
-           xticks = xticks,
-           xlim = [xticks[0], xticks[-1]],
-           # xlim = [xticks[0], xticks[-1]],
-            xticklabels = xticklabels,
-           # xlabel = xlabel,
-           ylabel = ylabel
+           # ylabel = ylabel
        )
     return ax
 
 
-def plot_f107(ax, limit = 84.33):
+def plot_f107(ax, ds, limit = 84.33):
     
     df = b.load(PATH_INDEX)
-
+    
+   
     df["f107a"] = df["f107"].rolling(
         window = 81).mean(center = True)
     
-    df = b.sel_dates(
-        df, 
-        dt.datetime(2013, 1, 1), 
-        dt.datetime(2022, 12, 21)
-        )
-
+    start = ds.columns[0] 
+    end = ds.columns[-1] 
+    df = b.sel_dates( df, start, end)
+    
 
     ax.plot( df["f107"])
-    ax.plot( 
-        df["f107a"], 
-        lw = 3, color = 'cornflowerblue', 
-        label = '81 days average'
+    ax.plot( df["f107a"], 
+            lw = 3, 
+            color = 'cornflowerblue', 
+            label = '81 days average'
         )
         
     ax.set(
         ylabel = '$F_{10.7}$ (sfu)', 
         ylim = [50, 250],
+        xlim = [start, end],
         yticks = np.arange(60, 350, 50),
         xlabel = 'Years'
         )
@@ -167,8 +151,6 @@ def plot_annual_hourly(df, sector = -50):
     
     
     plt.subplots_adjust(hspace = 0.1)
-    plot_f107(ax[1])
-    
     
     plot_seasonal_hourly(
         ax[0],
@@ -179,11 +161,15 @@ def plot_annual_hourly(df, sector = -50):
         heatmap = False
         )
     
+    plot_f107(ax[1], df2)
+    
     plot_terminator(ax[0], df, sector)
     
     
     b.plot_letters(
-        ax, y = 0.85, x = 0.03,
+        ax, 
+        y = 0.82, 
+        x = 0.02, 
         num2white = [0]
         )
     
@@ -200,10 +186,11 @@ def main():
     
     FigureName = 'hourly_annual_variation'
       
-    # fig.savefig(
-    #         b.LATEX(FigureName, folder = 'paper2'),
-    #         dpi = 400
-    #         ) 
+    fig.savefig(
+            b.LATEX(FigureName, folder = 'paper2'),
+            dpi = 400
+            ) 
     
     
-main()
+# main()
+
