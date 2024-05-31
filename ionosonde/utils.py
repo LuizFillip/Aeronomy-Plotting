@@ -69,10 +69,10 @@ def plot_terminators(ax, dn, col = None, shade = False):
 
      return dusk
  
-file = 'SAA0K_20130516(136).TXT'
+# file = 'SAA0K_20130516(136).TXT'
 
-df = dg.freq_fixed(FREQ_PATH + file)
-ds = df.iloc[1:].interpolate()
-vz = dg.vertical_drift(ds)
+# df = dg.freq_fixed(FREQ_PATH + file)
+# ds = df.iloc[1:].interpolate()
+# vz = dg.vertical_drift(ds)
 
-vz 
+# vz 

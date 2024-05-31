@@ -56,7 +56,7 @@ def fig_labels(
     
 
 
-def plot_sequence_of_ionogram(times):
+def plot_sequence_of_ionogram(PATH_IONOGRAM, times, site):
     
     fig, ax = plt.subplots(
          figsize = (16, 10), 
@@ -67,14 +67,14 @@ def plot_sequence_of_ionogram(times):
          nrows = 2
          )
     
-    plt.subplots_adjust(wspace = 0.1, hspace = 0.3)
+    plt.subplots_adjust(wspace = 0.1, hspace = 0.15)
     
-    site = 'SAA0K'
+    
     for i, ax in enumerate(ax.flat):
         
         dn = times[i]
-        filename = dn.strftime(
-            f'{site}_%Y%m%d(%j)%H%M%S.PNG')
+        filename = dn.strftime(f'{site}_%Y%m%d(%j)%H%M%S.PNG')
+        
         path_of_ionogram = os.path.join(
             PATH_IONOGRAM, 
             filename
@@ -95,29 +95,29 @@ def plot_sequence_of_ionogram(times):
             pass
         else:
             ax.set(yticks = [])
-        
-      
-    # date = dn.strftime('%d/%m/%Y')
-    # title = f'{site} - {date}'
+    
     
     fig_labels(
         fig, 
         fontsize = 30, 
-        title = 'São Luís'
+        title = dg.embrace_infos[site]['name']
         )
     
-    return
+    return fig 
 
 
 def main():
-    PATH_IONOGRAM = 'database/ionogram/20220724S'
+    site = 'SAA0K'
+    # site = 'CAJ2M'
+    # site = 'FZA0M'
+    PATH_IONOGRAM = 'database/ionogram/20220724' + site[0]
     
-    files = os.listdir(PATH_IONOGRAM)
-      
-    files = sorted([f for f in files if 'PNG' in f])
+
+    times = pd.date_range(
+        '2022-07-24 23:00:00', 
+        freq = '1H', periods = 8)
     
-    files = files[20:][::3]
+    plot_sequence_of_ionogram(PATH_IONOGRAM, times, site)
     
-    times = pd.date_range('2022-07-24 23:30:00', freq = '30min', periods = 8)
     
-    plot_sequence_of_ionogram(times)
+main()

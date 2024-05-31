@@ -64,11 +64,11 @@ def plot_two_ionossonde_parameters():
 
     plt.subplots_adjust(hspace = 0.05, wspace= 0.05)
 
-    plot_site(ax, 0, 'FZA0M_20220724(205).TXT')
+    plot_site(ax, 0, 'FZA0M_20151221(355).TXT')
            
-    plot_site(ax, 1, 'SAA0K_20220724(205).TXT')
+    plot_site(ax, 1, 'SAA0K_20151220(354).TXT')
 
-    plot_site(ax, 2, 'CAJ2M_20220724(205).TXT')
+    plot_site(ax, 2, 'BVJ03_20151221(355).TXT')
   
     ax[0, 0].legend(
         ncol = 6, 
