@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import datetime as dt
 import base as b
-from GEO import sun_terminator 
+# from GEO import sun_terminator 
 import pandas as pd
 import digisonde as dg 
 import numpy as np 
@@ -71,15 +71,7 @@ def plot_vertical_component_drift(ts, dn, ds = None, N = 5):
                     alpha = 0.2
                     )
     
-  
-    for lim in [0, 18]:
-        end = sun_terminator(
-                        dn, 
-                        twilight_angle = lim, 
-                        site = 'saa'
-                        )
-        
-        ax.axvline(end, lw = 2, linestyle = '--')
+
         
     ax.axhline(0, lw = 2, linestyle = '--')
     
@@ -103,80 +95,19 @@ def plot_vertical_component_drift(ts, dn, ds = None, N = 5):
     return fig
     
     
-    
 
-from tqdm import tqdm 
-
-def save_imgs(ts, ds, dn, root):
-    
-    plt.ioff()
-    fig = plot_vertical_component_drift(
-        ts, ds, dn, N = 5)
-    
-    FigureName = dn.strftime('%j.png')
-    
-    fig.savefig(root + FigureName,
-                pad_inches = 0, 
-                bbox_inches = "tight")
-    
-    plt.clf()   
-    plt.close()
-
-def run_days(year, root):
-    
-    infile = 'digisonde/data/drift/data/saa/'
-
-    df = b.load(infile + f'{year}_drift.txt')
-    df.replace(0.0, np.nan, inplace = True)
-    df = df[['vz', 'evz']]
-    df = df.loc[~(df['evz'] > 10)]
-    out = []
-    
-    for day in tqdm(range(365), desc = str(year)):
-        
-        delta = dt.timedelta(days = day)
-        
-        dn = dt.datetime(year, 1, 1, 19) + delta
-        
-        ts = b.sel_times(df, dn, hours = 5)
-        
-        if len(ts) > 5:
-            try:
-                out.append(get_maximum_row(ts, dn))
-            except:
-                print(dn)
-                continue
-        
-        
-    df1 = pd.concat(out)
-    save_in = f'D:\\drift\\{year}.txt'
-    df1.to_csv(save_in)
-
-def run_years():
-    
-    for year in range(2013, 2023):
-        
-    
-        root = f'D:\\img2\\{year}\\'
-        
-        
-        b.make_dir(root)
-        
-        run_days(year, root)
 
 
 
 def single_plot():
     
-    year = 2013 
+    dn = dt.datetime(2015, 12, 20, 19)
+    
     infile = 'digisonde/data/drift/data/saa/'
     
-    df = b.load(infile + f'{year}_drift.txt')
-    
-    
-    dn = dt.datetime(year, 1, 2, 19)
-    
-    ts = b.sel_times(df, dn, hours = 5)
+    df = b.load(infile + f'{dn.year}_drift.txt')
+
+    ts = b.sel_times(df, dn, hours = 15)
     
     ts = ts.loc[~(ts['evz'] > 10)]
     
@@ -184,10 +115,8 @@ def single_plot():
         
     plot_vertical_component_drift(
         ts, dn, ds, N = 5)
-
-
-
-# run_years()
+    
+    plt.show()
 
 
 # single_plot()
