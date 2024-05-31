@@ -34,7 +34,8 @@ def average(ax, infile):
         yerr = std, 
         linestyle = 'none',
         marker = 'o',
-        capsize= 5, color = 'k', lw = 2 )
+        capsize= 5, color = 'k', lw = 2
+        )
 
 def day_target(ax, infile):
 
@@ -79,22 +80,26 @@ def plot_hF2_monthly_and_target():
     fig, ax = plt.subplots(
         dpi = 300, 
         figsize = (12, 10), 
-        nrows = 2,
+        nrows = 3,
         sharey = True, 
         sharex = True
         )
     
     plt.subplots_adjust(hspace = 0.2)
     
-    average(ax[0], 'FZA0M_20220701(182).TXT')
+    average(ax[0], 'SAA0K_20220701(182).TXT')
     
-    day_target(ax[0], 'FZA0M_20220724(205).TXT')
+    day_target(ax[0], 'SAA0K_20220724(205).TXT')
     
-    average(ax[1], 'CAJ2M_20220701(182).TXT')
+    average(ax[1], 'FZA0M_20220701(182).TXT')
     
-    day_target(ax[1], 'CAJ2M_20220724(205).TXT')
+    day_target(ax[1], 'FZA0M_20220724(205).TXT')
     
-    ax[1].set(xlabel = 'Universal time')
+    average(ax[2], 'CAJ2M_20220701(182).TXT')
+    
+    day_target(ax[2], 'CAJ2M_20220724(205).TXT')
+        
+    ax[2].set(xlabel = 'Universal time')
 
     return fig 
 
@@ -102,3 +107,6 @@ def plot_hF2_monthly_and_target():
 
 fig = plot_hF2_monthly_and_target()
 
+FigureName = 'averages_of_hF2'
+    
+fig.savefig(b.LATEX(FigureName, 'paper2'), dpi = 400)
