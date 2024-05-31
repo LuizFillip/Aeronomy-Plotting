@@ -29,7 +29,7 @@ def plot_images(
             ax, 
             time_infos = True,
             fontsize = 10, 
-            limits = [0.25, 0.90], 
+            limits = limits, 
             dt_ps = (340, 510)
             )
         
@@ -109,16 +109,20 @@ def plot_keogram_and_images(
     return fig 
 
 
-dn = dt.datetime(2022, 7, 25, 0, 10)
+def main():
 
-site = 'CA'
-path = f'database/images/{site}_2022_0724/'
-
-fig = plot_keogram_and_images(dn, path, site)
-
-FigureName = f'keogram_images_{site.lower()}_20220724'
-
+    dn = dt.datetime(2022, 7, 25, 0, 10)
     
-fig.savefig(
-    b.LATEX(FigureName, 'paper2'),
-    dpi = 400)
+    site = 'CA'
+    str_dn = dn.strftime('%Y%m%d')
+    path = f'database/images/{site}_2022_0724/'
+    
+    fig = plot_keogram_and_images(dn, path, site, 
+    limits = [0.27, 0.90])
+    
+    FigureName = f'keogram_images_{site.lower()}_20220724'
+    
+        
+    fig.savefig(
+        b.LATEX(FigureName, 'paper2'),
+        dpi = 400)
