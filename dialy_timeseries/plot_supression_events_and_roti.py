@@ -23,7 +23,7 @@ def plot_dialy_roti_and_dst():
     df = c.atypical_frame(lon = -50, kind = 0, days = 3)
     days = df.loc[df['dst'] < -90]
     
-    print(days)
+    # print(days)
     for row, dn in enumerate(days.index[:5]):
         
         start = dn - dt.timedelta(days = 2)
@@ -86,7 +86,7 @@ def plot_dialy_roti_and_dst():
 fig = plot_dialy_roti_and_dst()
 
 FigureName = 'supression_events'
-fig.savefig(
-      b.LATEX(FigureName, 'timeseries'),
-      dpi = 400
-      )
+# fig.savefig(
+#       b.LATEX(FigureName, 'timeseries'),
+#       dpi = 400
+#       )
