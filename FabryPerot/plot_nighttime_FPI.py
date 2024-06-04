@@ -8,8 +8,9 @@ def plot_directions(ax, path, parameter = "vnu"):
     
     if parameter == "vnu":
         df = fp.FPI(path).wind
-        ylim = [-100, 200]
-        yticks = np.arange(-100, 200, 50)
+        vmax = round(df['vnu'].max())
+        ylim = [-100, vmax]
+        yticks = np.arange(ylim[0], ylim[-1], 50)
         units = '(m/s)'
     else:
         df = fp.FPI(path).temp
@@ -82,9 +83,9 @@ def plot_nighttime_observation(
         
 # infile = 'FabryPerot/data/FPI/'
 infile = 'database/FabryPerot/car/minime01_car_20140102.cedar.005.txt'
-infile = 'database/FabryPerot/cj/bfp220724g.7100.txt'
+infile = 'database/FabryPerot/car/minime01_car_20151220.cedar.003.txt'
 
-infile = 'database/FabryPerot/caj/minime02_caj_20130515.cedar.005.hdf5.txt'
+
 fig = plot_nighttime_observation(
     infile, parameter = 'vnu')
 

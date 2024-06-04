@@ -40,10 +40,6 @@ def plot_directions( ax, path, site = 'car'):
                 capsize = 5
                     )
             
-        
-            
-           
-            
             ds = tp.loc[(tp["dir"] == direction)]
             
             
@@ -60,7 +56,7 @@ def plot_directions( ax, path, site = 'car'):
       
     ax[0, 0].set(ylabel = "Velocity(m/s)", ylim = [-100, 400])
     
-    ax[1, 0].set(ylabel = "Temperature (K)", ylim = [600, 1200])
+    ax[1, 0].set(ylabel = "Temperature (K)", ylim = [800, 1400])
        
     for row, name in enumerate(coords.values()):
         ax[0, row].legend(name,
@@ -109,15 +105,8 @@ def plot_nighttime_observation(
         
 
     
-path = 'database/FabryPerot/cj/bfp220724g.7100.txt'
+path = 'database/FabryPerot/cj/bfp220725g.7100.txt'
 
 
 fig = plot_nighttime_observation(path)
 
-FigureName = 'temp_winds_cajazeiras'
-
-
-fig.savefig(
-      b.LATEX(FigureName, folder = 'paper2'),
-      dpi = 400
-      )
