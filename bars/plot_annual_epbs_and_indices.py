@@ -12,7 +12,6 @@ b.config_labels(fontsize = 25)
 
 def plot_EPBs(ax, df, col = -50, translate = True):
     
-    # ds = c.count_occurences(df).year 
     ds = c.seasonal_yearly_occurrence(
             df, 
             col = col
@@ -158,14 +157,7 @@ def plot_annually_epbs_and_indices(
         xlim = xlim
         )
     
-    # plot_Kp(
-    #     ax[2], 
-    #     df, 
-    #     kp_level = kp_level, 
-    #     translate = translate, 
-    #     xlim = xlim
-    #     )
-
+ 
     ax[1].set(
         xlabel = 'Years',
        

@@ -1,12 +1,13 @@
 import matplotlib.pyplot as plt 
 import base as b
 import core as c
+import PlasmaBubbles as pb 
+
 
 b.config_labels()
 
 def plot_seasonal_kp_level(
         df,
-        solar_level = 86,
         kp_level = 3
         ):
     
@@ -19,13 +20,8 @@ def plot_seasonal_kp_level(
     
     plt.subplots_adjust(hspace = 0.1)
     
-    levels = c.kp_levels(
-            df, 
-            level =  kp_level, 
-            kp_col = 'kp'
-            )
-    
-    
+    levels = c.DisturbedLevels(df).Kp(level = kp_level)
+
     names = [
         f'$Kp \\leq$ {kp_level}', 
         f'$Kp >$ {kp_level}'
@@ -33,12 +29,11 @@ def plot_seasonal_kp_level(
     
     for i, ds in enumerate(levels):
         
-        dataset = c.month_occurrence(ds)
+        dataset = c.count_occurences(ds).month
         
         dataset.plot(
             kind = 'bar',
             ax = ax[i], 
-            color =  'gray',
             legend = False,
             edgecolor = 'k'
             )
@@ -66,7 +61,12 @@ def plot_seasonal_kp_level(
     
     return fig
 
-df = c.concat_results('saa')
-fig = plot_seasonal_kp_level(df)
+df = b.load('events_class2')
+ds = pb.sel_typing(df, typing = 'midnight')
+
+
+fig = plot_seasonal_kp_level(ds)
 
 # fig.savefig(b.LATEX('Kp_seasonal_variation'))
+
+

@@ -65,7 +65,8 @@ def plot_seasonal_occurrence(
     ax.set(
         ylabel = ylabel,
         xlabel = xlabel,
-        xticklabels = b.month_names(sort = True, language = language),
+        xticklabels = b.month_names(
+            sort = True, language = language),
         ylim = [0, vmax]
         )
         
@@ -96,15 +97,18 @@ def main():
      
         
         ds = pb.sel_typing(df, typing = typing)
+        
+    
 
         fig = plot_seasonal_occurrence(
             ds, typing, translate = translate)
         
         FigureName = f'seasonal_{typing}'
           
-        fig.savefig(
-              b.LATEX(FigureName, folder = 'bars'),
-              dpi = 400
-              )
+        # fig.savefig(
+        #       b.LATEX(FigureName, folder = 'bars'),
+        #       dpi = 400
+        #       )
     
 # main()
+
