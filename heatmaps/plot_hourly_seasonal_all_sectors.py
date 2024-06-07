@@ -2,6 +2,11 @@ import PlasmaBubbles as pb
 import base as b 
 import matplotlib.pyplot as plt 
 import plotting as pl  
+
+import numpy as np 
+import pandas as pd 
+
+
 b.config_labels()
 
 
@@ -26,7 +31,7 @@ def divide_by_geomgnetic_levels(df):
 
 
 def plot_seasonal_hourly_all_sectors(
-        df, 
+        ds, 
         fontsize = 35, 
         translate = False,
         sector = 1
@@ -43,29 +48,41 @@ def plot_seasonal_hourly_all_sectors(
 
     plt.subplots_adjust(wspace = 0.05)
      
-    sectors = {-50: 1, -60: 2, -70: 3, -80: 4}
+    values = pb.annual_hourly_all_sectors(
+            ds, 
+            normalize = True,
+            step = 1, 
+            percent = True
+        )
+
+    z, x, y = values.shape
+    step = 1
+    yticks = np.arange(20, 32 + step, step)
+    cmap = 'jet'
 
 
-    for sector, row in sectors.items():
+    start = ds.index[0].strftime('%Y-01-01')
+    end = ds.index[-1].strftime('%Y-12-31')
+
+
+    xticks = pd.date_range(start, end, periods = y)
+
+    sectors = list(range(-80, -40, 10))[::-1]
+    for i, sector in enumerate(sectors):
         
-        df = ds.loc[(ds['lon'] == sector) ] 
-      
-        df2 = pb.hourly_annual_distribution(df, step = 1)
+        pl.plot_terminator(ax[i], sector)
         
-        pl.plot_terminator(ax[row - 1], sector)
+        ax[i].set(title = f'Setor: {i + 1}')
         
-        pl.plot_seasonal_hourly(
-            ax[row - 1],
-            df2, 
-            cmap = 'jet',
-            fontsize = 35, 
-            translate = True,
-            heatmap = True, 
-            colorbar = False, 
-            levels = 10
-            )
-        
-        ax[row - 1].set(ylabel = '', title = f'Setor {row}')
+        ax[i].imshow(
+              values[i],
+              aspect = 'auto', 
+              extent = [xticks[0], xticks[-1], 
+                        yticks[0], yticks[-1]],
+              cmap = cmap, 
+              vmax = 100, 
+              vmin = 0
+              )
         
         
 
@@ -83,13 +100,13 @@ def plot_seasonal_hourly_all_sectors(
             fig,
             vmin = 0, 
             vmax = 100, 
-            cmap = "jet",
+            cmap = cmap,
             fontsize = 25,
             step = 10,
             label = zlabel, 
             sets = [0.32, 0.98, 0.4, 0.02], 
             orientation = 'horizontal', 
-            levels = 30
+            levels = 10
             )
         
     fig.text(
@@ -103,6 +120,13 @@ def plot_seasonal_hourly_all_sectors(
         ylabel, 
         fontsize = fontsize, 
         rotation = 'vertical'
+        )
+    
+    b.plot_letters(
+        ax, 
+        y = 1.04, 
+        x = 0, 
+        num2white = None
         )
      
     return fig
@@ -128,4 +152,6 @@ def main():
     fig.savefig(
           b.LATEX(FigureName, 'climatology'),
           dpi = 400)
-    
+
+
+# main()

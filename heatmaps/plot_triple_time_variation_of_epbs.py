@@ -163,7 +163,7 @@ def plot_annual_hourly(df, sector = -50):
     
     plot_f107(ax[1], df2)
     
-    plot_terminator(ax[0], df, sector)
+    plot_terminator(ax[0], sector)
     
     
     b.plot_letters(
@@ -193,4 +193,4 @@ def main():
     
     
 # main()
-
+# 
