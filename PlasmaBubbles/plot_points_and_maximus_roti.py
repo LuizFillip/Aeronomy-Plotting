@@ -26,9 +26,18 @@ def get_infos(ds, lon):
 def plot_points_and_maximus_roti(
         df, dn, 
         threshold = 0.25,
-        fontsize = 30
+        fontsize = 30, 
+        vmax = 4, 
+        translate = True
         ):
     
+    if translate:
+        occurrence = 'Occurrence'
+        sector_name = 'Sector'
+    else:
+        occurrence = 'Ocorrência'
+        sector_name = 'Setor'
+        
     fig, ax = plt.subplots(
         dpi = 300, 
         nrows = 4,
@@ -36,11 +45,11 @@ def plot_points_and_maximus_roti(
         figsize = (10, 12)
         )
     
-    plt.subplots_adjust(hspace = 0.3, wspace = 0.03)
+    plt.subplots_adjust(hspace = 0.05)
     
     coords = gg.set_coords(dn.year)
     
-    out_infos = []
+    
     for row, sector in enumerate(coords.keys()):
     
         ds = pb.filter_region(df, dn.year, sector)
@@ -52,43 +61,50 @@ def plot_points_and_maximus_roti(
                 points_max = True
                 )
                 
-        terminator = gg.terminator(
-            sector, dn, float_fmt = False)
-        
-        ax[row].axvline(terminator, color = 'k', lw = 2)
-                        
-        info = f'Sector {row + 1} ({sector}°)'
+        l = b.chars()[row]                
+        info = f'({l}) {sector_name} {row + 1} ({sector}°)'
         
         ax[row].text(
-            0.01, 1.05, info, 
+            0.01, 0.8, info, 
             transform = ax[row].transAxes
             )
         
-        delta = dt.timedelta(hours = 3)
-        midnight = gg.local_midnight(dn + delta, sector)
+        if row == 0:
+            label_top = vmax + 2.2
+        else:
+            label_top = None
         
-        ax[row].axvline(
-            midnight, color = 'k', lw = 2, linestyle = '--')
+        pl.plot_references_lines(
+                ax[row],
+                sector, 
+                dn, 
+                label_top = label_top,
+                translate = translate
+                )
+        
         ax[row].set(
-            ylim = [0, 3], 
-            xlim = [df.index[0], df.index[-1]],
-            # title = get_infos(ds, lon = int(sector))
+            ylim = [0, vmax + 2], 
+            yticks = list(range(0, vmax + 2, 2)), 
+            xlim = [df.index[0], df.index[-1]], 
             )
         
-        if row == 0:
-            out_infos.extend([terminator, midnight])
-      
-    b.format_time_axes(ax[-1], translate = False)
+        
+    b.format_time_axes(ax[-1], translate = translate)
     
     
-    fig.text(0.03, 0.33, 'ROTI (TECU/min)', 
+    fig.text(
+        0.03, 0.33, 
+        'ROTI (TECU/min)', 
         fontsize = fontsize, 
         rotation = 'vertical'
         )
     
-    fig.text(0.93, 0.42, 'Occurrence', 
+    fig.text(
+        0.93, 0.42, 
+        occurrence, 
         fontsize = fontsize, 
-        rotation = 'vertical'
+        rotation = 'vertical', 
+        color = 'b'
         ) 
     
     return fig 
@@ -97,13 +113,13 @@ def plot_points_and_maximus_roti(
 
 def main():
   
-    dn = dt.datetime(2019, 1, 1, 21)
-    
-    
+    dn = dt.datetime(2015, 12, 20, 21)
+    dn = dt.datetime(2017, 9, 17, 21)
+    dn = dt.datetime(2022, 7, 24, 21)
     df = pb.concat_files(
         dn, 
         days = 2, 
-        root = 'D:\\', 
+        root = 'E:\\', 
         hours = 12
         )
     
@@ -112,10 +128,20 @@ def main():
             df, 
             dn, 
             threshold = 0.2,
-            fontsize = 30
+            fontsize = 30, 
+            translate = False
             )
     
+    FigureName = dn.strftime('occurrence_%Y%m%d')
     
+    
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'paper2'),
+          dpi = 400
+          )
+    
+
     plt.show()
     
 
+main()
