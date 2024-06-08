@@ -1,91 +1,154 @@
 import matplotlib.pyplot as plt
-import digisonde as dg
 import base as b 
-import GEO as gg 
-import plotting as pl
+import digisonde as dg 
+import numpy as np 
+import datetime as dt 
 
- 
-CHAR_PATH = 'digisonde/data/chars/midnight/'
+b.config_labels()
 
-def plot_site(ax, col, file):
-    
 
-    ds, vz, site = pl.pipe_data(file)
-     
-    dn = ds.index[0]
-    
-    cols = ds.columns[3:-5]
-    
-    cols = list(range(2, 7, 1))
-    
-    pl.plot_heights(ax[0, col], ds, cols)
-    
-    pl.plot_drift(ax[1, col], vz, cols, site)
-    
-    for c in cols:
-        x = ds[c].dropna()
-        y = b.filter_frequencies(x.values)
-        ax[2, col].plot(x.index, c * 10 + y)
-        ax[2, col].set(ylim = [0, 100])
-        
-    ax[0, col].set(title = gg.sites[site]['name'])
-    
-    b.format_time_axes(ax[-1, col], hour_locator = 2)
-    
-    d = gg.dusk_from_site(
-            dn, 
-            site = site,
-            twilight_angle = 18
-            )
-    
-    ax[0, col].axvline(d, lw = 2)
-    ax[1, col].axvline(d, lw = 2)
-    ax[2, col].axvline(d, lw = 2)
-    for a in ax.flat:
-        a.set(ylabel = '')
-       
-        
-       
-    ax[-1, 0].set(ylabel = 'd(hF) (km)')
-    ax[0, 0].set(ylabel = 'Altitude (km)')
-    ax[1, 0].set(ylabel = 'Vertical drift (m/s)')
 
- 
-def plot_two_ionossonde_parameters():
+
+def plot_QF(ax, df, color):
     
+    ax.bar(
+        df.index, 
+        df["QF"],
+        width = 0.01, 
+        color = color,
+        alpha = 0.7,
+        )
+    
+    ax.set(ylim = [0, 60])
+    
+    return None 
+
+
+    
+    
+def plot_multiples_sites(
+        ref,
+        cols, 
+        dn,
+        fontsize = 30
+        ):
+    
+   
     fig, ax = plt.subplots(
-        figsize = (18, 14), 
-        nrows = 3, 
-        ncols = 3,
-        sharex = True, 
-        sharey = 'row', 
-        dpi = 300
+         figsize = (16, 12), 
+         ncols = 2, 
+         nrows = 3,
+         sharex = True, 
+         dpi = 300
+         )
+
+    plt.subplots_adjust(
+        hspace = 0.05, 
+        wspace = 0.3
         )
 
-    plt.subplots_adjust(hspace = 0.05, wspace= 0.05)
+    cols = list(range(4, 8, 1))
 
-    plot_site(ax, 0, 'FZA0M_20151221(355).TXT')
-           
-    plot_site(ax, 1, 'SAA0K_20151220(354).TXT')
+    codes = ['SAA0K', 'BVJ03', 'JI91J']
 
-    plot_site(ax, 2, 'BVJ03_20151221(355).TXT')
-  
+    for i, site in enumerate(codes):
+        
+      
+        df = dg.IonoAverage(dn, cols, site, ref = ref)
+        
+        if site == 'JI91J':
+            parameter = 'hF'
+        else:
+            parameter = 'hF2'
+            
+        plot_heights(ax[i, 0], df, parameter)
+        
+        plot_drift(ax[i, 1], df, vmax = 50)
+       
+
+        s = f'({b.chars()[i]}) {df.data.site}'
+        
+        x = 0.03
+        y = 0.84
+        ax[i, 0].text(
+            x, y, s, 
+            transform = ax[i, 0].transAxes
+            )
+        ax[i, 1].text(
+            x, y, f'{df.data.site}', 
+            transform = ax[i, 1].transAxes
+            )
+        
+    end = ref + dt.timedelta(hours = 14)
+
+    ax[-1, 0].set(xlim = [ref, end])
+        
+    b.format_time_axes(ax[-1, 0], hour_locator = 2)
+    b.format_time_axes(ax[-1, 1], hour_locator = 2)
+
     ax[0, 0].legend(
-        ncol = 6, 
-        loc = "upper right", 
-        title = 'Frequencies (MHz)',
-        bbox_to_anchor = (2.4, 1.6), 
-        )
+          ncol = 6, 
+          loc = "upper right", 
+          bbox_to_anchor = (1.5, 1.43), 
+          )
     
-    b.plot_letters(ax, y = 0.85, x = 0.03)
+    ax[1, 0].set_ylabel(
+        'h`F (km)', fontsize = fontsize)
+    ax[1, 1].set_ylabel(
+        'Vertical drift (m/s)', fontsize = fontsize)
     
+
     return fig
 
 
 
-fig = plot_two_ionossonde_parameters()
-FigureName = 'frequencies_vz_saa_fza'
+def plot_drift(ax, df, vmax = 60):
+    
+    vz = df.ref_data.drift() 
+    qt = df.drift
+
+    ax.plot(vz['vz'], lw = 1.5, label = 'Disturbed')
+    
+    ax.plot(qt['vz'], lw = 1.5, label = 'Quiet')
+    
+    ax.axhline(0, linestyle = '--')
+     
+    ax.set(
+        ylim = [-vmax + 10, vmax], 
+        yticks = np.arange(-vmax + 10, vmax + 10, 20)
+        )
+    
+    return None
+    
+
+def plot_heights(ax, df, parameter = 'hmF2'):
+    
+
+    hf = df.ref_data.chars
+
+    qt = df.chars(parameter)
+
+    ax.plot(hf[parameter], lw = 1.5, label = 'Disturbed')
+
+    ax.plot(qt[parameter], lw = 1.5, label = 'Quiet')
+    
+    ax.set(ylim = [100, 600])
+    
+    return None
+
+ 
+ref = dt.datetime(2015, 12, 20, 20)
+
+dn = dt.datetime(2015, 12, 2)
+cols = list(range(4, 8, 1))
+
+
+fig = plot_multiples_sites(ref,cols,  dn)
+
+
+# FigureName = start.strftime('Iono_parameters_%Y%m%d')
 # fig.savefig(
 #       b.LATEX(FigureName, folder = 'paper2'),
 #       dpi = 400
 #       )
+

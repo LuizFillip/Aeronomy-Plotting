@@ -114,6 +114,8 @@ def main():
     char = dg.chars(CHAR_PATH + file)
     
     ds, vz, site = pl.pipe_data(file)
-    fig = plot_vz_and_frequencies(ds, vz, char, site)
+#     fig = plot_vz_and_frequencies(ds, vz, char, site)
     
-#main()
+# main()
+
+

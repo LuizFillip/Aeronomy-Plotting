@@ -64,19 +64,6 @@ def plot_fhF2(ax, df, name):
         )
 
 
-def plot_QF(ax, df, name, color):
-    
-    ax.bar(df.index, df["QF"],
-           width = 0.01, 
-           color = color,
-           alpha = 0.7,
-           label = name
-           )
-    
-    ax.set(
-        ylim = [0, 40], 
-        ylabel = "QF (Km)"
-        )
 
 
 def plot_terminators(
@@ -132,7 +119,7 @@ def plot_iono_chars(dn):
         
         color = plot_foF2(ax[2], df, name)
      
-        plot_QF(ax[3], df, name, color)
+        # plot_QF(ax[3], df, name, color)
         
         out[site] = color
         

@@ -2,22 +2,9 @@ import GEO as gg
 import datetime as dt
 import digisonde as dg 
 import base as b 
-FREQ_PATH = 'digisonde/data/chars/freqs/'
 
-def pipe_data(file):
-    df = dg.freq_fixed(FREQ_PATH + file)
-    # del df[9]
-    site, dn = dg.site_datetime_from_file(file, hours = 18)
-    
-    # ds = b.sel_times(df, dn, hours = 12).interpolate()
-    
-    ds = df.iloc[1:].interpolate()
-    vz = dg.vertical_drift(ds)
 
-    
-    vz = vz.replace(0, float('nan'))
-    
-    return ds, vz, site
+
 
 
 class labels:

@@ -64,10 +64,10 @@ def plot_sequence_of_ionogram(PATH_IONOGRAM, times, site):
           sharex = True,
         
          ncols = 4, 
-         nrows = 2
+         nrows = 3
          )
     
-    plt.subplots_adjust(wspace = 0.1, hspace = 0.15)
+    plt.subplots_adjust(wspace = 0.1, hspace = 0.2)
     
     
     for i, ax in enumerate(ax.flat):
@@ -91,33 +91,51 @@ def plot_sequence_of_ionogram(PATH_IONOGRAM, times, site):
         ax.set(ylabel = '', xlabel = '', 
                title = time)
         
-        if ((i == 0) or (i == 4)):
+        if ((i == 0) or (i == 4) or (i == 8)):
             pass
         else:
-            ax.set(yticks = [])
+            ax.set(yticklabels = [])
     
     
+    date = dn.strftime(' - %Y-%m-%d')
     fig_labels(
         fig, 
         fontsize = 30, 
-        title = dg.embrace_infos[site]['name']
+        title = dg.code_name[site] + date
         )
     
     return fig 
 
+import datetime as dt
+import base as b 
 
 def main():
     site = 'SAA0K'
+    # site = 'BVJ03'
+    site = 'FZA0M'
     # site = 'CAJ2M'
-    # site = 'FZA0M'
-    PATH_IONOGRAM = 'database/ionogram/20220724' + site[0]
     
+    dn = dt.datetime(2015, 12, 20, 23)
+    dn = dt.datetime(2022, 7, 24, 23)
+    PATH_IONO = 'database/ionogram/' 
 
+    path = dn.strftime(f'{PATH_IONO}%Y%m%d{site[0]}')
+    
+    delta= dt.timedelta(hours = 1)
     times = pd.date_range(
-        '2022-07-24 23:00:00', 
-        freq = '1H', periods = 8)
+        dn + delta, 
+        freq = '30min', 
+        periods = 12
+        )
     
-    plot_sequence_of_ionogram(PATH_IONOGRAM, times, site)
+    fig = plot_sequence_of_ionogram(path, times, site)
     
+    FigureName = dn.strftime(f'{site}_%Y%m%d')
     
-main()
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'paper2'),
+          dpi = 300
+          )
+
+    # 
+# main()
