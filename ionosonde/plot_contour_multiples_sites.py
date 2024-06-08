@@ -123,7 +123,6 @@ def plot_drift(ax, df, vmax = 60):
 
 def plot_heights(ax, df, parameter = 'hmF2'):
     
-
     hf = df.ref_data.chars
 
     qt = df.chars(parameter)
