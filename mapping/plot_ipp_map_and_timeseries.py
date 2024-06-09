@@ -20,6 +20,9 @@ def plot_ipp_on_map(ax, ds, dn, colorbar = False):
         
         ticks = np.arange(0, 2, 0.5)
         
+        
+
+        
         img = ax.scatter(
             sel.lon,
             sel.lat, 
@@ -110,5 +113,6 @@ def single_view(start):
 
 # start = dt.datetime(2014, 1, 1, 21)
 # fig = single_view(start)
+
 
 

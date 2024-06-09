@@ -14,20 +14,23 @@ args = dict(
 
 def plot_sites(ax, year):
     
-    lon, lat = gg.stations_coordinates(year, distance = 5)
+    # lon, lat = gg.stations_coordinates(year, distance = 5)
     
-    ax.scatter(lon, lat, **args, label = 'Receptores GNSS')
+    # ax.scatter(lon, lat, **args, label = 'Receptores GNSS')
     
     c = ['red', 'blue']
-    n  = ['São Luis', 'Jicamarca']
+    sites  = ['saa', 'caj', 'bjl', 'car']
     
-    for i, site in enumerate(['saa', 'jic']):
+    for i, site in enumerate(sites):
         
-        glat, glon = gg.sites[site]['coords']
+        site = gg.sites[site]
+        
+        name = site['name']
+        glat, glon = site['coords']
         
         ax.scatter(glon, glat, s = 150,
-                   c = c[i], marker = 's', 
-                   label = n[i])
+                   marker = '*', 
+                   label = name)
 
 def plot_regions_over_map(year = 2013):
     
@@ -43,14 +46,14 @@ def plot_regions_over_map(year = 2013):
         subplot_kw = {'projection': ccrs.PlateCarree()}
     )
     
-    gg.map_attrs(ax, year, degress = 5, grid = False)
-    gg.plot_rectangles_regions(ax)
+    gg.map_attrs(ax, year, degress = None, grid = False)
+    # gg.plot_rectangles_regions(ax)
     plot_sites(ax, year)
     
     ax.legend(
         loc = 'lower right',
-        ncol = 1, 
-        # bbox_to_anchor = (0.5, 1.1), 
+        ncol = 2, 
+        bbox_to_anchor = (1, 1.1), 
         columnspacing = 0.2
         )
     
