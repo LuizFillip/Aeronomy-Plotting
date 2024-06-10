@@ -178,9 +178,30 @@ def main():
     
     fig = plot_annually_epbs_and_indices(df)
     
-    fig.savefig(b.LATEX('annual_variation2', folder = 'bars'))
+    # fig.savefig(b.LATEX('annual_variation2', folder = 'bars'))
 
 
 # main()
 
 # plt.show()
+
+
+fig, ax = plt.subplots(
+     # nrows = 2, 
+     dpi = 300, 
+     sharex = True,
+     figsize = (14, 6)
+     )
+
+df = c.epbs(col = -50, geo = True, eyear = 2022)
+
+
+plot_F107(
+     ax, 
+     df, 
+     solar_level = None,
+     translate = False, 
+     )
+
+ax.set(xlabel = 'Years')
+plt.show()

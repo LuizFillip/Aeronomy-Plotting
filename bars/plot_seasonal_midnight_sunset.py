@@ -2,75 +2,103 @@ import numpy as np
 import matplotlib.pyplot as plt
 import base as b 
 import core as c
+import PlasmaBubbles as pb 
 
 b.config_labels()
 
-def plot_sunset_midnight_events(ds):
+
+
+def plot_annually_both_and_indexes(
+        df, 
+        xlabel = 'Month', 
+        translate = True
+        ):
     
+    if translate:
+        ylabel = 'Número de casos'
+        xlabel = 'Anos'
+        sector = 'Setor'
+    else:
+        ylabel = 'Number of cases'
+        xlabel = 'Months'
+        sector = 'Sector'
+    
+    
+    
+    if translate:
+        names = ['pós pôr do Sol', 'pós meia noite']
+       
+    else:
+        names = ['Post-sunset',  'Post-midnight']
+    
+        
     
     fig, ax = plt.subplots(
         dpi = 300, 
         nrows = 2,
         sharex = True,
-        figsize = (12, 8)
+        figsize = (16, 12)
         )
-
-    period = ['sunset', 'midnight']
     
-    plt.subplots_adjust(hspace = 0.1)
-    ylims = [350, 100]
-    for i, value in enumerate(period):
+    plt.subplots_adjust(hspace = 0.3)
+    
+    vmax = [350, 150]
+    for i, typing in enumerate(['sunset', 'midnight']):
+      
+        ds = pb.sel_typing(df, typing = typing)
         
-        df = c.month_occurrence(ds)
-        df = df.loc[df['type'] == value].iloc[:, :-1]
-        df = df.replace(np.nan, 0)
-        total = int(df.values.sum())
-        df.plot(
+        if xlabel == 'years':
+            df1 = c.count_occurences(ds).year
+            
+        else:
+            df1 = c.count_occurences(ds).month
+           
+        
+        df1.plot(
             kind = 'bar', 
             ax = ax[i], 
             legend = False
             )
         
-        title = f'({b.chars()[i]}) Post {period[i]} '
-        events = f'({total}  events)'
+        t = [f'{sector} {i} ({vl})' for i, vl in 
+             enumerate(df1.sum().values, start = 1)]
         
-        plt.xticks(rotation = 0)
-        
-        ax[i].text(
-            0.03, 0.85, 
-            title + events, 
-            transform = ax[i].transAxes
+        ax[i].legend(
+            t,
+            ncol = 5, 
+            title = names[i] + ' EPBs',
+            bbox_to_anchor = (.5, 1.3), 
+            loc = "upper center", 
+            columnspacing = 0.6
             )
         
         ax[i].set(
-            ylabel = 'Nigths with EPB',
-            xticklabels = b.number_to_months(), 
-            ylim = [0, ylims[i]]
+            ylabel = ylabel,
+            xlabel = xlabel.capitalize(),
+            ylim = [0, vmax[i]],
+            xticklabels = b.month_names(
+                sort = True, language = 'en'),
             )
         
-    # period_type = '$Kp > 3$'
-    ax[0].legend(
-        [f'{c}°' for c in ds.columns],
-        ncol = 5, 
-        title = f'Longitudinal sectors (2013 - 2022)',
-        bbox_to_anchor = (.5, 1.4), 
-        loc = "upper center", 
-        columnspacing = 0.6
-        )
     
-    ax[1].set(xlabel = 'Months')
-    plt.show()
+    plt.xticks(rotation = 0)
+
     return fig
 
-ds = c.epbs(class_epb = None)
 
-# ds
 
-fig = plot_sunset_midnight_events(ds)
+df = b.load('events_class2')
 
-FigureName = 'seasonal_midnight_sunset'
+fig = plot_annually_both_and_indexes(
+        df,  
+        translate = False
+        )
 
-# fig.savefig(
-#     b.LATEX(FigureName, folder = 'bars'),
-#     dpi = 400
-#     )
+#         FigureName = f'annual_{typing}'
+          
+#         fig.savefig(
+#               b.LATEX(FigureName, folder = 'bars'),
+#               dpi = 400
+#               )
+        
+plt.show()

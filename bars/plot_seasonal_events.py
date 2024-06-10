@@ -98,7 +98,6 @@ def main():
         
         ds = pb.sel_typing(df, typing = typing)
         
-    
 
         fig = plot_seasonal_occurrence(
             ds, typing, translate = translate)

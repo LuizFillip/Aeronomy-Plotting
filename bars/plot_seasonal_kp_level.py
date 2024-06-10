@@ -15,23 +15,21 @@ def plot_seasonal_kp_level(
         nrows = 2, 
         dpi = 300, 
         sharex = True,
-        figsize = (12, 8)
+        figsize = (14, 10)
         )
     
-    plt.subplots_adjust(hspace = 0.1)
+    plt.subplots_adjust(hspace = 0.2)
     
-    levels = c.DisturbedLevels(df).Kp(level = kp_level)
+    datasets = c.DisturbedLevels(df).Kp(level = kp_level)
 
-    names = [
-        f'$Kp \\leq$ {kp_level}', 
-        f'$Kp >$ {kp_level}'
-        ]
+    names = [f'$Kp \\leq$ {kp_level}',  f'$Kp >$ {kp_level}']
     
-    for i, ds in enumerate(levels):
+    for i, ds in enumerate(datasets):
         
-        dataset = c.count_occurences(ds).month
+        data = c.count_occurences(ds).month
+        data = data.iloc[:, :4]
         
-        dataset.plot(
+        data.plot(
             kind = 'bar',
             ax = ax[i], 
             legend = False,
@@ -39,34 +37,47 @@ def plot_seasonal_kp_level(
             )
     
         ax[i].set(
-            ylim = [0, 200],
+            ylim = [0, 100],
             ylabel = 'Number of nights',
             xlabel = 'Months',
             xticklabels = b.number_to_months()
             )
         
-        epb_count = dataset['epb'].sum()
         
-        l = b.chars()[i]
-        n = names[i]
-        info = f'({l}) {n} ({epb_count} EPBs events)'
+        summations = data.sum().values[:4]
         
-        ax[i].text(
-            0.02, 0.85, info, 
-            transform = ax[i].transAxes
+        t = [f'{i + 1} ({int(v)})' for i, v in
+             enumerate(summations)]        
+        
+        ax[i].legend(
+            t,
+            ncol = 5, 
+            loc = "upper center", 
+            columnspacing = 0.6
             )
+    
         
     plt.xticks(rotation = 0)
     
+    b.add_lines_and_letters(
+            ax, 
+            names, 
+            fontsize = 25,
+            x = 0.0, 
+            y = 1.05, 
+            num2white = None
+            )
     
     return fig
 
-df = b.load('events_class2')
-ds = pb.sel_typing(df, typing = 'midnight')
 
-
-fig = plot_seasonal_kp_level(ds)
-
-# fig.savefig(b.LATEX('Kp_seasonal_variation'))
+def main():
+    df = b.load('events_class2')
+    ds = pb.sel_typing(df, typing = 'midnight')
+    
+    
+    fig = plot_seasonal_kp_level(ds)
+    
+    # fig.savefig(b.LATEX('Kp_seasonal_variation'))
 
 
