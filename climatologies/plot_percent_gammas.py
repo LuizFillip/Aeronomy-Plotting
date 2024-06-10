@@ -38,8 +38,8 @@ def plot_percent_gamma_weigths(
    
     ds = df.resample(freq).mean()
     
-    names = [lb.winds, lb.drift,  lb.gravity]
-    colors = ['blue', 'red', 'green']
+    names = [ lb.drift, lb.winds,  lb.gravity]
+    colors = ['red', 'blue',  'k']
     markers = ['^', 's', 'o']
     out = []
     
@@ -60,7 +60,8 @@ def plot_percent_gamma_weigths(
             label = names[i],
             marker = markers[i],
             color = colors[i]
-                )
+            )
+        
         out.append(percent)
         
     su = pd.concat(out, axis = 1).sum(axis = 1).round()
@@ -79,8 +80,6 @@ def plot_percent_gamma_weigths(
         columnspacing = 0.3,
         loc = "upper center"      
         )
-    
-   
        
     ax.set(
         ylim = [-0.55, 1.2],
@@ -89,19 +88,7 @@ def plot_percent_gamma_weigths(
         ylabel = ylabel
         )
     
-    # ax[0].set(
-    #     ylabel = lb.ylabel, 
-    #     ylim = [-0.5, 3]
-    #     )
-    
     ax.axhline(0, linestyle = '--')
-    
-    # b.plot_letters(
-    #     ax, 
-    #     y = 0.85, 
-    #     x = 0.02, 
-    #     num2white = None
-    #     )
     
     plt.show()
     
@@ -109,7 +96,7 @@ def plot_percent_gamma_weigths(
 
 
 def main():
-    cols = ['gamma',  'winds', 'drift', 'gravity']
+    cols = ['gamma', 'drift', 'winds', 'gravity']
     
     df  = c.gamma(
             site = 'saa', 
