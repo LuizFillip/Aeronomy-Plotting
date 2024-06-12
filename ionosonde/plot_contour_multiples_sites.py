@@ -23,9 +23,7 @@ def plot_QF(ax, df, color):
     
     return None 
 
-
-    
-    
+   
 def plot_multiples_sites(
         ref,
         cols, 
@@ -142,12 +140,13 @@ dn = dt.datetime(2015, 12, 2)
 cols = list(range(4, 8, 1))
 
 
-fig = plot_multiples_sites(ref,cols,  dn)
+fig = plot_multiples_sites(ref, cols,  dn)
 
 
-# FigureName = start.strftime('Iono_parameters_%Y%m%d')
+FigureName = ref.strftime('Iono_parameters_%Y%m%d')
 # fig.savefig(
 #       b.LATEX(FigureName, folder = 'paper2'),
 #       dpi = 400
 #       )
 
+plt.show()
