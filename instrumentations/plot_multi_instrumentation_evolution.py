@@ -10,7 +10,7 @@ from tqdm import tqdm
 import numpy as np 
 
 
-def plot_roti(ax, df, target, sector = -50):
+def plot_roti(ax, df, target, dn, sector = -50):
     
     ds = pb.filter_region(df, target, sector = sector)
     
@@ -64,7 +64,7 @@ def plot_time_evolution(file, dn, df):
         )
     
     
-    plot_roti(ax_ts, df, target)
+    plot_roti(ax_ts, df, target, dn)
     
     title = target.strftime('%Y/%m/%d %Hh%M (UT)')
     
@@ -73,7 +73,7 @@ def plot_time_evolution(file, dn, df):
     folder = dn.strftime('%Y%m%d')
     name = target.strftime('%Y%m%d%H%M%S')
     
-    fig.savefig(f'{folder}/{name}')
+    # fig.savefig(f'{folder}/{name}')
          
     return fig
 
@@ -92,34 +92,7 @@ def run(df, dn):
         plt.close()   
 
 
-files = [ 
-    'O6_CA_20220725_000007.tif',
-    'O6_CA_20220725_021618.tif',
-    'O6_CA_20220725_034219.tif', 
-    'O6_CA_20220725_041809.tif'
-    ]
-
-dn = dt.datetime(2022, 7, 24, 20)
 
 
-def main():
-    df =  pb.concat_files(
-         dn, 
-         root = 'D:\\'
-         )
-     
-    df = b.sel_times(df, dn, hours = 11)
-    
-    
-    folder = dn.strftime('%Y%m%d')
-    b.make_dir(folder)
-    
-    run(df, dn)
-    # file = files[0]
-    # fig = plot_time_evolution(file, dn, df)
-    b.images_to_movie(
-            path_in = folder, 
-            path_out = '',
-            movie_name = folder,
-            fps = 12
-            )
+
+# b.axes_and_map()

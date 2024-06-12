@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 def plot_regions(ax_tec, site):
      
-     lat, lon = gg.sites['car']['coords']
+     lat, lon = gg.sites['ca']['coords']
      gg.plot_circle(
              ax_tec, 
              lon, 
@@ -47,27 +47,40 @@ def title(dn):
     return dn.strftime('%Y/%m/%d %Hh%M (UT)')
 
 
+    
+def adjust_axes_position(ax1, ax2, offset= 0.08):    
+    pos1 = ax1.get_position()
+    pos2 = ax2.get_position()
+
+    ax2.set_position(
+        [pos1.x0 , pos2.y0 + offset, 
+         pos2.width, pos2.height]
+        )
+    
+    return ax2
+    
+    
+ 
 def plot_time_evolution(
         file, 
         dn, 
         df, 
         target = None,
         vmax = 10, 
-        site = 'SAA0K',
         save = True,
         threshold = 0.20, 
         fontsize = 30, 
-        root_tec = 'D:\\'
+        root_tec = 'E:\\'
         ):
 
     fig, ax_img, ax_ion, ax_tec, axes = b.layout4(
-        figsize = (12, 20), 
-        hspace = 0.3, 
+        figsize = (10, 20),  #(20, 10)
+        hspace = 0.4, 
         wspace = 0.3
         )
     
     path_of_image = os.path.join(
-        im.path_all_sky(dn), file)
+        im.path_all_sky(dn, root = root_tec), file)
  
     target = im.plot_images(
         path_of_image, 
@@ -76,8 +89,8 @@ def plot_time_evolution(
         fontsize = 15
         )
     
-    fig.suptitle(title(target), y = 0.95)
-
+    fig.suptitle(title(target), y = 0.94)
+    
     pl.plot_tec_map(
         target, 
         ax = ax_tec, 
@@ -105,6 +118,7 @@ def plot_time_evolution(
         df, 
         target, 
         dn, 
+        site,
         vmax = 3, 
         right_ticks = False,
         threshold = threshold
@@ -112,19 +126,25 @@ def plot_time_evolution(
     
 
     fig.text(
-        0.03, 0.23, 'ROTI (TECU/min)', 
+       0.04, 0.25, # 0.62, 0.25, # 
+        'ROTI (TECU/min)', 
         fontsize = fontsize, 
         rotation = 'vertical'
         )
     
     fig.text(
-        0.95, 0.26, 'Occurrence', 
+        0.93, 0.28, #0.92, 0.3,
+        'OCCURRENCE', 
         fontsize = fontsize, 
         rotation = 'vertical',
         color = 'b'
         )
-
     
+    for i in range(len(axes) -1):
+        adjust_axes_position(axes[i], axes[i + 1], 
+            offset = 0.02 * (i + 1))
+
+
     if save:
         save_image(fig, target, dn)
     
@@ -135,47 +155,44 @@ def test_single(
         start = None, 
         vmax = 60, 
         offset = 8, 
-        remove_noise = True
+        remove_noise = True,
+        root = 'E:\\'
         ):
     
-    start = im.round_date(dn)
+    # start = im.round_date(dn)
     
     df =  pb.concat_files(
-          start, 
-          root = 'D:\\', 
+          dn, 
+          root = root, 
           remove_noise =  remove_noise
           )
 
-    ds = b.sel_times(df, start, hours = 12)
+    ds = b.sel_times(df, dn, hours = 12)
     
-    de = dt.timedelta(hours = offset)
-    file = im.get_closest(
-        dn + de, 
-        file_like = True
-        )
+    delta = dt.timedelta(hours = offset)
+    file = im.get_closest(dn + delta, file_like = True)
 
     plot_time_evolution(
         file, 
-        start, 
+        dn, 
         ds, 
         vmax = vmax
         )
+    
     plt.show()
     
     return None 
     
 
-# dn =  dt.datetime(2017, 9, 17, 21)
-# dn = dt.datetime(2019, 5, 2, 21)
-# dn =  dt.datetime(2014, 2, 9, 21)
+dn =  dt.datetime(2014, 2, 9, 20)
+dn = dt.datetime(2018, 3, 19, 20)
 
 # test_single(
 #     dn, 
 #     start = None, 
-#     vmax = 60, 
-#     offset = 6.5, 
+#     vmax = 10, 
+#     offset = 7, 
 #     remove_noise = True
 #     )
 
-# dn.timetuple().tm_yday
 

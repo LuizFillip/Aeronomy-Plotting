@@ -1,5 +1,5 @@
 import base as b
-import PlasmaBubbles as pb
+from tqdm import tqdm 
 import plotting as pl 
 import datetime as dt
 import imager as im 
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 def plot_regions(ax_tec, site):
      
-     lat, lon = gg.sites['car']['coords']
+     lat, lon = gg.sites['ca']['coords']
      gg.plot_circle(
              ax_tec, 
              lon, 
@@ -43,14 +43,18 @@ def save_image(fig, target, dn):
 
 
 def title(dn):
-    return dn.strftime('%Y/%m/%d %Hh%M (UT)')
+    delta = dt.timedelta(hours = 3)
+    dn -= delta
+    return dn.strftime('%Y/%m/%d %Hh%M (LT)')
 
 
 def plot_ion_tec_img(
         file, 
         dn, 
         kind = 'With EPB', 
-        title_dn = None):
+        title_dn = None, 
+        root = 'E:\\'
+        ):
         
     fig, ax_img, ax_ion, ax_tec   = b.layout3(
         figsize = (19, 8), 
@@ -61,7 +65,7 @@ def plot_ion_tec_img(
    
     
     path_of_image = os.path.join(
-        im.path_all_sky(dn), file)
+        im.path_all_sky(dn, root = root), file)
     
     target = im.plot_images(
         path_of_image, 
@@ -79,10 +83,11 @@ def plot_ion_tec_img(
         vmax = 60, 
         colorbar = True, 
         boxes = True,
-        root = root_tec
+        root = root
         )
     
-    site, path_of_ionogram = dg.path_ionogram(dn, target)
+    site, path_of_ionogram = dg.path_ionogram(
+        dn, target, root = root)
     
     plot_regions(ax_tec, site)
     
@@ -99,35 +104,63 @@ def plot_ion_tec_img(
         
         time_title = title(target)
         
+        fig.suptitle(time_title, y = 0.92)
     
     return fig 
 
-root_tec = 'D:\\'
 
-dn = dt.datetime(2014,1,2,21)
+with_epb = dt.datetime(2014, 1, 2, 21)
+without_epb = dt.datetime(2014, 6, 21, 21)
 
-delta = dt.timedelta(hours = 8)
-file = im.get_closest(
-    dn + delta, 
-    file_like = True
-    )
-figure_1 = plot_ion_tec_img(
-        file, 
-        dn, 
-        kind = 'With EPB', 
-        title_dn = None)
 
-dn = dt.datetime(2013,6,10,21)
 
-delta = dt.timedelta(hours = 8)
-file = im.get_closest(
-    dn + delta, 
-    file_like = True
-    )
-figure_2 = plot_ion_tec_img(
-        file, 
-        dn, 
-        kind = 'Without EPB', 
-        title_dn = None)
+def plot_with_and_without_epb(
+        with_epb, 
+        without_epb, 
+        delta
+        ):
+    
+    file = im.get_closest(
+        with_epb + delta, 
+        file_like = True
+        )
+    figure_1 = plot_ion_tec_img(
+            file, 
+            with_epb, 
+            kind = 'With EPB', 
+            title_dn = True)
+    
+    
+    file = im.get_closest(
+        without_epb + delta, 
+        file_like = True
+        )
+    figure_2 = plot_ion_tec_img(
+            file, 
+            without_epb, 
+            kind = 'Without EPB', 
+            title_dn = True)
+    
+    fig = b.join_images(figure_1, figure_2)
+    
+    dn = with_epb + delta
+    
+    fn = dn.strftime('%Y%m%d%H%M%S')
+    fig.savefig('temp/' + fn)
+    return fig
 
-fig = b.join_images(figure_1, figure_2)
+def run():
+    for minute in tqdm(range(0, 12 * 60, 2)):
+        
+        delta = dt.timedelta(minutes = minute)
+        
+        plt.ioff()
+    
+        fig = plot_with_and_without_epb(
+                with_epb, 
+                without_epb, 
+                delta
+                )
+        
+        plt.clf()   
+        plt.close()   
