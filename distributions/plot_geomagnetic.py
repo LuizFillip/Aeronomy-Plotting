@@ -68,8 +68,7 @@ def plot_distributions_geomagnetic(
                 limit = limit
             )
         
-        # plot_epbs_number(ax[0], data, color = colors[i])
-                        
+          
         days = pl.plot_histogram(
                 ax[1], 
                 data, 
@@ -80,7 +79,7 @@ def plot_distributions_geomagnetic(
                 translate = translate
             )
         
-        ax[1].set(ylim = [0, 600])
+        ax[1].set(ylim = [0, 200])
         ax[0].set(xlabel = '')
         total_epb.append(epbs)
         total_day.append(days)
@@ -101,23 +100,24 @@ def plot_distributions_geomagnetic(
     ax[1].legend(**legend_args)
     ax[0].legend(**legend_args)
     
-    pl.plot_infos(
+    pl.plot_infos_in_distribution(
         ax[0], 
         x = x, 
         y = y, 
         translate = translate, 
+        title = 'Ocorrência de EPBs',
         values = total_epb, 
-        offset_y = offset_y 
+        offset_y = offset_y
         )
     
-    pl.plot_infos(
+    pl.plot_infos_in_distribution(
         ax[1], 
-        x = x, #
+        x = x,
         y = y,
         values = total_day, 
-        epb_title = False, 
+        title = '$\gamma_{RT}$ total', 
         translate = translate, 
-        offset_y = offset_y 
+        offset_y = offset_y
         )
     
     return fig
@@ -147,10 +147,10 @@ def main():
     FigureName = f'geomagnetic_{parameter}'
     
     # infile = 'G:\\My Drive\\LaTex\\docs\\img\\distributions\\pt\\'
-    fig.savefig(
-        folder,  FigureName,
-        dpi = 400
-        )
+    # fig.savefig(
+    #     folder,  FigureName,
+    #     dpi = 400
+    #     )
 
 
     plt.show()

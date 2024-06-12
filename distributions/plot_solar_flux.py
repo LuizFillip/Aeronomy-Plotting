@@ -105,7 +105,7 @@ def plot_distributions_solar_flux(
         x = x,
         y = y,
         values = total_day, 
-        epb_title = False, 
+        title = False, 
         translate = translate, 
         offset_y = offset_y
         )
