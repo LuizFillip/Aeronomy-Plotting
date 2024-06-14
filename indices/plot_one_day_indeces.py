@@ -4,6 +4,7 @@ import datetime as dt
 import numpy as np
 
 b.config_labels()
+
 PATH = 'database/indices/omni_hourly.txt'
 
 def plot_kp(ax, ds):
@@ -19,7 +20,12 @@ def plot_kp(ax, ds):
             position = "right"
             )
     
-    ax1.set(ylabel = '$F_{10.7} ~(sfu)$')
+    vmax = ds['f107'].max()
+    vmin = ds['f107'].min()
+    ax1.set(
+        ylim = [vmin - 5, vmax + 5],
+        ylabel = '$F_{10.7}$ (sfu)'
+        )
     
     ds = ds.resample('3H').mean()
     ax.bar(
@@ -32,27 +38,27 @@ def plot_kp(ax, ds):
         )
     ax.set(
         ylabel = 'Kp', 
-        ylim = [0, 10], 
-        yticks = np.arange(0, 10, 2),
-        xlim = [ds.index[0], ds.index[-1]], 
-        # xlabel = 'Days'
+        ylim = [0, 12], 
+        yticks = np.arange(0, 12, 3)
         )
     
     ax.axhline(3, lw = 2, color = 'k', linestyle = '--')
     
+    return None 
+    
 
-def plot_dst(ax, ds, ylim = [-100, 50]):
+def plot_dst(ax, ds, ylim = [-200, 100]):
     
     ax.plot(ds['dst'], lw = 2)
     
     ax.set(
         xlim = [ds.index[0], ds.index[-1]], 
         ylim = ylim,
-        yticks = np.arange(ylim[0], ylim[-1] + 50, 50),
+        yticks = np.arange(ylim[0], ylim[-1] - 30, 50),
         ylabel = "Dst (nT)"
         )
     
-    ax.axhline(0, lw = 1, color = 'k', linestyle = '-')
+    ax.axhline(0, lw = 0.5, color = 'k', linestyle = '-')
     
     for limit in [-50, -150]:
         ax.axhline(
@@ -61,48 +67,88 @@ def plot_dst(ax, ds, ylim = [-100, 50]):
             color = 'k', 
             linestyle = '--'
             )
+    return None 
         
-def range_dates(dn, PATH, days = 2):
-    delta = dt.timedelta(days = days)
-    
-    ds = b.load(PATH)
-    
-    return b.sel_dates(ds, dn - delta, dn + delta)
 
-
-def plot_auroral_indices(ax, ds):
+def plot_magnetic_fields(ax, ds):
     
-    ax.plot(ds['ap'])
-
+    ax.plot(ds[['by', 'bz']], label = ['by', 'bz'] )
+    
+    ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
+    
+    ax.set(
+        ylim = [-40, 40], 
+        ylabel = '$B_y/B_z$ (nT)'
+        )
+    
+    ax.legend(
+        loc = 'upper right', 
+        ncol = 2
+        )
+    
+    return None 
+    
+def plot_auroras(ax, ds):
+    
+    ax.plot(ds[['al', 'ae']], label = ['AL', 'AE'])
+    
+    ax.set(
+        yticks = np.arange(-2000, 3000, 1000),
+        ylim = [-2000, 2000], 
+        ylabel = 'AL/AE (nT)'
+        )
+    
+    ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
+    
+    ax.legend(
+        loc = 'upper right', 
+        ncol = 2
+        )
+    
+    return None 
+    
 def plot_one_day_indices(dn, days = 2):
     
     fig, ax = plt.subplots(
         dpi = 300,
-        figsize = (10, 8), 
-        nrows = 2, 
+        figsize = (14, 12), 
+        nrows = 4, 
         sharex = True
         )
     
-    plt.subplots_adjust(wspace = 0.1)
+    plt.subplots_adjust(hspace = 0.05)
     
-    ds = range_dates(dn, PATH, days = days)
-     
-    plot_kp(ax[0], ds)
-    plot_dst(ax[1], ds)
+    ds = b.load(PATH)
+    ds = b.range_dates(ds, dn, days = days)
     
-    b.format_days_axes(ax[1])
+    plot_magnetic_fields(ax[0], ds)
+    plot_auroras(ax[1], ds)
+    plot_kp(ax[2], ds)
+    plot_dst(ax[3], ds)
+    
+    delta = dt.timedelta(hours = 3)
+    ax[-1].set( 
+       xlim = [ds.index[0] + delta, ds.index[-1] + delta]
+       )
+    
+    b.format_days_axes(ax[-1])
     
     delta = dt.timedelta(hours = 12)
     
-    for i in range(2):
-        ax[i].axvspan(
+    for a in ax.flat:
+        a.axvspan(
             dn, dn + delta, 
             ymin = 0, ymax = 1,
             alpha = 0.2, 
             color = 'gray'
             )
-        
-    b.plot_letters(ax, y = 0.85, x = 0.03)
+    
+    b.plot_letters(
+        ax, 
+        y = 0.8, 
+        x = 0.03, 
+        num2white = None
+        )
     
     return fig 
 
@@ -110,18 +156,30 @@ def plot_one_day_indices(dn, days = 2):
 
 dn = dt.datetime(2014, 2, 9, 21)
 dn = dt.datetime(2019, 3, 19, 21)
-dn = dt.datetime(2017, 9, 17, 21)
 dn = dt.datetime(2019, 5, 2, 21)
 dn = dt.datetime(2016, 10, 3, 21)
 dn = dt.datetime(2017, 8, 30, 21)
 dn = dt.datetime(2014, 1, 2, 21)
 dn = dt.datetime(2013, 3, 17, 21)
 dn = dt.datetime(2022, 7, 24, 21)
+dn = dt.datetime(2015, 12, 20, 21)
 
+dn = dt.datetime(2015, 12, 25, 21)
+dn = dt.datetime(2017, 9, 17, 21)
 
-days = 2
+def main():
+    days = 3
 
-df = range_dates(dn, PATH, days = days)
+    fig = plot_one_day_indices(dn, days = days)
+    
+    FigureName = dn.strftime('Indices_%Y%m%d')
+    
+    
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'paper2'),
+          dpi = 300
+          )
+    
+# main()
 
-fig = plot_one_day_indices(dn, days = days)
 
