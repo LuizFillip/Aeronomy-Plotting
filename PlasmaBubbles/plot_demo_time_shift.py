@@ -49,25 +49,33 @@ def dusk(dn, col):
 
 def plot_terminator_shift(ax, dusk, occur):
 
-    ax.annotate(
-        '', 
-        xy = (dusk, 0.5), 
-        xytext = (occur, 0.5), 
-        arrowprops = dict(arrowstyle='<->')
-        )
+    # ax.annotate(
+    #     '', 
+    #     xy = (dusk, 0.5), 
+    #     xytext = (occur, 0.5), 
+    #     arrowprops = dict(arrowstyle='<->')
+    #     )
     
     middle = middle_time(occur, dusk)
     dtime = abs(round(
         (occur - dusk).total_seconds() / 3600, 2))
         
-    ax.annotate(
-        f'{dtime} hrs',
-        xy = (middle, 0.55), 
-        xycoords = 'data',
-        fontsize = 30.0,
-        textcoords = 'data', 
-        ha = 'center'
-        )
+    # ax.annotate(
+    #     f'{dtime} hrs',
+    #     xy = (middle, 0.55), 
+    #     xycoords = 'data',
+    #     fontsize = 30.0,
+    #     textcoords = 'data', 
+    #     ha = 'center'
+    #     )
+    
+    
+    middle = middle_time(occur, dusk)
+    info = middle.strftime('First occurrence at %Hh%M UT')
+    
+    ax.text(middle, 2.7, info, transform = ax.transData)
+    
+    
     
 def plot_shift(ax, ds, col, lon = -50):
     
@@ -86,6 +94,8 @@ def plot_shift(ax, ds, col, lon = -50):
             
         plot_arrow_and_note(ax, start, end, time)
 
+    
+    
 def plot_terminator_line(
         ax, 
         dn, 
@@ -103,14 +113,7 @@ def plot_terminator_line(
         lw = 2
         )
     
-    if label:
-      
-        ax.text(
-            dusk_time, 
-            vmax,
-            'Solar terminator (300 km)',
-            transform = ax.transData
-            )
+   
     
     return 
 def plot_occurrencegram(
@@ -121,8 +124,10 @@ def plot_occurrencegram(
         ):
     
     dn = ds.index[0]
-    ds1 = pb.events_by_longitude(ds, threshold)
+    times = pb.time_range(ds)
+    ds1 = pb.maximum_in_time_window(ds, 'max', times)
     
+   
     ax.plot(
          ds1, 
          marker = 'o',
@@ -141,21 +146,23 @@ def plot_occurrencegram(
             linestyle = '--'
             )
     
-    ax.set(
-        ylabel = 'EPBs occurrence', 
-        yticks = [0, 1], 
-        xlim = [ds.index[0], ds.index[-1]],
-        ylim = [-0.2, 1.2]
-        )
     
-    b.format_time_axes(ax, translate = False)
+    
+    
     
     return ds1
 
 
 def plot_roti_max(ax, ds, lon = -50, threshold = 0.25):
     
+    target = ds.index[-1]
+    
+    ds = pb.filter_region_and_dn(ds, target, lon)
+    
+    ds = ds.iloc[::2, :]
+    
     dn = ds.index[0]
+    
     
     ds1 = pl.plot_roti_points(
             ax, ds, 
@@ -173,7 +180,8 @@ def plot_roti_max(ax, ds, lon = -50, threshold = 0.25):
          label = f'{threshold} TECU/min'
          )
     
-    pl.legend_max_points_roti(ax, fontsize = 25)
+    pl.legend_max_points_roti(ax, fontsize = 25,
+    anchor = (0.8, 2))
     
     return ds1
 
@@ -193,10 +201,25 @@ def plot_epb_time_feadtures(ds,  col = '-50'):
     plt.subplots_adjust(hspace = 0.05)
 
 
-    ds1 = plot_roti_max(ax[0], ds, lon = -50)
+    ds = plot_roti_max(ax[0], ds, lon = -50)
     
-    events = plot_occurrencegram(ax[1], ds1['max'], lon = -50)
+    times = pb.time_range(ds)
     
+    ds = pb.maximum_in_time_window(ds, 'max', times)
+    
+    
+    events = pl.plot_occurrence_events(ax[1], ds, threshold = 0.25)
+    
+    ax[1].set(
+        ylabel = 'EPBs occurrence', 
+        yticks = [0, 1], 
+        xlim = [ds.index[0], ds.index[-1]],
+        ylim = [-0.2, 1.2]
+        )
+    
+    dn = ds.index[0]
+    b.format_time_axes(ax[-1], translate = False)
+    plot_terminator_line(ax[-1], dn, lon = -50, label = False)
     plot_shift(ax[1], events, col = 'max')
     
     b.plot_letters(ax, y = 0.8, x = 0.02)
@@ -216,5 +239,6 @@ def main():
          )
     
     fig = plot_epb_time_feadtures(df,  col = '-50')
-
+    
+    plt.show()
 main()
