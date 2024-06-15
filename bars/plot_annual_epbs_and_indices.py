@@ -46,7 +46,7 @@ def plot_EPBs(ax, df, col = -50, translate = True):
 def plot_F107(
         ax, 
         df, 
-        solar_level = 84.33, 
+        solar_level = None, 
         translate = True, 
         xlim = None
         ):
@@ -136,7 +136,7 @@ def plot_annually_epbs_and_indices(
         ):
     
     fig, ax = plt.subplots(
-        nrows = 2, 
+        nrows = 3, 
         dpi = 300, 
         sharex = True,
         figsize = (14, 12)
@@ -152,13 +152,20 @@ def plot_annually_epbs_and_indices(
     plot_F107(
         ax[1], 
         df, 
-        solar_level = f107_level,
+        solar_level = None,
         translate = translate, 
         xlim = xlim
         )
     
+    plot_Kp(
+            ax[2], 
+            df, 
+            kp_level = 3, 
+            translate = False, 
+            xlim = None
+            )
  
-    ax[1].set(
+    ax[-1].set(
         xlabel = 'Years',
        
             xticks = np.arange(2013, 2024, 1), 
@@ -174,7 +181,7 @@ def plot_annually_epbs_and_indices(
 
 
 def main():
-    df = c.epbs(col = -50, geo = True, eyear = 2022)
+    df = c.epbs(col = -50, geo = True, eyear = 2023)
     
     fig = plot_annually_epbs_and_indices(df)
     
@@ -183,25 +190,3 @@ def main():
 
 # main()
 
-# plt.show()
-
-
-fig, ax = plt.subplots(
-     # nrows = 2, 
-     dpi = 300, 
-     sharex = True,
-     figsize = (14, 6)
-     )
-
-df = c.epbs(col = -50, geo = True, eyear = 2022)
-
-
-plot_F107(
-     ax, 
-     df, 
-     solar_level = None,
-     translate = False, 
-     )
-
-ax.set(xlabel = 'Years')
-plt.show()

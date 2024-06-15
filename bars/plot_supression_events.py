@@ -3,6 +3,8 @@ import base as b
 import matplotlib.pyplot as plt 
 import numpy as np 
 
+b.config_labels()
+
 
 def get_min_max(df):
     
@@ -11,11 +13,23 @@ def get_min_max(df):
     return min(years), max(years)
 
 
-def plot_seasonal_supression(df):
+def plot_seasonal_supression(
+        df, translate = True):
     
-    
+    if translate:
+        ylabel = 'Number of cases'
+        xlabel = 'Months'
+        ln = 'en'
+        title = 'EPBs suppressions'
+    else:
+        ylabel = 'Número de eventos'
+        xlabel = 'Meses'
+        ln = 'pt'
+        title= 'Supressão de EPBs'
+        
+        
     fig, ax = plt.subplots(
-        figsize = (12, 6), 
+        figsize = (12, 8), 
         dpi = 300
         )
     
@@ -30,13 +44,13 @@ def plot_seasonal_supression(df):
         legend = False,
         edgecolor = 'k'
         )
-    title = f'Supressão de EPBs no setor 1 ({vmin} - {vmax})'
+    title = f'{title} ({vmin} - {vmax})'
     ax.set(
         ylim = [0, 20],
-        ylabel = 'Número de eventos',
-        xlabel = 'Meses',
+        ylabel = ylabel,
+        xlabel = xlabel,
         title = title,
-        xticklabels = b.month_names(language = 'pt')
+        xticklabels = b.month_names(language = ln)
         )
     
     plt.xticks(rotation = 0)
@@ -49,7 +63,7 @@ def main():
     lon = -50
     
     df = c.atypical_frame(lon, kind = 0, days = 3)
-    print(df)
+   
     fig = plot_seasonal_supression(df)
     
     FigureName = 'seasonality_supression_events'
@@ -58,3 +72,5 @@ def main():
         b.LATEX(FigureName, folder = 'bars'),
         dpi = 400
         )
+    
+# main()
