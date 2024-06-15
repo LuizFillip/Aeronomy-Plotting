@@ -1,1 +1,1 @@
-from .plot_annual_hourly import plot_seasonal_hourly, plot_terminator
+from .plot_hourly_seasonal_and_solar_flux import plot_seasonal_hourly, plot_terminator
