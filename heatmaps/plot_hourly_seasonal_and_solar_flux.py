@@ -2,7 +2,7 @@ import PlasmaBubbles as pb
 import base as b 
 import numpy as np
 import matplotlib.pyplot as plt 
-import pandas as pd 
+from matplotlib.ticker import AutoMinorLocator
 import datetime as dt
 import GEO as gg 
 
@@ -10,7 +10,19 @@ b.config_labels(fontsize = 22)
 
 PATH_INDEX =  'database/indices/omni_pro2.txt'
 
-def plot_terminator(ax, sector):
+def plot_terminator(
+        ax, 
+        sector, 
+        midnight = True, 
+        translate = True
+        ):
+    
+    if translate:
+        terminator_label = 'Solar terminator (300 km)'
+        midnight_label = 'Local midnight'
+    else:
+        terminator_label = 'Terminadouro solar (300 km)'
+        midnight_label = 'Meia-noite local'
     
     df = b.load('events_class2')
     
@@ -19,27 +31,38 @@ def plot_terminator(ax, sector):
     
     dn = df.index[0]
     
-    midnight = gg.local_midnight(dn, sector, delta_day = None)
-    midnight = round(b.dn2float(midnight))
-    ax.axhline(midnight, lw = 2, color = 'w')
+    dusk = gg.local_midnight(dn, sector, delta_day = None)
+    dusk = round(b.dn2float(dusk))
+    
 
     ax.text(
         0.01, 0.05, 
-        'Solar terminator (300 km)', 
+        terminator_label, 
         color = 'w',
         transform = ax.transAxes
         )
     
-    ax.text(
-         dn, midnight + 0.5, 
-        'Local midnight', 
-        color = 'w',
-        transform = ax.transData
+    if midnight:
+        
+        ax.text(
+            dn, dusk + 0.5, 
+            midnight_label, 
+            color = 'w',
+            transform = ax.transData
+            )
+        
+        ax.axhline(dusk, lw = 2, color = 'w')
+        
+    
+    ax.plot(
+        df.index, 
+        df['dusk'] + 2,
+        linestyle = '--', 
+        lw = 2, 
+        color = 'w'
         )
     
-    ax.plot(df.index, df['dusk'] + 2,
-            linestyle = '--', 
-            lw = 2, color = 'w')
+    return midnight, dusk
     
 def plot_seasonal_hourly(
         ax,
@@ -89,10 +112,8 @@ def plot_seasonal_hourly(
         
     yticks = np.arange(yticks[0], yticks[-1] + 2, 2)
 
-    ax.set(
-           yticks = yticks,
-           # ylabel = ylabel
-       )
+    ax.set(yticks = yticks)
+    
     return ax
 
 
@@ -133,11 +154,12 @@ def plot_f107(ax, ds, limit = 84.33):
         )
     
     ax.legend(loc = 'upper right')
-        
+    
+    return None 
 
 
 
-def plot_annual_hourly(df, sector = -50):
+def plot_annual_hourly(df, sector = -50, translate = True):
 
     df2 = pb.hourly_annual_distribution(df, step = 1)
     
@@ -164,14 +186,24 @@ def plot_annual_hourly(df, sector = -50):
     plot_f107(ax[1], df2)
     
     plot_terminator(ax[0], sector)
+    if translate:
+        xlabel = 'Years'
+    else:
+        xlabel = 'Anos'
+    delta = dt.timedelta(days = 25)
     
-    
+    ax[-1].set(
+        xlim = [df.index[0] - delta, 
+                df.index[-1] + delta], 
+        xlabel = xlabel)
     b.plot_letters(
         ax, 
         y = 0.82, 
         x = 0.02, 
         num2white = [0]
         )
+    
+    plt.gca().xaxis.set_minor_locator(AutoMinorLocator(n=11))
     
     return fig
 
@@ -186,10 +218,10 @@ def main():
     
     FigureName = 'hourly_annual_variation'
       
-    fig.savefig(
-            b.LATEX(FigureName, folder = 'paper2'),
-            dpi = 400
-            ) 
+    # fig.savefig(
+    #         b.LATEX(FigureName, folder = 'paper2'),
+    #         dpi = 400
+    #         ) 
     
     
 # main()
