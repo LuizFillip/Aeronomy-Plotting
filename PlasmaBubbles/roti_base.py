@@ -2,6 +2,7 @@ import base as b
 import PlasmaBubbles as pb 
 import GEO as gg
 import numpy as np 
+import digisonde as dg 
 
 b.config_labels()
 
@@ -14,7 +15,7 @@ args = dict(
      alpha = 0.2, 
      )
     
-def plot_occurrence_events(ax, ds, threshold = 0.25):
+def plot_occurrence_events(ax, ds, threshold = 0.25, color = 'b'):
     
     events = pb.events_by_longitude(ds['max'], threshold)
     
@@ -41,7 +42,7 @@ def plot_occurrence_events(ax, ds, threshold = 0.25):
     for limit in [0, 1]:
         ax.axhline(
             limit, 
-            color = 'b', 
+            color = color, 
             linestyle = '--'
             )
         
@@ -61,14 +62,16 @@ def plot_roti_points(
     
 
     if len(ds) != 0:
-        times = pb.time_range(ds)
+        
         
         ax.axhline(
             threshold, 
             color = 'red', 
             lw = 2, 
-            label = f'{threshold} TECU/min'
+            label = f'{threshold} TECU/min' 
             )
+        
+        times = pb.time_range(ds)
         
         df1 = pb.maximum_in_time_window(ds, 'max', times)
         
@@ -98,22 +101,74 @@ def plot_roti_points(
             plot_occurrence_events(
                 ax1, 
                 df1, 
-                threshold
+                threshold, 
+                color = 'b'
                 )
         
         if occurrence:
             return df1 
     
+    return ds
 
 
+def plot_references_lines(
+        ax,
+        ref_long, 
+        start, 
+        label_top = None,
+        translate = True
+        ):
+    
+    if translate:
+        term_name = 'Local terminator'
+        midn_name = 'Local midnight'
+    else:
+        term_name = 'Terminadouro local'
+        midn_name = 'Meia noite local'
+    
+    dusk = gg.terminator(
+        ref_long, 
+        start, 
+        float_fmt = False
+        )
+    
+    ax.axvline(dusk, lw = 2)
+    
+    midnight = gg.local_midnight(
+        start, 
+        ref_long + 5, 
+        delta_day = 1
+        )
+    
+    ax.axvline(
+        midnight, 
+        lw = 2,
+        color = 'k',
+        linestyle = '--'
+        )
+    
+    if label_top is not None:
+        ax.text(
+            dusk, label_top,
+            term_name,
+            transform = ax.transData
+            )
 
+        ax.text(
+            midnight, label_top,
+            midn_name,
+            transform = ax.transData
+            )
+    
+    return dusk, midnight 
 
 def plot_lines( 
         axes, 
         start,  
         plot_term = False,
         y = 4.8, 
-        label_top = False
+        label_top = None, 
+        st = 0
         ):
     """
     Plot terminator of the first occurrence in 
@@ -121,66 +176,114 @@ def plot_lines(
     
     """
     
-    key = np.arange(-80, -40, 10)[::-1]
+    sectors = np.arange(-80, -40, 10)[::-1]
     
-    for i, ax in enumerate(axes):
+    for i, ax in enumerate(axes[st:]):
         
-        ref_long = key[i]
-        
-        dusk = gg.terminator(
-            ref_long, 
+        # if i == 0:
+        #     label_top = 5.5
+        # else:
+        #     label_top = None
+        dusk, midnight = plot_references_lines(
+            ax, 
+            sectors[i], 
             start, 
-            float_fmt = False
+            label_top = label_top
             )
-        
-        ax.axvline(dusk, lw = 2)
-        
-        midnight = gg.local_midnight(
-            start, 
-            ref_long + 5, 
-            delta_day = 1
-            )
-        
-        if label_top:
-            ax.text(dusk, 0.5,
-                'Local terminator',
-                transform = ax.transData
-                )
+     
+    return None
+ 
+def plot_vertical_drift(
+        ax, 
+        dn, 
+        target, 
+        site, 
+        vmax = 80, 
+        hours = 12
+        ):
     
+    cols = list(range(5, 8, 1))
     
+    file = dn.strftime(f'{site}_%Y%m%d(%j).TXT')
+
+    ds = dg.IonoChar(file, cols)
     
-            ax.text(midnight, 0.5,
-                'Local midnight',
-                transform = ax.transData
-                )
-            
-        ax.axvline(
-            midnight, 
-            lw = 2,
-            color = 'k',
-            linestyle = '--'
-            )
-        
+    df = b.sel_times(ds.drift(smooth = 5), dn, hours)
+    ds1 = df.loc[df.index < target]
+    ax.plot(ds1['vz'], lw = 2)
+    
+    pre = round(df['vz'].max(), 2)
+    
+    ax.text(
+        0.72, 0.75, 
+        f'$V_P =$ {pre} m/s', 
+        transform = ax.transAxes
+        )
+    
+    ax.set(
+        ylabel = 'Vz (m/s)',
+        ylim = [-vmax + 20, vmax], 
+        yticks = np.arange(-vmax + 20, vmax + 10, 40), 
+        xlim = [df.index[0], df.index[-1]],
+        xticklabels = []
+        )
+    
+    plot_references_lines(ax, -50, dn, label_top = vmax + 6)
+    
+    s = f'(a) {ds.site} ionosonde'
+    ax.text(0.01, 0.8, s, transform = ax.transAxes)
+
+    ax.axhline(0, linestyle = '--')
+    
+    ax1 = ax.twinx()
+    
+    df =  b.sel_times(ds.chars , dn, hours)
+    ds = df.loc[df.index < target]
+    ax1.bar(
+        ds.index, 
+        ds["QF"],
+        width = 0.01, 
+        color = 'gray',
+        alpha = 0.7,
+        )
+    ylim = [0, 100]
+    ax1.set(
+        ylim = [ylim[0], ylim[-1]], 
+        yticks = np.arange(ylim[0], ylim[-1] + 20, 30),
+        ylabel = "QF (Km)", 
+        xticklabels = []
+        )
+    
+    return None
+
 def plot_roti_timeseries(
         axes, 
         df, 
-        dn, 
-        start,  
+        target, 
+        dn,  
+        site, 
         right_ticks = False, 
         vmax  = 2, 
         threshold = 0.25,
-        occurrence = True
+        occurrence = True,
+        plot_drift = True , 
+        translate = True
         ):
         
     sectors = np.arange(-80, -40, 10)[::-1]    
-    plot_lines( axes, start, y = vmax + 1.2)
     
     
-    for i, ax in enumerate(axes):
-        
-        sector = sectors[i]
-        
-        sel = pb.filter_region_and_dn(df, dn, sector)
+    if plot_drift:
+        plot_vertical_drift(axes[0], dn, target, site)
+        st = 1
+    else:
+        st = 0
+    
+    plot_lines(axes, dn, y = vmax + 1.2, st = st)
+    
+    for i, ax in enumerate(axes[st:]):
+             
+        sel = pb.filter_region_and_dn(df, target, sectors[i])
         
         plot_roti_points(
             ax, sel, 
@@ -190,16 +293,18 @@ def plot_roti_timeseries(
             vmax = vmax,
             occurrence = occurrence
             )
-                
+        
+        l = b.chars()
+        s = f'({l[i + st]}) Box {i + 1}'
         ax.text(
-            0.01, 1.05, f'Box {i + 1}', 
+            0.01, 0.8, s, 
             transform = ax.transAxes
             )
         
         ax.set(
-            ylim = [0, vmax + 1], 
-            yticks = list(range(0, vmax + 1, 1)), 
-            xlim = [df.index[0], df.index[-1]]
+            ylim = [0, vmax + 2], 
+            yticks = list(range(0, vmax + 3, 2)), 
+            xlim = [df.index[0], df.index[-1]], 
             )
         
         if right_ticks:
@@ -211,10 +316,14 @@ def plot_roti_timeseries(
                 left = False
                 )
             
-        
         if i != -1:
             ax.set(xticklabels = [])
             
     
     
-    b.format_time_axes(axes[-1])
+    axes[0].set(xlim = axes[1].get_xlim())
+    b.format_time_axes(axes[-1], translate = translate)
+    
+    return None 
+
+

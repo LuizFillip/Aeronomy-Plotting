@@ -51,14 +51,19 @@ def plot_points_and_maximus_roti(
     
     
     for row, sector in enumerate(coords.keys()):
-    
-        ds = pb.filter_region(df, dn.year, sector)
+        
+        if sector != -80:
+            df1 = pb.removing_noise(df)
+        else:
+            df = df.copy()
+            
+        ds = pb.filter_region(df1, dn.year, sector)
         
         ds = pl.plot_roti_points(
                 ax[row], ds, 
                 threshold = threshold,
                 label = False, 
-                points_max = True
+                points_max = True, 
                 )
                 
         l = b.chars()[row]                
@@ -114,13 +119,14 @@ def plot_points_and_maximus_roti(
 def main():
   
     dn = dt.datetime(2015, 12, 20, 21)
-    dn = dt.datetime(2017, 9, 17, 21)
-    dn = dt.datetime(2022, 7, 24, 21)
+    # dn = dt.datetime(2017, 9, 17, 21)
+    dn = dt.datetime(2013, 1, 26, 21)
     df = pb.concat_files(
         dn, 
         days = 2, 
         root = 'E:\\', 
-        hours = 12
+        hours = 12, 
+        remove_noise = True
         )
     
     
@@ -129,19 +135,19 @@ def main():
             dn, 
             threshold = 0.2,
             fontsize = 30, 
-            translate = False
+            translate = True
             )
     
     FigureName = dn.strftime('occurrence_%Y%m%d')
     
     
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'paper2'),
-          dpi = 400
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'paper2'),
+    #       dpi = 400
+    #       )
     
 
     plt.show()
     
 
-main()
+# main()

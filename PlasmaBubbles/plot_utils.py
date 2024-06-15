@@ -29,29 +29,29 @@ def legend_max_points_roti(
         lw = 2
         )
     
-    l4 = ax.axhline(
-        threshold, 
-        color = 'k', 
-        lw = 2
-        )
+    # l4 = ax.axhline(
+    #     threshold, 
+    #     color = 'k', 
+    #     lw = 2
+    #     )
     
-    l5 = ax.axhline(
-        threshold, 
-        color = 'k', 
-        lw = 2,
-        linestyle = '--'
-        )
+    # l5 = ax.axhline(
+    #     threshold, 
+    #     color = 'k', 
+    #     lw = 2,
+    #     linestyle = '--'
+    #     )
 
     labels = [
         'ROTI points',
         'Maximum value', 
         f'{threshold} TECU/min',
-        'Solar terminator (300 km)', 
-        'Local midnight'
+        # 'Solar terminator (300 km)', 
+        # 'Local midnight'
         ]
 
     plt.legend(
-        [l1, l2, l3, l4, l5], 
+        [l1, l2, l3], #, l4, l5], 
         labels, 
         ncol = ncol, 
         fontsize = fontsize,
