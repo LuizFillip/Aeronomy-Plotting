@@ -1,102 +1,79 @@
-import pandas as pd
-import RayleighTaylor as rt
+import numpy as np
 import matplotlib.pyplot as plt
-from common import plot_roti, plot_terminators
+import plotting as pl 
+import datetime as dt 
+import PlasmaBubbles as pb 
+import base as b 
 
 
+def plot_roti_in_range(ax, dn):
 
-def sum_gammas(df, sign = 1, wind = "zon", recom = False):
-    res = []
-    for hem in ["south", "north"]:
-        ds = df.loc[df["hem"] == hem]
-        
-        gamma = rt.effects_due_to_winds(
-                ds, 
-                wind = wind,
-                sign_wd = sign, 
-                recom = recom
-                )
-        
-        res.append(gamma)
+    start = dn - dt.timedelta(hours = 9, days = 2)
+    end = dn + dt.timedelta(days = 3)
+    ds = pb.roti_in_range(
+        start, end, root = 'E:\\')
     
-    return pd.concat(res, axis = 1).sum(axis = 1)
-
-
-
-def plot_gamma(ax, df, coord = "zonal", rc = False, sign = 1):
+    ax.scatter(
+        ds.index, 
+        ds['roti'], 
+        c = 'k', 
+        s = 5, 
+        alpha = 0.6
+        )
     
-    winds = [coord[:3], coord[:3] + "_ef"]
-    
-    labels = ["Geográfico", "Efetivo"]
-    
-    for i in range(2):
-  
-        gamma = sum_gammas(
-            df, sign = sign, wind = winds[i], recom = rc
-            )
-        
-        ax.plot(gamma * 1e4, 
-                label = labels[i])
-        
-    ax.text(0.05, 0.85, coord.title(), transform = ax.transAxes)
-    
-    ax.axhline(0, linestyle = "--")
-    ax.set(ylim  = [-40, 40], 
-           xlim = [df.index[0], df.index[-1]])
-    return ax
-
-
-
-def plot_total_winds_effect(ds, rc = False, station = "salu"):
-    
-    fig, ax = plt.subplots(
-        figsize = (14, 13),
-        nrows = 5,
-        dpi = 300,
-        sharex = True,
+    ax.set(
+        ylabel = 'ROTI (TECU/min)',
+        ylim = [0, 3], 
+        xlim = [start, end],
+        yticks = np.arange(0, 4, 1)
         )
 
-    plt.subplots_adjust(hspace = 0.4)
-
-    eq = rt.EquationsFT()
-
-    cols = [("zonal", 1), ("zonal", -1),
-            ("meridional", 1), ("meridional", -1)]
-
-    for row, col in enumerate(cols):
-        
-        coord, sign = col
-            
-        title = eq.winds(wind_sign = sign, recom = rc)
-        
-        ax[row].set(title = title)
-        
-        plot_gamma(ax[row], ds, coord = coord, rc = rc, sign = sign) 
-        
-
-    ax[0].legend(ncol= 4, 
-        bbox_to_anchor = (.5, 1.7),
-        loc = "upper center")
-         
-    plot_roti(ax[4], ds, station = station)
-
-    for ax in ax.flat:
-        plot_terminators(ax, ds)
-        
-    if rc:
-        w = "com"
-    else:
-        w = "sem"
+def plot_indices_roti_quiet_periods(dn):
     
-    fig.suptitle(f"Taxas de crescimento totais devido aos ventos neutros {w} recombinação")
-    plt.show()
-    
-    return fig
-    
-def main():
-    infile = "database/RayleighTaylor/reduced/300.txt"
-    df = rt.load_process(infile, apex = 300)
-    ds = rt.split_by_freq(df, freq_per_split = "10D")[0]
-    fig = plot_total_winds_effect(ds, rc = False)
+    fig, ax = plt.subplots(
+        dpi = 300,
+        figsize = (14, 14), 
+        nrows = 4, 
+        sharex = True
+        )
+
+    plt.subplots_adjust(hspace = 0.1)
+
+    ds = pl.indexes_in_range(dn, days = 3)
 
 
+    pl.plot_auroras(ax[0], ds)
+    pl.plot_kp(ax[1], ds)
+    pl.plot_dst(ax[2], ds)
+
+    plot_roti_in_range(ax[3], dn)
+
+    for a in ax.flat:
+        
+        a.axvspan(
+            dn, 
+            dn + dt.timedelta(hours = 14), 
+            ymin = 0, 
+            ymax = 1,
+            alpha = 0.2, 
+            color = 'gray'
+            )
+        
+
+    b.format_time_axes(
+        ax[-1], 
+        hour_locator = 12, translate = True)
+    
+    b.plot_letters(
+        ax, 
+        y = 0.8, 
+        x = 0.03, 
+        num2white = None
+        )
+    return 
+
+
+dn = dt.datetime(2013, 3, 17, 21)
+dn = dt.datetime(2015, 12, 20, 21)
+
+plot_indices_roti_quiet_periods(dn)

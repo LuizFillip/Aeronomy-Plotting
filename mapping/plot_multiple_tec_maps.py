@@ -3,10 +3,22 @@ import cartopy.crs as ccrs
 import datetime as dt
 import plotting as pl
 import matplotlib.pyplot as plt
-import os 
 import numpy as np 
 
-
+def run_in_days(infile):
+    for day in range(0, 5, 1):
+        delta = dt.timedelta(days = day)
+        
+        start =  dt.datetime(2016, 1, 11, 21, 0) + delta 
+        
+        fig = plot_multiple_tec_maps(start, vmax = 50)
+        
+        FigureName = start.strftime('%Y%m%d')
+        fig.savefig(
+            b.LATEX(infile + FigureName, 
+                    folder = 'maps'),
+            dpi = 400
+            )
 
 b.config_labels(fontsize = 25)
 
@@ -14,7 +26,7 @@ b.config_labels(fontsize = 25)
 def plot_multiple_tec_maps(
         start, 
         vmax = 50, 
-        root = os.getcwd()
+        root = 'E:\\'
         ):
     
 
@@ -22,7 +34,7 @@ def plot_multiple_tec_maps(
          figsize = (18, 25), 
          dpi = 300, 
          ncols = 4, 
-         nrows = 5,
+         nrows = 4,
          subplot_kw = 
          {'projection': ccrs.PlateCarree()}
          )
@@ -32,7 +44,7 @@ def plot_multiple_tec_maps(
         hspace = 0.2
         )
     
-    minutes = np.arange(0, 200, 10)
+    minutes = np.arange(0, 600, 30)
     
     for i, ax in enumerate(ax.flat):
                 
@@ -59,6 +71,7 @@ def plot_multiple_tec_maps(
             fig,
             vmin = 0, 
             vmax = vmax, 
+            orientation = 'horizontal',
             sets = [0.3, 0.97, 0.4, 0.02] 
             )
     
@@ -67,9 +80,9 @@ def plot_multiple_tec_maps(
 
 def main():
     
-    start =  dt.datetime(2016, 1, 11, 21, 0)
+    start =  dt.datetime(2015, 12, 20, 21)
     
-    fig = plot_multiple_tec_maps(start, vmax = 50)
+    fig = plot_multiple_tec_maps(start, vmax = 60)
     
     FigureName = start.strftime('%Y%m%d')
     # fig.savefig(
@@ -81,19 +94,3 @@ def main():
 main()
 
 plt.show()
-
-# infile = 'G:\\Meu Drive\\Python\\data-analysis\\database\\tec_maps\\all\\'
-
-# for day in range(0, 5, 1):
-#     delta = dt.timedelta(days = day)
-    
-#     start =  dt.datetime(2016, 1, 11, 21, 0) + delta 
-    
-#     fig = plot_multiple_tec_maps(start, vmax = 50)
-    
-#     FigureName = start.strftime('%Y%m%d')
-#     fig.savefig(
-#         b.LATEX(infile + FigureName, 
-#                 folder = 'maps'),
-#         dpi = 400
-#         )

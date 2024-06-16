@@ -12,10 +12,20 @@ def gamma(ds):
         ds['ge'] / ds['nui'])) * ds['K'] - ds['R'] *0.1
 
 
-def plot_integrated_parameters(ax, ds):
+def plot_integrated_parameters(
+        ax, ds,
+        translate = False
+        ):
     
-
-    names = ['Norte', 'Sul', 'Total']
+    if translate:
+        ylabel = 'Apex height (km)'
+        names = ['North', 'South', 'Total']
+        
+    else:
+        ylabel = 'Altura de Apex (km)'
+        
+        
+        names = ['Norte', 'Sul', 'Total']
     
     out = []
     
@@ -24,17 +34,23 @@ def plot_integrated_parameters(ax, ds):
         df = gamma(ds.loc[ds['hem'] == col]).dropna()
         out.append(df)
            
-        ax.plot(df * 1e3, df.index, label = name)
+        ax.plot(df * 1e3, df.index, label = name, lw = 2)
     
-    ax.plot(pl.total(out)* 1e3, df.index, label = names[-1])
+    ax.plot(pl.total(out)* 1e3, df.index, label = names[-1], lw = 2)
     ax.axvline(0, linestyle = '--')
     ax.axhline(300, linestyle = '--')
     
-    ax.set(xlim = [-3, 3], 
-           xticks = np.arange(-3, 4, 1),
-           ylim = [150, 500], 
-           ylabel = 'Altura de Apex (km)', 
-           xlabel = b.y_label('gamma'))
+
+        
+    step = 1
+    xlim = [-2, 2]
+    ax.set(
+        xlim = xlim, 
+        xticks = np.arange(xlim[0], xlim[-1] + step, step),
+        ylim = [150, 500], 
+        ylabel = ylabel, 
+        xlabel = b.y_label('gamma')
+        )
 
 def local_gamma(ds):
     
@@ -62,23 +78,28 @@ def plot_integrated_gamma():
     
     ds = pl.load_fluxtube()
     
-    plot_integrated_parameters(ax, ds)
+    plot_integrated_parameters(ax, ds, translate=True)
      
     
-    df =  local_gamma(ds)
+    # df =  local_gamma(ds)
     
     
     
-    ax.plot(df['gamma']* 1e3, df.index, lw = 2, 
-            linestyle = '--', color = 'k',
-            label = 'Perfil local\nno Equador')
+    # ax.plot(df['gamma']* 1e3, df.index, lw = 2, 
+    #         linestyle = '--', color = 'k',
+    #         label = 'Perfil local\nno Equador')
     
     
     ax.legend()
     
     
     FigureName = 'gamma_local_integrated'
-    fig.savefig(
-        b.LATEX(FigureName, folder = 'profiles'),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder = 'profiles'),
+    #     dpi = 400
+    #     )
+    
+    return fig
+
+fig = plot_integrated_gamma()
+

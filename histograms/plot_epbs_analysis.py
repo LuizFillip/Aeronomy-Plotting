@@ -43,25 +43,7 @@ args = dict(
 
 
 
-def plot_info(ax, df, parameter, translate = True):
-    
-    vls = df[parameter]
-    mu = round(vls.mean(), 2)
-    sigma = round(vls.std(), 2)
-    
-    if translate:
-        unit = 'hours'
-    else:
-        unit = 'horas'
-    info =  f'$\mu = $ {mu} {unit}\n$\sigma = $ {sigma} {unit}'
-    
-    ax.text(0.5, 0.7, info, transform = ax.transAxes)
-    
-def bins(df, parameter = 'start', n = 10):
-    vmin = round(df[parameter].min())
-    vmax = round(df[parameter].max())
 
-    return np.linspace(vmin, vmax, n)
 
 
 
@@ -97,7 +79,7 @@ def plot_epbs_stats(
         df[parameter].plot(
             kind = 'hist', 
             ax = ax, 
-            bins = bins(df, parameter, n), 
+            bins = b.bins(df, parameter, n), 
             **args
             )
         
@@ -106,7 +88,7 @@ def plot_epbs_stats(
         ax.set( 
             ylabel = '',
             ylim = [0, 400],
-            xticks = bins(df, parameter, 5)
+            xticks = b.bins(df, parameter, 5)
             )
     
     fig.text( 

@@ -111,6 +111,7 @@ def main():
     file = 'SAA0K_20170830(242).TXT'
     file = 'FZA0M_20220724(205).TXT'
     file = 'SAA0K_20130516(136).TXT'
+    file = 'SAA0K_20130516(136).TXT'
     char = dg.chars(CHAR_PATH + file)
     
     ds, vz, site = pl.pipe_data(file)

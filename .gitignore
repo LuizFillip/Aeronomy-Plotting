@@ -20,6 +20,7 @@
 /occurrengram/__pycache__/*
 /ionosonde/__pycache__/*
 /heatmaps/__pycache__/*
+/indices/__pycache__/*
 
 /ionosonde/ionogram/__pycache__/*
 

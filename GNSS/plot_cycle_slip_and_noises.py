@@ -2,46 +2,50 @@ import matplotlib.pyplot as plt
 import base as b 
 import PlasmaBubbles as pb 
 import datetime as dt
-import GEO as gg 
-import os 
+import pandas as pd
 
 
+b.config_labels()
 
-def load_data():
+
+def load_data(dn, root = 'E:\\', sector = -50):
     
-    dn = dt.datetime(2013, 12, 24, 20)
         
+    out = []
+    for day in range(2):
+        delta = dt.timedelta(days = day)
     
-    df = pb.concat_files(
-            dn, 
-            root = 'D:\\' ,
-            days = 1
-            )
-
+        path = pb.path_roti(dn + delta, root = root)
+        
+        out.append(b.load(path))
+        
+    df = b.sel_times(pd.concat(out), dn, hours = 16)
     
-    df = df.loc[df['el'] > 30]
+    return pb.filter_region(df, dn.year, sector)
     
-    coords = gg.set_coords(dn.year, radius = 10)
-    
-    sector = -60
-    
-    ds = pb.filter_coords(df, sector, coords)
-    
-    ds['roti'].plot(ylim = [0, 3])
-    
+   
 
 
 
-# load_data()
+dn = dt.datetime(2013, 12, 24, 18)
+df = load_data(dn)
 
-# dn = dt.datetime(2013, 12, 24, 20)
+# df = df.loc[df['sts'] == 'salu']
+fig, ax = plt.subplots(
+    nrows = 2,
+    sharey = True, 
+    sharex = True, 
+    figsize = (10, 8)
     
+    )
 
-# df = pb.concat_files(
-#         dn, 
-#         root = 'D:\\' ,
-#         days = 1
-#         )
+ax[0].plot(df['roti'])
 
+ds = df.loc[df['el'] >  30]
 
-# df
+ax[-1].plot(ds['roti'])
+
+ax[-1].set(ylim = [0, 5])
+
+b.format_time_axes(ax[-1])
+ 

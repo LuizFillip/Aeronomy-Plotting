@@ -73,6 +73,12 @@ def run(start):
             fps = 5
             )
 
-# start = dt.datetime(2014, 1, 2, 21)
+start = dt.datetime(2014, 1, 2, 21)
 # 
 # run(start)
+
+b.images_to_movie(
+         path_in = path_in(start), 
+         path_out = '',
+         fps = 10
+         )

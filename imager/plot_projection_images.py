@@ -25,7 +25,6 @@ def set_image(
     # img = all_sky.linear(all_sky.bright(), area = areap)
     img = im.crop_circle(all_sky.bright())
     
-    
     site = all_sky.site.lower()
     
     plot_projection(
@@ -87,18 +86,18 @@ def plot_images_projection(dn):
         )
     
     path_of_image = im.path_from_closest_dn(dn, site = 'BJL')
-    print(path_of_image)
+    # print(path_of_image)
     set_image(ax, path_of_image, area_factor = 2, 
               color = 'blue')
     
     
     path_of_image = im.path_from_closest_dn(dn, site  = 'CA')
-    print(path_of_image)
+    # print(path_of_image)
     set_image(ax, path_of_image, area_factor = 2, 
               color = 'red')
     
     path_of_image = im.path_from_closest_dn(dn, site = 'CP')
-    print(path_of_image)
+    # print(path_of_image)
     set_image(ax, path_of_image, area_factor = 2, 
               color = 'green')
     

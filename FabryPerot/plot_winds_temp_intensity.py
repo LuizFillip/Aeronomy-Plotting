@@ -75,18 +75,20 @@ def plot_directions( ax, path):
         b.format_time_axes(ax[-1, col])
          
     yticks = np.arange(-100, 400, 100)
-    ax[0, 0].set(ylabel = "Velocity (m/s)", 
-                 yticks = yticks,
-                 ylim = [-400, 300])
+    ax[0, 0].set(
+        ylabel = "Velocity (m/s)", 
+        yticks = yticks,
+        ylim = [yticks[0], yticks[-1]]
+        )
     
-    yticks = np.arange(700, 1400, 200)
-    ax[1, 0].set(ylabel = "Temperature (K)", 
-                 ylim = [600, 1400], 
-                 yticks = yticks
-                 )
+    yticks = np.arange(500, 1200, 200)
+    ax[1, 0].set(
+        ylabel = "Temperature (K)", 
+        ylim = [yticks[0], yticks[-1]], 
+        yticks = yticks
+        )
     ax[2, 0].set(ylabel = "Relative intensity (R)") 
-          #       ylim = [-2, 1])
-    
+
     anchor = (0.5, 1.45)
     ax[0, 0].legend(
          ncol = 2, 
@@ -136,19 +138,21 @@ def plot_winds_temp_intensity(PATH_FPI):
 
 def main():
     
-    dn  = dt.datetime(2015, 12, 20)
+    dn  = dt.datetime(2017, 9, 17)
     
     fig = plot_winds_temp_intensity(dn)
     
     FigureName = dn.strftime('FPI_%Y%m%d')
     
     
-    # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'paper2'),
-    #       dpi = 400
-    #       )
-
-# PATH_FPI = 'database/FabryPerot/aif/aif220724g.7100.txt'
-# PATH_FPI = 'database/FabryPerot/clf220724g.7100.txt'
-
-# fig = plot_winds_temp_intensity(PATH_FPI)
+  
+def main():
+        
+    PATH_FPI = 'database/FabryPerot/car/minime01_car_20170917.cedar.txt'
+    
+    fig = plot_winds_temp_intensity(PATH_FPI)
+    FigureName = 'car_20170917'
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'paper2'),
+          dpi = 400
+          )

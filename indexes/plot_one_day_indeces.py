@@ -106,6 +106,12 @@ def plot_auroras(ax, ds):
         )
     
     return None 
+
+
+def indexes_in_range(dn, days = 2):
+    
+    ds = b.load(PATH)
+    return b.range_dates(ds, dn, days = days)
     
 def plot_one_day_indices(dn, days = 2):
     
@@ -118,8 +124,8 @@ def plot_one_day_indices(dn, days = 2):
     
     plt.subplots_adjust(hspace = 0.05)
     
-    ds = b.load(PATH)
-    ds = b.range_dates(ds, dn, days = days)
+    ds = indexes_in_range(dn, days = 2)
+   
     
     plot_magnetic_fields(ax[0], ds)
     plot_auroras(ax[1], ds)

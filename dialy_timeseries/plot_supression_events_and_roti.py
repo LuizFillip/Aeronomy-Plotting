@@ -3,31 +3,19 @@ import core as c
 import matplotlib.pyplot as plt
 import base as b 
 import PlasmaBubbles as pb 
-import pandas as pd 
 import numpy as np 
 
-PATH_EPB = 'database/epbs/longs/'
 PATH_DST = 'database/indices/omni_hourly.txt'
 
 b.config_labels()
 
 
 
-def plot_roti(ax, start, end, root = 'E:\\'):
-    
-    out = []
-    for dn in pd.date_range(start, end):
-        
-        path = pb.path_roti(dn, root = root)
-    
-        out.append(
-            pb.load_filter(path, remove_noise = True))
     
     
-    df = pd.concat(out)
-    df = df.loc[df['sts'].isin(['salu', 'pbjp'])]
+def plot_roti_in_range(ax, start, end, root = 'E:\\'):
     
-    ds = b.sel_dates(df, start, end)
+    ds = pb.roti_in_range(start, end)
     
     ax.scatter(
         ds.index, ds['roti'], 
@@ -107,7 +95,7 @@ def plot_dialy_roti_and_dst(
         start = dn - dt.timedelta(days = 2)
         end = dn + dt.timedelta(days = 4)
         
-        plot_roti(ax[i], start, end, root = 'E:\\')
+        plot_roti_in_range(ax[i], start, end, root = 'E:\\')
        
         plot_dst(ax[i], dn, start, end)
         
@@ -142,15 +130,19 @@ def plot_dialy_roti_and_dst(
         )
     return fig 
 
-df = c.atypical_frame(lon = -50, kind = 0, days = 3)
- 
-days = df.loc[df['dst'] < -90].index
- 
-fig = plot_dialy_roti_and_dst(days)
 
-FigureName = 'supression_events'
-
-fig.savefig(
-      b.LATEX(FigureName, 'timeseries'),
-      dpi = 400
-      )
+def main():
+        
+    
+    df = c.atypical_frame(lon = -50, kind = 0, days = 3)
+     
+    days = df.loc[df['dst'] < -90].index
+     
+    fig = plot_dialy_roti_and_dst(days)
+    
+    FigureName = 'supression_events'
+    
+    fig.savefig(
+          b.LATEX(FigureName, 'timeseries'),
+          dpi = 400
+          )

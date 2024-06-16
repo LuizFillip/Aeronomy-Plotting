@@ -111,8 +111,15 @@ def single_view(start):
     
     return fig
 
-# start = dt.datetime(2014, 1, 1, 21)
+start = dt.datetime(2014, 1, 1, 21)
 # fig = single_view(start)
 
 
 
+df =  pb.concat_files(
+    start, 
+    root = os.getcwd(), 
+    hours = 12
+    )
+
+df['sts'].unique()

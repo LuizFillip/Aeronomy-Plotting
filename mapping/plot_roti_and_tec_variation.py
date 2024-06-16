@@ -4,6 +4,10 @@ import base as b
 import PlasmaBubbles as pb 
 import GEO as gg 
 import numpy as np 
+from simulations import simulate_roti_points
+from tqdm import tqdm 
+import matplotlib.pyplot as plt
+import pandas as pd 
 
 b.config_labels(fontsize = 25)
 
@@ -136,6 +140,10 @@ def plot_roti_tec_variation(
     axes[-1].set(
         xlim = [df.index[0], df.index[-1]]
         )
+    
+    title = dn.strftime('%d/%m/%Y %H:%M (UT)')
+    
+    fig.suptitle(title)
     return fig
 
 def main():
@@ -148,11 +156,66 @@ def main():
         )
     
     df = b.sel_times(df, start, hours = 12)
-  
+    df = pd.concat(
+        [df, simulate_roti_points(df)])
     dn = range_time(start, 400)
     
     fig = plot_roti_tec_variation(df, start, dn, vmax = 12)
     
     
+def path_in(start = None):
+    root = 'database/'
     
-main()
+   
+    if start is None:
+        return root
+    else:
+        return root + start.strftime('%Y%m%d')
+    
+    
+
+
+ 
+def run(start):
+    folder =  path_in(start)
+    
+    b.make_dir(folder)
+    
+    delta = dt.timedelta(hours = 12)
+    end = start + delta
+    
+    times = pd.date_range(start, end, freq ='2min')
+    
+    df =  pb.concat_files(
+         start, 
+         root = 'E:\\'
+         )
+
+    for dn in tqdm(times):
+        
+        plt.ioff()
+       
+        fig = plot_roti_tec_variation(df, start, dn, vmax = 12)
+        
+        name = dn.strftime('%Y%m%d%H%M')
+                
+        fig.savefig(f'{folder}/{name}', dpi = 100)
+            
+        plt.clf()   
+        plt.close()    
+
+def find_():
+    for year in range(2013, 2023):
+            
+        start = dt.datetime(2013, 1, 1, 20)
+        
+        for day in range(365):
+            
+            delta = dt.timedelta(days = day)
+            dn =  start + delta
+            df =  pb.concat_files(dn, root = 'E:\\')
+            
+            ds = df.loc[df['sts'].isin(['areg', 'iqqe', 'riop'])]
+            
+            if len(ds) > 1900:
+                print(ds, dn)

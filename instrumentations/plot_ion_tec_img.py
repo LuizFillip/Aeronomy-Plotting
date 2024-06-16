@@ -42,10 +42,10 @@ def save_image(fig, target, dn):
     fig.savefig(f'{path_to_save}/{name}', dpi = 100)
 
 
-def title(dn):
+def title(dn, kind):
     delta = dt.timedelta(hours = 3)
     dn -= delta
-    return dn.strftime('%Y/%m/%d %Hh%M (LT)')
+    return dn.strftime(f'{kind} - %Y/%m/%d %Hh%M (LT)')
 
 
 def plot_ion_tec_img(
@@ -102,15 +102,12 @@ def plot_ion_tec_img(
     
     if title_dn is not None:
         
-        time_title = title(target)
+        time_title = title(target, kind)
         
-        fig.suptitle(time_title, y = 0.92)
+        fig.suptitle(time_title, y = 0.90, fontsize = 40)
     
     return fig 
 
-
-with_epb = dt.datetime(2014, 1, 2, 21)
-without_epb = dt.datetime(2014, 6, 21, 21)
 
 
 
@@ -150,7 +147,10 @@ def plot_with_and_without_epb(
     return fig
 
 def run():
-    for minute in tqdm(range(0, 12 * 60, 2)):
+    with_epb = dt.datetime(2014, 1, 2, 21)
+    without_epb = dt.datetime(2014, 6, 21, 21)
+
+    for minute in tqdm(range(2*60, 12 * 60, 2)):
         
         delta = dt.timedelta(minutes = minute)
         
@@ -164,3 +164,16 @@ def run():
         
         plt.clf()   
         plt.close()   
+
+# run()
+
+# with_epb = dt.datetime(2014, 1, 2, 21)
+# without_epb = dt.datetime(2014, 6, 21, 21)
+
+# delta = dt.timedelta(hours = 3)
+# fig =  plot_with_and_without_epb(
+#         with_epb, 
+#         without_epb, 
+#         delta
+#         )
+

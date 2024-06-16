@@ -127,6 +127,8 @@ def plot_annual_compararion_roti(years):
     fig.suptitle("1 de Janeiro", 
                  fontsize = fontsize, 
                  y = 0.95)
+    
+    return fig 
         
     
         

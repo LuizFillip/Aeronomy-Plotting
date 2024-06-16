@@ -56,7 +56,7 @@ def plot_directions( ax, path, site = 'car'):
       
     ax[0, 0].set(ylabel = "Velocity(m/s)", ylim = [-100, 400])
     
-    ax[1, 0].set(ylabel = "Temperature (K)", ylim = [800, 1400])
+    ax[1, 0].set(ylabel = "Temperature (K)", ylim = [700, 1200])
        
     for row, name in enumerate(coords.values()):
         ax[0, row].legend(name,
@@ -103,10 +103,10 @@ def plot_nighttime_observation(
     b.plot_letters(ax, y = 0.85, x = 0.03)
     return fig
         
-
+def main():
     
-path = 'database/FabryPerot/cj/bfp220725g.7100.txt'
-
-
-fig = plot_nighttime_observation(path)
-
+    path = 'database/FabryPerot/cj/bfp220725g.7100.txt'
+    
+    path = 'database/FabryPerot/car/minime01_car_20150810.cedar.001.txt'
+    fig = plot_nighttime_observation(path)
+    
