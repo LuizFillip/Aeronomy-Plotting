@@ -15,7 +15,12 @@ args = dict(
      alpha = 0.2, 
      )
     
-def plot_occurrence_events(ax, ds, threshold = 0.25, color = 'b'):
+def plot_occurrence_events(
+        ax, 
+        ds, 
+        threshold = 0.25,
+        color = 'b'
+        ):
     
     events = pb.events_by_longitude(ds['max'], threshold)
     

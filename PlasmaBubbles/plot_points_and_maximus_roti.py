@@ -5,6 +5,7 @@ import PlasmaBubbles as pb
 import plotting as pl
 import base as b  
 
+b.config_labels(fontsize = 30)
 
 def get_infos(ds, lon):
     df1 = pb.bubble_features(ds)
@@ -42,7 +43,7 @@ def plot_points_and_maximus_roti(
         dpi = 300, 
         nrows = 4,
         sharex = True,
-        figsize = (10, 12)
+        figsize = (16, 12)
         )
     
     plt.subplots_adjust(hspace = 0.05)
@@ -89,7 +90,7 @@ def plot_points_and_maximus_roti(
         
         ax[row].set(
             ylim = [0, vmax + 2], 
-            yticks = list(range(0, vmax + 2, 2)), 
+            yticks = list(range(0, 6, 1)), 
             xlim = [df.index[0], df.index[-1]], 
             )
         
@@ -98,7 +99,7 @@ def plot_points_and_maximus_roti(
     
     
     fig.text(
-        0.03, 0.33, 
+        0.05, 0.35, 
         'ROTI (TECU/min)', 
         fontsize = fontsize, 
         rotation = 'vertical'
@@ -112,14 +113,27 @@ def plot_points_and_maximus_roti(
         color = 'b'
         ) 
     
+    pl.legend_max_points_roti(
+            ax[0], 
+            fontsize = 25, 
+            s = 80, 
+            threshold = 0.25,
+            anchor = (0.5, 4.8), 
+            ncol = 3
+            )
     return fig 
 
 
 
 def main():
   
-    dn = dt.datetime(2015, 12, 20, 21)
-    # dn = dt.datetime(2017, 9, 17, 21)
+    dates = [dt.datetime(2015, 12, 20, 21), 
+             dt.datetime(2017, 9, 17, 21),
+             dt.datetime(2013, 1, 17, 21),
+             dt.datetime(2014, 2, 9, 21)]
+    
+    # for dn in dates:
+    dn = dates[3]
     dn = dt.datetime(2013, 1, 26, 21)
     df = pb.concat_files(
         dn, 
@@ -135,19 +149,19 @@ def main():
             dn, 
             threshold = 0.2,
             fontsize = 30, 
-            translate = True
+            translate = False
             )
     
     FigureName = dn.strftime('occurrence_%Y%m%d')
     
     
     # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'paper2'),
+    #       b.LATEX(FigureName, folder = 'timeseries'),
     #       dpi = 400
     #       )
     
 
     plt.show()
-    
+        
 
 # main()

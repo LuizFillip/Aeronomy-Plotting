@@ -3,108 +3,158 @@ import base as b
 import pandas as pd 
 import numpy as np
 import datetime as dt 
-import GEO as gg 
+import plotting as pl 
+
 
 b.config_labels()
 
 
-def plot_epb_time_section():
-    
-    return 
 
 def shade_area(
         ax, 
         start,
-        offset = 2,
+        end,
         name = 'Daytime', 
         color = '#0C5DA5'
         ):
-
-    end = start + dt.timedelta(hours = offset)
     
     ax.axvspan(
         start, end, 
-        ymin = 0, ymax = 1,
+        ymin = 0, 
+        ymax = 1,
         alpha = 0.2, 
         color = color
         )
     
-    delta = dt.timedelta(hours = 1.)
-    middle = start + (end - start) / 2 
     
-    ax.text(
-        middle - delta, 
-        0.5, 
-        name, 
-        transform = ax.transData
-        )
-
+    return None
 
 
 def dumb_data(start):
     
     end = start + dt.timedelta(hours = 11)
     time = pd.date_range(start, end, freq = '1min')
-    return pd.DataFrame({'Occ': np.zeros(len(time))}, index = time)
-
-dn = dt.datetime(2013, 12, 24, 21)
-df = dumb_data(dn)
+    return pd.DataFrame(
+        {'Occ': np.zeros(len(time))}, index = time)
 
 
-fig, ax = plt.subplots(
-    figsize = (12, 6),
-    dpi = 300
-    )
 
 
-ax.plot(df)
-
-terminator = gg.terminator(-50, dn, float_fmt = False)
-
-shade_area(
+def plot_region_shades(
         ax, 
-        terminator,
-        name = 'Post-sunset', 
-        color = '#0C5DA5'
-        )
-
-
-shade_area(
-        ax, 
-        terminator + dt.timedelta(hours = 2),
-        offset = 8, 
-        name = 'Post-midnight', 
-        color = 'lightgray'
-        )
- 
-ax.axvline(terminator, color = 'k', lw = 2, label = 'Solar terminator (300 km)')
-midnight = dt.datetime(2013, 12, 25, 3)
-ax.axvline(midnight, 
-           color = 'k', lw = 2, 
-           linestyle = '--')
-ax.text(terminator, 1.15,
-    'Solar terminator (300 km)',
-    transform = ax.transData
-    )
-
-
-
-ax.text(midnight, 1.15,
-    'Local midnight',
-    transform = ax.transData
-    )
-
-ax.set(
-       ylabel = 'Occurrence',
-       ylim = [-0.1, 1.1],
-       yticks = [0, 1]
-       )
-
-for line in [0,1]:
+        sector, 
+        dn, 
+        label_top = 1.05,  
+        translate = False
+        ):
     
-    ax.axhline(line, linestyle = '--')
+    if translate:
+        midn_name = 'Post-midnight'
+        term_name = 'Post-sunset' 
+    else:
+        term_name = 'Pós-pôr do Sol'
+        midn_name = 'Pós meia-noite'
+    
+        
+    dusk, midnight = pl.plot_references_lines(
+            ax,
+            sector, 
+            dn, 
+            label_top = label_top,
+            translate = translate
+            )
+    
+    end_sunset = dusk + dt.timedelta(hours = 2)
+    shade_area(
+            ax, 
+            dusk,
+            end_sunset,
+            name = term_name,
+            color = '#0C5DA5'
+            )
+    
+    
+    delta = dt.timedelta(hours = 1.)
+    middle = dusk + (end_sunset - dusk) / 2 
+    
+    ax.text(
+        middle - delta, 
+        0.5, 
+        term_name, 
+        transform = ax.transData
+        )
+    
+    delta = dt.timedelta(hours = 8)
+    shade_area(
+            ax, 
+            end_sunset,
+            end_sunset + delta, 
+            name = midn_name, 
+            color = 'lightgray'
+            )
+    
+    delta = dt.timedelta(hours = 0.3)
+    ax.text(
+        midnight + delta, 
+        0.5, 
+        midn_name, 
+        transform = ax.transData
+        )
+    delta = dt.timedelta(hours = 2.3)
+    ax.text(
+        midnight - delta, 
+        0.5, 
+        'Pré meia-noite', 
+        transform = ax.transData
+        )
+    
+    
+dn = dt.datetime(2013, 12, 24, 21)
 
-fig.suptitle('São Luis', y = 1.05)
-b.format_time_axes(ax)
 
-plt.show()
+def plot_epb_time_section(dn):
+    
+    fig, ax = plt.subplots(
+        figsize = (14, 12),
+        nrows = 4, 
+        sharex = True,
+        dpi = 300
+        )
+    
+    plt.subplots_adjust(hspace = 0.05)
+    
+    sectors = list(range(-80, -40, 10))[::-1]
+    
+    for i, sector in enumerate(sectors):
+        
+        ax[i].plot(dumb_data(dn))
+    
+        if i == 0:
+            label_top = 1.05
+        else:
+            label_top = None 
+            
+        plot_region_shades(
+            ax[i], sector, dn, label_top = label_top)
+        
+        delta = dt.timedelta(hours = 11)
+        ax[i].set(
+            ylabel = f'Setor {i + 1}',
+            xlim = [dn, dn + delta],
+            yticklabels = [],
+            ylim = [0, 1]
+            )
+    
+    b.format_time_axes(ax[-1])
+    
+    return fig
+
+
+# fig = plot_epb_time_section(dn)
+
+# FigureName = 'time_section_in_sectors'
+  
+# fig.savefig(
+#       b.LATEX(FigureName, folder = 'products'),
+#       dpi = 400
+#       )
