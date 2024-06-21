@@ -1,112 +1,83 @@
 import matplotlib.pyplot as plt
 import base as b 
+from matplotlib.legend_handler import HandlerTuple
+import numpy as np 
+import core as c 
 
 
 b.config_labels()
 
+names = ['march', 'june', 'september', 'december']
 
-# print(convert_to_latex(df))
-
-
-
-from matplotlib.legend_handler import HandlerTuple
-
-class HandlerTupleVertical(HandlerTuple):
-    def __init__(self, **kwargs):
-        HandlerTuple.__init__(self, **kwargs)
-
-    def create_artists(
-            self, 
-            legend, 
-            orig_handle,
-            xdescent, 
-            ydescent, 
-            width, 
-            height, 
-            fontsize, 
-            trans
-            ):
-
-        numlines = len(orig_handle)
-        handler_map = legend.get_legend_handler_map()
-
-        height_y = (height / numlines)
-
-        leglines = []
-        for i, handle in enumerate(orig_handle):
-            handler = legend.get_legend_handler(
-                handler_map, handle)
-
-            legline = handler.create_artists(
-                legend, handle,
-                xdescent,
-                (2*i + 1)*height_y,
-                width,
-                2*height,
-                fontsize, trans)
-            leglines.extend(legline)
-
-        return leglines
-
-import numpy as np 
-
-
-
-def plot_seasonal_gamma_relation():
+def plot_seasonal_gamma_relation(epb, day):
     
 
-    c = ['k', 
-         '#00B945', 
-     '#FF9500', 
-     '#FF2C00', 
-     '#845B97'] 
+    c = ['k',  '#00B945', '#FF9500', 
+         '#FF2C00', '#845B97'] 
     
     
     fig, ax = plt.subplots(
-        figsize = (12, 5),
+        figsize = (12, 8),
+        nrows = 2,
+        sharex = True,
         dpi = 300)
     
+    plt.subplots_adjust(hspace=0.08)
     
     list_lines = []
-    
+    labels = ['Março', 'Junho', 'Setembro', 'Dezembro']
     for i, season in enumerate(names):
     
-        line1, = ax.plot(
+        line1, = ax[0].plot(
             day[season], 
             color = c[i], 
             lw = 2,
-            label = season, 
+            label = labels[i], 
             marker = 's'
             )
         
-        ax1 = ax.twinx()
         
-        line2, = ax1.plot(
+        line2, = ax[1].plot(
             epb[season],
             lw = 2,
             color = c[i],
-            marker = 'o',
-            linestyle = '--')
+            marker = 's',
+            )
         
         list_lines.append((line1, line2))
     
-        ax1.set(ylim = [0, 100])
+        ax[1].set(
+            ylabel = '$N_{EPBs}$',
+            ylim = [0, 100], 
+            xlabel = '$\gamma_{RT}~(10^{-3}~s^{-1})$')
         
-    ax1.set(ylabel = 'Número de EPBs')
-    
-    ax.set(
+        ax[0].set(
            xticks = np.arange(-0.2, 2.6, 0.2),
            ylim = [0, 300],
-           ylabel = 'Número de dias', 
-           xlabel = '$\gamma_{RT}~(10^{-3}~s^{-1})$')
+           ylabel = '$N_{dias}$'
+           )
     
-    plt.legend(
-        list_lines, names,
+    ax[0].legend(
         ncol = 4, 
-        columnspacing = 0.4,
-        bbox_to_anchor = (0.5, 1.2),
-        loc = 'upper center',
-        handler_map = {tuple : HandlerTupleVertical()}
+           columnspacing = 0.4,
+           bbox_to_anchor = (0.5, 1.25),
+           loc = 'upper center',
         )
     
+    b.plot_letters(ax, y = 0.85, x = 0.03)
+    
     return fig
+
+
+df = c.load_results('saa', eyear = 2022)
+level = c.limits_on_parts(df['f107a'], parts = 2 )
+df_index = c.DisturbedLevels(df)
+ 
+solar_cycles = df_index.F107(level)
+
+ds = solar_cycles[0]
+
+day = c.concat_season_probability(ds, specify = 'days')
+epb = c.concat_season_probability(ds, specify = 'epbs')
+
+fig = plot_seasonal_gamma_relation(epb, day)

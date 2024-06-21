@@ -4,10 +4,6 @@ import core as c
 import plotting as pl 
 
 
-b.config_labels()
-
-df = c.load_results('saa', eyear = 2022)
-ds = c.split_with_solar_level(df)
 
 def plot_polynomial_fitting(ds):
     
@@ -38,11 +34,17 @@ def plot_polynomial_fitting(ds):
     ax.legend(ncol = 1, loc = 'upper center')
     
     return fig
-    
-fig = plot_polynomial_fitting(ds)
 
-FigureName = 'Ajuste_polinomial'
-   
-fig.savefig(b.LATEX(FigureName, folder = 'distributions/pt'))
-   
-   
+b.config_labels()
+
+def main():
+    df = c.load_results('saa', eyear = 2022)
+    ds = c.split_with_solar_level(df)
+    
+    fig = plot_polynomial_fitting(ds)
+    
+    FigureName = 'Ajuste_polinomial'
+       
+    fig.savefig(b.LATEX(FigureName, folder = 'distributions/pt'))
+       
+       
