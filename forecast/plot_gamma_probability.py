@@ -9,23 +9,42 @@ def plot_gamma_predict_epbs(df):
     fig, ax = plt.subplots(
         dpi = 300, 
         nrows = 3,
-        sharex=True,
+        sharex = True,
         figsize = (14, 12)
         )
     
     plt.subplots_adjust(hspace = 0.1)
     
-    ax[0].plot(df['gamma'])
+    ax[0].plot(df['gamma'], lw = 2)
     
-    ax[1].plot(df['predict'] *100, color = 'k')
+    ax[1].plot(df['predict'] *100, lw = 2, color = 'k')
     
-    ax[2].plot(df['epb'], color = 'k', label = 'observadas')
-    ax[2].plot(df['epb_est'], color = 'b', label = 'Estimadas')
+    
+    ax[2].plot(
+        df['epb'], 
+        linestyle = 'none',
+        fillstyle = 'none',
+        color = 'k',
+        markersize = 10, 
+        marker = 'o', 
+        label = 'Observadas'
+        )
+    
+    ax[2].plot(
+        df['epb_est'], 
+        color = 'b', 
+        marker = 's', 
+        linestyle = 'none',
+        fillstyle = 'none',
+        markersize = 10,
+        label = 'Estimadas'
+        )
+    
     ax[2].legend(ncol = 2, loc = 'upper center')
     
     ax[1].set(
         ylabel = 'Probabilidade (\%)', 
-        ylim = [-20, 120], 
+        ylim = [-20, 130], 
         yticks = list(range(0, 125, 25))
         )
   
@@ -48,7 +67,7 @@ def plot_gamma_predict_epbs(df):
         ax[1].axhline(line * 100, lw = 0.5, linestyle = '--') 
         ax[2].axhline(line, lw = 0.5, linestyle = '--')
     
-    b.plot_letters(ax, y = 0.88, x = 0.02)
+    b.plot_letters(ax, y = 0.85, x = 0.02)
     
     return fig 
 
