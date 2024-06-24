@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jun 17 13:40:08 2024
+
+@author: Luiz
+"""
+
 import base as b 
 import matplotlib.pyplot as plt 
 import core as c
@@ -31,44 +38,38 @@ def plot_distributions_seasons(
             translate = translate
             )
         
-        df_index = c.DisturbedLevels(df_season.sel_season)
-        
-        F107_labels = df_index.solar_labels(solar_level)
-        
-        for index, df_level in enumerate(df_index.F107(solar_level)):
-    
-            data, epb = pl.plot_distribution(
-                    ax[row, 0], 
-                    df_level, 
-                    parameter,
-                    label = F107_labels[index],
-                    outliner = outliner, 
-                    translate = translate,
-                    limit = limit
-                    )
-            
-            total_epb.append(epb)
-            
-            days = pl.plot_histogram(
-                    ax[row, 1], 
-                    data, 
-                    index,
-                    parameter = parameter,
-                    label = F107_labels[index]
-                    )
-            
-            total_day.append(days)
-            
-            ax[row, 1].set(
-                ylim = [0, 350], 
-                yticks = list(range(0, 400, 100))
+        data, epb = pl.plot_distribution(
+                ax[row, 0], 
+                df_season.sel_season, 
+                parameter,
+                label = '',
+                outliner = outliner, 
+                translate = translate,
+                limit = limit
                 )
-                    
-            ax[row, index].text(
-                0.35, 0.82,
-                f'{df_season.name}',
-                transform = ax[row, index].transAxes
+        
+        total_epb.append(epb)
+        
+        days = pl.plot_histogram(
+                ax[row, 1], 
+                data, 
+                row,
+                parameter = parameter,
+                label = ''
                 )
+        
+        total_day.append(days)
+        
+        ax[row, 1].set(
+            ylim = [0, 350], 
+            yticks = list(range(0, 400, 100))
+            )
+                
+        ax[row, 0].text(
+            0.35, 0.82,
+            f'{df_season.name}',
+            transform = ax[row, 0].transAxes
+            )
             
 
         TOTAL = [total_epb, total_day]
@@ -94,7 +95,7 @@ def plot_distributions_seasons(
 
 def main():
     
-    translate = False
+    translate = True
     parameter = 'gamma'
     df = c.load_results('saa', eyear = 2022)
     solar_limit = c.limits_on_parts(df['f107a'])
@@ -108,7 +109,7 @@ def main():
             limit = True
             )
     
-    FigureName = f'seasonal_{parameter}2'
+    FigureName = f'seasonal_{parameter}_all'
     
     if translate:
         folder = 'distributions/pt/'
@@ -124,4 +125,4 @@ def main():
 
     plt.show()
 main()
-
+# 

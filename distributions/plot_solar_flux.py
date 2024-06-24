@@ -105,7 +105,7 @@ def plot_distributions_solar_flux(
         x = x,
         y = y,
         values = total_day, 
-        title = False, 
+        title = parameter, 
         translate = translate, 
         offset_y = offset_y
         )
@@ -123,6 +123,8 @@ def main():
     limit = c.limits_on_parts(df['f107a'], parts = 2 )
 
     parameter = 'gamma'
+    
+    
     
     fig = plot_distributions_solar_flux(
             df, 
@@ -148,5 +150,5 @@ def main():
 
     plt.show()
     
-# main()
+main()
 
