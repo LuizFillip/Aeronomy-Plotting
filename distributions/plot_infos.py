@@ -23,6 +23,17 @@ def plot_infos_in_distribution(
         offset_y = 0.15
         ):
     
+    if title == 'gamma':
+        title_p = '$\gamma_{RT}$ total'
+    elif title == 'vp':
+        title_p = '$V_P$ total'
+    else:
+        if translate:
+            title_p = 'Ocorrência de EPBs'
+        else:
+            title_p = 'EPBs occurrence'
+        
+    
     if translate:
         event = 'eventos'
     else:
@@ -35,7 +46,7 @@ def plot_infos_in_distribution(
         if i == 0:
             
             ax.text(
-                x, y, f'{title}\n{info}', 
+                x, y, f'{title_p}\n{info}', 
                 transform = ax.transAxes, 
                 color = 'k'
                 ) 
@@ -58,15 +69,15 @@ def plot_events_infos(
         y = 0.2
         ):
     
-    titles = titles_infos(parameter)
-    
+    titles = ['epb', parameter]
     for col, total in enumerate(LIST):  
                 
         if col == 0:
-          
-            f = 0
+            if translate:
+                f = 0
+            else:
+                f = 0.08
         else:
-          
             f =  0.1
             
         plot_infos_in_distribution(
