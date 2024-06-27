@@ -49,29 +49,29 @@ def dusk(dn, col):
 
 def plot_terminator_shift(ax, dusk, occur):
 
-    # ax.annotate(
-    #     '', 
-    #     xy = (dusk, 0.5), 
-    #     xytext = (occur, 0.5), 
-    #     arrowprops = dict(arrowstyle='<->')
-    #     )
+    ax.annotate(
+        '', 
+        xy = (dusk, 0.5), 
+        xytext = (occur, 0.5), 
+        arrowprops = dict(arrowstyle='<->')
+        )
     
     middle = middle_time(occur, dusk)
     dtime = abs(round(
         (occur - dusk).total_seconds() / 3600, 2))
         
-    # ax.annotate(
-    #     f'{dtime} hrs',
-    #     xy = (middle, 0.55), 
-    #     xycoords = 'data',
-    #     fontsize = 30.0,
-    #     textcoords = 'data', 
-    #     ha = 'center'
-    #     )
+    ax.annotate(
+        f'{dtime} hrs',
+        xy = (middle, 0.55), 
+        xycoords = 'data',
+        fontsize = 30.0,
+        textcoords = 'data', 
+        ha = 'center'
+        )
     
     
     middle = middle_time(occur, dusk)
-    info = middle.strftime('First occurrence at %Hh%M UT')
+    info = middle.strftime('Primeira ocorrência em %Hh%M UT')
     
     ax.text(middle, 2.7, info, transform = ax.transData)
     
@@ -91,8 +91,8 @@ def plot_shift(ax, ds, col, lon = -50):
         start = sel['start']
         end = sel['end']
         time = sel['duration']     
-            
-        plot_arrow_and_note(ax, start, end, time)
+        if time > 2:
+            plot_arrow_and_note(ax, start, end, time)
 
     
     
@@ -103,8 +103,8 @@ def plot_terminator_line(
         vmax = 5, 
         label = False):
     
-    delta = dt.timedelta(minutes = 30)
-    dusk_time = dusk(dn, lon)  - delta
+    # delta = dt.timedelta(minutes = 30)
+    dusk_time = dusk(dn, lon) # - delta
     
     ax.axvline(
         dusk_time, 
@@ -116,6 +116,8 @@ def plot_terminator_line(
    
     
     return 
+
+
 def plot_occurrencegram(
         ax, 
         ds, 
@@ -146,21 +148,15 @@ def plot_occurrencegram(
             linestyle = '--'
             )
     
-    
-    
-    
-    
     return ds1
 
 
-def plot_roti_max(ax, ds, lon = -50, threshold = 0.25):
+def plot_roti_max(ax, ds, lon = -50, threshold = 0.272):
     
     target = ds.index[-1]
     
     ds = pb.filter_region_and_dn(ds, target, lon)
-    
-    ds = ds.iloc[::2, :]
-    
+        
     dn = ds.index[0]
     
     
@@ -176,12 +172,16 @@ def plot_roti_max(ax, ds, lon = -50, threshold = 0.25):
     
     ax.axhline(
          threshold, 
-         color = 'red', lw = 2, 
+         color = 'red', 
+         lw = 2, 
          label = f'{threshold} TECU/min'
          )
     
-    pl.legend_max_points_roti(ax, fontsize = 25,
-    anchor = (0.8, 2))
+    pl.legend_max_points_roti(
+        ax, 
+        threshold = threshold,
+        fontsize = 25,
+        anchor = (0.8, 2))
     
     return ds1
 
@@ -189,7 +189,12 @@ def plot_roti_max(ax, ds, lon = -50, threshold = 0.25):
 
 
 
-def plot_epb_time_feadtures(ds,  col = '-50'):
+def plot_epb_time_feadtures(
+        ds,  
+        col = '-50', 
+        translate = False,
+        threshold = 0.262
+        ):
 
     fig, ax = plt.subplots(
           figsize = (14, 8), 
@@ -200,18 +205,23 @@ def plot_epb_time_feadtures(ds,  col = '-50'):
       
     plt.subplots_adjust(hspace = 0.05)
 
-
-    ds = plot_roti_max(ax[0], ds, lon = -50)
+    ds = plot_roti_max(ax[0], ds, int(col), threshold)
     
     times = pb.time_range(ds)
     
     ds = pb.maximum_in_time_window(ds, 'max', times)
     
     
-    events = pl.plot_occurrence_events(ax[1], ds, threshold = 0.25)
+    events = pl.plot_occurrence_events(
+        ax[1], ds, threshold)
     
+    if translate:
+        ylabel = 'Occurrence'
+    else:
+        ylabel = 'Ocorrência'
+        
     ax[1].set(
-        ylabel = 'EPBs occurrence', 
+        ylabel = ylabel, 
         yticks = [0, 1], 
         xlim = [ds.index[0], ds.index[-1]],
         ylim = [-0.2, 1.2]
@@ -230,15 +240,23 @@ def main():
     import os 
     
     dn = dt.datetime(2013, 1, 14, 20)
+    dn = dt.datetime(2013, 12, 24, 20)
     
     df = pb.concat_files(
          dn, 
          days = 2, 
-         root = os.getcwd(), 
+         root = 'E:\\', 
          hours = 12
          )
     
     fig = plot_epb_time_feadtures(df,  col = '-50')
     
+    FigureName = dn.strftime('occurrence_%Y%m%d')
+    
+
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'timeseries'),
+          dpi = 400
+          )
     plt.show()
 main()

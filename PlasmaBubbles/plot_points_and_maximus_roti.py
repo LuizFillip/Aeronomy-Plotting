@@ -26,11 +26,13 @@ def get_infos(ds, lon):
 
 def plot_points_and_maximus_roti(
         df, dn, 
-        threshold = 0.25,
         fontsize = 30, 
         vmax = 4, 
         translate = True
         ):
+    
+    threshold  = pb.threshold(dn, factor = 4)['noise'].item()
+    threshold = round(threshold, 3)
     
     if translate:
         occurrence = 'Occurrence'
@@ -132,14 +134,13 @@ def main():
              dt.datetime(2013, 1, 17, 21),
              dt.datetime(2014, 2, 9, 21)]
     
-    # for dn in dates:
     dn = dates[3]
-    dn = dt.datetime(2013, 1, 26, 21)
-    dn = dt.datetime(2014, 4, 28, 21)
+    # dn = dt.datetime(2013, 1, 26, 21)
+    # dn = dt.datetime(2014, 4, 28, 21)
     df = pb.concat_files(
         dn, 
         days = 2, 
-        root = 'D:\\', 
+        root = 'E:\\', 
         hours = 12, 
         remove_noise = True
         )
@@ -148,7 +149,6 @@ def main():
     fig = plot_points_and_maximus_roti(
             df, 
             dn, 
-            threshold = 0.2,
             fontsize = 30, 
             translate = False
             )
@@ -156,10 +156,10 @@ def main():
     FigureName = dn.strftime('occurrence_%Y%m%d')
     
     
-    # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'timeseries'),
-    #       dpi = 400
-    #       )
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'timeseries'),
+          dpi = 400
+          )
     
 
     plt.show()
