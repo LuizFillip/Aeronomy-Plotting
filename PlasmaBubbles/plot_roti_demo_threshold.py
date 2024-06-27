@@ -5,14 +5,15 @@ import GNSS as gs
 import os 
 from scipy.stats import weibull_min
 import numpy as np
+from scipy.stats import norm
 
 PATH_LIMIT = 'database/epbs/night_day.txt'
 
 b.config_labels()
 
 args = dict(
-     marker = 'o', 
-     markersize = 3,
+      marker = 'o', 
+      markersize = 3,
      linestyle = 'none', 
      color = 'gray', 
      alpha = 0.3, 
@@ -22,7 +23,7 @@ args = dict(
 def plot_weibull(ax, day):
     
     data = day['roti'].values
-    
+    # print(data)
     std = data.std()
     avg = data.mean()
     threshold = avg + 4 * std
@@ -30,12 +31,15 @@ def plot_weibull(ax, day):
     ax.axvline(
         threshold, lw = 2,
         color = 'r', 
-        label = '$\mu + 4 \sigma$')
+        label = '$\mu + 4 \sigma$'
+        )
     ax.axvline(
         avg, lw = 2, 
-        color = 'b', label = '$\mu$')
-
-
+        color = 'b', 
+        label = '$\mu$'
+        )
+    
+    
     shape, loc, scale = weibull_min.fit(data)
     
     weibull_dist = weibull_min(
@@ -57,20 +61,18 @@ def plot_weibull(ax, day):
     
     ax.plot(
         x, 
-        55 * fitted_pdf, 
-        label = 'Weibull Fit', 
+        fitted_pdf * 40, 
+        label = 'Ajuste Weibull', 
         lw = 3
         )
-    
-    vmin, vmax = min(data), max(data)
 
     
     ax.set(
-        ylabel = 'Frequency of occurrence', 
+        ylabel = 'Frequência de ocorrência', 
         xlabel = 'ROTI (TECU/min)',
-        # ylim = [0, 22],
-        xlim = [-0.05, 0.3],
-        xticks = np.arange(vmin, vmax, 0.1)
+        ylim = [0, 1000]
+        # xlim = [-0.05, 0.3],
+        # xticks = np.arange(vmin, vmax, 0.2)
         )
     
     ax.legend( 
@@ -115,28 +117,30 @@ def plot_data_roti(ax, df):
         ylabel = 'ROTI (TECU/min)'
         )
     
-    b.format_time_axes(ax)
+    b.format_time_axes(ax, translate = False)
     
     return ax
     
 
 
-def plot_roti_demo_threshold(ds, day):
+def plot_roti_demo_threshold(ds, translate = False):
     
     fig, ax = plt.subplots(
         dpi = 300, 
         ncols = 2,
-        figsize = (12, 6)
+        figsize = (14, 8)
         )
     
     plt.subplots_adjust(wspace = 0.3)
     
-    plot_data_roti(ax[0], day)
+    plot_data_roti(ax[0], ds)
     
-    plot_weibull(ax[1], day)
+    plot_weibull(ax[1], ds)
     
-    names = ['Daytime ROTI', 
-             'ROTI Distribution']
+    if translate:
+        names = ['Daytime ROTI', 'ROTI Distribution']
+    else:
+        names = ['ROTI diurno', 'Distribuição do ROTI']
     
     for i, ax in enumerate(ax.flat):
         l = b.chars()[i]
@@ -150,9 +154,9 @@ def plot_roti_demo_threshold(ds, day):
 
 def set_data():
 
-    path = gs.paths(2013, 14, root = os.getcwd())
+    path = gs.paths(2013, 359, root = 'D:\\')
     
-    df = pb.load_filter(path.fn_roti)
+    df = pb.load_filter(path.fn_roti())
     
     receivers = [
         'pepe',
@@ -173,29 +177,15 @@ def set_data():
     
     df = df.loc[df['sts'].isin(receivers)]
     
-    return df.between_time(
-        '12:00', '20:00'
-        )
-path = 'D:\\database\\GNSS\\roti\\are2019\\'
-
-# df = pb.load_filter(path)
-
-from tqdm import tqdm 
-
-def threshold(df):
-    df = df.between_time('12:00', '20:00')
-    return (1.2 * df['roti'].mean() + 4 * df['roti'].std())
-
-# out = []
-# idx = []
-# for file in tqdm(os.listdir(path)):
-    
-#     df = pb.load_filter(path + file)
-#     idx.append(df.index[0])
-#     out.append(threshold(df))
+    return df.between_time('12:00', '20:00' )
 
 
+# ds = set_data()
 
-# plt.plot(idx, out)
 
+# fig = plot_roti_demo_threshold(ds)
+
+# fig.savefig(
+#     b.LATEX('threshold_eval', folder = 'products'),
+#     dpi = 400)
 # plt.show()

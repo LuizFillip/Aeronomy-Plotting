@@ -117,7 +117,7 @@ def plot_points_and_maximus_roti(
             ax[0], 
             fontsize = 25, 
             s = 80, 
-            threshold = 0.25,
+            threshold = threshold,
             anchor = (0.5, 4.8), 
             ncol = 3
             )
@@ -135,10 +135,11 @@ def main():
     # for dn in dates:
     dn = dates[3]
     dn = dt.datetime(2013, 1, 26, 21)
+    dn = dt.datetime(2014, 4, 28, 21)
     df = pb.concat_files(
         dn, 
         days = 2, 
-        root = 'E:\\', 
+        root = 'D:\\', 
         hours = 12, 
         remove_noise = True
         )
