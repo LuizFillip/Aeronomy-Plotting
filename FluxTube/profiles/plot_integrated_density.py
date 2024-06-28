@@ -8,7 +8,7 @@ import models as m
 
 b.config_labels(fontsize = 25)
 
-lb = b.Labels().infos
+lb = b.labels
 
 
 names = ['Norte', 'Sul', 'Total']
@@ -32,9 +32,9 @@ def plot_gradient(ax, ds):
     ax.plot(total * 1e5, total.index, label = 'Total')
     
     ax.set(
-        xlim = [-1, 13], 
+        xlim = [-5, 15], 
+        xticks = np.arange(0, 18, 3),
         xlabel = f'{symbol} ({units})', 
-        xticks = np.arange(0, 14, 2)
         )
     
     ax.axvline(0, color = 'k', linestyle = '--')
@@ -48,29 +48,24 @@ def plot_density(ax, ds):
     out = []
     for i, col in enumerate(['north', 'south']):
         
-        df = ds.loc[ds['hem'] == col, 'N']
+        df = ds.loc[ds['hem'] == col, 'N'] * 1e-18
         out.append(df)
         ax.plot(df, df.index, 
                 label = names[i])
     
     total = pd.concat(out, axis = 1).dropna().sum(axis = 1)
 
-    ax.plot(total, total.index, 
+    ax.plot(
+        total, total.index, 
             label  = names[-1])
     
     ax.set(
         ylabel = 'Altura de Apex',
-        # xlim = [15, 20], 
-        # xticks = np.arange(15, 21, 1),
-        xlabel = "$N_0$ ($cm^{-2}$)"
+        xlim = [-1, 3], 
+        xlabel = b.y_label('N', factor = 18)
         )
     
-    # ax.legend(
-    #     ncol = 3,
-    #     # bbox_to_anchor = (1., 1.15),
-    #     loc = "upper center"
-    #     )
-
+    return None
 
 
 def plot_local_profiles(ax, ds):
@@ -82,16 +77,17 @@ def plot_local_profiles(ax, ds):
     ax1 = ax[0].twiny()
     
     ax1.plot(
-        df['ne'],
+        df['ne'] * 1e-12,
         df.index, 
         lw = 2,
         color = 'k', 
         linestyle = '--', 
-        label = 'Perfil local no equador')
+        label = 'Perfil local no equador'
+        )
     
-    ax1.set(xlabel = b.y_label('ne'))
-    
-    # 
+    ax1.set(xlabel = b.y_label('ne'), 
+            xlim = [-1, 3])
+
     ax1.axvline(0, lw = 1, linestyle = ':')
     
     ax1 = ax[1].twiny()
@@ -104,8 +100,11 @@ def plot_local_profiles(ax, ds):
         lw = 2,
         label = 'Perfil local \nno equador')
 
-    ax1.set(xlabel = b.y_label('L'), 
-            ylim = [150, 500])
+    ax1.set(
+        xlim = [-5, 15],
+        xticks = np.arange(0, 18, 3),
+        xlabel = b.y_label('L'),
+        ylim = [150, 500])
     
     ax1.axvline(0, lw = 1, linestyle = ':')
     ax1.legend(loc = 'center right')
@@ -134,20 +133,18 @@ def plot_ft_density_profiles(ds):
     
     plot_gradient(ax[1], ds)
     
-    
-    
-    b.plot_letters(ax, y = 1.1, x = 0.01)
+    b.plot_letters(ax, y = 0.92, x = 0.05)
     return fig
 
-# ds = pl.load_fluxtube()
+ds = pl.load_fluxtube()
 
-# fig = plot_ft_density_profiles(ds)
+fig = plot_ft_density_profiles(ds)
 
-# FigureName = 'electron_density_and_gradient'
+FigureName = 'electron_density_and_gradient'
 
-# fig.savefig(
-#     b.LATEX(FigureName, folder = 'profiles'),
-#     dpi = 400
-#     )
+fig.savefig(
+    b.LATEX(FigureName, folder = 'profiles'),
+    dpi = 400
+    )
 
 

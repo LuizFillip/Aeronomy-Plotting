@@ -162,8 +162,8 @@ def plot_mag_meridians(
         ncol = 1, 
         loc = "upper right"
         )
-    if ax is None:
-        return fig
+    
+    return fig
 
 fig = plot_mag_meridians( year = 2013)
 

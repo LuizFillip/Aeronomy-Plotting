@@ -2,8 +2,9 @@ import base as b
 import matplotlib.pyplot as plt
 import pandas as pd
 import plotting as pl 
+import numpy as np 
 
-    
+b.config_labels(fontsize = 30)
 
 def plot_integrated_winds(ax, ds):
    
@@ -30,14 +31,19 @@ def plot_integrated_winds(ax, ds):
     
     ax[0].set(ylabel = 'Altura de Apex (km)', 
               xlim = [-50, 150],
+              
+              xticks = np.arange(0, 200, 50),
               xlabel = 'Velocidade meridional (m/s)')
     
     ax[1].set(ylim = [150, 500],
               xlim = [-50, 150],
+              xticks = np.arange(0, 200, 50),
               xlabel = 'Velocidade zonal (m/s)')
     
     ax[2].plot(total(UL), df.index, lw = 2)
-    ax[2].set(xlim = [-10, 10],
+    ax[2].set(
+        xlim = [-5, 5],
+              xticks = np.arange(-4, 5, 1),
               xlabel = '$U_L^P$ (m/s)')
     ax[2].axvline(0, linestyle = '--')
     
@@ -58,9 +64,8 @@ def plot_local_winds(ax):
     
     ax[1].plot(df['zon'], df.index, lw = 2, 
                linestyle = '--', color = 'k',
-               label = 'Perfil local \nno equador')
+               label = 'Perfil local no equador')
     
-    ax[1].legend(loc = 'lower right')
 
 def plot_winds_profiles(ds):
     
@@ -73,7 +78,7 @@ def plot_winds_profiles(ds):
         )
     
     plt.subplots_adjust(
-        wspace = 0.15
+        wspace = 0.05
         )
     
     plot_local_winds(ax)
@@ -81,9 +86,14 @@ def plot_winds_profiles(ds):
 
     plot_integrated_winds(ax, ds)
     
-    ax[0].legend(loc = 'lower right')
+    ax[1].legend(
+        ncol = 4, 
+        bbox_to_anchor = (0.5, 1.13),
+        loc = 'upper center',
+        columnspacing = 0.5, 
+        )
     
-    b.plot_letters(ax, y = 1.03, x = 0.01)
+    b.plot_letters(ax, y = 0.95, x = 0.05)
     
     return fig
 
@@ -98,3 +108,6 @@ def main():
         b.LATEX(FigureName, folder = 'profiles'),
         dpi = 400
         )
+
+
+# main()

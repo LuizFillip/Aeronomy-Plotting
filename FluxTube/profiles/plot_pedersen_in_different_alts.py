@@ -1,11 +1,9 @@
 import matplotlib.pyplot as plt
-import ionosphere as io
+import aeronomy as io
 import datetime as dt
 from GEO import sites
 import pandas as pd
 
-import pandas as pd
-import ionosphere as io
 from models import altrange_models
 
 def test_data(**kwargs):
