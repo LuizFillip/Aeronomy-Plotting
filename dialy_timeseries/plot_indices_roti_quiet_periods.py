@@ -23,8 +23,8 @@ def plot_roti_in_range(ax, dn):
     
     ax.set(
         ylabel = 'ROTI (TECU/min)',
-        ylim = [0, 3], 
-        xlim = [start, end],
+        ylim = [0, 4], 
+        # xlim = [start, end],
         yticks = np.arange(0, 4, 1)
         )
 
@@ -70,10 +70,10 @@ def plot_indices_roti_quiet_periods(dn):
         x = 0.03, 
         num2white = None
         )
-    return 
+    return fig
 
 
 dn = dt.datetime(2013, 3, 17, 21)
 dn = dt.datetime(2015, 12, 20, 21)
 
-plot_indices_roti_quiet_periods(dn)
+# fig = plot_indices_roti_quiet_periods(dn)
