@@ -45,7 +45,7 @@ def plot_timeseries_cond_ratio():
     
         
     
-    ax.legend()
+    return fig
     
         
     
