@@ -67,7 +67,13 @@ def plot_PRE_monthly():
            )
     
     return fig
-    #plt.show()
     
     
-plot_PRE_monthly()
+# fig = plot_PRE_monthly()
+
+# FigureName = 'seasonal_pre_sites'
+  
+# fig.savefig(
+#       b.LATEX(FigureName, folder = 'climatology'),
+#       dpi = 400
+#       )

@@ -70,9 +70,15 @@ def seasonal_mean(df, parameter = 'gamma'):
         out = {name: [] for name in names}
         
         for season in names:
-            ss = c.SeasonsSplit(df1, season, translate = True)
-                
-            out[season].append(ss.sel_season[parameter].mean())
+            ss = c.SeasonsSplit(
+                df1, season, translate = True)
+            
+            if parameter == 'epb':
+                out[season].append(
+                    ss.sel_season[parameter].sum())
+            else:
+                out[season].append(
+                    ss.sel_season[parameter].mean())
         
         out_year.append(pd.DataFrame(out, index = [year]))
         
@@ -88,6 +94,67 @@ df = c.load_results()
 df['K'] = df['K'] * 1e5 
 
 ds = df.resample('1M').mean()
-ds = seasonal_mean(df)
-ds.plot(kind = 'bar') 
+
+b.config_labels()
+
+def plot_seasonal_count():
     
+ 
+    names = ['epb']
+    
+    for i, name in enumerate(names):
+        
+        ds = seasonal_mean(df, name)
+        
+        ds.plot(
+            ax= ax[i], 
+            kind = 'bar', 
+            legend = False
+            )
+        
+        ax[i].set(ylabel = name)
+        
+   
+    
+    return fig 
+
+fig, ax = plt.subplots(
+       figsize = (12, 8),
+       dpi = 300,
+       sharex = True,
+       nrows = 2
+       )
+   
+   
+plt.subplots_adjust(hspace = 0.1)
+
+df1 = df.loc[df['kp'] <= 3]
+
+ds = seasonal_mean(df1, parameter = 'epb')
+
+ds.plot(
+    ax= ax[0], 
+    kind = 'bar', 
+    legend = False
+    ) 
+
+
+df2 = df.loc[df['kp'] > 3]
+
+ds = seasonal_mean(df2, parameter = 'epb')
+
+ds.plot(
+    ax= ax[1], 
+    kind = 'bar', 
+    legend = False
+    ) 
+
+ax[0].legend(
+     bbox_to_anchor = (0.5, 1.3), 
+     ncol = 4, 
+     loc = 'upper center'
+     )
+ 
+ax[-1].set(xlabel = 'Years')
+ 
+plt.xticks(rotation = 0)

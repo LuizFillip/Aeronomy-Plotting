@@ -76,7 +76,7 @@ def plot_events_infos(
             if translate:
                 f = 0
             else:
-                f = 0.08
+                f = 0.07
         else:
             f =  0.1
             
@@ -133,7 +133,7 @@ def FigureLabels(
         )
     
     fig.text(
-        0.49, 0.37, 
+        0.49, 0.39, 
         ylabel2, 
         fontsize = fontsize, 
         rotation = 'vertical'

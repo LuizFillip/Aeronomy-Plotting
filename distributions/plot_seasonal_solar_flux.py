@@ -65,7 +65,7 @@ def plot_distributions_seasons(
                 )
                     
             ax[row, index].text(
-                0.35, 0.82,
+                0.02, 0.82,
                 f'{df_season.name}',
                 transform = ax[row, index].transAxes
                 )
@@ -97,6 +97,7 @@ def main():
     translate = False
     parameter = 'gamma'
     df = c.load_results('saa', eyear = 2022)
+    
     solar_limit = c.limits_on_parts(df['f107a'])
     
     fig = plot_distributions_seasons(
@@ -116,10 +117,10 @@ def main():
         folder = 'distributions/en/'
         
         
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder),
+        dpi = 400
+        )
     
 
     plt.show()

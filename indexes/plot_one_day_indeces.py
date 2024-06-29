@@ -172,6 +172,7 @@ dn = dt.datetime(2015, 12, 20, 21)
 
 dn = dt.datetime(2015, 12, 25, 21)
 dn = dt.datetime(2017, 9, 17, 21)
+dn = dt.datetime(2013, 1, 17, 21)
 
 def main():
     days = 3
@@ -181,10 +182,10 @@ def main():
     FigureName = dn.strftime('Indices_%Y%m%d')
     
     
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'paper2'),
-          dpi = 300
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'timeseries'),
+    #       dpi = 300
+    #       )
     
 # main()
 

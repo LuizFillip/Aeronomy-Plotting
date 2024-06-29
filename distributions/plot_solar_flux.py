@@ -124,8 +124,6 @@ def main():
 
     parameter = 'gamma'
     
-    
-    
     fig = plot_distributions_solar_flux(
             df, 
             parameter,
@@ -150,5 +148,5 @@ def main():
 
     plt.show()
     
-main()
+# main()
 

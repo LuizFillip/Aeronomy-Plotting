@@ -12,13 +12,21 @@ def plot_storm_levels_distribution(
         level = -50, 
         translate = False,
         outliner = 10,
-        limit =  True
+        limit =  True,
+        random_state = None
         ):
     
     fig, ax = pl.axes_for_seasonal_plot()
     
     names = ['march', 'june', 'september', 'december']
     
+    if random_state is not None:
+        vmax = 150
+        step = 50
+    else:
+        vmax = 400
+        step = 100
+        
     for row, name in enumerate(names):
         
         total_epb = []
@@ -30,11 +38,22 @@ def plot_storm_levels_distribution(
             translate = translate
             )
         
-        df_index = c.DisturbedLevels(df_season.sel_season)
-        kp_labels = df_index.geomagnetic_labels(level)
         
-        for index, df_level in enumerate(df_index.Dst(level)):
-    
+        df_index = c.DisturbedLevels(df_season.sel_season)
+        
+        if level == 3:
+            datasets = df_index.Kp(level, random_state)
+            kp_labels = df_index.geomagnetic_labels(
+                level, dst = False)
+        else:
+            kp_labels = df_index.geomagnetic_labels(
+                level, dst = True)
+            datasets = df_index.Dst(level, random_state)
+       
+        
+        for index, df_level in enumerate(datasets):
+            
+            
             data, epb = pl.plot_distribution(
                     ax[row, 0], 
                     df_level, 
@@ -45,9 +64,6 @@ def plot_storm_levels_distribution(
                     limit = limit
                     )
             
-            if name == 'december':
-                print(data)
-                
             total_epb.append(epb)
             
             days = pl.plot_histogram(
@@ -62,8 +78,8 @@ def plot_storm_levels_distribution(
             total_day.append(days)
         
             ax[row, 1].set(
-                ylim = [0, 350], 
-                yticks = list(range(0, 400, 100))
+                ylim = [0, vmax - step], 
+                yticks = list(range(0, vmax, step))
                 )
                     
             ax[row, index].text(
@@ -93,7 +109,7 @@ def plot_storm_levels_distribution(
 
 def main():
     
-    translate = True
+    translate = False
 
     df = c.load_results('saa')
     parameter ='gamma'
@@ -103,8 +119,9 @@ def main():
         parameter= parameter,
         level = -30, 
         translate = translate,
-        limit =  True, 
-        outliner = 5
+        limit = True, 
+        outliner = 10, 
+        random_state = 30
         )
     
     if translate:
@@ -112,7 +129,7 @@ def main():
     else:
         folder = 'distributions/en/'
         
-    FigureName = f'geomagnetic_{parameter}'
+    # FigureName = f'geomagnetic_{parameter}'
     
     FigureName = 'geomagnetic_seasonal'
     
@@ -122,4 +139,4 @@ def main():
     #     )
     
     
-main()
+# main()
