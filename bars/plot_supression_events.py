@@ -14,43 +14,52 @@ def get_min_max(df):
 
 
 def plot_seasonal_supression(
-        df, translate = True):
+        df, 
+        translate = True
+        ):
     
     if translate:
         ylabel = 'Number of cases'
         xlabel = 'Months'
         ln = 'en'
-        title = 'EPBs suppressions'
     else:
-        ylabel = 'Número de eventos'
+        ylabel = 'Número de supressões'
         xlabel = 'Meses'
         ln = 'pt'
-        title= 'Supressão de EPBs'
+        title = 'Total de supressões de EPBs (2013 - 2023)'
         
         
     fig, ax = plt.subplots(
-        figsize = (12, 8), 
+        figsize = (16, 10), 
         dpi = 300
         )
     
-    ds = c.count_occurences(df).month
+    df = df[df.columns[::-1]]
     
-    vmin, vmax = get_min_max(df)
-    
-    ds['epb'].plot(
+    df.plot(
         kind = 'bar',
         ax = ax, 
-        color =  'gray',
         legend = False,
         edgecolor = 'k'
         )
-    title = f'{title} ({vmin} - {vmax})'
     ax.set(
-        ylim = [0, 20],
+        ylim = [0, 30],
         ylabel = ylabel,
         xlabel = xlabel,
-        title = title,
         xticklabels = b.month_names(language = ln)
+        )
+    
+    t = [f'Setor {i} ({vl})' for i, vl in 
+         enumerate(df.sum().values, start = 1)]
+    
+    ax.legend(
+        t,
+        ncol = 5, 
+        title = title,
+        bbox_to_anchor = (.5, 1.22), 
+        loc = "upper center", 
+        columnspacing = 0.3,
+        fontsize = 28
         )
     
     plt.xticks(rotation = 0)
@@ -59,12 +68,10 @@ def plot_seasonal_supression(
 
 
 def main():
-    
-    lon = -50
-    
-    df = c.atypical_frame(lon, kind = 0, days = 3)
-   
-    fig = plot_seasonal_supression(df)
+        
+    df = c.seasonal_suppression_in_all(kind = 0, days = 3)
+        
+    fig = plot_seasonal_supression(df, translate = False)
     
     FigureName = 'seasonality_supression_events'
     

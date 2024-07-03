@@ -4,7 +4,7 @@ import base as b
 import PlasmaBubbles as pb 
 
 
-b.config_labels(fontsize = 25)
+b.config_labels(blue = False, fontsize = 35)
 
 
 
@@ -21,43 +21,44 @@ def plot_seasonal_occurrence(
     if typing == 'sunset':
         vmax = 350
         if translate:
-            typing = 'pós pôr do Sol'
+            typing = 'pós-pôr do sol'
         else:
             typing = 'Sunset'
         
     else:
-        vmax = 150
+        vmax = 160
         if translate:
-            typing = 'pós meia noite'
+            typing = 'pós-meia-noite'
         else:
             typing = 'post-midnight'
         
     
     fig, ax = plt.subplots(
         dpi = 300, 
-        nrows = 1,
-        sharex = True,
-        figsize = (16, 6)
+        figsize = (16, 10)
         )
-    
-    plt.subplots_adjust(hspace = 0.1)
-        
+            
     df = c.count_occurences(ds).month
-    df = df[df.columns[::-1]]
+    # df = df[df.columns[::-1]]
     
-    df.plot(kind = 'bar', ax = ax, legend = False)
+    df.plot(
+        kind = 'bar', 
+        edgecolor = 'k',
+        ax = ax, 
+        legend = False
+        )
 
     plt.xticks(rotation = 0)
     
     if translate:
         ylabel = 'Número de casos'
-        xlabel = 'Anos'
+        xlabel = 'Meses'
         sector = 'Setor'
         title = f'Eventos de EPBs {typing} ({s_year} - {e_year})'
         language = 'pt'
     else:
         ylabel = 'Number of cases'
-        xlabel = 'Years'
+        xlabel = 'Meses'
         sector = 'Sector'
         title = f'Events of {typing} EPBs ({s_year} - {e_year})'
         language = 'en'
@@ -77,9 +78,10 @@ def plot_seasonal_occurrence(
         t,
         ncol = 5, 
         title = title,
-        bbox_to_anchor = (.5, 1.3), 
+        bbox_to_anchor = (.5, 1.22), 
         loc = "upper center", 
-        columnspacing = 0.6
+        columnspacing = 0.3,
+        fontsize = 28
         )
     
     return fig
@@ -104,10 +106,10 @@ def main():
         
         FigureName = f'seasonal_{typing}'
           
-        # fig.savefig(
-        #       b.LATEX(FigureName, folder = 'bars'),
-        #       dpi = 400
-        #       )
+        fig.savefig(
+              b.LATEX(FigureName, folder = 'bars'),
+              dpi = 400
+              )
     
-# main()
+main()
 

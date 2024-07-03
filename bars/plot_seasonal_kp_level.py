@@ -4,27 +4,38 @@ import core as c
 import PlasmaBubbles as pb 
 
 
-b.config_labels()
+b.config_labels(fontsize = 30)
 
 def plot_seasonal_kp_level(
         df,
-        kp_level = 3
+        level = -30, 
+        translate = True
         ):
+    
+    if translate:
+        ylabel = 'Number of nights'
+        xlabel = 'Months'
+        ln = 'en'
+    else:
+        ylabel = 'Número de casos'
+        xlabel = 'Meses'
+        ln = 'pt'
     
     fig, ax = plt.subplots(
         nrows = 2, 
-        dpi = 300, 
+        dpi = 300,
+        sharey = True,
         sharex = True,
-        figsize = (14, 10)
+        figsize = (18, 14)
         )
     
     plt.subplots_adjust(hspace = 0.2)
     
-    datasets = c.DisturbedLevels(df).Kp(level = kp_level)
+    DL = c.DisturbedLevels(df)
 
-    names = [f'$Kp \\leq$ {kp_level}',  f'$Kp >$ {kp_level}']
+    names = DL.geomagnetic_labels(level, dst = True)
     
-    for i, ds in enumerate(datasets):
+    for i, ds in enumerate(DL.Dst(level = level)):
         
         data = c.count_occurences(ds).month
         data = data.iloc[:, :4]
@@ -37,23 +48,25 @@ def plot_seasonal_kp_level(
             )
     
         ax[i].set(
-            ylim = [0, 100],
-            ylabel = 'Number of nights',
-            xlabel = 'Months',
-            xticklabels = b.number_to_months()
+            ylabel = ylabel,
+            xlabel = xlabel,
+            xticklabels = b.month_names(language = ln)
             )
         
         
         summations = data.sum().values[:4]
         
-        t = [f'{i + 1} ({int(v)})' for i, v in
-             enumerate(summations)]        
+        t = [f'Setor {i} ({int(v)})' for i, v in
+             enumerate(summations, start = 1)]        
         
         ax[i].legend(
             t,
             ncol = 5, 
+            
+            bbox_to_anchor = (.5, 1.22), 
             loc = "upper center", 
-            columnspacing = 0.6
+            columnspacing = 0.3,
+            fontsize = 28
             )
     
         
@@ -62,9 +75,9 @@ def plot_seasonal_kp_level(
     b.add_lines_and_letters(
             ax, 
             names, 
-            fontsize = 25,
-            x = 0.0, 
-            y = 1.05, 
+            fontsize = 40,
+            x = 0.02, 
+            y = 0.85, 
             num2white = None
             )
     
@@ -72,12 +85,16 @@ def plot_seasonal_kp_level(
 
 
 def main():
-    df = b.load('events_class2')
-    ds = pb.sel_typing(df, typing = 'midnight')
+    df = b.load(
+        'events_class2')
+    ds = pb.sel_typing(df, typing = 'midnight', 
+    indexes = True, 
+    year = 2023)
     
     
-    fig = plot_seasonal_kp_level(ds)
+    fig = plot_seasonal_kp_level(ds, translate = False)
     
     # fig.savefig(b.LATEX('Kp_seasonal_variation'))
 
 
+main()
