@@ -2,13 +2,10 @@ import matplotlib.pyplot as plt
 import digisonde as dg
 import base as b 
 import GEO as gg 
-import plotting as pl 
+import datetime as dt 
 import numpy as np
 
-b.config_labels(fontsize = 25)
-FREQ_PATH = 'digisonde/data/chars/freqs/'
-CHAR_PATH = 'digisonde/data/chars/midnight/'
-
+b.config_labels(fontsize = 30)
 
 
 def plot_infos(ax, vz, site):
@@ -35,28 +32,27 @@ def plot_infos(ax, vz, site):
 
 def plot_heights(ax, df, cols):
     
-    ax.plot(df[cols], label = cols)
+    ax.plot(df[cols], label = cols, lw = 2)
 
     ax.set(
         ylabel = "Altitude (km)", 
-        ylim = [100, 400])
+        ylim = [100, 600])
     
- 
+    return None 
 
-def plot_drift(ax, vz, cols, site, vmax = 50):
-    
-    lb = pl.labels('en')
-    
-    ax.plot(vz[cols], label = cols)
+def plot_drift(ax, df, cols, site, vmax = 60):
+        
+    ax.plot(df[cols], label = cols, lw = 2)
     ax.set(
-          ylabel = lb.vz, 
+        ylabel = 'Deriva vertical (m/s)', 
           ylim = [-vmax, vmax], 
-          yticks = np.arange(-vmax, vmax + 10, 20),
-          xlim = [vz.index[0], vz.index[-1]]
+          yticks = np.arange(-vmax + 20, vmax + 20, 20),
           )
 
     ax.axhline(0, linestyle = '--')
-    plot_infos(ax, vz, site)
+    
+    return None
+    # plot_infos(ax, vz, site)
 
 
 def plot_QF(ax, df):
@@ -69,13 +65,23 @@ def plot_QF(ax, df):
         ylabel = "QF (Km)"
         )
 
-    
-def plot_vz_and_frequencies(df, vz, char, site):
-    
-    dn = df.index[0]
+    return None
 
+
+
+
+
+cols = list(range(5, 9, 1))
+site = 'SAA0K'
+#dn = dt.datetime(2022, 7, 24)
+dn = dt.datetime(2013, 12, 24)
+
+def plot_vz_and_frequencies(dn, cols, site):
+    file = dn.strftime(f'{site}_%Y%m%d(%j).TXT')
+    df = dg.IonoChar(file, cols, sel_from = 17)
+    
     fig, ax = plt.subplots(
-        figsize = (12, 8), 
+        figsize = (14, 10), 
         nrows = 2, 
         sharex = True, 
         dpi = 300
@@ -83,40 +89,44 @@ def plot_vz_and_frequencies(df, vz, char, site):
     
     plt.subplots_adjust(hspace = 0.05)
     
-    cols = list(range(3, 7, 1))
-    
-    plot_heights(ax[0], df, cols)
-    plot_drift(ax[1], vz, cols, site)
+    plot_heights(ax[0], df.heights, cols)
+    plot_drift(ax[1], df.drift(), cols, site)
     b.format_time_axes(ax[1], translate = False)
-
-    pl.plot_terminators(ax, dn)
     
-    b.plot_letters(ax, y = 0.85, x = 0.03)
     
-    ax[0].set(title = gg.sites[site]['name'])
+    
+    ax[0].legend( ncol = 5, 
+     title = 'Frequências (MHz)',
+         bbox_to_anchor = (.5, 1.45), 
+         loc = "upper center", 
+         columnspacing = 0.3,
+         fontsize = 30
+         )
+    
+    dusk = gg.dusk_from_site(
+           dn, 
+           site[:3].lower(),
+           twilight_angle = 18
+           )
+    
+    ax[0].axvline(dusk, lw = 1, linestyle = '--')
+    ax[1].axvline(dusk, lw = 1, linestyle = '--')
     
     ax1 = ax[1].twinx()
-    plot_QF(ax1, char)
+    plot_QF(ax1, df.chars )
+    b.plot_letters(ax, y = 0.85, x = 0.03, fontsize = 40)
     
+   
+      
     plt.show()
-
+    
     return fig
-
-
-
-
-
-
-def main():
-    file = 'SAA0K_20170830(242).TXT'
-    file = 'FZA0M_20220724(205).TXT'
-    file = 'SAA0K_20130516(136).TXT'
-    file = 'SAA0K_20130516(136).TXT'
-    char = dg.chars(CHAR_PATH + file)
     
-    ds, vz, site = pl.pipe_data(file)
-#     fig = plot_vz_and_frequencies(ds, vz, char, site)
-    
-# main()
+fig = plot_vz_and_frequencies(dn, cols, site)
 
-
+FigureName = dn.strftime(f'{site}_%Y%m%d')
+   
+fig.savefig(
+       b.LATEX(FigureName, folder = 'Iono'),
+       dpi = 400
+       )

@@ -108,16 +108,9 @@ def plot_drift(ax, df, vmax = 60):
     
     vz = df.ref_data.drift() 
     qt = df.drift
-    # print(qt)
     ax.plot(vz['vz'], lw = 1.5, label = 'Disturbed')
     
     ax.plot(qt['vz'], lw = 1.5, label = 'Quiet')
-    
-    # ax.fill_between(qt.index, 
-    #                 qt['vz'] +  qt['dvz'], 
-    #                 qt['vz'] -  qt['dvz'], 
-    #                 alpha = 0.3)
-    
     ax.axhline(0, linestyle = '--')
      
     ax.set(
@@ -156,7 +149,7 @@ ref = dt.datetime(2013, 3, 17)
 cols = list(range(4, 8, 1))
 
 
-# fig = plot_multiples_sites(ref, cols,  dn)
+fig = plot_multiples_sites(ref, cols,  dn)
 
 
 # FigureName = ref.strftime('Iono_parameters_%Y%m%d')
