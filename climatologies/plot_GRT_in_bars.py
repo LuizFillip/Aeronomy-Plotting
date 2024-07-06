@@ -1,11 +1,14 @@
 import core as c 
 import pandas as pd 
 import base as b 
-import datetime as dt 
 import matplotlib.pyplot as plt 
 import PlasmaBubbles as pb 
+import numpy as np 
+import datetime as dt 
 
-
+def declination(doy):
+    return  np.sin(-np.radians(360 / 365 * (275 + doy)))
+names = ['march', 'june', 'september', 'december']
 
 def simple_avg(df):
 
@@ -29,7 +32,7 @@ def simple_avg(df):
 def run_by_season(df, year, parameter = 'gamma'):
     df['doy'] = df.index.day_of_year
     
-    names = ['march', 'june', 'september', 'december']
+    
     out = {name: [] for name in names}
     
     for season in names:
@@ -46,8 +49,6 @@ def run_by_season(df, year, parameter = 'gamma'):
      
 def seasonal_by_year(df, parameter = 'gamma'):
     
-    
-
     out_year = []
     for year in range(2013, 2024, 1):
             
@@ -55,79 +56,92 @@ def seasonal_by_year(df, parameter = 'gamma'):
         
         out_year.append(
             run_by_season(
-                df1, year, parameter = 'gamma')
+                df1, year, parameter)
             )
         
     return pd.concat(out_year)
 
 PATH_GAMMA = 'database/gamma/p1_saa.txt'
 
-# df = b.load(PATH_GAMMA)
-
-# df = df.loc[(df.index.time == dt.time(22, 0)) ]
-
-# df = c.load_results()
-# df['K'] = df['K'] * 1e5 
-
-# ds = df.resample('1M').mean()
 
 
-
-def plot_seasonal_count(ds):
-    
-    b.config_labels()
-    
-    fig, ax = plt.subplots(
-                figsize = (12, 8),
-                dpi = 300,
-                sharex = True,
-                nrows = 2
-                )
-            
-    plt.subplots_adjust(hspace = 0.1)
-      
-    ds = seasonal_mean(ds, parameter = 'epb')
-   
-    ds.plot(
-        ax= ax[0], 
-        kind = 'bar', 
-        legend = False
-        ) 
-   
-   
-    df2 = df.loc[df['kp'] > 3]
-   
-    ds = seasonal_mean(df2, parameter = 'epb')
-   
-    ds.plot(
-        ax= ax[1], 
-        kind = 'bar', 
-        legend = False
-        ) 
-   
-    ax[0].legend(
-         bbox_to_anchor = (0.5, 1.3), 
-         ncol = 4, 
-         loc = 'upper center'
-         )
-     
-    ax[-1].set(xlabel = 'Years')
-     
-    plt.xticks(rotation = 0)
         
-   
-    return fig 
+        
+b.config_labels(blue = False)
 
-df = pb.sel_typing(
-    b.load('events_class2'), 
-    typing = 'sunset', indexes = True)
 
-ds = df.loc[df['dst'] >= -30]
 
-# ds = df.loc[df['kp'] <= 3]
+def plot_annualy_quiet_time():
+    fig, ax = plt.subplots(
+        figsize = (16, 10),
+        nrows = 2,
+        sharex = True,
+        dpi = 300
+        )
+    
+    plt.subplots_adjust(hspace = 0.05)
+    
+    plt.subplots_adjust(hspace=0.1)
+    df = pb.sel_typing(
+        b.load('events_class2'), 
+        typing = 'sunset', 
+        indexes = True, 
+        year = 2023)
+    
+    
+    df = df.loc[df['dst'] >= -30]
+    
+    df = df.rename(columns = {-50: 'epb'})
+    
+    
+    ds = seasonal_by_year(df, parameter = 'epb')
+    
+    
+    ds.plot(ax = ax[0], kind = 'bar', legend = False)
+    names1 = ['Março', 'Junho', 'Setembro', 'Dezembro']
+    t = [f'{name} ({vl})' for name, vl in 
+          zip(names1, ds.sum().values)]
+     
+    ax[0].legend(
+         t,
+         ncol = 5, 
+         bbox_to_anchor = (.5, 1.2), 
+         loc = "upper center", 
+         columnspacing = 0.6
+         )
+    
+    
+    df = c.load_results()
+    
+    df = df.loc[df['dst'] >= -30]
+    
+    ds = seasonal_by_year(df, parameter = 'gamma')
+    
+    ds.plot(ax = ax[1], kind = 'bar', legend = False)
+    
+    plt.xticks(rotation = 0)
+    
+    ax[1].set(
+        ylim = [0, 3],
+        xlabel = 'Anos', 
+        ylabel = '$\gamma_{RT}~(10^{-3}~s^{-1})$'
+        )
+    
+    ax[0].set(
+        ylim = [0, 100],
+        ylabel = 'Número de eventos'
+        )
+    
 
-ds = ds.rename(columns = {-50: 'epb'})
-
-year = 'min'
-
-run_by_season(df, year, parameter = 'gamma')
+    b.plot_letters(ax, y = 0.85, x = 0.03)
+    
+    
+      
+    FigureName = 'annual_quiet_time'
+      
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'bars'),
+    #       dpi = 400
+    #       )
+    
+    return fig

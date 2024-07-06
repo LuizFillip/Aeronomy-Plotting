@@ -4,6 +4,8 @@ import base as b
 import core as c 
 import RayleighTaylor as rt 
 import pandas as pd 
+import numpy as np 
+import GEO as gg 
 
 b.config_labels()
 
@@ -17,7 +19,7 @@ def plot_percent_gamma_weigths(
         ):
     
     fig, ax = plt.subplots(
-        figsize = (16, 8), 
+        figsize = (22, 10), 
         dpi = 300, 
         sharex = True, 
         nrows = 1
@@ -37,6 +39,8 @@ def plot_percent_gamma_weigths(
     lb = rt.EquationsFT()
    
     ds = df.resample(freq).mean()
+    
+    ds.index = ds.index.map(gg.year_fraction)
     
     names = [ lb.drift, lb.winds,  lb.gravity]
     colors = ['red', 'blue',  'k']
@@ -69,7 +73,7 @@ def plot_percent_gamma_weigths(
     ax.scatter(su.index, su, s = 10, c = 'k')
     
     ax.text(
-        0.8, 0.9, 
+        0.6, 0.9, 
         sum_label, 
         transform = ax.transAxes
         )
@@ -83,7 +87,9 @@ def plot_percent_gamma_weigths(
        
     ax.set(
         ylim = [-0.55, 1.2],
-        xlim = [df.index[0], df.index[-1]],
+        # xlim = [df.index[0], df.index[-1]],
+        xticks = np.arange(2013, 2024, 1), 
+        xticklabels = np.arange(2013, 2024, 1),
         xlabel = xlabel, 
         ylabel = ylabel
         )
@@ -109,7 +115,7 @@ def main():
     df = df.loc[df.index.year < 2023].dropna()
 
     fig = plot_percent_gamma_weigths(
-        df, cols, translate = True)
+        df, cols, translate = False)
         
     FigureName = 'weight_in_each_term'
     
@@ -118,5 +124,4 @@ def main():
         dpi = 300
         )
     
-    
-# main()
+main()
