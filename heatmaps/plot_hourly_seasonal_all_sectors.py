@@ -2,7 +2,6 @@ import PlasmaBubbles as pb
 import base as b 
 import matplotlib.pyplot as plt 
 import plotting as pl  
-
 import numpy as np 
 import pandas as pd 
 
@@ -13,20 +12,7 @@ b.config_labels()
 
 
 
-def divide_by_geomgnetic_levels(df):
-    
-    cond = [
-        df['kp'] <= 3, 
-        (df['kp'] > 3) & 
-        (df['kp'] <= 6), 
-        df['kp'] > 6]
-    
-    labels = [
-    '$Kp \\leq 3$', '$ 3 < Kp \\leq  6$', "$Kp > 6$"
-    ]    
-    
-    
-    return cond, labels
+
 
 
 
