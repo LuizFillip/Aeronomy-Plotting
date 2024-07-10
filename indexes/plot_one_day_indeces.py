@@ -87,6 +87,8 @@ def plot_magnetic_fields(ax, ds):
         )
     
     return None 
+
+
     
 def plot_auroras(ax, ds):
     
