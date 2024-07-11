@@ -13,28 +13,46 @@ def get_dn(wd):
         wd.index[0].month, 
         wd.index[0].day, 21, 0)
 
-def sel_coord(ax, wd, direction, parameter = 'vnu'):
+def sel_coord(ax, wd, direction, parameter = 'vnu', 
+              translate = False):
     
     ds = wd.loc[(wd["dir"] == direction)]
     
+    dir_name = {
+        'east': 'Leste', 
+        'north': 'Norte', 
+        'west': 'Oeste', 
+        'south': 'Sul'
+        }
+    
+    if translate:
+        label = direction
+    else:
+        label = dir_name[direction]
+        
+        
     ax.errorbar(
         ds.index, 
         ds[parameter], 
         yerr = ds[f'd{parameter}'], 
-        label = f'{direction} (LOS)', 
+        label = label, 
         capsize = 5,
         lw = 2
             )
+    
+    return None 
         
 def title_site(fig, path):    
     if "car" in path:    
-        site= "Cariri"
+        site= "São João do Cariri"
     elif 'bfp' in path:
         site = "Cachoeira Paulista"
     else:
         site = "Cajazeiras"
 
     fig.suptitle(site)
+    
+    return None 
     
     
 def plot_total_component(ax, dn, parameter = 'VN1'):
@@ -50,8 +68,19 @@ def plot_total_component(ax, dn, parameter = 'VN1'):
         lw = 2
             )
     
+    return None
     
-def plot_directions( ax, path):
+    
+def plot_directions(ax, path, translate = True):
+    
+    if translate:
+        label_temp = "Temperature (K)"
+        label_rel = "Relative intensity (R)"
+        label_vel = "Velocity (m/s)"
+    else:
+        label_temp = 'Temperatura (K)'
+        label_rel = 'Intensidade (R)' 
+        label_vel = 'Velocidade (m/s)'
     
     wd = fp.FPI(path).wind
     tp = fp.FPI(path).temp
@@ -66,30 +95,64 @@ def plot_directions( ax, path):
                 
         for row, direction in enumerate(coords[coord]):
             
-            sel_coord(ax[0, col], wd, direction, parameter = 'vnu')
-            sel_coord(ax[1, col], tp, direction, parameter = 'tn')
-            sel_coord(ax[2, col], rl, direction, parameter = 'rle')
+            sel_coord(
+                ax[0, col], wd, 
+                direction, 
+                parameter = 'vnu'
+                )
             
-            ax[0, row].axhline(0, color = "k", linestyle = "--")
+            sel_coord(
+                ax[1, col], tp, 
+                direction, 
+                parameter = 'tn'
+                )
             
-        b.format_time_axes(ax[-1, col])
+            sel_coord(
+                ax[2, col], rl, 
+                direction, 
+                parameter = 'rle'
+                )
+            
+            ax[0, row].axhline(
+                0, 
+                color = "k", 
+                linestyle = "--"
+                )
+            
+            ax[-1, row].axhline(
+                0, 
+                color = "k", 
+                linestyle = "--"
+                )
+            
+        b.format_time_axes(
+            ax[-1, col],
+            hour_locator = 1, pad = 80)
          
-    yticks = np.arange(-100, 400, 100)
+    yticks = np.arange(-200, 400, 100)
+    
     ax[0, 0].set(
-        ylabel = "Velocity (m/s)", 
+        ylabel = label_vel, 
         yticks = yticks,
-        ylim = [yticks[0], yticks[-1]]
+        ylim = [yticks[0] - 50, 
+                yticks[-1] + 50]
         )
     
-    yticks = np.arange(500, 1200, 200)
+    yticks = np.arange(500, 1400, 200)
+    
     ax[1, 0].set(
-        ylabel = "Temperature (K)", 
-        ylim = [yticks[0], yticks[-1]], 
+        ylabel = label_temp, 
+        ylim = [yticks[0] - 100,
+                yticks[-1] + 100], 
         yticks = yticks
         )
-    ax[2, 0].set(ylabel = "Relative intensity (R)") 
+    ax[2, 0].set(
+        ylim = [0, 200],
+        # ylim = [-2, 2],
+        ylabel = label_rel) 
 
     anchor = (0.5, 1.45)
+    
     ax[0, 0].legend(
          ncol = 2, 
          title = 'Zonal',
@@ -114,25 +177,25 @@ def plot_winds_temp_intensity(PATH_FPI):
     fig, ax = plt.subplots(
         nrows = 3, 
         ncols = 2,
-        figsize = (16, 12), 
+        figsize = (20, 14), 
         sharex =  'col',
         sharey = 'row',
         dpi = 300
         )
     
     plt.subplots_adjust(
-        wspace = 0.02, 
-        hspace = 0.05
+        wspace = 0.05, 
+        hspace = 0.1
         )
     
-    plot_directions(ax, PATH_FPI)
+    plot_directions(ax, PATH_FPI, translate = False)
     
     # plot_total_component(ax[0, 0], dn, parameter = 'VN1')
     # plot_total_component(ax[0, 1], dn, parameter = 'VN2')
     
-    b.plot_letters(ax, y = 0.85, x = 0.03)
+    b.plot_letters(ax, y = 0.85, x = 0.03, fontsize = 40)
     
-    # title_site(fig, file)
+    title_site(fig, PATH_FPI)
     return fig
         
 
@@ -148,11 +211,14 @@ def main():
   
 def main():
         
-    PATH_FPI = 'database/FabryPerot/car/minime01_car_20170917.cedar.txt'
-    
+    PATH_FPI = 'database/FabryPerot/car/minime01_car_20151220.cedar.003.txt'
+    PATH_FPI = 'database/FabryPerot/cj/bfp220724g.7100.txt'
     fig = plot_winds_temp_intensity(PATH_FPI)
-    FigureName = 'car_20170917'
+    FigureName = 'bfp_20220724'
     fig.savefig(
-          b.LATEX(FigureName, folder = 'paper2'),
+          b.LATEX(FigureName, folder = 'FPI'),
           dpi = 400
           )
+
+
+# main()
