@@ -4,7 +4,8 @@ import core as c
 import GEO as gg 
 import numpy as np 
 from matplotlib.ticker import AutoMinorLocator
-
+import plotting as pl 
+import datetime as dt 
 b.config_labels(fontsize = 25)
 
 
@@ -150,21 +151,26 @@ def plot_annually_epbs_and_indices(
     df.index = df.index.map(gg.year_fraction)
     
     plot_F107(
-        ax[1], 
+        ax[2], 
         df, 
         solar_level = None,
         translate = translate, 
         xlim = xlim
         )
     
-    plot_Kp(
-            ax[2], 
-            df, 
-            kp_level = 3, 
-            translate = False, 
-            xlim = None
-            )
- 
+    
+    
+    PATH_GAMMA = 'database/gamma/p1_saa.txt'
+    
+    df = b.load(PATH_GAMMA)
+
+    df = df.loc[
+        (df.index.time == dt.time(22, 0)) & 
+        (df.index.year < 2023)]
+    
+    
+    pl.plot_gamma(ax[1], df['gamma'], avg_run = 27)
+
     ax[-1].set(
         xlabel = 'Years',
        
@@ -174,19 +180,19 @@ def plot_annually_epbs_and_indices(
     )
     
     plt.gca().xaxis.set_minor_locator(AutoMinorLocator(n=11))
-    b.plot_letters(ax, y = 0.88, x = 0.02)
+    b.plot_letters(ax, y = 0.85, x = 0.02)
     
     return fig
 
 
 
 def main():
-    df = c.epbs(col = -50, geo = True, eyear = 2023)
+    df = c.epbs(col = -50, geo = True, eyear = 2022)
     
     fig = plot_annually_epbs_and_indices(df)
     
     # fig.savefig(b.LATEX('annual_variation2', folder = 'bars'))
 
 
-# main()
+main()
 
