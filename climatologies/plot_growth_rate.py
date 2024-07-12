@@ -3,7 +3,7 @@ import base as b
 import datetime as dt 
 import numpy as np
 from matplotlib.ticker import AutoMinorLocator 
-
+import GEO as gg 
 
 b.config_labels()
 
@@ -16,13 +16,17 @@ def plot_gamma(ax, df, avg_run = 27):
     
     df = df * 1e3
     
-    ax.scatter(df.index, df, **args_scatter)
-    
     df = df.to_frame()
-    df['avg'] = df['gamma'].rolling(f'{avg_run}D').mean()
-
-    ax.plot(df['avg'], lw = 2)
     
+    df['avg'] = df['gamma'].rolling(f'{avg_run}D').mean()
+    
+    df.index = df.index.map(gg.year_fraction)
+    
+    ax.scatter(df.index, df['gamma'], **args_scatter)
+    
+
+    ax.plot(df['avg'], lw = 2, label = f'{avg_run} days average')
+    ax.legend(loc = 'upper right')
     ax.set(
         ylim = [-0.2, 4], 
         yticks = np.arange(0, 5, 1),
@@ -184,7 +188,7 @@ def main():
         b.LATEX(FigureName, folder = 'paper2'), dpi = 300)
 
 
-
-main()
+# 
+# main()
 
 

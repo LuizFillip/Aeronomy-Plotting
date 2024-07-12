@@ -1,0 +1,1 @@
+from .plot_growth_rate import plot_gamma
