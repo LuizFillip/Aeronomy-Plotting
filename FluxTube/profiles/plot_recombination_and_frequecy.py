@@ -6,9 +6,9 @@ import pandas as pd
 import models as m 
 import aeronomy as ae
 
-b.config_labels(fontsize = 25)
+b.config_labels(fontsize = 35)
 
-lb = b.Labels().infos
+lb = b.labels
 
 
 names = ['Norte', 'Sul', 'Total']
@@ -22,22 +22,28 @@ def plot_collision_freq(ax, ds):
          
         K.append(df)
         ax.plot(b.smooth2(df, 3), df.index, 
-                label = names[i])
+                lw = 1.5, label = names[i])
     
     total = pd.concat(K, axis = 1).dropna().sum(axis = 1)
 
     ax.plot(total, total.index, label = 'Total')
     
     ax.set(
-        # xscale ='log',  
-        xlabel = b.y_label('nueff'),
-        ylim = [150, 500]
+        xscale ='log',  
+        xlabel = b.y_label('nui_eff'),
+        ylim = [100, 550]
         )
     
     ax.axvline(0, color = 'k', linestyle = '--')
     
-    ax.legend(loc = 'upper right')
-    return 
+    ax.legend(
+        ncol = 4, 
+        bbox_to_anchor = (0, 1.2),
+        loc = "upper center",
+        columnspacing = 0.3
+        )
+    
+    return None
 
 
 def plot_recombination(ax, ds):
@@ -48,32 +54,31 @@ def plot_recombination(ax, ds):
         df = ds.loc[ds['hem'] == col, 'R']
         out.append(df)
         
-        ax.plot(df, df.index, 
-                label = names[i])
+        ax.plot(df, df.index, lw = 1.5, label = names[i])
     
     total = pd.concat(out, axis = 1).dropna().sum(axis = 1)
 
-    ax.plot(total, total.index, 
-            label  = names[-1])
+    ax.plot(total, total.index, label  = names[-1])
     
     ax.set(
-        # xscale ='log', 
+        xscale ='log', 
         ylabel = 'Altura de Apex',
         xlabel = b.y_label('R')
         )
     
     ax.axvline(0, color = 'k', linestyle = '--')
     
-    return 
+    return None 
   
 
 
 def plot_local_profiles(ax, dn):
     
-    df = m.altrange_models(**m.kargs(dn, hmin = 80))
+    df = m.altrange_models(
+        **m.kwargs_from_meridian(dn, hmin = 100))
     df = ae.conductivity_parameters(df, other_conds = True)
 
-    ax1 = ax[0].twiny()
+    ax1 = ax[0]
     
     ax1.plot(
         df['R'],
@@ -87,10 +92,10 @@ def plot_local_profiles(ax, dn):
         xscale ='log', 
         xlabel = b.y_label('nuR')
         )
-    ax1.legend(loc = 'upper right')
+ 
     ax1.axvline(0, lw = 1, linestyle = ':')
     
-    ax1 = ax[1].twiny()
+    ax1 = ax[1]
     
     ax1.plot(
         df['nui'],
@@ -117,7 +122,7 @@ def plot_ft_density_profiles(ds):
     
     '''
     fig, ax = plt.subplots(
-        figsize = (12, 10),
+        figsize = (14, 10),
         sharey = True,
         ncols = 2, 
         dpi = 300,
@@ -134,7 +139,7 @@ def plot_ft_density_profiles(ds):
     
     plot_collision_freq(ax[1], ds)
     
-    b.plot_letters(ax, y = 1.05, x = 0.01)
+    b.plot_letters(ax, y = 0.92, x = 0.04, fontsize = 40)
     return fig
 
 def main():
@@ -149,5 +154,5 @@ def main():
         dpi = 400
         )
 
-
+# main()
 

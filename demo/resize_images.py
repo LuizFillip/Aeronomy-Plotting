@@ -1,15 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jun 28 16:43:49 2024
-
-@author: Luiz
-"""
-
 import os 
 from skimage import io
 import matplotlib.pyplot as plt 
 
-infile = 'C:\\Luiz\\LaTex\\docs\\img\\maps\\map_sequence.png'
+infile = 'C:\\Luiz\\LaTex\\docs\\img\\modeling\\fluxogram.png'
 
 
 
@@ -23,4 +16,7 @@ ax.imshow(io.imread(infile))
 
 ax.axis('off')
 
-fig.savefig(infile, dpi = 1000)
+fig.savefig(infile, dpi = 1500, 
+pad_inches = 0, 
+bbox_inches = "tight", 
+transparent = False)

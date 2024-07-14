@@ -16,3 +16,8 @@ def load_fluxtube(dn = dn):
 
 def total(out):
     return pd.concat(out, axis = 1).sum(axis = 1)
+
+# infile = 'total_20131224'
+# df = pd.read_csv(infile, index_col = 0)
+
+# df

@@ -4,6 +4,8 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 import datetime as dt 
 import numpy as np
+import datetime as dt 
+
 
 b.config_labels(fontsize = 30)
 
@@ -50,28 +52,28 @@ def mean_compose(ds, direction = 'zonal'):
     
     df1 = pd.pivot_table(
         ds, 
-        values = dirs[0], 
+        values = 'zonal', # dirs[0], 
         index = 'time', 
         columns = 'day')
     
-    df2 = pd.pivot_table(
-        ds, 
-        values = dirs[1], 
-        index = 'time', 
-        columns = 'day'
-        )
+    # df2 = pd.pivot_table(
+    #     ds, 
+    #     values = dirs[1], 
+    #     index = 'time', 
+    #     columns = 'day'
+    #     )
     
     data  = {
-        'west': df2.mean(axis = 1), 
-        'east': df1.mean(axis = 1), 
-        'seast': df1.std(axis = 1), 
-        'swest': df2.std(axis = 1)
+        # 'mean': df2.mean(axis = 1), 
+        'mean': df1.mean(axis = 1), 
+        'std': df1.std(axis = 1), 
+        # 'swest': df2.std(axis = 1)
         }
     
     df = pd.DataFrame(data, index = df1.index)
    
-    df['mean'] = df[['west', 'east']].mean(axis = 1)
-    df['std'] = df[['swest', 'seast']].mean(axis = 1)
+    # df['mean'] = df[['west', 'east']].mean(axis = 1)
+    # df['std'] = df[['swest', 'seast']].mean(axis = 1)
     ref = dt.datetime(2014, 1, 1)
     df.index = b.new_index_by_ref(ref, df.index)
     
@@ -118,7 +120,7 @@ def plot_season_zonal_winds(
         'december'
         ]
     
-
+    out = []
     for i, season in enumerate(seasons):
         
         # try:
@@ -132,6 +134,7 @@ def plot_season_zonal_winds(
             direction = direction
             ).resample('1H').asfreq()
         
+        
         plot_curves(axes[i, col], df1, label)
         
         l = b.chars()[i]
@@ -144,9 +147,34 @@ def plot_season_zonal_winds(
             transform = axes[i, col].transAxes
             
             )
+        
+        ds = df1.loc[df1.index.time == dt.time(22, 0)].T
+        
+        ds.columns = [season]
+        
+        out.append(ds)
 
-    return None
+    return pd.concat(out, axis = 1)
 
+    
+def to_latex(df):
+    
+    d = df.round(2)
+    
+    res = []
+    for col in d.columns:
+        out = {}
+        for co in ['west', 'east']:
+            vel = d[col][co]
+            std = d[col]['s' + co]
+            out[co] = f'{vel} \pm {std}'
+        vel1 = d[col]['mean']
+        std1 = d[col]['std']
+        out['mean'] = f'{vel1} \pm {std1}'
+        res.append(pd.DataFrame(out, index = [col]))
+
+    return pd.concat(res)
+    
 def plot_with_without_epbs(
         df, 
         ax, 
@@ -154,16 +182,18 @@ def plot_with_without_epbs(
         direction = 'zonal'
         ):
 
-    plot_season_zonal_winds(
+    ds = plot_season_zonal_winds(
         ax, col, df.loc[df['epb'] == 0], 
         direction= direction,
         label = 'EPBs ausentes')
     
-    plot_season_zonal_winds(
+    
+    ds1 = plot_season_zonal_winds(
         ax, col, df.loc[df['epb'] == 1], 
         direction= direction,
         label = 'EPBs presentes')
-    
+
+   
     return None
 
 
@@ -171,7 +201,8 @@ def set_data(file):
     
     df = b.load('database/FabryPerot/' + file)
     
-    # df = df.loc[df.index.year < 2022]
+    df['zonal'] = df[['west', 'east']].mean(axis = 1)
+
     df['time'] = df.index.to_series().apply(b.dn2float)
     df['day'] = (df.index.year + 
                  df.index.month / 12  +
@@ -198,13 +229,11 @@ def plot_FPI_seasonal_winds():
     
     df = set_data('mean')
     
+  
     plot_with_without_epbs(df,  ax, 0)
     
     df = set_data('mean_ch')
-    
-    df = df.loc[df.index.year == 2019]
-    
-    # print(df)
+
     plot_with_without_epbs(df, ax, 1)
     
     
@@ -236,6 +265,8 @@ def plot_FPI_seasonal_winds():
 
 # fig = plot_FPI_seasonal_winds()
 
+
+
 # FigureName = 'seasonsal_analysis'
 
 # fig.savefig(
@@ -243,9 +274,7 @@ def plot_FPI_seasonal_winds():
 #     dpi = 400
 #     )
 
+df = set_data('mean')
 
-df = set_data('mean_ch')
- 
-df = df.loc[df.index.year == 2020]
 
 df

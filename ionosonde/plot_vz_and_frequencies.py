@@ -8,31 +8,31 @@ import numpy as np
 b.config_labels(fontsize = 30)
 
 
-def plot_infos(ax, vz, site):
-
-    data = dg.time_between_terminator(
-        vz, site = site)
-
+def plot_infos(ax, vz, site = 'saa'):
+    
+    dn = vz.index[0]
+    
+    data = dg.get_infos(vz, dn, site = 'saa')
+    
     ax.axvline(data['time'], label = 'Vp')
     
-    time = data['time'].strftime('%Hh%M')
+    time = data['time'].strftime('%Hh%M UT')
     
     vmax = round(data['vp'], 2)
     
     ax.text(
-        0.4, 0.82,
-        f'$V_p =$ {vmax} m/s',
+        0.58, 0.83,
+        f'$V_p =$ {vmax} m/s ({time})',
         transform = ax.transAxes
         )
     
-    ax.axhline(0, linestyle = '--')
-    
+    return None 
 
 
 
 def plot_heights(ax, df, cols):
     
-    ax.plot(df[cols], label = cols, lw = 2)
+    ax.plot(df[cols], label = cols, lw = 1.5)
 
     ax.set(
         ylabel = "Altitude (km)", 
@@ -42,7 +42,7 @@ def plot_heights(ax, df, cols):
 
 def plot_drift(ax, df, cols, site, vmax = 60):
         
-    ax.plot(df[cols], label = cols, lw = 2)
+    ax.plot(df[cols], label = cols, lw = 1.5)
     ax.set(
         ylabel = 'Deriva vertical (m/s)', 
           ylim = [-vmax, vmax], 
@@ -51,8 +51,9 @@ def plot_drift(ax, df, cols, site, vmax = 60):
 
     ax.axhline(0, linestyle = '--')
     
+    plot_infos(ax, df, site = 'saa')
+    
     return None
-    # plot_infos(ax, vz, site)
 
 
 def plot_QF(ax, df):
@@ -77,7 +78,9 @@ site = 'SAA0K'
 dn = dt.datetime(2013, 12, 24)
 
 def plot_vz_and_frequencies(dn, cols, site):
+    
     file = dn.strftime(f'{site}_%Y%m%d(%j).TXT')
+    
     df = dg.IonoChar(file, cols, sel_from = 17)
     
     fig, ax = plt.subplots(
@@ -91,16 +94,15 @@ def plot_vz_and_frequencies(dn, cols, site):
     
     plot_heights(ax[0], df.heights, cols)
     plot_drift(ax[1], df.drift(), cols, site)
-    b.format_time_axes(ax[1], translate = False)
     
     
-    
-    ax[0].legend( ncol = 5, 
-     title = 'Frequências (MHz)',
-         bbox_to_anchor = (.5, 1.45), 
-         loc = "upper center", 
-         columnspacing = 0.3,
-         fontsize = 30
+    ax[0].legend( 
+        ncol = 5, 
+        title = 'Frequências fixas (MHz)',
+        bbox_to_anchor = (.5, 1.45), 
+        loc = "upper center", 
+        columnspacing = 0.3,
+        fontsize = 30
          )
     
     dusk = gg.dusk_from_site(
@@ -116,7 +118,11 @@ def plot_vz_and_frequencies(dn, cols, site):
     plot_QF(ax1, df.chars )
     b.plot_letters(ax, y = 0.85, x = 0.03, fontsize = 40)
     
-   
+    b.format_time_axes(
+        ax[1], 
+        pad = 70, 
+        translate = False
+        )
       
     plt.show()
     

@@ -3,7 +3,7 @@ import core as c
 import plotting as pl
 
 
-b.config_labels(fontsize = 25)
+b.config_labels(fontsize = 35)
 
 
 def plot_storm_levels_distribution(

@@ -28,12 +28,12 @@ def plot_multiples_sites(
         ref,
         cols, 
         dn,
-        fontsize = 30
+        fontsize = 40
         ):
     
    
     fig, ax = plt.subplots(
-         figsize = (16, 12), 
+         figsize = (18, 14), 
          ncols = 2, 
          nrows = 3,
          sharex = True, 
@@ -50,8 +50,7 @@ def plot_multiples_sites(
     codes = ['SAA0K', 'BVJ03', 'JI91J']
 
     for i, site in enumerate(codes):
-        
-      
+    
         df = dg.IonoAverage(dn, cols, site, ref = ref)
         
         if site == 'JI91J':
@@ -81,21 +80,21 @@ def plot_multiples_sites(
 
     ax[-1, 0].set(xlim = [ref, end])
         
-    b.format_time_axes(ax[-1, 0], hour_locator = 2)
-    b.format_time_axes(ax[-1, 1], hour_locator = 2)
+    b.format_time_axes(ax[-1, 0], pad = 80, hour_locator = 2)
+    b.format_time_axes(ax[-1, 1], pad = 80, hour_locator = 2)
 
     ax[0, 0].legend(
           ncol = 6, 
           loc = "upper right", 
-          bbox_to_anchor = (1.5, 1.43), 
+          bbox_to_anchor = (1.7, 1.43), 
           )
     
     ax[1, 0].set_ylabel(
-        'h`F (km)', 
+        'Altura (km)', 
         fontsize = fontsize
         )
     ax[1, 1].set_ylabel(
-        'Vertical drift (m/s)', 
+        'Deriva vertical (m/s)', 
         fontsize = fontsize
         )
     
@@ -108,9 +107,9 @@ def plot_drift(ax, df, vmax = 60):
     
     vz = df.ref_data.drift() 
     qt = df.drift
-    ax.plot(vz['vz'], lw = 1.5, label = 'Disturbed')
+    ax.plot(vz['vz'], lw = 1.5, label = 'Perturbado')
     
-    ax.plot(qt['vz'], lw = 1.5, label = 'Quiet')
+    ax.plot(qt['vz'], lw = 1.5, label = 'Calmo')
     ax.axhline(0, linestyle = '--')
      
     ax.set(
@@ -127,9 +126,9 @@ def plot_heights(ax, df, parameter = 'hmF2'):
 
     qt = df.chars(parameter)
 
-    ax.plot(hf[parameter], lw = 1.5, label = 'Disturbed')
+    ax.plot(hf[parameter], lw = 1.5, label = 'Perturbado')
 
-    ax.plot(qt[parameter], lw = 1.5, label = 'Quiet')
+    ax.plot(qt[parameter], lw = 1.5, label = 'Calmo')
     
     ax.set(ylim = [100, 600])
     
@@ -141,9 +140,9 @@ ref = dt.datetime(2015, 12, 20, 20)
 dn = dt.datetime(2015, 12, 2)
 
 
-dn = dt.datetime(2013, 3, 4, 20)
+# dn = dt.datetime(2013, 3, 4, 20)
 
-ref = dt.datetime(2013, 3, 17)
+# ref = dt.datetime(2013, 3, 17)
 
 
 cols = list(range(4, 8, 1))
@@ -152,10 +151,10 @@ cols = list(range(4, 8, 1))
 fig = plot_multiples_sites(ref, cols,  dn)
 
 
-# FigureName = ref.strftime('Iono_parameters_%Y%m%d')
-# # fig.savefig(
-# #       b.LATEX(FigureName, folder = 'paper2'),
-# #       dpi = 400
-# #       )
+FigureName = ref.strftime('Iono_parameters_%Y%m%d')
+fig.savefig(
+      b.LATEX(FigureName, folder = 'Iono'),
+      dpi = 400
+      )
 
 # plt.show()

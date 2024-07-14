@@ -9,3 +9,4 @@ from .correlations import *
 from .bars import *
 from .instrumentations import *
 from .heatmaps import *
+from .climatologies import *

@@ -173,10 +173,8 @@ def plot_annually_epbs_and_indices(
 
     ax[-1].set(
         xlabel = 'Years',
-       
-            xticks = np.arange(2013, 2024, 1), 
-            xticklabels = np.arange(2013, 2024, 1), 
-            # xlim = [df.index[0], df.index[-1]]
+        xticks = np.arange(2013, 2024, 1), 
+        xticklabels = np.arange(2013, 2024, 1), 
     )
     
     plt.gca().xaxis.set_minor_locator(AutoMinorLocator(n=11))
@@ -194,5 +192,5 @@ def main():
     # fig.savefig(b.LATEX('annual_variation2', folder = 'bars'))
 
 
-main()
+# main()
 

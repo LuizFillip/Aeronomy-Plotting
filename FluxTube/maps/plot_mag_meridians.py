@@ -83,8 +83,6 @@ def plot_meridian(
 
     rlat = np.degrees(mlat)
     
-
-    # for i, site in enumerate([ "saa"]): 
     site = 'saa'
     
     glat, glon = gg.sites[site]['coords']  
@@ -96,8 +94,6 @@ def plot_meridian(
     nx, ny, x, y = gg.load_meridian(year, site)
     
     x = sorted(x)
-    
-    
     
     x, y = gg.interpolate(
          x, y, 
@@ -165,9 +161,11 @@ def plot_mag_meridians(
     
     return fig
 
-fig = plot_mag_meridians( year = 2013)
-
-
-fig.savefig(b.LATEX(
-    'WindProjections2', folder = 'modeling'), dpi = 400)
-plt.show()
+def main():
+    fig = plot_mag_meridians( year = 2013)
+    
+    FigureName = 'WindProjections2'
+    fig.savefig(
+        b.LATEX(
+        FigureName, folder = 'modeling'), dpi = 400)
+    plt.show()

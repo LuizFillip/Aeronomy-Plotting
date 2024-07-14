@@ -104,7 +104,8 @@ def plot_local_profiles(ax, ds):
         xlim = [-5, 15],
         xticks = np.arange(0, 18, 3),
         xlabel = b.y_label('L'),
-        ylim = [150, 500])
+        ylim = [150, 500]
+        )
     
     ax1.axvline(0, lw = 1, linestyle = ':')
     ax1.legend(loc = 'center right')
@@ -136,15 +137,16 @@ def plot_ft_density_profiles(ds):
     b.plot_letters(ax, y = 0.92, x = 0.05)
     return fig
 
-ds = pl.load_fluxtube()
-
-fig = plot_ft_density_profiles(ds)
-
-FigureName = 'electron_density_and_gradient'
-
-fig.savefig(
-    b.LATEX(FigureName, folder = 'profiles'),
-    dpi = 400
-    )
-
+def main():
+    ds = pl.load_fluxtube()
+    
+    fig = plot_ft_density_profiles(ds)
+    
+    FigureName = 'electron_density_and_gradient'
+    
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'profiles'),
+        dpi = 400
+        )
+    
 

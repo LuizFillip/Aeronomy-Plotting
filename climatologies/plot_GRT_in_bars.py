@@ -81,7 +81,7 @@ def plot_annualy_quiet_time(df):
 
     ds = seasonal_by_year(df, parameter = 'epb')
     
-    d = (ds['march'] - ds['september'])
+    # d = (ds['march'] - ds['september'])
     ds.plot(ax = ax[0], kind = 'bar', legend = False)
     names1 = ['Março',  'Setembro', 'Dezembro']
     #'Junho',
@@ -131,19 +131,19 @@ df = pb.sel_typing(
      indexes = True, 
      year = 2023)
  
-# def main(df):
+def main(df):
     
-df = df.loc[df['dst'] >= -30]
-
-# df = df.loc[df.index.year < 2018]
-
-df = df.rename(columns = {-50: 'epb'})
-
-fig = plot_annualy_quiet_time(df)
-  
-FigureName = 'annual_quiet_time'
-  
-fig.savefig(
-      b.LATEX(FigureName, folder = 'bars'),
-      dpi = 400
-      )
+    df = df.loc[df['dst'] >= -30]
+    
+    # df = df.loc[df.index.year < 2018]
+    
+    df = df.rename(columns = {-50: 'epb'})
+    
+    fig = plot_annualy_quiet_time(df)
+      
+    FigureName = 'annual_quiet_time'
+      
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'bars'),
+          dpi = 400
+          )

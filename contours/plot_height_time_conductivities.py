@@ -1,5 +1,4 @@
 import base as b
-import datetime as dt 
 import numpy as np
 import matplotlib.pyplot as plt 
 import pandas as pd 
@@ -31,7 +30,7 @@ def plot_height_time_conductivities():
     cols = ['parl', 'hall', 'perd']
     
     lb = b.labels
-    factors = [1e-5, 1e3, 1e4]
+
     for i, col in enumerate(cols):
         
         ds = pd.pivot_table(
@@ -39,8 +38,7 @@ def plot_height_time_conductivities():
             values = col, 
             index = df.index, 
             columns = 'dn')
-        f = factors[i]
-        
+     
         gg.plot_sunrise_sunset(ax[i], dn, site = 'saa')
         vls = np.log10(ds.values) 
         
@@ -77,7 +75,7 @@ def plot_height_time_conductivities():
     b.format_time_axes(
         ax[-1],
         pad = 80,
-                       hour_locator = 2, translate = False)
+        hour_locator = 2, translate = False)
     
     
     
@@ -85,14 +83,15 @@ def plot_height_time_conductivities():
 
     return fig 
 
-
-fig = plot_height_time_conductivities()
-
-FigureName = 'Conductivities'
-
-fig.savefig(
+def main():
+    
+    fig = plot_height_time_conductivities()
+    
+    FigureName = 'Conductivities'
+    
+    fig.savefig(
     b.LATEX(FigureName, 
             folder = 'Iono'),
     dpi = 400
     )
-
+    

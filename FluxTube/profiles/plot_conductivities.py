@@ -18,11 +18,10 @@ def total_ratio(ax, ds):
        
         region_E = ds.loc[ds['hem'] == col, 'E']
         region_F = ds.loc[ds['hem'] == col, 'F']
-        
-        
+    
         ratio = region_F / (region_E + region_F) 
         
-        ax.plot(b.smooth2(ratio, 2), ratio.index, lw = 2)
+        ax.plot(b.smooth2(ratio, 2), ratio.index, lw = 1.5)
 
     ax.set(
         xlabel = b.y_label('ratio'),
@@ -46,11 +45,10 @@ def plot_height_prf(ax, ds, region = 'E'):
         df = ds.loc[ds['hem'] == col, region]
         
         out.append(df)
-        # vars()[col].append(df)
         
         ax.plot(b.smooth2(df, number), 
                 df.index, 
-                label = name, lw = 2)
+                label = name, lw = 1.5)
         
         ax.set(xlabel = b.y_label("S" + region))
         
@@ -60,7 +58,7 @@ def plot_height_prf(ax, ds, region = 'E'):
     ax.plot(
         b.smooth2(total, number), 
         total.index, 
-        label = 'Total', lw = 2)
+        label = 'Total', lw = 1.5)
     
 
     return total
@@ -86,7 +84,7 @@ def plot_conductivities(df):
     
     ratio = region_F / (region_E + region_F) 
     
-    ax[2].plot(b.smooth2(ratio, 2), ratio.index, lw = 2)
+    ax[2].plot(b.smooth2(ratio, 2), ratio.index, lw = 1.5)
     
     ax[0].set(
         ylabel = 'Altura de Apex (km)', 
@@ -107,7 +105,7 @@ def plot_conductivities(df):
     
     ax[1].set(xticks = np.arange(0, 160, 40))
    
-    b.plot_letters(ax, y = 0.92, x = 0.06, fontsize = 40)
+    b.plot_letters(ax, y = 0.92, x = 0.04, fontsize = 40)
     
     return fig
 

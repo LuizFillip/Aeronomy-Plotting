@@ -83,16 +83,16 @@ def main():
     df = c.load_results('saa', eyear = 2023)
     df.loc[df.index > time, 'gamma'] *= 0.7
     ds = c.predict_seasons(df)
-    
+    # print(ds)
     fig = plot_gamma_predict_epbs(ds)
     
     FigureName = 'Estimation_2023'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder = 'climatology')
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder = 'climatology')
+    #     )
     
     
-main()
+# main()
 
 

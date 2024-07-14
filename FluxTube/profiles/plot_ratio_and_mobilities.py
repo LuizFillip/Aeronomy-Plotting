@@ -6,12 +6,14 @@ def plot_electron_ration(ax, df):
     
     args = dict(lw = 2)
     
-    ax.plot(df["ke"].abs(), df.index, 
-               label = "$|\kappa_e|$", 
-               **args)
+    ax.plot(
+        df["ke"].abs(), df.index, 
+        label = "$|\kappa_e|$", 
+        **args)
     
-    ax.plot(df["ki"], df.index, 
-               label = "$\kappa_i$", 
+    ax.plot(
+        df["ki"], df.index, 
+        label = "$\kappa_i$", 
                **args)
     
     ax.set(
