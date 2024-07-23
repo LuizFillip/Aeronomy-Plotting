@@ -21,8 +21,8 @@ def plot_infos(ax, vz, site = 'saa'):
     vmax = round(data['vp'], 2)
     
     ax.text(
-        0.58, 0.83,
-        f'$V_p =$ {vmax} m/s ({time})',
+        0.55, 0.83,
+        f'$V_{{zp}} =$ {vmax} m/s ({time})',
         transform = ax.transAxes
         )
     
@@ -113,7 +113,8 @@ def plot_vz_and_frequencies(dn, cols, site):
     
     ax[0].axvline(dusk, lw = 1, linestyle = '--')
     ax[1].axvline(dusk, lw = 1, linestyle = '--')
-    
+    ax[0].text(dusk, 500, 'Terminadouro local', 
+               transform = ax[0].transData)
     ax1 = ax[1].twinx()
     plot_QF(ax1, df.chars )
     b.plot_letters(ax, y = 0.85, x = 0.03, fontsize = 40)
@@ -128,11 +129,13 @@ def plot_vz_and_frequencies(dn, cols, site):
     
     return fig
     
-fig = plot_vz_and_frequencies(dn, cols, site)
-
-FigureName = dn.strftime(f'{site}_%Y%m%d')
-   
-fig.savefig(
-       b.LATEX(FigureName, folder = 'Iono'),
-       dpi = 400
-       )
+def main():
+    
+    fig = plot_vz_and_frequencies(dn, cols, site)
+    
+    FigureName = dn.strftime(f'{site}_%Y%m%d')
+       
+    fig.savefig(
+            b.LATEX(FigureName, folder = 'Iono'),
+            dpi = 400
+            )
