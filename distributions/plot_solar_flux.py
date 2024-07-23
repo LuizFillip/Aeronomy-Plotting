@@ -4,7 +4,7 @@ import core as c
 import plotting as pl 
  
 
-b.config_labels(fontsize = 25)
+b.config_labels(fontsize = 25, blue = True)
 
 legend_args = dict(
     ncol = 2, 
@@ -57,9 +57,6 @@ def plot_distributions_solar_flux(
                 limit = limit
             )
     
-        # print(data) s
-        
-        
         days = pl.plot_histogram(
                 ax[1], 
                 data, 
@@ -116,7 +113,7 @@ def plot_distributions_solar_flux(
 
 def main():
     
-    translate = False
+    translate = True
 
     df = c.load_results('saa', eyear = 2022)
 
@@ -140,10 +137,10 @@ def main():
         
     FigureName = f'solar_flux_{parameter}2'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder),
+        dpi = 400
+        )
 
 
     plt.show()

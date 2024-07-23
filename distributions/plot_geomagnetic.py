@@ -4,7 +4,7 @@ import core as c
 import plotting as pl 
  
 
-b.config_labels(fontsize = 25)
+b.config_labels(fontsize = 25, blue = True)
 
 legend_args = dict(
     ncol = 2, 
@@ -79,7 +79,7 @@ def plot_distributions_geomagnetic(
                 translate = translate
             )
         
-        ax[1].set(ylim = [0, 200])
+        ax[1].set(ylim = [0, 700])
         ax[0].set(xlabel = '')
         total_epb.append(epbs)
         total_day.append(days)
@@ -94,7 +94,7 @@ def plot_distributions_geomagnetic(
                 fontsize = 30
                 )
             
-    x = 0.7
+    x = 0.68
     y = 0.25
     offset_y = 0.1
     ax[1].legend(**legend_args)
@@ -146,11 +146,11 @@ def main():
         
     FigureName = f'geomagnetic_{parameter}'
     
-    # infile = 'G:\\My Drive\\LaTex\\docs\\img\\distributions\\pt\\'
-    # fig.savefig(
-    #     folder,  FigureName,
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder),
+        dpi = 400
+        )
+
 
 
     plt.show()
