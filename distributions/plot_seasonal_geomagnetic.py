@@ -3,7 +3,7 @@ import core as c
 import plotting as pl
 
 
-b.config_labels(fontsize = 35)
+b.config_labels(fontsize = 25, blue = True)
 
 
 def plot_storm_levels_distribution(
@@ -109,7 +109,7 @@ def plot_storm_levels_distribution(
 
 def main():
     
-    translate = False
+    translate = True
 
     df = c.load_results('saa')
     parameter ='gamma'
@@ -121,7 +121,7 @@ def main():
         translate = translate,
         limit = True, 
         outliner = 10, 
-        random_state = 30
+        random_state = None
         )
     
     if translate:
@@ -133,10 +133,10 @@ def main():
     
     FigureName = 'geomagnetic_seasonal'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder = folder),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder = folder),
+        dpi = 400
+        )
     
     
-# main()
+main()

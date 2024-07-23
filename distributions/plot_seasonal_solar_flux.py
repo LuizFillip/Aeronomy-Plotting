@@ -5,7 +5,7 @@ import plotting as pl
 
 
 
-b.config_labels(fontsize = 25)
+b.config_labels(fontsize = 25, blue = True)
 
 def plot_distributions_seasons(
         df, 
@@ -117,10 +117,10 @@ def main():
         folder = 'distributions/en/'
         
         
-    fig.savefig(
-        b.LATEX(FigureName, folder),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder),
+    #     dpi = 400
+    #     )
     
 
     plt.show()
