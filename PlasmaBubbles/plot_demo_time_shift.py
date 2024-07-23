@@ -254,9 +254,9 @@ def main():
     FigureName = dn.strftime('occurrence_%Y%m%d')
     
 
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'timeseries'),
-          dpi = 400
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'timeseries'),
+    #       dpi = 400
+    #       )
     plt.show()
 main()

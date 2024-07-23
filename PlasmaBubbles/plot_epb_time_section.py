@@ -6,7 +6,7 @@ import datetime as dt
 import plotting as pl 
 
 
-b.config_labels()
+b.config_labels(fontsize = 30)
 
 
 
@@ -52,8 +52,8 @@ def plot_region_shades(
         midn_name = 'Post-midnight'
         term_name = 'Post-sunset' 
     else:
-        term_name = 'Pós-pôr do Sol'
-        midn_name = 'Pós meia-noite'
+        term_name = 'Pós-pôr do sol'
+        midn_name = 'Pós-meia-noite'
     
         
     dusk, midnight = pl.plot_references_lines(
@@ -104,18 +104,17 @@ def plot_region_shades(
     ax.text(
         midnight - delta, 
         0.5, 
-        'Pré meia-noite', 
+        'Pré-meia-noite', 
         transform = ax.transData
         )
     
     
-dn = dt.datetime(2013, 12, 24, 21)
-
+    return None 
 
 def plot_epb_time_section(dn):
     
     fig, ax = plt.subplots(
-        figsize = (14, 12),
+        figsize = (16, 12),
         nrows = 4, 
         sharex = True,
         dpi = 300
@@ -145,16 +144,19 @@ def plot_epb_time_section(dn):
             ylim = [0, 1]
             )
     
-    b.format_time_axes(ax[-1])
+    b.format_time_axes(ax[-1], pad = 70)
     
     return fig
 
-
-# fig = plot_epb_time_section(dn)
-
-# FigureName = 'time_section_in_sectors'
-  
-# fig.savefig(
-#       b.LATEX(FigureName, folder = 'products'),
-#       dpi = 400
-#       )
+def main():
+    
+    dn = dt.datetime(2013, 12, 24, 21)
+    
+    fig = plot_epb_time_section(dn)
+    
+    FigureName = 'time_section_in_sectors'
+      
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'products'),
+          dpi = 400
+          )
