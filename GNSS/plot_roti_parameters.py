@@ -5,7 +5,7 @@ import datetime as dt
 import numpy as np
 
 
-b.config_labels()
+b.config_labels(fontsize = 30)
 
     
 
@@ -17,9 +17,10 @@ def plot_rot(ax, tec, prn):
     ax.plot(ds['drot'])
     
     ax.set(ylabel = "ROT (TECU/min)", 
-           ylim = [-10, 10], 
+           ylim = [-12, 12], 
            yticks = np.arange(-10, 15, 5)
            )
+    return None 
     
         
 def plot_roti(ax, path, prn, station = 'salu'):
@@ -72,11 +73,13 @@ def plot_shades(ax, start, end):
         lw = 2
     )
     
+    
+    return None 
 
 def plot_roti_parameters(dn, station, prn):
     
     fig, ax = plt.subplots(
-        figsize = (10, 12),
+        figsize = (12, 14),
         dpi = 300,
         nrows = 3,
         sharex = True
@@ -86,26 +89,35 @@ def plot_roti_parameters(dn, station, prn):
     
     doy = gs.doy_from_date(dn)
     
-    path = gs.paths(dn.year, doy, root = 'D:\\')
+    path = gs.paths(dn.year, doy, root = 'E:\\')
     
     tec = plot_stec(ax[0], path, station, prn)
     
     plot_rot(ax[1], tec, prn)
     
-    el = plot_roti(ax[2], path, prn)
+    plot_roti(ax[2], path, prn)
     
     # plot_elevation(ax[0], el)
     ax[0].set(
-        title = f'Station: {station.upper()} - PRN: {prn}')
+        title = f'Estação: {station.upper()} - PRN: {prn}')
     
-    b.format_time_axes(ax[-1])
+    b.format_time_axes(ax[-1], pad = 70)
     
     b.plot_letters(ax, y = 0.8, x = 0.02)
     
-    for ax in ax.flat:
-        start = dt.datetime(2013, 12, 24, 20)
-        end =  dt.datetime(2013, 12, 24, 22, 35)
+    for i, ax in enumerate(ax.flat):
+        end = dt.datetime(2013, 12, 25, 0)
+        start =  dt.datetime(2013, 12, 24, 22, 35)
         plot_shades(ax, start, end)
+        
+        if i == 0:
+            d1 = dt.timedelta(hours = 1.5)
+            ax.text(start - d1, 150, 'Sem EPBs', 
+                    transform = ax.transData)
+            
+            d1 = dt.timedelta(minutes = 20)
+            ax.text(start + d1, 150, 'Com EPBs', 
+                    transform = ax.transData)
         
     return fig
 
