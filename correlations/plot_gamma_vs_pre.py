@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import base as b
 
 
-b.config_labels()
+b.config_labels(fontsize = 30)
 
 
 def plot_labels(fig, fontsize = 30):
@@ -22,6 +22,7 @@ def plot_labels(fig, fontsize = 30):
          fontsize = fontsize
          )
     
+    return None 
     
 
 def plot_infos(ax, fit, i = 0, color = 'k', dep = 'vp'):
@@ -45,14 +46,19 @@ def plot_infos(ax, fit, i = 0, color = 'k', dep = 'vp'):
     else:
         str_slp = f'{abs(slope)}{dep}'
     
-    equation = '$\gamma_{RT}$ = ' + f'{str_slp}{str_int}'
+    eq = '$\gamma_{RT}$ = ' + f'{str_slp}{str_int}'
+    r2 = str(fit.r2_score).replace('.', ',')
+    eq = eq.replace('.', ',')
+    
     
     ax.text(
         0.05, 0.75, 
-        f'$R^2$ = {fit.r2_score}\n{equation}', 
+        f'$R^2$ = {r2}\n{eq}', 
         transform = ax.transAxes,
         color = color
         )
+    return None 
+
 
 def plot_scattering(
         ax, 
@@ -134,30 +140,26 @@ def plot_seasonal_gamma_vs_pre(
         ):
 
     names = ['march', 'june', 'september', 'december']
-    
-    b.plot_letters(ax, y = 1.04, x = 0.01)
-    
+        
     for i, ax in enumerate(ax.flat):
         
         name = names[i]
         
-        ds_split = c.SeasonsSplit(df, name)
+        ds_split = c.SeasonsSplit(df, name, translate = True)
                 
         plot_single_correlation(
             ds_split.sel_season, 
             ax = ax, 
+            col = col,
             color = color, 
             index = index, 
             label = label
             )
-    
-        ax.set(title = ds_split.name)
         
-        if i == 0:
-            
-            ax.legend(**legend_args)
-                 
-    
+        l = b.chars()[i]
+        ax.set(title = f'({l})  ' + ds_split.name)
+        
+       
             
     return ax
 
@@ -166,16 +168,39 @@ def plot_seasonal_gamma_vs_pre(
 def main():
     df = c.load_results('saa', eyear = 2022)
     
-    fig = plot_seasonal_gamma_vs_pre(df, col = 'gamma')
+    fontsize = 35
+    fig, ax = plt.subplots(
+        nrows = 2,
+        dpi = 300,
+        ncols = 2, 
+        figsize = (16, 14),
+        sharex= True, 
+        sharey= True
+        )
+    plt.subplots_adjust(wspace = 0.05, hspace = 0.2)
+    
+    plot_seasonal_gamma_vs_pre(ax, df, col = 'vp')
+    
+     
+    fig.text(
+        0.06, 0.39, 
+        b.y_label('gamma')  , 
+        fontsize = fontsize, 
+        rotation = 'vertical'
+        )
+    
+    fig.text(
+        0.45, 0.07, 
+        b.y_label('vp'), 
+        fontsize = fontsize
+        )
     
     FigureName = 'seasonal_vp_and_gamma'
      
-    # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'correlations'),
-    #       dpi = 400
-    #       )
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'correlations'),
+          dpi = 400
+          )
 
 
 # main()
-
-# plot_separe_in_solar_activity()
