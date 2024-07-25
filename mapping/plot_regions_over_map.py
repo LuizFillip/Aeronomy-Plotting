@@ -50,7 +50,7 @@ def plot_regions_over_map(year = 2013):
     ax.legend(
         loc = 'lower right',
         ncol = 3, 
-        bbox_to_anchor = (1., 1.01), 
+        bbox_to_anchor = (1., 1.0), 
         columnspacing = 0, 
         fontsize = 22
         
@@ -65,13 +65,16 @@ def plot_regions_over_map(year = 2013):
         xytext=(lon[1] - 5, lat[1] + 15),
         arrowprops=dict(lw = 2, arrowstyle='->'), 
         transform = ax.transData, 
-        fontsize = 25)
+        fontsize = 25
+        )
     return fig
-    
-# fig = plot_regions_over_map(year = 2013)
-# FigureName = 'regions_and_ipp'
-# fig.savefig(
-#     b.LATEX(FigureName, folder = 'maps'),
-#     dpi = 400
-#     )
 
+def main():
+    fig = plot_regions_over_map(year = 2013)
+    FigureName = 'regions_and_ipp'
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'maps'),
+        dpi = 400
+        )
+    
+# main()

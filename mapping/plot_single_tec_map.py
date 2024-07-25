@@ -39,6 +39,7 @@ def plot_matrix(
         infile, 
         vmax = 30,
         colorbar = True,
+        vertical_cbar = True
         ):
     
     lon, lat, values = load_tec(infile)
@@ -58,28 +59,30 @@ def plot_matrix(
     ticks = np.arange(0, vmax + step, step).round(0)
     
     if colorbar:
-        b.colorbar(
-                img, 
-                ax, 
-                ticks, 
-                label = 'TECU ($10^{16}/m^2$)', 
-                height = '5%' , 
-                width = "80%",
-                orientation = "horizontal", 
-                anchor = (-0.26, 0.7, 1.26, 0.5)
-                )
-        
-        # b.colorbar(
-        #         img, 
-        #         ax, 
-        #         ticks, 
-        #         label = 'TECU ($16^{16}/m^2$)', 
-        #         height = "100%", 
-        #         width = "3%",
-        #         orientation = "vertical", 
-        #         anchor = (.25, 0., 1, 1)
-        #         )
-        
+       
+        if vertical_cbar:
+            b.colorbar(
+                    img, 
+                    ax, 
+                    ticks, 
+                    label = 'TECU ($16^{16}/m^2$)', 
+                    height = "100%", 
+                    width = "3%",
+                    orientation = "vertical", 
+                    anchor = (.25, 0., 1, 1)
+                    )
+        else:
+            b.colorbar(
+                    img, 
+                    ax, 
+                    ticks, 
+                    label = 'TECU ($10^{16}/m^2$)', 
+                    height = '10%' , 
+                    width = "80%",
+                    orientation = "horizontal", 
+                    anchor = (-0.26, 0.7, 1.26, 0.9)
+                    )
+            
     
     return img
 
@@ -94,7 +97,8 @@ def plot_tec_map(
         boxes = False,
         title = False,
         invert_axis = False,
-        root = 'D:\\'
+        root = 'D:\\',
+        vertical_cbar = True
         ):
     
     if ax is None:
@@ -113,7 +117,8 @@ def plot_tec_map(
     img = plot_matrix(
         ax, path,
         vmax = vmax, 
-        colorbar = colorbar
+        colorbar = colorbar,
+        vertical_cbar = vertical_cbar
         )
 
     gg.map_attrs(
