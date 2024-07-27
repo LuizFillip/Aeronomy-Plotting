@@ -193,7 +193,7 @@ def plot_epb_time_feadtures(
         ds,  
         col = '-50', 
         translate = False,
-        threshold = 0.262
+        threshold = 0.20
         ):
 
     fig, ax = plt.subplots(

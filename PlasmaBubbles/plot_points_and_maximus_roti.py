@@ -26,7 +26,7 @@ def get_infos(ds, lon):
 
 def plot_points_and_maximus_roti(
         df, dn, 
-        fontsize = 30, 
+        fontsize = 35, 
         vmax = 4, 
         translate = True
         ):
@@ -117,7 +117,7 @@ def plot_points_and_maximus_roti(
     
     pl.legend_max_points_roti(
             ax[0], 
-            fontsize = 25, 
+            fontsize = 32, 
             s = 80, 
             threshold = threshold,
             anchor = (0.5, 4.8), 
@@ -134,8 +134,8 @@ def main():
              dt.datetime(2013, 1, 17, 21),
              dt.datetime(2014, 2, 9, 21)]
     
-    dn = dates[3]
-    # dn = dt.datetime(2013, 1, 26, 21)
+    dn = dates[2]
+    dn = dt.datetime(2019, 12, 6, 21)
     # dn = dt.datetime(2014, 4, 28, 21)
     df = pb.concat_files(
         dn, 
@@ -149,20 +149,20 @@ def main():
     fig = plot_points_and_maximus_roti(
             df, 
             dn, 
-            fontsize = 30, 
+            fontsize = 35, 
             translate = False
             )
     
     FigureName = dn.strftime('occurrence_%Y%m%d')
     
     
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'timeseries'),
-          dpi = 400
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'timeseries'),
+    #       dpi = 400
+    #       )
     
 
     plt.show()
         
 
-# main()
+main()

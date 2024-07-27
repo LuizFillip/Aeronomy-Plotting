@@ -109,9 +109,11 @@ def plot_roti_points(
                 threshold, 
                 color = 'b'
                 )
-        
+            
+            ax1.set_ylabel('Ocorrência', color = 'b')
+            
         if occurrence:
-            return df1 
+            return ax1
     
     return ds
 

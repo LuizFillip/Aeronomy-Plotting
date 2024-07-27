@@ -61,7 +61,7 @@ def plot_weibull(ax, day):
     
     ax.plot(
         x, 
-        fitted_pdf * 40, 
+        fitted_pdf * 60, 
         label = 'Ajuste Weibull', 
         lw = 3
         )
@@ -117,7 +117,7 @@ def plot_data_roti(ax, df):
         ylabel = 'ROTI (TECU/min)'
         )
     
-    b.format_time_axes(ax, translate = False)
+    b.format_time_axes(ax, pad = 70,  translate = False)
     
     return ax
     
@@ -128,7 +128,7 @@ def plot_roti_demo_threshold(ds, translate = False):
     fig, ax = plt.subplots(
         dpi = 300, 
         ncols = 2,
-        figsize = (14, 8)
+        figsize = (16, 10)
         )
     
     plt.subplots_adjust(wspace = 0.3)
@@ -154,38 +154,39 @@ def plot_roti_demo_threshold(ds, translate = False):
 
 def set_data():
 
-    path = gs.paths(2013, 359, root = 'D:\\')
+    path = gs.paths(2013, 358, root = 'E:\\')
     
     df = pb.load_filter(path.fn_roti())
     
-    receivers = [
-        'pepe',
-          'mabb',
-          'mabs',
-          'crat',
-          'topl',
-          'maba',
-          'pitn',
-          'picr',
-          'brft',
-          'ceft',
-          'ceeu',
-          'salu',
-          'impz'
-          ]
+    # receivers = [
+    #     'pepe',
+    #       'mabb',
+    #       'mabs',
+    #       'crat',
+    #       'topl',
+    #       'maba',
+    #       'pitn',
+    #       'picr',
+    #       'brft',
+    #       'ceft',
+    #       'ceeu',
+    #       'salu',
+    #       'impz'
+    #       ]
         
     
-    df = df.loc[df['sts'].isin(receivers)]
+    df = df.loc[(df['lon'] < -40) & (df['lon'] > -50)]
     
     return df.between_time('12:00', '20:00' )
 
+def main():
+    ds = set_data()
+    
+    fig = plot_roti_demo_threshold(ds)
+    
+    # fig.savefig(
+    #     b.LATEX('threshold_eval', folder = 'products'),
+    #     dpi = 400)
+    plt.show()
 
-# ds = set_data()
-
-
-# fig = plot_roti_demo_threshold(ds)
-
-# fig.savefig(
-#     b.LATEX('threshold_eval', folder = 'products'),
-#     dpi = 400)
-# plt.show()
+# main()
