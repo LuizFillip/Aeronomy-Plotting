@@ -32,6 +32,21 @@ def simple_avg(df):
         
     return pd.DataFrame(out, index = range(1, 13, 1))
 
+
+def sel_season(df, season):
+    
+    if season == 'march':
+        num = [3, 4]
+    elif season == 'september':
+        num = [9, 10]
+    else:
+        num = [12, 11]
+        
+        
+    return df.loc[(df.index.month == num[0]) |
+           (df.index.month == num[1])]
+
+
 def run_by_season(df, year, parameter = 'gamma'):
     df['doy'] = df.index.day_of_year
     
@@ -43,31 +58,102 @@ def run_by_season(df, year, parameter = 'gamma'):
             df, season, translate = True
             )
         
+        
+        ss = sel_season(df, season)
+        
         if parameter == 'epb':
-            sel_s = ss.sel_season[parameter]
-            percent = sel_s.sum() / len(sel_s) * 100
+            sel_s = ss[parameter]
+            
+            percent = sel_s.sum() #/ len(sel_s) * 100
+            # print(percent)
             out[season].append(percent)
         else:
-            out[season].append(
-                ss.sel_season[parameter].mean())
+            sel_s = ss[parameter]
+            out[season].append(sel_s.mean())
+    # print(out)
     return pd.DataFrame(out, index = [year])
      
 def seasonal_by_year(df, parameter = 'gamma'):
     
     out_year = []
-    for year in range(2013, 2024, 1):
+    for year in range(2013, 2023, 1):
             
         df1 = df.loc[df.index.year == year]
+        ds = run_by_season(
+            df1, year, parameter)
         
-        out_year.append(
-            run_by_season(
-                df1, year, parameter)
-            )
+        if parameter == 'epb':
+            total = ds.sum(axis = 1).item()
+            ds = (ds / total) * 100
+        out_year.append(ds)
         
     return pd.concat(out_year)
 
+def plot_epbs_rate(ax):
+    
+    df = pb.sel_typing(
+         b.load('events_class2'), 
+         typing = 'sunset', 
+         indexes = True, 
+         year = 2022)
+    
+    df = df.loc[df['dst'] >= -30]
+    
+    df = df.rename(columns = {-50: 'epb'})
+    
+    ds = seasonal_by_year(df, parameter = 'epb')
+    
+    for offset, col in enumerate(names):
+       
+        width = 0.2  # the width of the bars
+        ax.bar(ds.index + (width * offset),
+               ds[col], width, label=col)
+    
+    ds['eq_diff'] = ds['september']-  ds['march']  
+    
+    ax1 = ax.twinx()
+    
+    ax1.plot(ds.index, ds['eq_diff'], 
+             lw = 1.5, markersize = 10, marker = 's')
+    ax1.axhline(0, linestyle = '--')
+    ax1.set(ylim = [-40, 40], 
+            ylabel = 'Diferença equinócial (\%)')
+    ax.set(
+        ylim = [0, 100],
+        ylabel = 'Taxa de ocorrência (\%)'
+        )
+    
+   
+    return None
+    
+def plot_gamma(ax):
+    df = c.load_results()
+    
+    df = df.loc[df['dst'] >= -30]
+    
+    df = df.loc[df.index.year < 2023]
+    
+    ds = seasonal_by_year(df, parameter = 'gamma')
+    
+    for offset, col in enumerate(names):
+        
+        width = 0.2  # the width of the bars
+        ax.bar(ds.index + (width * offset),
+               ds[col], width, label=col)
+    
+    # plt.xticks(rotation = 0)
+    
+    ax.set(
+        xlim = [ds.index[0] - 0.5, ds.index[-1] + 1],
+        xticks = np.arange(2013, 2023, 1),
+        ylim = [0, 3],
+        xlabel = 'Anos', 
+        ylabel = '$\gamma_{RT}~(10^{-3}~s^{-1})$'
+            )
+    
+    return None
 
-def plot_annualy_quiet_time(df):
+def plot_annualy_quiet_time():
     fig, ax = plt.subplots(
         figsize = (18, 12),
         nrows = 2,
@@ -75,48 +161,21 @@ def plot_annualy_quiet_time(df):
         dpi = 300
         )
     
-    plt.subplots_adjust(hspace = 0.05)
-    
     plt.subplots_adjust(hspace = 0.1)
-
-    ds = seasonal_by_year(df, parameter = 'epb')
     
-    # d = (ds['march'] - ds['september'])
-    ds.plot(ax = ax[0], kind = 'bar', legend = False)
+    plot_epbs_rate(ax[0])
+    plot_gamma(ax[1])
+    
     names1 = ['Março',  'Setembro', 'Dezembro']
-    #'Junho',
-    t = [f'{name}' for name, vl in 
-          zip(names1, ds.sum().values)]
-     
+  
     ax[0].legend(
-         t,
+         names1,
          ncol = 5, 
          bbox_to_anchor = (.5, 1.2), 
          loc = "upper center", 
          columnspacing = 0.3
          )
-    
-    
-    df = c.load_results()
-    
-    df = df.loc[df['dst'] >= -30]
-    
-    ds = seasonal_by_year(df, parameter = 'gamma')
-
-    ds.plot(ax = ax[1], kind = 'bar', legend = False)
-    
     plt.xticks(rotation = 0)
-    
-    ax[1].set(
-        ylim = [0, 3],
-        xlabel = 'Anos', 
-        ylabel = '$\gamma_{RT}~(10^{-3}~s^{-1})$'
-        )
-    
-    ax[0].set(
-        ylim = [0, 120],
-        ylabel = 'Taxa de ocorrência (\%)'
-        )
     
     b.plot_letters(
         ax, 
@@ -125,25 +184,15 @@ def plot_annualy_quiet_time(df):
 
     return fig
 
-df = pb.sel_typing(
-     b.load('events_class2'), 
-     typing = 'sunset', 
-     indexes = True, 
-     year = 2023)
- 
-def main(df):
-    
-    df = df.loc[df['dst'] >= -30]
-    
-    # df = df.loc[df.index.year < 2018]
-    
-    df = df.rename(columns = {-50: 'epb'})
-    
-    fig = plot_annualy_quiet_time(df)
+
+  
+   
+fig = plot_annualy_quiet_time()
+  
+FigureName = 'annual_quiet_time'
       
-    FigureName = 'annual_quiet_time'
-      
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'bars'),
-          dpi = 400
-          )
+fig.savefig(
+      b.LATEX(FigureName, folder = 'bars'),
+      dpi = 400
+      )
+
