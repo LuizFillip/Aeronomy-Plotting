@@ -14,7 +14,8 @@ def plot_terminator(
         ax, 
         sector, 
         midnight = True, 
-        translate = True
+        translate = True,
+        label = False
         ):
     
     if translate:
@@ -34,22 +35,24 @@ def plot_terminator(
     dusk = gg.local_midnight(dn, sector, delta_day = None)
     dusk = round(b.dn2float(dusk))
     
-
-    ax.text(
-        0.01, 0.05, 
-        terminator_label, 
-        color = 'w',
-        transform = ax.transAxes
-        )
+    if label:
+        ax.text(
+            0.01, 0.05, 
+            terminator_label, 
+            color = 'w',
+            transform = ax.transAxes
+            )
     
     if midnight:
         
-        ax.text(
-            dn, dusk + 0.5, 
-            midnight_label, 
-            color = 'w',
-            transform = ax.transData
-            )
+        if label:
+            
+            ax.text(
+                dn, dusk + 0.5, 
+                midnight_label, 
+                color = 'w',
+                transform = ax.transData
+                )
         
         ax.axhline(dusk, lw = 2, color = 'w')
         

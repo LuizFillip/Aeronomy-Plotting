@@ -6,9 +6,9 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import pandas as pd
 import numpy as np 
 
+b.config_labels(fontsize = 30)
 
-
-def plot_histogram(ax, values):
+def plot_histogram(ax, values, i):
        
     args = dict(
         facecolor = 'lightgrey', 
@@ -23,8 +23,7 @@ def plot_histogram(ax, values):
         "right", 2.5, pad = 0.2, sharey = ax)
     
     
-    plt.setp( axHisty.get_yticklabels(),
-              visible=False)
+    plt.setp( axHisty.get_yticklabels(), visible=False)
     
     bins = np.linspace(20, 32, 30)
     
@@ -36,15 +35,21 @@ def plot_histogram(ax, values):
         orientation='horizontal',
         **args
         )
-
+    
 
     axHisty.set(
-   
         ylim = [20, 32], 
-        xlim = [0, 1000]
+        xlim = [0, 250],
+        yticks = np.arange(20, 28 + 4, 4),
+        xticks = np.arange(0, 250, 100),
+        xlabel = 'Frequência \n de ocorrência'
         )
     
-    b.plot_mean_std(axHisty, vls, )
+    if i != 3:
+        axHisty.set(xticklabels = [], 
+                    xlabel = '')
+    
+    b.plot_mean_std(axHisty, vls, x = 0.09, y = 0.1)
     
     return axHisty 
 
@@ -55,7 +60,6 @@ def get_ticks(values, ds, step = 1):
     start = ds.index[0].strftime('%Y-01-01')
     end = ds.index[-1].strftime('%Y-12-31')
     
-    
     xticks = pd.date_range(start, end, periods = y)
     
     return xticks, yticks
@@ -64,7 +68,7 @@ def get_ticks(values, ds, step = 1):
 def plot_hourly_and_histograms(
         ds,
         translate = False, 
-        fontsize = 35
+        fontsize = 45
         ):
     
     
@@ -75,9 +79,11 @@ def plot_hourly_and_histograms(
            dpi = 300, 
            sharex = True, 
            sharey = True,
-           figsize = (16, 14)
+           figsize = (18, 14)
            )
     
+    
+    plt.subplots_adjust(hspace = 0.1)
     values = pb.annual_hourly_all_sectors(
             ds, 
             normalize = True,
@@ -87,6 +93,7 @@ def plot_hourly_and_histograms(
     
     
     xticks, yticks = get_ticks(values, ds, step = 1)
+  
     sectors = list(range(-80, -40, 10))[::-1]
     
     
@@ -104,16 +111,20 @@ def plot_hourly_and_histograms(
               vmin = 0
               )
         
-        plot_histogram(
-            ax[i], ds1['start'].values )
-        
-        
+        plot_histogram(ax[i], ds1['start'].values, i)
+
+        ax[i].set(xlim = [xticks[0], xticks[-1]])
         pl.plot_terminator(ax[i], sector, translate = False)
         
         l = b.chars()[i]
         s = f'({l}) Setor {i + 1}'
         
-        ax[i].text(0., 1.05, s, transform = ax[i].transAxes)
+        ax[i].text(
+            0.01, 0.82, s, 
+            transform = ax[i].transAxes, 
+            color = 'w',
+            fontsize = 35
+            )
         
     if translate:
         ylabel = 'Universal time'
@@ -129,17 +140,19 @@ def plot_hourly_and_histograms(
             vmin = 0, 
             vmax = 100, 
             cmap = 'jet',
-            fontsize = 25,
+            fontsize = 35,
             step = 10,
             label = zlabel, 
-            sets = [0.32, 0.98, 0.4, 0.02], 
+            sets = [0.32, 0.96, 0.4, 0.02], 
             orientation = 'horizontal', 
             levels = 10
             )
+
     
-    ax[-1].set(xlabel = xlabel)
+    ax[-1].set_xlabel(xlabel, fontsize = fontsize)
+    
     fig.text(
-        0.045, 0.41, 
+        0.05, 0.38, 
         ylabel, 
         fontsize = fontsize, 
         rotation = 'vertical'
@@ -148,8 +161,10 @@ def plot_hourly_and_histograms(
 
 def main():
     ds = b.load('events_class2')
+    ds = ds.loc[ds.index.year < 2023]
     
-    type_in = 'sunset'
+    # for type_in in ['sunset', 'midnight']:
+    type_in = 'midnight'
     ds = ds.loc[(ds['drift'] == 'fresh') & 
                 (ds['type'] == type_in)]
     
@@ -162,3 +177,6 @@ def main():
     fig.savefig(
           b.LATEX(FigureName, 'climatology'),
           dpi = 400)
+
+
+main()
