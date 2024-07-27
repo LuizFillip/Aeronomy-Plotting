@@ -38,7 +38,8 @@ def plot_infos_in_distribution(
         event = 'eventos'
     else:
         event = 'events'
-        
+    
+    colors = ['k', 'b', '#00B945']
     for i, val in enumerate(values):
         
         info = fmt(i + 1, val) + event
@@ -48,15 +49,15 @@ def plot_infos_in_distribution(
             ax.text(
                 x, y, f'{title_p}\n{info}', 
                 transform = ax.transAxes, 
-                color = 'k'
+                color = colors[i]
                 ) 
         else:
             ax.text(
-                x, y - offset_y, f'{info}', 
+                x, y - offset_y * i,
+                f'{info}', 
                 transform = ax.transAxes, 
-                color = 'b'
-                ) #'#0C5DA5'
-
+                color = colors[i]
+                ) 
     return None 
 
     

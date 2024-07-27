@@ -7,10 +7,11 @@ import plotting as pl
 b.config_labels(fontsize = 25, blue = True)
 
 legend_args = dict(
-    ncol = 2, 
+    ncol = 3, 
     loc = 'upper center', 
-    labelcolor = 'linecolor'
-    
+    labelcolor = 'linecolor',
+    fontsize = 20,
+    columnspacing = 0.2,
     )
 
 
@@ -41,7 +42,7 @@ def plot_distributions_solar_flux(
     total_epb = []
     total_day = []
    
-    for i, ds in enumerate(df_index.F107(level)):
+    for i, ds in enumerate(df_index.F107_2(level)):
         
         index = i + 1
         label = f'({index}) {F107_labels[i]}'
@@ -56,7 +57,6 @@ def plot_distributions_solar_flux(
                 translate = translate,
                 limit = limit
             )
-    
         days = pl.plot_histogram(
                 ax[1], 
                 data, 
@@ -64,7 +64,8 @@ def plot_distributions_solar_flux(
                 label, 
                 parameter = parameter,
                 axis_label = True,
-                translate = translate
+                translate = translate, 
+                width = 0.001
             )
         
         ax[1].set(ylim = [0, 600])
@@ -74,15 +75,15 @@ def plot_distributions_solar_flux(
         
         l = b.chars()[i]
         
-        ax[i].text(
-            0.03, 0.87,
-            f'({l})',
-            transform = ax[i].transAxes, 
-            fontsize = 30
-            )
+        # ax[i].text(
+        #     0.03, 0.87,
+        #     f'({l})',
+        #     transform = ax[i].transAxes, 
+        #     fontsize = 30
+        #     )
         
     x = 0.7
-    y = 0.25
+    y = 0.35
     offset_y = 0.1
     
     ax[1].legend(**legend_args)
@@ -113,9 +114,9 @@ def plot_distributions_solar_flux(
 
 def main():
     
-    translate = True
+    translate = False
 
-    df = c.load_results('saa', eyear = 2022)
+    df = c.load_results('saa', eyear = 2023)
 
     limit = c.limits_on_parts(df['f107a'], parts = 2 )
 
@@ -124,7 +125,7 @@ def main():
     fig = plot_distributions_solar_flux(
             df, 
             parameter,
-            level = limit, 
+            level = limit, #[75, 100], 
             translate = translate, 
             outliner = 10,
             limit = True
@@ -137,13 +138,13 @@ def main():
         
     FigureName = f'solar_flux_{parameter}2'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder),
+    #     dpi = 400
+    #     )
 
 
     plt.show()
     
-# main()
+main()
 

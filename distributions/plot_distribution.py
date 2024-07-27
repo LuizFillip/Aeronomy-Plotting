@@ -49,7 +49,7 @@ def plot_histogram(
     if index == 0:
         offset = (width / 2)
     else:
-        offset = - (width / 2)
+        offset = - (width / 2) * index
         
     ax.bar(
         ds['start'] + offset,
@@ -126,7 +126,8 @@ def plot_distribution(
     else:
         vmin, vmax, step = c.compute_limits(df, parameter)
     
-   
+    vmin, vmax, step = 0, 1, 0.2
+    
     if parameter == 'vp':
         xlabel = b.y_label('vp')
     else:
