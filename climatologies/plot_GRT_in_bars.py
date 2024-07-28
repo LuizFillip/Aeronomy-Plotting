@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt
 import PlasmaBubbles as pb 
 import numpy as np 
 import datetime as dt 
+import plotting as pl 
 
 PATH_GAMMA = 'database/gamma/p1_saa.txt'
 
-b.config_labels(blue = False, fontsize = 30)
+b.config_labels(blue = False, fontsize = 35)
 
 
 names = ['march',  'september', 'december']
@@ -64,7 +65,7 @@ def run_by_season(df, year, parameter = 'gamma'):
         if parameter == 'epb':
             sel_s = ss[parameter]
             
-            percent = sel_s.sum() #/ len(sel_s) * 100
+            percent = sel_s.sum() / len(sel_s) * 100
             # print(percent)
             out[season].append(percent)
         else:
@@ -82,9 +83,10 @@ def seasonal_by_year(df, parameter = 'gamma'):
         ds = run_by_season(
             df1, year, parameter)
         
-        if parameter == 'epb':
-            total = ds.sum(axis = 1).item()
-            ds = (ds / total) * 100
+        # if parameter == 'epb':
+        #     total = ds.sum(axis = 1).item()
+        #     ds = (ds / total) * 100
+            
         out_year.append(ds)
         
     return pd.concat(out_year)
@@ -102,7 +104,7 @@ def plot_epbs_rate(ax):
     df = df.rename(columns = {-50: 'epb'})
     
     ds = seasonal_by_year(df, parameter = 'epb')
-    
+
     for offset, col in enumerate(names):
        
         width = 0.2  # the width of the bars
@@ -113,16 +115,24 @@ def plot_epbs_rate(ax):
     
     ax1 = ax.twinx()
     
-    ax1.plot(ds.index, ds['eq_diff'], 
+    ax1.plot(ds.index, ds['eq_diff'],  color = 'red',
              lw = 1.5, markersize = 10, marker = 's')
+    
     ax1.axhline(0, linestyle = '--')
-    ax1.set(ylim = [-40, 40], 
-            ylabel = 'Diferença equinócial (\%)')
+    
+    ax1.set(ylim = [-50, 50], 
+            ylabel = 'Diferença equinocial (\%)')
     ax.set(
-        ylim = [0, 100],
+        ylim = [0, 120],
         ylabel = 'Taxa de ocorrência (\%)'
         )
     
+    b.change_axes_color(
+            ax1, 
+            color = 'red',
+            axis = "y", 
+            position = "right"
+            )
    
     return None
     
@@ -140,19 +150,57 @@ def plot_gamma(ax):
         width = 0.2  # the width of the bars
         ax.bar(ds.index + (width * offset),
                ds[col], width, label=col)
-    
-    # plt.xticks(rotation = 0)
-    
+        
     ax.set(
         xlim = [ds.index[0] - 0.5, ds.index[-1] + 1],
         xticks = np.arange(2013, 2023, 1),
         ylim = [0, 3],
-        xlabel = 'Anos', 
+        
         ylabel = '$\gamma_{RT}~(10^{-3}~s^{-1})$'
             )
     
+    ax1 = ax.twinx()
+    
+    pl.plot_f107(ax1, mean = None)
+    
+    b.change_axes_color(
+            ax1, 
+            color = 'red',
+            axis = "y", 
+            position = "right"
+            )
     return None
 
+def plot_neutral_composition(ax):
+    import GEO as gg 
+    
+    df = b.load('models/temp/msis_saa_300')
+    
+    df = df.loc[(df.index.time == dt.time(22, 0)) &
+                (df.index.year  < 2023)]
+    
+    df.index = df.index.to_series().apply(
+        lambda n: n.replace(hour = 0))
+    
+    df['N2O2'] = df['O'] / df['N2']
+    
+    df = df.resample('1M').mean()
+    
+    mar = df.loc[df.index.month == 3]
+    mar.index = mar.index.map(gg.year_fraction)
+    
+    sep = df.loc[df.index.month == 9]
+    sep.index = sep.index.map(gg.year_fraction)
+    
+    df.index = df.index.map(gg.year_fraction)
+    # df.loc[df.index.year == 2015]
+    ax.plot(df['N2O2'], lw = 2)
+    ax.scatter(mar.index, mar['N2O2'], s = 50, c = 'k')
+    ax.scatter(sep.index, sep['N2O2'], s = 50, c = 'b')
+    ax.set(ylabel = '$n(O) / n(N_2)$',
+           ylim = [2, 10])
+    
+    return None 
 def plot_annualy_quiet_time():
     fig, ax = plt.subplots(
         figsize = (18, 12),
@@ -165,9 +213,11 @@ def plot_annualy_quiet_time():
     
     plot_epbs_rate(ax[0])
     plot_gamma(ax[1])
+    # plot_neutral_composition(ax[2])
+    
     
     names1 = ['Março',  'Setembro', 'Dezembro']
-  
+    ax[-1].set(xlabel = 'Anos')
     ax[0].legend(
          names1,
          ncol = 5, 
