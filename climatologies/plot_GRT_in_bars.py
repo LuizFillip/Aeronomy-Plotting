@@ -91,7 +91,7 @@ def seasonal_by_year(df, parameter = 'gamma'):
         
     return pd.concat(out_year)
 
-def plot_epbs_rate(ax):
+def plot_epbs_rate(ax, translate = True):
     
     df = pb.sel_typing(
          b.load('events_class2'), 
@@ -107,7 +107,7 @@ def plot_epbs_rate(ax):
 
     for offset, col in enumerate(names):
        
-        width = 0.2  # the width of the bars
+        width = 0.2  
         ax.bar(ds.index + (width * offset),
                ds[col], width, label=col)
     
@@ -115,16 +115,21 @@ def plot_epbs_rate(ax):
     
     ax1 = ax.twinx()
     
+    # print(ds.mean())
+    
     ax1.plot(ds.index, ds['eq_diff'],  color = 'red',
              lw = 1.5, markersize = 10, marker = 's')
     
     ax1.axhline(0, linestyle = '--')
     
-    ax1.set(ylim = [-50, 50], 
-            ylabel = 'Diferença equinocial (\%)')
+    ax1.set(ylim = [-50, 50], ) #ylabel = 'Diferença equinocial (\%)'
+    if translate: 
+        ylabel = 'Rate of occurrence (\%)'
+    else:
+        ylabel = 'Taxa de ocorrência (\%)'
     ax.set(
         ylim = [0, 120],
-        ylabel = 'Taxa de ocorrência (\%)'
+        ylabel = ylabel
         )
     
     b.change_axes_color(
@@ -160,9 +165,14 @@ def plot_gamma(ax):
             )
     
     ax1 = ax.twinx()
+    ds['eq_diff'] = ds['september']-  ds['march']  
+    # pl.plot_f107(ax1, mean = None)
+    ax1.plot(ds.index, ds['eq_diff'],  color = 'red',
+             lw = 1.5, markersize = 10, marker = 's')
     
-    pl.plot_f107(ax1, mean = None)
-    
+    ax1.axhline(0, linestyle = '--')
+    ax1.set(ylim = [-1, 1], 
+            ylabel = 'Equinox difference')
     b.change_axes_color(
             ax1, 
             color = 'red',
@@ -171,6 +181,52 @@ def plot_gamma(ax):
             )
     return None
 
+
+def plot_vp(ax, translate = False):
+    df = c.load_results()
+    
+    df = df.loc[df['dst'] >= -30]
+    
+    df = df.loc[df.index.year < 2023]
+    
+    ds = seasonal_by_year(df, parameter = 'vp')
+    
+    ds['eq_diff'] = ds['september']-  ds['march']  
+    
+    for offset, col in enumerate(names):
+        
+        width = 0.2  # the width of the bars
+        ax.bar(ds.index + (width * offset),
+               ds[col], width, label=col)
+    
+    ax.set(
+        xlim = [ds.index[0] - 0.5, ds.index[-1] + 1],
+        xticks = np.arange(2013, 2023, 1),
+        ylim = [0, 80],
+        
+        ylabel = '$V_P$ (m/s)'
+            )
+    
+    ax1 = ax.twinx()
+    ax1.plot(ds.index, ds['eq_diff'],  color = 'red',
+             lw = 1.5, markersize = 10, marker = 's')
+    
+    ax1.axhline(0, linestyle = '--')
+    
+    if translate:
+        ylabel = 'difference'
+    
+    ax1.set(ylim = [-20, 20])
+
+
+    b.change_axes_color(
+            ax1, 
+            color = 'red',
+            axis = "y", 
+            position = "right"
+            )
+    return 
+    
 def plot_neutral_composition(ax):
     import GEO as gg 
     
@@ -201,10 +257,11 @@ def plot_neutral_composition(ax):
            ylim = [2, 10])
     
     return None 
-def plot_annualy_quiet_time():
+
+def plot_annualy_quiet_time(translate = True):
     fig, ax = plt.subplots(
-        figsize = (18, 12),
-        nrows = 2,
+        figsize = (18, 14),
+        nrows = 3,
         sharex = True,
         dpi = 300
         )
@@ -213,24 +270,34 @@ def plot_annualy_quiet_time():
     
     plot_epbs_rate(ax[0])
     plot_gamma(ax[1])
-    # plot_neutral_composition(ax[2])
+    plot_vp(ax[2])
     
     
-    names1 = ['Março',  'Setembro', 'Dezembro']
-    ax[-1].set(xlabel = 'Anos')
+    
+    if translate:
+        xlabel = 'Years'
+        names1 = ['March',  'September', 'December']
+
+    else:
+        xlabel = 'Anos'
+        names1 = ['Março',  'Setembro', 'Dezembro']
+    ax[-1].set_xlabel(xlabel)
     ax[0].legend(
          names1,
          ncol = 5, 
-         bbox_to_anchor = (.5, 1.2), 
+         bbox_to_anchor = (.5, 1.3), 
          loc = "upper center", 
          columnspacing = 0.3
          )
+    
     plt.xticks(rotation = 0)
     
     b.plot_letters(
         ax, 
-        y = 0.85, 
-        x = 0.03, fontsize = 40)
+        y = 0.9, 
+        x = 0.03, 
+        fontsize = 40
+        )
 
     return fig
 
@@ -241,8 +308,8 @@ fig = plot_annualy_quiet_time()
   
 FigureName = 'annual_quiet_time'
       
-fig.savefig(
-      b.LATEX(FigureName, folder = 'bars'),
-      dpi = 400
-      )
+# fig.savefig(
+#       b.LATEX(FigureName, folder = 'bars'),
+#       dpi = 400
+#       )
 
