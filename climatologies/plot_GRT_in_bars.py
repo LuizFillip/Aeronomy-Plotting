@@ -14,6 +14,27 @@ b.config_labels(blue = False, fontsize = 35)
 
 names = ['march',  'september', 'december']
 
+def mean_compose(ds, direction = 'zonal'):
+    
+ 
+    df1 = pd.pivot_table(
+        ds, 
+        values = direction, 
+        index = 'time', 
+        columns = 'day')
+
+    data  = {
+        'mean': df1.mean(axis = 1), 
+        'std': df1.std(axis = 1), 
+        }
+    
+    df = pd.DataFrame(data, index = df1.index)
+
+    # ref = dt.datetime(2014, 1, 1)
+    # df.index = b.new_index_by_ref(ref, df.index)
+    
+    return df 
+
 def simple_avg(df):
 
     out = {
@@ -44,8 +65,9 @@ def sel_season(df, season):
         num = [12, 11]
         
         
-    return df.loc[(df.index.month == num[0]) |
-           (df.index.month == num[1])]
+    return df.loc[
+        (df.index.month == num[0]) |
+        (df.index.month == num[1])]
 
 
 def run_by_season(df, year, parameter = 'gamma'):
@@ -55,9 +77,9 @@ def run_by_season(df, year, parameter = 'gamma'):
     out = {name: [] for name in names}
     
     for season in names:
-        ss = c.SeasonsSplit(
-            df, season, translate = True
-            )
+        # ss = c.SeasonsSplit(
+        #     df, season, translate = True
+        #     )
         
         
         ss = sel_season(df, season)
@@ -66,12 +88,12 @@ def run_by_season(df, year, parameter = 'gamma'):
             sel_s = ss[parameter]
             
             percent = sel_s.sum() / len(sel_s) * 100
-            # print(percent)
+           
             out[season].append(percent)
         else:
             sel_s = ss[parameter]
             out[season].append(sel_s.mean())
-    # print(out)
+   
     return pd.DataFrame(out, index = [year])
      
 def seasonal_by_year(df, parameter = 'gamma'):
@@ -83,13 +105,32 @@ def seasonal_by_year(df, parameter = 'gamma'):
         ds = run_by_season(
             df1, year, parameter)
         
-        # if parameter == 'epb':
-        #     total = ds.sum(axis = 1).item()
-        #     ds = (ds / total) * 100
-            
         out_year.append(ds)
         
     return pd.concat(out_year)
+
+def plot_equinox_difference(ax, ds):
+    ds['eq_diff'] = 100 *(
+        ds['september']- ds['march']) / ds['september']
+    
+    ax1 = ax.twinx()
+    
+    ax1.plot(ds.index, ds['eq_diff'],  color = 'red',
+             lw = 1.5, markersize = 10, marker = 's')
+    
+    ax1.axhline(0, linestyle = '--')
+    
+    ax1.set(ylim = [-60, 60])
+    
+    
+    b.change_axes_color(
+            ax1, 
+            color = 'red',
+            axis = "y", 
+            position = "right"
+            )
+    
+    return ax1
 
 def plot_epbs_rate(ax, translate = True):
     
@@ -111,34 +152,16 @@ def plot_epbs_rate(ax, translate = True):
         ax.bar(ds.index + (width * offset),
                ds[col], width, label=col)
     
-    ds['eq_diff'] = ds['september']-  ds['march']  
-    
-    ax1 = ax.twinx()
-    
-    # print(ds.mean())
-    
-    ax1.plot(ds.index, ds['eq_diff'],  color = 'red',
-             lw = 1.5, markersize = 10, marker = 's')
-    
-    ax1.axhline(0, linestyle = '--')
-    
-    ax1.set(ylim = [-50, 50], ) #ylabel = 'Diferença equinocial (\%)'
     if translate: 
         ylabel = 'Rate of occurrence (\%)'
     else:
         ylabel = 'Taxa de ocorrência (\%)'
+        
     ax.set(
         ylim = [0, 120],
         ylabel = ylabel
         )
-    
-    b.change_axes_color(
-            ax1, 
-            color = 'red',
-            axis = "y", 
-            position = "right"
-            )
-   
+    plot_equinox_difference(ax, ds)
     return None
     
 def plot_gamma(ax):
@@ -164,21 +187,7 @@ def plot_gamma(ax):
         ylabel = '$\gamma_{RT}~(10^{-3}~s^{-1})$'
             )
     
-    ax1 = ax.twinx()
-    ds['eq_diff'] = ds['september']-  ds['march']  
-    # pl.plot_f107(ax1, mean = None)
-    ax1.plot(ds.index, ds['eq_diff'],  color = 'red',
-             lw = 1.5, markersize = 10, marker = 's')
-    
-    ax1.axhline(0, linestyle = '--')
-    ax1.set(ylim = [-1, 1], 
-            ylabel = 'Equinox difference')
-    b.change_axes_color(
-            ax1, 
-            color = 'red',
-            axis = "y", 
-            position = "right"
-            )
+    plot_equinox_difference(ax, ds)
     return None
 
 
@@ -191,7 +200,7 @@ def plot_vp(ax, translate = False):
     
     ds = seasonal_by_year(df, parameter = 'vp')
     
-    ds['eq_diff'] = ds['september']-  ds['march']  
+    ds['eq_diff'] = 100 *(ds['september']- ds['march']) / ds['september'] 
     
     for offset, col in enumerate(names):
         
@@ -207,58 +216,25 @@ def plot_vp(ax, translate = False):
         ylabel = '$V_P$ (m/s)'
             )
     
-    ax1 = ax.twinx()
-    ax1.plot(ds.index, ds['eq_diff'],  color = 'red',
-             lw = 1.5, markersize = 10, marker = 's')
-    
-    ax1.axhline(0, linestyle = '--')
-    
-    if translate:
-        ylabel = 'difference'
-    
-    ax1.set(ylim = [-20, 20])
-
-
-    b.change_axes_color(
-            ax1, 
-            color = 'red',
-            axis = "y", 
-            position = "right"
-            )
+    plot_equinox_difference(ax, ds)
     return 
     
-def plot_neutral_composition(ax):
-    import GEO as gg 
-    
-    df = b.load('models/temp/msis_saa_300')
-    
-    df = df.loc[(df.index.time == dt.time(22, 0)) &
-                (df.index.year  < 2023)]
-    
-    df.index = df.index.to_series().apply(
-        lambda n: n.replace(hour = 0))
-    
-    df['N2O2'] = df['O'] / df['N2']
-    
-    df = df.resample('1M').mean()
-    
-    mar = df.loc[df.index.month == 3]
-    mar.index = mar.index.map(gg.year_fraction)
-    
-    sep = df.loc[df.index.month == 9]
-    sep.index = sep.index.map(gg.year_fraction)
-    
-    df.index = df.index.map(gg.year_fraction)
-    # df.loc[df.index.year == 2015]
-    ax.plot(df['N2O2'], lw = 2)
-    ax.scatter(mar.index, mar['N2O2'], s = 50, c = 'k')
-    ax.scatter(sep.index, sep['N2O2'], s = 50, c = 'b')
-    ax.set(ylabel = '$n(O) / n(N_2)$',
-           ylim = [2, 10])
-    
-    return None 
 
-def plot_annualy_quiet_time(translate = True):
+def set_data(file):
+    
+    df = b.load('database/FabryPerot/' + file)
+    
+    df['zon'] = df[['west', 'east']].mean(axis = 1)
+    df['mer'] = df[['south', 'north']].mean(axis = 1)
+    df['time'] = df.index.to_series().apply(b.dn2float)
+    df['day'] = (df.index.year + 
+                 df.index.month / 12  +
+                 df.index.day / 31)
+    
+    return df
+
+
+def plot_annualy_quiet_time(translate = False):
     fig, ax = plt.subplots(
         figsize = (18, 14),
         nrows = 3,
@@ -268,12 +244,10 @@ def plot_annualy_quiet_time(translate = True):
     
     plt.subplots_adjust(hspace = 0.1)
     
-    plot_epbs_rate(ax[0])
+    plot_epbs_rate(ax[0], translate)
     plot_gamma(ax[1])
-    plot_vp(ax[2])
-    
-    
-    
+    # plot_vp(ax[1])
+    pl.plot_f107(ax[2], mean = None)
     if translate:
         xlabel = 'Years'
         names1 = ['March',  'September', 'December']
@@ -281,6 +255,7 @@ def plot_annualy_quiet_time(translate = True):
     else:
         xlabel = 'Anos'
         names1 = ['Março',  'Setembro', 'Dezembro']
+        
     ax[-1].set_xlabel(xlabel)
     ax[0].legend(
          names1,
@@ -294,9 +269,21 @@ def plot_annualy_quiet_time(translate = True):
     
     b.plot_letters(
         ax, 
-        y = 0.9, 
+        y = 0.8, 
         x = 0.03, 
         fontsize = 40
+        )
+    if translate:
+        label = "Equinox difference (\%)"
+    else:
+        label = 'Diferença equinocial (\%)'
+        
+    fig.text(
+        0.96, 0.45, 
+        label,
+        rotation = 'vertical',
+        fontsize = 40,
+        color = 'red'
         )
 
     return fig
@@ -313,3 +300,19 @@ FigureName = 'annual_quiet_time'
 #       dpi = 400
 #       )
 
+# df = set_data('mean')
+# # 
+
+# ds = df.loc[
+#     (df.index.time >= dt.time(22, 0)) | 
+#     (df.index.time <= dt.time(0, 0))]
+
+# ds = ds.resample('1D').mean()
+
+
+# ds = seasonal_by_year(ds, parameter = 'mer')
+
+
+# # df.loc[df.index.year == 2016]
+
+# ds

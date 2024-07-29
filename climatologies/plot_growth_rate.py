@@ -197,15 +197,15 @@ def set_data_and_plot():
     df['gamma2'] = df['ratio'] * df['K'] * (
         - df['mer_perp'] + df['gr'])
     
-    
+    print(df.resample('1M').mean().max())
     fig = plot_annual_GRT(df, translate=True, gamma = gamma)
     
     FigureName = f'annual_{gamma}_parameters'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder = 'paper2'), dpi = 300)
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder = 'paper2'), dpi = 300)
 
 
 
-set_data_and_plot()
+# set_data_and_plot()
 
