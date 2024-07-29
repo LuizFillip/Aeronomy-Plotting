@@ -35,7 +35,7 @@ def plot_seasonal_occurrence(
     
     fig, ax = plt.subplots(
         dpi = 300, 
-        figsize = (16, 10)
+        figsize = (18, 8)
         )
             
     df = c.count_occurences(ds).month
@@ -78,10 +78,10 @@ def plot_seasonal_occurrence(
         t,
         ncol = 5, 
         title = title,
-        bbox_to_anchor = (.5, 1.22), 
+        bbox_to_anchor = (.5, 1.3), 
         loc = "upper center", 
         columnspacing = 0.3,
-        fontsize = 28
+        fontsize = 30
         )
     
     return fig
@@ -92,7 +92,7 @@ def plot_seasonal_occurrence(
 def main():
 
     df = b.load('events_class2')
-    
+    df = df.loc[df.index.year < 2023]
     translate = True
     
     for typing in ['sunset', 'midnight']:
@@ -110,6 +110,12 @@ def main():
               b.LATEX(FigureName, folder = 'bars'),
               dpi = 400
               )
-    
+    # 
 # main()
+
+
+# df = b.load('events_class2')
+# df = df.loc[df.index.year < 2023]
+
+# df['']
 

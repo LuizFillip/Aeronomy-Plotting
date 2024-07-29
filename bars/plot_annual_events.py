@@ -4,7 +4,7 @@ import base as b
 import PlasmaBubbles as pb 
 
 
-b.config_labels(blue = False, fontsize = 30)
+b.config_labels(blue = False, fontsize = 35)
 
 
 def plot_annually_events_count(
@@ -36,7 +36,7 @@ def plot_annually_events_count(
     fig, ax = plt.subplots(
         dpi = 300, 
         sharex = True,
-        figsize = (16, 10)
+        figsize = (18, 8)
         )
         
     df = c.count_occurences(ds).year
@@ -77,15 +77,18 @@ def plot_annually_events_count(
         t,
         ncol = 5, 
         title = title,
-        bbox_to_anchor = (.5, 1.22), 
+        bbox_to_anchor = (.5, 1.3), 
         loc = "upper center", 
         columnspacing = 0.3,
-        fontsize = 28
+        fontsize = 30
         )
     return fig
 
 def main():
     df = b.load('events_class2')
+    
+    df = df.loc[df.index.year < 2023]
+    
     translate = True
     for typing in ['sunset', 'midnight']:
       
