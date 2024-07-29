@@ -35,7 +35,9 @@ def plot_distributions_seasons(
         
         F107_labels = df_index.solar_labels(solar_level)
         
-        for index, df_level in enumerate(df_index.F107(solar_level)):
+        solar_flux_data = df_index.F107_2(solar_level)
+        
+        for index, df_level in enumerate(solar_flux_data):
     
             data, epb = pl.plot_distribution(
                     ax[row, 0], 
@@ -59,24 +61,34 @@ def plot_distributions_seasons(
             
             total_day.append(days)
             
+            if len(solar_flux_data) == 2:
+                ylim = [0, 350]
+            else:
+                ylim = [0, 250]
+                
             ax[row, 1].set(
-                ylim = [0, 350], 
-                yticks = list(range(0, 400, 100))
+                ylim = ylim, 
+                yticks = list(range(ylim[0], ylim[-1] + 50, 100))
                 )
                     
-            ax[row, index].text(
+            ax[row, 0].text(
                 0.35, 0.82,
                 f'{df_season.name}',
-                transform = ax[row, index].transAxes
+                transform = ax[row, 0].transAxes
+                )
+        
+            ax[row, 1].text(
+                0.35, 0.82,
+                f'{df_season.name}',
+                transform = ax[row, 1].transAxes
                 )
             
-
         TOTAL = [total_epb, total_day]
        
         pl.plot_events_infos(
             ax, row, TOTAL, 
             x = 0.58,
-            y = 0.3,
+            y = 0.4, #0.3
             parameter = parameter,
             translate = translate
             )
@@ -94,8 +106,8 @@ def plot_distributions_seasons(
 
 def main():
     
-    translate = True
-    parameter = 'vp'
+    translate = False
+    parameter = 'gamma'
     df = c.load_results('saa', eyear = 2022)
     
     solar_limit = c.limits_on_parts(df['f107a'])
@@ -103,7 +115,7 @@ def main():
     fig = plot_distributions_seasons(
             df, 
             parameter = parameter,
-            solar_level = solar_limit,
+            solar_level = [75, 100], #solar_limit
             translate = translate,
             outliner = 10,
             limit = True
@@ -117,10 +129,10 @@ def main():
         folder = 'distributions/en/'
         
         
-    fig.savefig(
-        b.LATEX(FigureName, folder),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder),
+    #     dpi = 400
+    #     )
     
 
     plt.show()

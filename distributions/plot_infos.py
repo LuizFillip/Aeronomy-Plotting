@@ -91,18 +91,22 @@ def plot_events_infos(
             )
                 
         ax[0, col].legend(
-            ncol = 2, 
+            ncol = 3, 
             bbox_to_anchor = (0.5, 1.3),
             loc = "upper center", 
+            columnspacing = 0.2,
             labelcolor = 'linecolor'
             )
+        
         l = b.chars()[col]
         
         ax[0, col].text(
-            -0.1, 1.2, f'({l})', 
+            -0.2, 1.25, f'({l})', 
             fontsize = 35,
             transform = ax[0, col].transAxes
             )
+        
+    return None 
 
 def FigureLabels(
         fig, 
@@ -145,7 +149,8 @@ def FigureLabels(
         xlabel, 
         fontsize = fontsize
         )
-    
+    return None 
+
 def plot_epbs_number(ax, data, color = 'k'):
     if color == 'k':
         offset = -12
@@ -158,6 +163,8 @@ def plot_epbs_number(ax, data, color = 'k'):
                 int(z),
                 transform = ax.transData, 
                 color = color)
+        
+    return None 
         
         
 def axes_for_seasonal_plot(nrows = 4):

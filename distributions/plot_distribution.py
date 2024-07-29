@@ -126,7 +126,7 @@ def plot_distribution(
     else:
         vmin, vmax, step = c.compute_limits(df, parameter)
     
-    vmin, vmax, step = 0, 1, 0.2
+    # vmin, vmax, step = 0, 1, 0.2
     
     if parameter == 'vp':
         xlabel = b.y_label('vp')

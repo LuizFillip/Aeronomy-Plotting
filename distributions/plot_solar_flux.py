@@ -125,7 +125,7 @@ def main():
     fig = plot_distributions_solar_flux(
             df, 
             parameter,
-            level = limit, #[75, 100], 
+            level = [75, 100], 
             translate = translate, 
             outliner = 10,
             limit = True
