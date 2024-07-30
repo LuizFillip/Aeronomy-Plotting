@@ -79,9 +79,9 @@ def main():
     
     FigureName = 'seasonality_supression_events_sector_1'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder = 'bars'),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'bars'),
+        dpi = 400
+        )
     
 main()
