@@ -8,14 +8,6 @@ import pandas as pd
 
 b.config_labels()
 
-
-
-
-
-
-
-
-
 def plot_seasonal_hourly_all_sectors(
         ds, 
         fontsize = 35, 
