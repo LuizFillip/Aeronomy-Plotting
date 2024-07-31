@@ -3,84 +3,37 @@ import core as c
 import pandas as pd 
 import matplotlib.pyplot as plt 
 import datetime as dt 
-import numpy as np
-import datetime as dt 
+
 
 
 b.config_labels(fontsize = 30)
 
-def ones_data(dn):
-    start = dn.replace(hour = 21)
-    end = start + dt.timedelta(hours = 10)
-    # df_source = c.geo_index()
-    # df['dst'] = df.index.map(df_source['dst'])
-    
-    
-    index = pd.date_range(start, end, freq = '10min')
-    
-    return pd.DataFrame({'epb': np.ones(len(index))}, index = index)
 
-
-def adding_epb_occurrence(df):
-    
-    ds = b.load('events_class2')
-    ds = ds.loc[
-        (ds['type'] == 'sunset') &
-        (ds['drift'] == 'fresh') &
-        (ds['lon'] == -50)]
-
-    out = []
-    for dn in ds.index:
-        out.append(ones_data(dn))
-        
-    ds1 = pd.concat(out)
-    
-    df['epb'] = df.index.map(ds1['epb'])
-    
-    df['epb'] = df['epb'].replace(float('nan'), 0)
-    
-    return df 
 
 
 def mean_compose(ds, direction = 'zonal'):
     
-    if direction == 'zonal':
-        dirs = ['east', 'west']
-    else:
-        dirs = ['north', 'south']
-    
-    
+ 
     df1 = pd.pivot_table(
         ds, 
-        values = 'zonal', # dirs[0], 
+        values = direction, 
         index = 'time', 
         columns = 'day')
-    
-    # df2 = pd.pivot_table(
-    #     ds, 
-    #     values = dirs[1], 
-    #     index = 'time', 
-    #     columns = 'day'
-    #     )
-    
+
     data  = {
-        # 'mean': df2.mean(axis = 1), 
         'mean': df1.mean(axis = 1), 
         'std': df1.std(axis = 1), 
-        # 'swest': df2.std(axis = 1)
         }
     
     df = pd.DataFrame(data, index = df1.index)
-   
-    # df['mean'] = df[['west', 'east']].mean(axis = 1)
-    # df['std'] = df[['swest', 'seast']].mean(axis = 1)
+
     ref = dt.datetime(2014, 1, 1)
     df.index = b.new_index_by_ref(ref, df.index)
     
     return df 
 
  
-def plot_curves(ax, df1, label):
+def plot_curves(ax, df1, label = ''):
     
     ax.errorbar(
         df1.index, 
@@ -95,8 +48,10 @@ def plot_curves(ax, df1, label):
         )
     
   
-    ax.set(ylim = [-50, 250],
-           yticks = [0, 50, 100, 150, 200])
+    ax.set(
+        ylim = [-50, 150],
+        yticks = [0, 50, 100, 150]
+        )
     ax.axhline(0, linestyle = ':')
     ax.axhline(100, linestyle = ':')
     b.axes_hour_format(
@@ -106,11 +61,27 @@ def plot_curves(ax, df1, label):
     
     return None 
 
+def sel_season(df, season):
+    
+    if season == 'march':
+        num = [3, 4]
+    elif season == 'september':
+        num = [9, 10]
+    else:
+        num = [12, 11]
+        
+        
+    return df.loc[(df.index.month == num[0]) |
+           (df.index.month == num[1])]
+
+
 def plot_season_zonal_winds(
         axes, 
         col, df, 
         direction = 'zonal',
-        label = 'With EPBs'
+        # label = 'With EPBs', 
+        translate = False, 
+        plot_los = False
         ):
     
     seasons = [
@@ -120,98 +91,110 @@ def plot_season_zonal_winds(
         'december'
         ]
     
-    out = []
+    los = {
+        'meridional': ['north', 'south'], 
+        'zonal': ['east', 'west']
+        }
     for i, season in enumerate(seasons):
         
         # try:
-        ds = c.SeasonsSplit(
+        ds_season = c.SeasonsSplit(
             df, season, 
-            translate = True
+            translate = translate
             )
         
+        ds = sel_season(df, season)
+        
         df1 = mean_compose(
-            ds.sel_season, 
+            ds,  
             direction = direction
             ).resample('1H').asfreq()
         
+            
+        plot_curves(axes[i, col], df1)
         
-        plot_curves(axes[i, col], df1, label)
-        
-        l = b.chars()[i]
-        if col == 0:
-            s = f'({l}) {ds.name}'
-        else:
-            s = f'{ds.name}'
+        if plot_los:
+            for v in los[direction]:
+            
+                plot_curves(
+                    axes[i, col], 
+                    mean_compose(
+                        ds,  
+                        direction = v
+                        ).resample('1H').asfreq()
+                    )
+            
+            
+        s = f'{ds_season.name}'
+            
         axes[i, col].text(
             0.02, 0.82, s, 
             transform = axes[i, col].transAxes
             
             )
         
-        ds = df1.loc[df1.index.time == dt.time(22, 0)].T
         
-        ds.columns = [season]
+    l = b.chars()[col]
+    
+    axes[0, col].text(
+        0., 1.1, f'({l})', 
+        fontsize = 40,
+        transform = axes[0, col].transAxes
         
-        out.append(ds)
+        )
 
-    return pd.concat(out, axis = 1)
-
-    
-def to_latex(df):
-    
-    d = df.round(2)
-    
-    res = []
-    for col in d.columns:
-        out = {}
-        for co in ['west', 'east']:
-            vel = d[col][co]
-            std = d[col]['s' + co]
-            out[co] = f'{vel} \pm {std}'
-        vel1 = d[col]['mean']
-        std1 = d[col]['std']
-        out['mean'] = f'{vel1} \pm {std1}'
-        res.append(pd.DataFrame(out, index = [col]))
-
-    return pd.concat(res)
-    
-def plot_with_without_epbs(
-        df, 
-        ax, 
-        col,
-        direction = 'zonal'
-        ):
-
-    ds = plot_season_zonal_winds(
-        ax, col, df.loc[df['epb'] == 0], 
-        direction= direction,
-        label = 'EPBs ausentes')
-    
-    
-    ds1 = plot_season_zonal_winds(
-        ax, col, df.loc[df['epb'] == 1], 
-        direction= direction,
-        label = 'EPBs presentes')
-
-   
     return None
 
+    
 
 def set_data(file):
     
     df = b.load('database/FabryPerot/' + file)
     
     df['zonal'] = df[['west', 'east']].mean(axis = 1)
-
+    df['meridional'] = df[['north', 'south']].mean(axis = 1)
     df['time'] = df.index.to_series().apply(b.dn2float)
     df['day'] = (df.index.year + 
                  df.index.month / 12  +
                  df.index.day / 31)
     
-    return adding_epb_occurrence(df)
+    return df
 
-# title = 'Cachoeira Paulista'
-def plot_FPI_seasonal_winds():
+def plot_labels_and_infos(
+        fig, 
+        direction, 
+        translate = True,     
+        fontsize = 35
+        ):
+   
+    
+    if translate:
+        ylabel = f'Velocidade {direction} (m/s)'
+        xlabel = 'Hora universal'
+    else:
+        ylabel = 'Zonal velocity (m/s)'
+        xlabel = 'Universal time'
+    
+    
+    fig.text(
+          0.04, 0.32, 
+          ylabel, 
+          fontsize = fontsize, 
+          rotation = 'vertical'
+          )
+    
+    fig.text(
+          0.44, 0.04, 
+          xlabel, 
+          fontsize = fontsize, 
+          )
+    
+    return None
+    
+    
+def plot_FPI_seasonal_winds(
+        direction = 'zonal',
+        translate = False):
     
     fig, ax = plt.subplots(
         nrows = 3,
@@ -229,52 +212,52 @@ def plot_FPI_seasonal_winds():
     
     df = set_data('mean')
     
-  
-    plot_with_without_epbs(df,  ax, 0)
+    plot_season_zonal_winds(
+        ax, 0, df, 
+        direction= direction,
+        label = '', 
+        translate= translate
+        )
     
     df = set_data('mean_ch')
 
-    plot_with_without_epbs(df, ax, 1)
-    
-    
-    ax[0, 0].legend(
-         ncol = 2, 
-         loc = 'upper center',
-         bbox_to_anchor = (1., 1.6),
-         )
-    
+    plot_season_zonal_winds(
+        ax, 1, df,
+        direction= direction,
+        label = '', 
+        translate= translate
+        )
     
     ax[0, 0].set(title = 'São João do Cariri')
     ax[0, 1].set(title =  'Cachoeira Paulista')
     
     
-    fig.text(
-          0.02, 0.3, 
-          'Velocidade zonal (m/s)', 
-          fontsize = 40, 
-          rotation = 'vertical'
-          )
+    # ax[0, 0].legend(
+    #      ncol = 2, 
+    #      loc = 'upper center',
+    #      bbox_to_anchor = (1., 1.6),
+    #      )
     
-    fig.text(
-          0.42 , 0.03, 
-          'Hora universal', 
-          fontsize = 40, 
-          )
     
+    plot_labels_and_infos(
+            fig, direction, translate = True)
     return fig 
 
-# fig = plot_FPI_seasonal_winds()
+fig = plot_FPI_seasonal_winds(
+    direction= 'zonal',
+    translate = True
+    )
 
 
 
-# FigureName = 'seasonsal_analysis'
+FigureName = 'seasonsal_analysis_'
 
 # fig.savefig(
 #     b.LATEX(FigureName, folder = 'FPI'),
 #     dpi = 400
 #     )
 
-df = set_data('mean')
+# df = set_data('mean')
 
 
-df
+# df
