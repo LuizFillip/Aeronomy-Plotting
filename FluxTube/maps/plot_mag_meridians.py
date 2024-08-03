@@ -110,7 +110,7 @@ def plot_meridian(
             hemisphere = 'both'
             )
     
-    total_B(ax, (nx, ny), (min(x1) - 1.2, max(y1) + 2))
+    total_B(ax, (glon - 0.2, glat), (min(x1) - 1.2, max(y1) + 2))
     vectors(ax, (glon, glat))
     # ax.plot(
     #     x1, y1, 
@@ -167,5 +167,9 @@ def main():
     FigureName = 'WindProjections2'
     fig.savefig(
         b.LATEX(
-        FigureName, folder = 'modeling'), dpi = 400)
+        FigureName, 
+        folder = 'modeling'), dpi = 400
+        )
     plt.show()
+    
+# main()

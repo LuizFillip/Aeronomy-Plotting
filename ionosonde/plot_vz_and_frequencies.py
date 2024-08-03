@@ -19,7 +19,7 @@ def plot_infos(ax, vz, site = 'saa'):
     time = data['time'].strftime('%Hh%M UT')
     
     vmax = round(data['vp'], 2)
-    
+    vmax = str(vmax).replace('.', ',')
     ax.text(
         0.55, 0.83,
         f'$V_{{zp}} =$ {vmax} m/s ({time})',
@@ -31,7 +31,7 @@ def plot_infos(ax, vz, site = 'saa'):
 
 
 def plot_heights(ax, df, cols):
-    
+   
     ax.plot(df[cols], label = cols, lw = 1.5)
 
     ax.set(
@@ -42,7 +42,7 @@ def plot_heights(ax, df, cols):
 
 def plot_drift(ax, df, cols, site, vmax = 60):
         
-    ax.plot(df[cols], label = cols, lw = 1.5)
+    ax.plot(df[cols].mean(axis =1), label = cols, lw = 1.5)
     ax.set(
         ylabel = 'Deriva vertical (m/s)', 
           ylim = [-vmax, vmax], 
@@ -51,7 +51,7 @@ def plot_drift(ax, df, cols, site, vmax = 60):
 
     ax.axhline(0, linestyle = '--')
     
-    plot_infos(ax, df, site = 'saa')
+    # plot_infos(ax, df, site = 'saa')
     
     return None
 
@@ -69,20 +69,25 @@ def plot_QF(ax, df):
     return None
 
 
+def plot_hF2(ax, df):
+    
+    ds = df['hmF2'].interpolate()
+    ax.plot(ds, lw = 2, color = 'k')
+    
+    ax.set(
+        ylabel = "Altitude (km)", 
+        ylim = [100, 600])
+    
+    return None 
 
 
-
-cols = list(range(5, 9, 1))
-site = 'SAA0K'
-#dn = dt.datetime(2022, 7, 24)
-dn = dt.datetime(2013, 12, 24)
 
 def plot_vz_and_frequencies(dn, cols, site):
     
     file = dn.strftime(f'{site}_%Y%m%d(%j).TXT')
     
     df = dg.IonoChar(file, cols, sel_from = 17)
-    
+   
     fig, ax = plt.subplots(
         figsize = (14, 10), 
         nrows = 2, 
@@ -92,18 +97,20 @@ def plot_vz_and_frequencies(dn, cols, site):
     
     plt.subplots_adjust(hspace = 0.05)
     
-    plot_heights(ax[0], df.heights, cols)
+    # plot_heights(ax[0], df.heights, cols)
+    
+    plot_hF2(ax[0], df.chars)
     plot_drift(ax[1], df.drift(), cols, site)
     
     
-    ax[0].legend( 
-        ncol = 5, 
-        title = 'Frequências fixas (MHz)',
-        bbox_to_anchor = (.5, 1.45), 
-        loc = "upper center", 
-        columnspacing = 0.3,
-        fontsize = 30
-         )
+    # ax[0].legend( 
+    #     ncol = 5, 
+    #     title = 'Frequências fixas (MHz)',
+    #     bbox_to_anchor = (.5, 1.45), 
+    #     loc = "upper center", 
+    #     columnspacing = 0.3,
+    #     fontsize = 30
+    #      )
     
     dusk = gg.dusk_from_site(
            dn, 
@@ -111,13 +118,22 @@ def plot_vz_and_frequencies(dn, cols, site):
            twilight_angle = 18
            )
     
-    ax[0].axvline(dusk, lw = 1, linestyle = '--')
-    ax[1].axvline(dusk, lw = 1, linestyle = '--')
-    ax[0].text(dusk, 500, 'Terminadouro local', 
-               transform = ax[0].transData)
-    ax1 = ax[1].twinx()
-    plot_QF(ax1, df.chars )
-    b.plot_letters(ax, y = 0.85, x = 0.03, fontsize = 40)
+    ax[0].axvline(
+        dusk, lw = 1, linestyle = '--')
+    ax[1].axvline(
+        dusk, lw = 1, linestyle = '--')
+    ax[0].text(
+        dusk, 605, 
+        'Terminadouro local', 
+        transform = ax[0].transData)
+    # ax1 = ax[1].twinx()
+    # plot_QF(ax1, df.chars )
+    b.plot_letters(
+        ax, 
+        y = 0.85, 
+        x = 0.03, 
+        fontsize = 40
+        )
     
     b.format_time_axes(
         ax[1], 
@@ -131,11 +147,21 @@ def plot_vz_and_frequencies(dn, cols, site):
     
 def main():
     
+    cols = list(range(4, 8, 1))
+    site = 'SAA0K'
+    site = 'FZA0M'
+    #dn = dt.datetime(2022, 7, 24)
+    dn = dt.datetime(2013, 12, 24)
+    dn = dt.datetime(2019, 5, 2)
+    
     fig = plot_vz_and_frequencies(dn, cols, site)
     
     FigureName = dn.strftime(f'{site}_%Y%m%d')
        
-    fig.savefig(
-            b.LATEX(FigureName, folder = 'Iono'),
-            dpi = 400
-            )
+    # fig.savefig(
+    #         b.LATEX(FigureName, folder = 'Iono'),
+    #         dpi = 400
+    #         )
+    
+    
+# main()

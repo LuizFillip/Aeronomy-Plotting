@@ -106,7 +106,7 @@ def plot_distributions_seasons(
 
 def main():
     
-    translate = False
+    translate = True
     parameter = 'gamma'
     df = c.load_results('saa', eyear = 2022)
     
@@ -115,7 +115,7 @@ def main():
     fig = plot_distributions_seasons(
             df, 
             parameter = parameter,
-            solar_level = [75, 100], #solar_limit
+            solar_level = solar_limit, 
             translate = translate,
             outliner = 10,
             limit = True
@@ -129,10 +129,10 @@ def main():
         folder = 'distributions/en/'
         
         
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder),
+        dpi = 400
+        )
     
 
     plt.show()

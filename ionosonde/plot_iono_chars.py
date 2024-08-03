@@ -137,7 +137,7 @@ def plot_iono_chars(dn):
         plot_terminators(ax, df, site, color)
         
     b.plot_letters(ax, y = 0.79, x = 0.02)
-
+    return fig
 
 dn = '20161003(277)'
 dn = '20170423(113)'
@@ -146,4 +146,4 @@ dn = '20130327(086)'
 dn = '20150409(099)'
 dn = '20220724(205)'
 
-plot_iono_chars(dn)
+fig = plot_iono_chars(dn)

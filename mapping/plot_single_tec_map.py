@@ -65,9 +65,9 @@ def plot_matrix(
                     img, 
                     ax, 
                     ticks, 
-                    label = 'TECU ($16^{16}/m^2$)', 
+                    label = 'TECU ($10^{16}/m^2$)', 
                     height = "100%", 
-                    width = "3%",
+                    width = "10%",
                     orientation = "vertical", 
                     anchor = (.25, 0., 1, 1)
                     )

@@ -192,5 +192,10 @@ def main():
     # fig.savefig(b.LATEX('annual_variation2', folder = 'bars'))
 
 
-# main()
+df = c.epbs(col = -50, geo = True, eyear = 2022)
+df.loc[(df['dst'] < -30) | (df['dst'] <= -50)]
+df.loc[(df['dst'] < -50) | (df['dst'] <= -100)]
 
+len(df.loc[(df['dst'] < -100)]) / len(df)
+
+760 / len(df) * 100

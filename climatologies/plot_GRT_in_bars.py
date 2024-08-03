@@ -299,20 +299,3 @@ FigureName = 'annual_quiet_time'
 #       b.LATEX(FigureName, folder = 'bars'),
 #       dpi = 400
 #       )
-
-# df = set_data('mean')
-# # 
-
-# ds = df.loc[
-#     (df.index.time >= dt.time(22, 0)) | 
-#     (df.index.time <= dt.time(0, 0))]
-
-# ds = ds.resample('1D').mean()
-
-
-# ds = seasonal_by_year(ds, parameter = 'mer')
-
-
-# # df.loc[df.index.year == 2016]
-
-# ds

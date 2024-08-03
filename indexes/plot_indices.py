@@ -5,9 +5,11 @@ import base as b
 from datetime import datetime, timedelta
 from utils import compute_ticks
 
-def plot_solar_flux(ax, 
-                  years = [2008, 2022], 
-                  yshade = 2014):
+def plot_solar_flux(
+        ax, 
+        years = [2008, 2022], 
+        yshade = 2014
+        ):
     
     """Plotting Solar flux F10.7 cm"""
     

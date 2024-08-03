@@ -23,7 +23,31 @@ def plot_QF(ax, df, color):
     
     return None 
 
-   
+import GEO as gg 
+
+def plot_terminator(ax, dn, site):
+    
+    dusk = gg.dusk_from_site(
+           dn, 
+           site,
+           twilight_angle = 18
+           )
+        
+    ax.axvline(
+        dusk, lw = 2, linestyle = '--')
+    
+    start = dt.datetime(2015, 12, 21, 6, 30)
+    ax.axvspan(
+         start, 
+         start + dt.timedelta(hours = 1), 
+         ymin = 0, 
+         ymax = 1,
+         alpha = 0.2, 
+         color = 'gray'
+         )
+    
+    return dusk
+
 def plot_multiples_sites(
         ref,
         cols, 
@@ -33,9 +57,9 @@ def plot_multiples_sites(
     
    
     fig, ax = plt.subplots(
-         figsize = (18, 14), 
+         figsize = (20, 12), 
          ncols = 2, 
-         nrows = 3,
+         nrows = 2,
          sharex = True, 
          dpi = 300
          )
@@ -47,8 +71,8 @@ def plot_multiples_sites(
 
     cols = list(range(4, 8, 1))
 
-    codes = ['SAA0K', 'BVJ03', 'JI91J']
-
+    codes = ['SAA0K', 'BVJ03']# 'JI91J']
+    sites = ['saa', 'bvj'] #'jic']
     for i, site in enumerate(codes):
     
         df = dg.IonoAverage(dn, cols, site, ref = ref)
@@ -63,7 +87,7 @@ def plot_multiples_sites(
         plot_drift(ax[i, 1], df, vmax = 50)
        
 
-        s = f'({b.chars()[i]}) {df.data.site}'
+        s = f'{df.data.site}'
         
         x = 0.03
         y = 0.84
@@ -76,6 +100,23 @@ def plot_multiples_sites(
             transform = ax[i, 1].transAxes
             )
         
+    
+        dusk = plot_terminator(ax[i, 0],  ref,sites[i])
+        dusk = plot_terminator(ax[i, 1],  ref,sites[i])
+        
+        if i == 0:
+            ax[0, 0].text(
+                dusk, 605, 
+                'Terminadouro local', 
+                transform = ax[0, 0].transData
+                )
+            
+            ax[0, 1].text(
+                dusk, 55, 
+                'Terminadouro local', 
+                transform = ax[0, 1].transData
+                )
+             
     end = ref + dt.timedelta(hours = 14)
 
     ax[-1, 0].set(xlim = [ref, end])
@@ -86,15 +127,29 @@ def plot_multiples_sites(
     ax[0, 0].legend(
           ncol = 6, 
           loc = "upper right", 
-          bbox_to_anchor = (1.7, 1.43), 
+          bbox_to_anchor = (1.7, 1.4), 
           )
     
-    ax[1, 0].set_ylabel(
+    ax[0, 0].text(
+        -0.1, 1.1, '(a)',
+        fontsize = fontsize,
+        transform = ax[0, 0].transAxes
+        )
+    ax[0, 1].text(
+        -0.1, 1.1, '(b)',
+        fontsize = fontsize,
+        transform = ax[0, 1].transAxes
+        )
+    fig.text(
+        0.04, 0.4,
         'Altura (km)', 
+        rotation = 'vertical',
         fontsize = fontsize
         )
-    ax[1, 1].set_ylabel(
+    fig.text(
+        0.48, 0.3,
         'Deriva vertical (m/s)', 
+        rotation = 'vertical',
         fontsize = fontsize
         )
     

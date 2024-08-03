@@ -55,7 +55,7 @@ def plot_declination_difference(ax):
     ax_new.set(
         ylim = [-50, 50],
         xticklabels = [], 
-        ylabel = 'Grau de alinhamento'
+        ylabel = '$\\alpha$ (°)'
         )
     
     
@@ -94,28 +94,29 @@ def plot_PRE_monthly():
     ax.set(
            ylim = [0, 50],
            xlabel = 'Meses', 
-           ylabel = 'Deriva vertical (m/s)',
+           ylabel = '$V_P$ (m/s)',
            xticks = np.arange(1, 13, 1),
            xticklabels = b.month_names(
                sort = True, language = 'pt'),
            
            )
     fig.text(
-        0.97, 0.23, 'Grau de alinhamento (°)', 
-        rotation = 'vertical')
+        0.94, 0.46, 
+        '$\\alpha$ (°)', 
+        rotation = 'vertical'
+        )
     return fig
     
+
+def main():    
+    fig = plot_PRE_monthly()
     
-fig = plot_PRE_monthly()
+    FigureName = 'seasonal_pre_sites'
+      
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'climatology'),
+          dpi = 400
+          )
 
-FigureName = 'seasonal_pre_sites'
-  
-fig.savefig(
-      b.LATEX(FigureName, folder = 'climatology'),
-      dpi = 400
-      )
-
-# ds = set_data(site)
-
-# ds
+# main()
 

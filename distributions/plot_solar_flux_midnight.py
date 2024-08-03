@@ -49,7 +49,7 @@ total = ds['epbs'].sum()
 
 
 ax[0].text(
-    0.7, 0.4, 
+    0.6, 0.4, 
     'Ocorrência de EPBs\n' + f'{total} eventos',
     transform = ax[0].transAxes
     )
@@ -57,7 +57,7 @@ ax[0].text(
 total = ds['days'].sum()
 
 ax[1].text(
-    0.7, 0.4, 
+    0.6, 0.4, 
     '$\gamma_{RT}$ total\n' + f'{total} eventos',
     transform = ax[1].transAxes
     )
@@ -70,7 +70,14 @@ ax[1].set(
     xlabel = '$\gamma_{RT} (10^{-3} s^{-1})$ ',
     xticks = np.arange(0, 1, 0.1))
 
-FigureName = f'solar_flux_midnight'
+b.plot_letters(
+    ax, 
+    y = 0.85, 
+    x = 0.03, 
+    fontsize = 40
+    )
+
+FigureName = 'solar_flux_midnight'
 
 folder = 'distributions/pt/'
 fig.savefig(

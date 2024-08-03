@@ -3,7 +3,7 @@ import base as b
 import datetime as dt
 import numpy as np
 
-b.config_labels()
+b.config_labels(fontsize = 30)
 
 PATH = 'database/indices/omni_hourly.txt'
 
@@ -24,7 +24,7 @@ def plot_kp(ax, ds):
     vmin = ds['f107'].min()
     ax1.set(
         ylim = [vmin - 5, vmax + 5],
-        ylabel = '$F_{10.7}$ (sfu)'
+        ylabel = '$F10,7$ (sfu)'
         )
     
     ds = ds.resample('3H').mean()
@@ -48,12 +48,12 @@ def plot_kp(ax, ds):
     
 
 def plot_dst(ax, ds, ylim = [-200, 100]):
-    
+    # print(ds.resample('1D').min()['dst'])
     ax.plot(ds['dst'], lw = 2)
     
     ax.set(
         xlim = [ds.index[0], ds.index[-1]], 
-        ylim = ylim,
+        ylim = [ylim[0] - 30, ylim[-1]],
         yticks = np.arange(ylim[0], ylim[-1] - 30, 50),
         ylabel = "Dst (nT)"
         )
@@ -72,7 +72,7 @@ def plot_dst(ax, ds, ylim = [-200, 100]):
 
 def plot_magnetic_fields(ax, ds):
     
-    ax.plot(ds[['by', 'bz']], label = ['by', 'bz'] )
+    ax.plot(ds[['by', 'bz']], label = ['$B_y$', '$B_z$'] )
     
     ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
     
@@ -83,7 +83,8 @@ def plot_magnetic_fields(ax, ds):
     
     ax.legend(
         loc = 'upper right', 
-        ncol = 2
+        ncol = 2, 
+        columnspacing = 0.5
         )
     
     return None 
@@ -104,7 +105,8 @@ def plot_auroras(ax, ds):
     
     ax.legend(
         loc = 'upper right', 
-        ncol = 2
+        ncol = 2, 
+        columnspacing = 0.5
         )
     
     return None 
@@ -119,14 +121,14 @@ def plot_one_day_indices(dn, days = 2):
     
     fig, ax = plt.subplots(
         dpi = 300,
-        figsize = (14, 12), 
+        figsize = (14, 14), 
         nrows = 4, 
         sharex = True
         )
     
     plt.subplots_adjust(hspace = 0.05)
     
-    ds = indexes_in_range(dn, days = 2)
+    ds = indexes_in_range(dn, days = 4)
    
     
     plot_magnetic_fields(ax[0], ds)
@@ -136,8 +138,13 @@ def plot_one_day_indices(dn, days = 2):
     
     delta = dt.timedelta(hours = 3)
     ax[-1].set( 
-       xlim = [ds.index[0] + delta, ds.index[-1] + delta]
+       xlim = [ds.index[0] + delta, ds.index[-1] + delta], 
+       xlabel = 'Dias'
        )
+    
+    month = b.monthToNum(dn.month, language = 'pt')
+    year = dn.year
+    ax[0].set(title = f'{month} de {year}')
     
     b.format_days_axes(ax[-1])
     
@@ -172,9 +179,9 @@ dn = dt.datetime(2013, 3, 17, 21)
 dn = dt.datetime(2022, 7, 24, 21)
 dn = dt.datetime(2015, 12, 20, 21)
 
-dn = dt.datetime(2015, 12, 25, 21)
-dn = dt.datetime(2017, 9, 17, 21)
-dn = dt.datetime(2013, 1, 17, 21)
+# dn = dt.datetime(2015, 12, 25, 21)
+dn = dt.datetime(2019, 5, 2, 21)
+# dn = dt.datetime(2019, 12, 6, 21)
 
 def main():
     days = 3

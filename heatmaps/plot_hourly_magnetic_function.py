@@ -23,61 +23,6 @@ def divide_by_geomgnetic_levels(df):
     
     
     return cond, labels
-ds = b.load('events_class2')
-
-
-df = ds.loc[
-    (ds['type'] == 'midnight') & 
-    (ds['drift'] == 'fresh')# &
-    # (ds['lon'] == -50)
-    ]
-
-
-
-df_source = c.geo_index(eyear = 2023)
-df['dst'] = df.index.map(df_source['dst'])
-
-
-def plot_magnetic_dependency(df, cmap = 'jet'):
-    
-
-    fig, ax = plt.subplots(
-              dpi = 300, 
-              nrows = 4,
-              ncols = 2,
-              sharex = True, 
-              sharey = True,
-              figsize = (12, 8)
-              )
-    
-    
-    plt.subplots_adjust(hspace = 0.1, wspace = 0.1)
-    
-    def plot_heatmap(ax, ds):
-        df2 = pb.hourly_distribution(ds, step = 1).T 
-    
-        yticks = df2.index 
-        xticks = df2.columns 
-        values = df2.values
-        
-        img = ax.imshow(
-              values[::-1],
-              aspect = 'auto', 
-              extent = [xticks[0], xticks[-1], 
-                        yticks[0], yticks[-1]],
-              cmap = cmap
-              )
-        
-    cols = np.arange(-80, -40, 10)
-    
-    for i, col in enumerate(cols):
-        
-        ds = df.loc[(df['lon'] == col)]
-    
-        plot_heatmap(ax[i, 0], ds.loc[(ds['dst'] >= -30)])
-        plot_heatmap(ax[i, 1], ds.loc[(ds['dst'] < -30)])
-        
-        
 
 def values_by_season(df):
     
@@ -99,8 +44,70 @@ def values_by_season(df):
     return arr
 
 
+ds = b.load('events_class2')
 
-quiet = values_by_season(df.loc[(df['dst'] >= -30)])
 
-distu = values_by_season(df.loc[(df['dst'] < -30)])
+df = ds.loc[
+    (ds['type'] == 'midnight') & 
+    (ds['drift'] == 'fresh')
+    ]
+
+
+
+df_source = c.geo_index(eyear = 2022)
+df['dst'] = df.index.map(df_source['dst'])
+df['kp'] = df.index.map(df_source['kp'])
+
+
+
+# quiet = df.loc[(df['dst'] > -30)]
+quiet = values_by_season( df.loc[(df['kp'] <= 3)])
+
+distu = values_by_season(df.loc[(df['kp'] > 3)])
+distu /= np.max(distu)
+
+quiet /= np.max(quiet) 
+
+# def plot_magnetic_dependency(df, cmap = 'jet'):
+    
+
+fig, ax = plt.subplots(
+          dpi = 300, 
+          nrows = 4,
+          ncols = 2,
+          sharex = True, 
+          sharey = True,
+          figsize = (12, 8)
+          )
+
+
+plt.subplots_adjust(hspace = 0.1, wspace = 0.1)
+
+def plot_heatmap(ax, values):
+
+    yticks = np.arange(20, 32, 1)
+    xticks = np.arange(1, 13, 1)
+    
+    values = values[::-1] * 100
+    
+    img = ax.imshow(
+          values,
+          aspect = 'auto', 
+          extent = [xticks[0], xticks[-1], 
+                    yticks[0], yticks[-1]],
+          cmap = 'jet',
+          vmax = 100, 
+          vmin = 0
+          )
+    
+    # ax.contourf(
+    #     xticks, 
+    #     yticks,
+    #     values,
+    #     cmap = 'jet'
+    #     )
+
+for row in range(4):
+    plot_heatmap(ax[row, 0], quiet[row])
+    # plot_heatmap(ax[row, 1], distu[row])
     

@@ -40,8 +40,8 @@ def plot_annually_events_count(
         )
         
     df = c.count_occurences(ds).year
-    
-    # df = df[df.columns[::-1]]
+    ds = df[-80]
+    # print((ds.min() - ds.max())/ ds.max())
         
     df.plot(
         kind = 'bar', 
@@ -90,18 +90,18 @@ def main():
     df = df.loc[df.index.year < 2023]
     
     translate = True
-    for typing in ['sunset', 'midnight']:
-      
-        ds = pb.sel_typing(df, typing = typing)
-        
-        fig = plot_annually_events_count(
-            ds, typing, translate=translate)
-        
-        FigureName = f'annual_{typing}'
+    # for typing in ['sunset', 'midnight']:
+    typing = 'sunset'
+    ds = pb.sel_typing(df, typing = typing)
+    
+    fig = plot_annually_events_count(
+        ds, typing, translate=translate)
+    
+    FigureName = f'annual_{typing}'
           
-        fig.savefig(
-              b.LATEX(FigureName, folder = 'bars'),
-              dpi = 400
-              )
+        # fig.savefig(
+        #       b.LATEX(FigureName, folder = 'bars'),
+        #       dpi = 400
+        #       )
         
-# main()
+main()

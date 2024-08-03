@@ -73,7 +73,7 @@ def plot_monthly_hwm_winds(files):
     
     return fig
 
-# fig = plot_monthly_hwm_winds(files)
+fig = plot_monthly_hwm_winds(files)
 
 
 

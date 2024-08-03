@@ -6,7 +6,7 @@ import pandas as pd
 import models as m 
 import aeronomy as ae
 
-b.config_labels(fontsize = 35)
+b.config_labels(fontsize = 30)
 
 lb = b.labels
 
@@ -40,7 +40,7 @@ def plot_collision_freq(ax, ds):
         ncol = 4, 
         bbox_to_anchor = (0, 1.2),
         loc = "upper center",
-        columnspacing = 0.3
+        columnspacing = 0.5
         )
     
     return None

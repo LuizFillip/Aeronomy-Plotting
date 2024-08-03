@@ -39,8 +39,8 @@ def plot_curves(ax, df1, label):
     
   
     ax.set(
-        ylim = [-50, 250], 
-        yticks = [0, 50, 100, 150, 200]
+        ylim = [-50, 150], 
+        yticks = [0, 50, 100, 150]
         )
     ax.axhline(0, linestyle = ':')
     ax.axhline(100, linestyle = ':')

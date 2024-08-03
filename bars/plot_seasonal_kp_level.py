@@ -24,7 +24,7 @@ def plot_seasonal_kp_level(
     fig, ax = plt.subplots(
         nrows = 2, 
         dpi = 300,
-        sharey = True,
+        # sharey = True,
         sharex = True,
         figsize = (18, 14)
         )
@@ -66,7 +66,7 @@ def plot_seasonal_kp_level(
             bbox_to_anchor = (.5, 1.22), 
             loc = "upper center", 
             columnspacing = 0.3,
-            fontsize = 28
+            fontsize = 30
             )
     
         
@@ -75,7 +75,7 @@ def plot_seasonal_kp_level(
     b.add_lines_and_letters(
             ax, 
             names, 
-            fontsize = 40,
+            fontsize = 35,
             x = 0.02, 
             y = 0.85, 
             num2white = None
@@ -89,7 +89,8 @@ def main():
         'events_class2')
     ds = pb.sel_typing(df, typing = 'midnight', 
     indexes = True, 
-    year = 2023)
+    year = 2022
+    )
     
     
     fig = plot_seasonal_kp_level(ds, translate = False)
@@ -97,4 +98,4 @@ def main():
     # fig.savefig(b.LATEX('Kp_seasonal_variation'))
 
 
-# main()
+main()

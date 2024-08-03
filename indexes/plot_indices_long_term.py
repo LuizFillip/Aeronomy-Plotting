@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import base as b
 import datetime as dt
 import numpy as np
+import GEO as gg
 
 PATH_INDEX =  'database/indices/omni_pro2.txt'
 
@@ -22,9 +23,20 @@ def plot_dst(ax, dst, limit = -100 ):
 
     return None
 
-def plot_f107(ax, df, mean = None):
+def plot_f107(
+        ax, mean = None, float_index = True, 
+              color = 'k'):
     
-    ax.plot(df['f107'])
+    
+    df = b.load(PATH_INDEX)
+        
+    df["f107a"] = df["f107"].rolling(
+        window = 5).mean(center = True)
+    
+    if float_index:
+        df.index = df.index.map(gg.year_fraction)
+        
+    ax.plot(df['f107'], color = color)
     
     if mean is not None:
         ax.plot(
@@ -34,7 +46,7 @@ def plot_f107(ax, df, mean = None):
             )
         
     ax.set(
-        ylabel = '$F_{10.7}$ (sfu)', 
+        ylabel = '$F10,7$ (sfu)', 
         ylim = [50, 300],
         yticks = np.arange(50, 350, 100)
         )   
@@ -111,6 +123,7 @@ def plot_long_term(s_year, e_year):
         dt.datetime(2023, 1, 1), 
         dt.datetime(2023, 12, 31)
         )
+    
         
     plot_kp(ax[2], df, mean = None)
     plot_dst(ax[1], df['dst'])

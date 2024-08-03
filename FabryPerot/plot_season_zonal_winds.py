@@ -48,10 +48,7 @@ def plot_curves(ax, df1, label = ''):
         )
     
   
-    ax.set(
-        ylim = [-50, 150],
-        yticks = [0, 50, 100, 150]
-        )
+   
     ax.axhline(0, linestyle = ':')
     ax.axhline(100, linestyle = ':')
     b.axes_hour_format(
@@ -71,7 +68,8 @@ def sel_season(df, season):
         num = [12, 11]
         
         
-    return df.loc[(df.index.month == num[0]) |
+    return df.loc[
+        (df.index.month == num[0]) |
            (df.index.month == num[1])]
 
 
@@ -79,7 +77,6 @@ def plot_season_zonal_winds(
         axes, 
         col, df, 
         direction = 'zonal',
-        # label = 'With EPBs', 
         translate = False, 
         plot_los = False
         ):
@@ -95,9 +92,19 @@ def plot_season_zonal_winds(
         'meridional': ['north', 'south'], 
         'zonal': ['east', 'west']
         }
+    
+    if direction == 'meridional':
+        axes[0, 1].set(
+            ylim = [-50, 100],
+            yticks = [-50, 0, 50, 100]
+            )
+    else:
+        axes[0, 1].set(
+            ylim = [-10, 150],
+            yticks = [0, 50, 100, 150]
+            )
     for i, season in enumerate(seasons):
         
-        # try:
         ds_season = c.SeasonsSplit(
             df, season, 
             translate = translate
@@ -132,8 +139,6 @@ def plot_season_zonal_winds(
             transform = axes[i, col].transAxes
             
             )
-        
-        
     l = b.chars()[col]
     
     axes[0, col].text(
@@ -215,7 +220,6 @@ def plot_FPI_seasonal_winds(
     plot_season_zonal_winds(
         ax, 0, df, 
         direction= direction,
-        label = '', 
         translate= translate
         )
     
@@ -224,27 +228,19 @@ def plot_FPI_seasonal_winds(
     plot_season_zonal_winds(
         ax, 1, df,
         direction= direction,
-        label = '', 
         translate= translate
         )
     
     ax[0, 0].set(title = 'São João do Cariri')
     ax[0, 1].set(title =  'Cachoeira Paulista')
     
-    
-    # ax[0, 0].legend(
-    #      ncol = 2, 
-    #      loc = 'upper center',
-    #      bbox_to_anchor = (1., 1.6),
-    #      )
-    
-    
+
     plot_labels_and_infos(
             fig, direction, translate = True)
     return fig 
 
 fig = plot_FPI_seasonal_winds(
-    direction= 'zonal',
+    direction= 'meridional',
     translate = True
     )
 

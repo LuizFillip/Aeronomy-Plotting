@@ -15,7 +15,7 @@ args = dict(
 def plot_sites(ax, year):
         
     sites  = ['jic', 'saa', 'bvj', 'ca', 'cp', 'bjl']
-    
+    sites = ['jic', 'saa', 'bvj', 'ca']
     for i, site in enumerate(sites):
         
         site = gg.sites[site]
@@ -26,8 +26,23 @@ def plot_sites(ax, year):
         ax.scatter(glon, glat, s = 150,
                    marker = 's', label = name)
         
-        # ax.text(glon, glat - 4, name)
+        # ax.text(glon - 3, glat + 1, name)
+        
+    return None
+
+def plot_GNSS(ax, year):
+
+    lon, lat = gg.stations_coordinates(year, distance = 10)
     
+    ax.scatter(lon, lat, **args, label = 'Receptores GNSS')
+    
+    # ax.annotate(
+    #     'Receptores GNSS', xy=(lon[1], lat[1]), 
+    #     xytext=(lon[1] - 5, lat[1] + 15),
+    #     arrowprops=dict(lw = 2, arrowstyle='->'), 
+    #     transform = ax.transData, 
+    #     fontsize = 25
+    #     )
 
 def plot_regions_over_map(year = 2013):
     
@@ -46,27 +61,18 @@ def plot_regions_over_map(year = 2013):
     gg.map_attrs(ax, year, degress = None, grid = False)
     gg.plot_rectangles_regions(ax)
     plot_sites(ax, year)
+    plot_GNSS(ax, year)
     
     ax.legend(
-        loc = 'lower right',
+        loc = 'upper center',
         ncol = 3, 
-        bbox_to_anchor = (1., 1.0), 
+        # bbox_to_anchor = (1., 1.0), 
         columnspacing = 0, 
-        fontsize = 22
+        fontsize = 20
         
         )
     
-    lon, lat = gg.stations_coordinates(year, distance = 10)
     
-    ax.scatter(lon, lat, **args)
-    
-    ax.annotate(
-        'Receptores GNSS', xy=(lon[1], lat[1]), 
-        xytext=(lon[1] - 5, lat[1] + 15),
-        arrowprops=dict(lw = 2, arrowstyle='->'), 
-        transform = ax.transData, 
-        fontsize = 25
-        )
     return fig
 
 def main():
@@ -77,4 +83,4 @@ def main():
         dpi = 400
         )
     
-# main()
+main()
