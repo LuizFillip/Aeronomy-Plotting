@@ -5,7 +5,7 @@ import digisonde as dg
 
 def redefine_ticks(ax, img):
     
-    xticks = np.arange(0, 16, 2)
+    xticks = np.arange(1, 17, 3)
     yticks = np.arange(150, 1350, 150)
 
     x_positions = np.linspace(
@@ -19,6 +19,8 @@ def redefine_ticks(ax, img):
     
     ax.set_xticks(x_positions, xticks)
     ax.set_yticks(y_positions, yticks)
+    
+    return None 
         
 
     
