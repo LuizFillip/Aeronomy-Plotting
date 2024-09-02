@@ -8,9 +8,11 @@ import GEO as gg
 import PlasmaBubbles as pb 
 
 b.config_labels(fontsize = 50)
-for hour in [22, 0, 2, 4, 6]:
+# for hour in [22, 0, 2, 4, 6]:
     
+def plot_ipp_over_map(hour):
     
+
     fig, ax = plt.subplots(
          figsize = (12,12), 
          dpi = 300, 
@@ -67,14 +69,19 @@ for hour in [22, 0, 2, 4, 6]:
               anchor = (.1, 0., 1, 1)
              )
     
+    return fig
+  
     
-    fig.savefig(dn.strftime('%H'), dpi = 500)
+fig = plot_ipp_over_map(hour)
+
+
+# fig.savefig(dn.strftime('%H'), dpi = 500)
     
     
 FigureName = 'cicle_slip_demo'
 
 
-fig.savefig(
-      b.LATEX(FigureName, folder = 'timeseries'),
-      dpi = 400
-      )
+# fig.savefig(
+#       b.LATEX(FigureName, folder = 'timeseries'),
+#       dpi = 400
+#       )

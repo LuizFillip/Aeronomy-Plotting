@@ -49,7 +49,7 @@ def plot_stec(ax, path, station, prn):
     ax.set(
         ylabel = "STEC (TECU)", 
         xlim = [dt.datetime(2013, 12, 24, 20), 
-                dt.datetime(2013, 12, 25, 0)], 
+                dt.datetime(2013, 12, 24, 23, 59)], 
                 yticks = np.arange(50, 250, 50)
         )
     return tec
@@ -92,6 +92,8 @@ def plot_roti_parameters(dn, station, prn):
     path = gs.paths(dn.year, doy, root = 'E:\\')
     
     tec = plot_stec(ax[0], path, station, prn)
+    
+    print(tec)
     
     plot_rot(ax[1], tec, prn)
     
@@ -136,4 +138,4 @@ def main():
         dpi = 400
         )
     
-# main()
+main()
