@@ -44,6 +44,8 @@ def plot_GNSS(ax, year):
     #     fontsize = 25
     #     )
 
+lat_lims = dict(min = -20, max = 10, stp = 10)
+
 def plot_regions_over_map(year = 2013):
     
     """
@@ -54,14 +56,19 @@ def plot_regions_over_map(year = 2013):
     fig, ax = plt.subplots(
         dpi = 300,
         sharex = True, 
-        figsize = (10, 10),
+        figsize = (13, 6),
         subplot_kw = {'projection': ccrs.PlateCarree()}
     )
     
-    gg.map_attrs(ax, year, degress = None, grid = False)
+    gg.map_attrs(
+        ax, year,
+        degress = None, 
+        grid = False, 
+        lat_lims = lat_lims,
+)
     gg.plot_rectangles_regions(ax)
-    plot_sites(ax, year)
-    plot_GNSS(ax, year)
+    # plot_sites(ax, year)
+    # plot_GNSS(ax, year)
     
     ax.legend(
         loc = 'upper center',
@@ -78,9 +85,9 @@ def plot_regions_over_map(year = 2013):
 def main():
     fig = plot_regions_over_map(year = 2013)
     FigureName = 'regions_and_ipp'
-    fig.savefig(
-        b.LATEX(FigureName, folder = 'maps'),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder = 'maps'),
+    #     dpi = 400
+    #     )
     
 main()

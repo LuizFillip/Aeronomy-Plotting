@@ -80,7 +80,7 @@ def plot_matrix(
                     height = '10%' , 
                     width = "80%",
                     orientation = "horizontal", 
-                    anchor = (-0.26, 0.7, 1.26, 0.9)
+                    anchor = (-0.26, 0.7, 1.26, 0.55)
                     )
             
     
