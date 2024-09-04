@@ -115,7 +115,7 @@ def plot_terminator_line(
     
    
     
-    return 
+    return None
 
 
 def plot_occurrencegram(

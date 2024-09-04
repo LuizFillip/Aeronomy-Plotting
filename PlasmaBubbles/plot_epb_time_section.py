@@ -79,7 +79,7 @@ def plot_region_shades(
     
     ax.text(
         middle - delta, 
-        0.5, 
+        0.45, 
         term_name, 
         transform = ax.transData
         )
@@ -93,18 +93,19 @@ def plot_region_shades(
             color = 'lightgray'
             )
     
-    delta = dt.timedelta(hours = 0.3)
-    ax.text(
-        midnight + delta, 
-        0.5, 
-        midn_name, 
-        transform = ax.transData
-        )
-    delta = dt.timedelta(hours = 2.3)
+    # delta = dt.timedelta(hours = 0.3)
+    # ax.text(
+    #     midnight + delta, 
+    #     0.5, 
+    #     midn_name, 
+    #     transform = ax.transData
+    #     )
+    delta = dt.timedelta(hours = 1.3)
+    
     ax.text(
         midnight - delta, 
-        0.5, 
-        'Pré-meia-noite', 
+        0.45, 
+        'Próximo da meia-noite', 
         transform = ax.transData
         )
     
@@ -146,6 +147,8 @@ def plot_epb_time_section(dn):
     
     b.format_time_axes(ax[-1], pad = 70)
     
+    b.plot_letters(ax, y = 0.8, x = 0.02)
+    
     return fig
 
 def main():
@@ -160,3 +163,5 @@ def main():
           b.LATEX(FigureName, folder = 'products'),
           dpi = 400
           )
+    
+# main()

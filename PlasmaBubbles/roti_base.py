@@ -110,7 +110,7 @@ def plot_roti_points(
                 color = 'b'
                 )
             
-            ax1.set_ylabel('Ocorrência', color = 'b')
+            # ax1.set_ylabel('Ocorrência', color = 'b')
             
         if occurrence:
             return ax1
@@ -131,7 +131,7 @@ def plot_references_lines(
         midn_name = 'Local midnight'
     else:
         term_name = 'Terminadouro local'
-        midn_name = 'Meia noite local'
+        midn_name = 'Meia-noite local'
     
     dusk = gg.terminator(
         ref_long, 
@@ -223,7 +223,7 @@ def plot_vertical_drift(
     
     ax.text(
         0.72, 0.75, 
-        f'$V_P =$ {pre} m/s', 
+        '$V_{zp} =$' + f'{pre} m/s', 
         transform = ax.transAxes
         )
     
