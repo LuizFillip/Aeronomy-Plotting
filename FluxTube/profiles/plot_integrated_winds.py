@@ -65,7 +65,7 @@ def plot_local_winds(ax):
     ax[1].plot(df['zon'], df.index, lw = 2, 
                linestyle = '--', color = 'k',
                label = 'Perfil local no equador')
-    
+    return None 
 
 def plot_winds_profiles(ds):
     

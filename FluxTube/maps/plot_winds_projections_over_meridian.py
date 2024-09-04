@@ -57,18 +57,18 @@ def vectors(ax, xy):
     
     
     
-    ax.annotate(
-        '$\\vec{H}$', 
-        xy=xy, 
-        xytext=(xe, ye),
-        arrowprops=dict(
-            color = 'orange',
-            lw = 4,
-            arrowstyle='<-'), 
-        transform = ax.transData, 
-        fontsize = 40, 
-        color = 'orange'
-        )
+    # ax.annotate(
+    #     '$\\vec{H}$', 
+    #     xy=xy, 
+    #     xytext=(xe, ye),
+    #     arrowprops=dict(
+    #         color = 'orange',
+    #         lw = 4,
+    #         arrowstyle='<-'), 
+    #     transform = ax.transData, 
+    #     fontsize = 40, 
+    #     color = 'orange'
+    #     )
     
     ax.legend()
     
@@ -165,11 +165,11 @@ def main():
     fig = plot_mag_meridians( year = 2013)
     
     FigureName = 'WindProjections2'
-    fig.savefig(
-        b.LATEX(
-        FigureName, 
-        folder = 'modeling'), dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(
+    #     FigureName, 
+    #     folder = 'modeling'), dpi = 400
+    #     )
     plt.show()
     
-# main()
+main()
