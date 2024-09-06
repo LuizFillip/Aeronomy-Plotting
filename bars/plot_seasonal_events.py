@@ -41,7 +41,7 @@ def plot_seasonal_occurrence(
     df = c.count_occurences(ds).month
     # df = df[df.columns[::-1]]
     
-    df.plot(
+    df[-50].plot(
         kind = 'bar', 
         edgecolor = 'k',
         ax = ax, 
@@ -106,16 +106,17 @@ def main():
         
         FigureName = f'seasonal_{typing}'
           
-        fig.savefig(
-              b.LATEX(FigureName, folder = 'bars'),
-              dpi = 400
-              )
-    # 
+        # fig.savefig(
+    #           b.LATEX(FigureName, folder = 'bars'),
+    #           dpi = 400
+    #           )
+    # # 
 # main()
 
+df = b.load('events_class2')
 
-# df = b.load('events_class2')
-# df = df.loc[df.index.year < 2023]
 
-# df['']
 
+df.loc[(df['lon'] == -50) & 
+       (df.index.year == 2018) & 
+       (df.index.month == 12)]
