@@ -10,7 +10,8 @@ b.config_labels(blue = False, fontsize = 35)
 def plot_annually_events_count(
         ds, 
         typing = 'sunset', 
-        translate = True
+        translate = True, 
+        percent = True
         ):
     
     e_year = ds.index[-1].year
@@ -40,9 +41,9 @@ def plot_annually_events_count(
         )
         
     df = c.count_occurences(ds).year
-    ds = df[-80]
-    # print((ds.min() - ds.max())/ ds.max())
-        
+    df = df[[-50, -60, -70]]
+    
+ 
     df.plot(
         kind = 'bar', 
         ax = ax, 
@@ -71,7 +72,7 @@ def plot_annually_events_count(
     
     
     t = [f'{sector} {i} ({vl})' for i, vl in 
-         enumerate(df.sum().values, start = 1)]
+          enumerate(df.sum().values, start = 1)]
     
     ax.legend(
         t,
@@ -85,23 +86,27 @@ def plot_annually_events_count(
     return fig
 
 def main():
+    df = b.load('features_one_hour')
     df = b.load('events_class2')
     
-    df = df.loc[df.index.year < 2023]
+    # df = df.loc[df.index.year < 2023]
     
-    translate = True
-    # for typing in ['sunset', 'midnight']:
-    typing = 'sunset'
-    ds = pb.sel_typing(df, typing = typing)
+    translate = False
+    for typing in ['sunset', 'midnight']:
     
-    fig = plot_annually_events_count(
-        ds, typing, translate=translate)
-    
-    FigureName = f'annual_{typing}'
-          
-        # fig.savefig(
-        #       b.LATEX(FigureName, folder = 'bars'),
-        #       dpi = 400
-        #       )
+        if translate:
+            FigureName = f'pt/annual_{typing}'
+        else:
+            FigureName = f'en/annual_{typing}'
+            
+        ds = pb.sel_typing(df, typing = typing)
         
-main()
+        fig = plot_annually_events_count(
+            ds, typing, translate=translate)
+                  
+        fig.savefig(
+              b.LATEX(FigureName, folder = 'bars'),
+              dpi = 400
+              )
+        
+# main()

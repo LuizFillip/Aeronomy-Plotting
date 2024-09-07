@@ -40,8 +40,9 @@ def plot_seasonal_occurrence(
             
     df = c.count_occurences(ds).month
     # df = df[df.columns[::-1]]
+    # df = df[[-50, -60, -70]]
     
-    df[-50].plot(
+    df.plot(
         kind = 'bar', 
         edgecolor = 'k',
         ax = ax, 
@@ -58,7 +59,7 @@ def plot_seasonal_occurrence(
         language = 'pt'
     else:
         ylabel = 'Number of cases'
-        xlabel = 'Meses'
+        xlabel = 'Months'
         sector = 'Sector'
         title = f'Events of {typing} EPBs ({s_year} - {e_year})'
         language = 'en'
@@ -91,32 +92,33 @@ def plot_seasonal_occurrence(
 
 def main():
 
-    df = b.load('events_class2')
-    df = df.loc[df.index.year < 2023]
-    translate = True
+    df = b.load('features_one_hour')
+    # df = df.loc[df.index.year < 2023]
+    translate = False
     
-    for typing in ['sunset', 'midnight']:
-     
+    # for typing in ['sunset', 'midnight']:
+    typing = 'sunset' 
+    typing = 'midnight'
         
-        ds = pb.sel_typing(df, typing = typing)
-        
+    ds = pb.sel_typing(df, typing = typing)
+    
 
-        fig = plot_seasonal_occurrence(
-            ds, typing, translate = translate)
-        
-        FigureName = f'seasonal_{typing}'
+    fig = plot_seasonal_occurrence(
+        ds, typing, translate = translate)
+    
+    FigureName = f'seasonal_{typing}'
           
         # fig.savefig(
     #           b.LATEX(FigureName, folder = 'bars'),
     #           dpi = 400
     #           )
     # # 
-# main()
+main()
 
-df = b.load('events_class2')
+# df = b.load('events_class2')
 
 
 
-df.loc[(df['lon'] == -50) & 
-       (df.index.year == 2018) & 
-       (df.index.month == 12)]
+# df.loc[(df['lon'] == -50) & 
+#        (df.index.year == 2018) & 
+#        (df.index.month == 12)]
