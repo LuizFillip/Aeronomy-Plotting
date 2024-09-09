@@ -3,7 +3,7 @@ import GEO as gg
 import matplotlib.pyplot as plt
 import base as b 
 
-b.config_labels(fontsize = 30)
+b.config_labels(fontsize = 40)
 
 args = dict( 
     s = 50, 
@@ -30,11 +30,14 @@ def plot_sites(ax, year):
         
     return None
 
-def plot_GNSS(ax, year):
+def plot_GNSS(ax, year, translate = False):
 
     lon, lat = gg.stations_coordinates(year, distance = 10)
-    
-    ax.scatter(lon, lat, **args, label = 'Receptores GNSS')
+    if translate:
+        label = 'Receptores GNSS'
+    else:
+        label = 'GNSS receivers'
+    ax.scatter(lon, lat, **args, label = label)
     
     # ax.annotate(
     #     'Receptores GNSS', xy=(lon[1], lat[1]), 
@@ -43,8 +46,9 @@ def plot_GNSS(ax, year):
     #     transform = ax.transData, 
     #     fontsize = 25
     #     )
+    return None 
 
-lat_lims = dict(min = -20, max = 10, stp = 10)
+lat_lims = dict(min = -40, max = 20, stp = 10)
 
 def plot_regions_over_map(year = 2013):
     
@@ -56,7 +60,7 @@ def plot_regions_over_map(year = 2013):
     fig, ax = plt.subplots(
         dpi = 300,
         sharex = True, 
-        figsize = (13, 6),
+        figsize = (15, 10),
         subplot_kw = {'projection': ccrs.PlateCarree()}
     )
     
@@ -68,14 +72,14 @@ def plot_regions_over_map(year = 2013):
 )
     gg.plot_rectangles_regions(ax)
     # plot_sites(ax, year)
-    # plot_GNSS(ax, year)
+    plot_GNSS(ax, year)
     
     ax.legend(
-        loc = 'upper center',
+        loc = 'upper right',
         ncol = 3, 
         # bbox_to_anchor = (1., 1.0), 
         columnspacing = 0, 
-        fontsize = 20
+        fontsize = 35
         
         )
     
@@ -84,10 +88,12 @@ def plot_regions_over_map(year = 2013):
 
 def main():
     fig = plot_regions_over_map(year = 2013)
-    FigureName = 'regions_and_ipp'
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder = 'maps'),
-    #     dpi = 400
-    #     )
     
-main()
+    FigureName = 'en/gnss_receivers'
+    
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'maps'),
+        dpi = 400
+        )
+    
+# main()

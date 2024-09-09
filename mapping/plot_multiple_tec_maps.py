@@ -23,6 +23,42 @@ def run_in_days(infile):
 b.config_labels(fontsize = 25)
 
 
+def arrow(ax, xy, xytext, text = '$B_1$', color = 'red'):
+
+    ax.annotate(
+        text, xy = xy, 
+        xytext=xytext,
+        arrowprops=dict(
+            color = color,
+            lw = 4,
+            arrowstyle='->'), 
+        transform = ax.transData, 
+        fontsize = 40, 
+        color = color
+        )
+    return None 
+
+def pplot_arrows(axs):
+    arrow(axs[0, 1], (-60, -10), (-60, 10), text = '$B_1$')
+    arrow(axs[0, 2], (-55, -10), (-55, 10), text = '$B_1$')
+    arrow(axs[0, 2], (-65, -10), (-65, 10), text = '$B_2$', 
+          color = 'black')
+    
+    arrow(axs[1, 0], (-50, -10), (-50, 10), text = '$B_1$')
+    arrow(axs[1, 0], (-65, -10), (-65, 10), text = '$B_2$', 
+          color = 'black')
+    
+    arrow(axs[1, 1], (-47, -8), (-47, 11), text = '$B_1$')
+    arrow(axs[1, 1], (-60, -10), (-60, 10), text = '$B_2$', 
+          color = 'black')
+    
+    arrow(axs[1, 2], (-45, -8), (-45, 11), text = '$B_1$')
+    arrow(axs[1, 2], (-58, -10), (-58, 10), text = '$B_2$', 
+          color = 'black')
+    
+    return None 
+      
+
 def plot_multiple_tec_maps(
         start, 
         hours,
@@ -30,7 +66,7 @@ def plot_multiple_tec_maps(
         root = 'E:\\'
         ):
 
-    fig, ax = plt.subplots(
+    fig, axs = plt.subplots(
          figsize = (18, 14), 
          dpi = 300, 
          ncols = 3, 
@@ -44,9 +80,7 @@ def plot_multiple_tec_maps(
         hspace = 0.1
         )
     
-    # minutes = np.arange(0, 400, 30)
-    
-    for i, ax in enumerate(ax.flat):
+    for i, ax in enumerate(axs.flat):
                 
         dn = start + dt.timedelta(hours = int(hours[i]))
         
@@ -70,7 +104,8 @@ def plot_multiple_tec_maps(
         ax.text(0.02, 1.05, f'({l})', 
                 fontsize = 30,
                 transform = ax.transAxes)
-        
+    
+    
     b.fig_colorbar(
             fig,
             vmin = 0, 
@@ -86,15 +121,17 @@ def main():
     
     start =  dt.datetime(2015, 12, 20, 20)
     start =  dt.datetime(2014, 2, 9, 23)
+    start = dt.datetime(2017, 9, 17, 0)
     hours = np.arange(0, 7, 1)
-    fig = plot_multiple_tec_maps(start, hours, vmax = 80)
+    fig = plot_multiple_tec_maps(start, hours, vmax = 20)
     
     FigureName = start.strftime('%Y%m%d')
-    fig.savefig(
-        b.LATEX(FigureName, 
-                folder = 'maps'),
-        dpi = 400
-        )
+    
+    # fig.savefig(
+    #     b.LATEX(FigureName, 
+    #             folder = 'maps'),
+    #     dpi = 400
+    #     )
     
 main()
 

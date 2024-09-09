@@ -66,19 +66,19 @@ def plot_in_circle(
 
 
 
+def main():
 
-
-year = 2021
-clon, clat, radius = -45, -5, 5
-
-names, lon, lat = gg.arr_coords(
     year = 2021
-    )
-
-in_x, in_y = plot_in_circle(year, lon, lat, (clon, clat), 
-    radius
-    )
-
-
+    clon, clat, radius = -45, -5, 5
+    
+    names, lon, lat = gg.arr_coords(
+        year = 2021
+        )
+    
+    in_x, in_y = plot_in_circle(year, lon, lat, (clon, clat), 
+        radius
+        )
+    
+    
 
 

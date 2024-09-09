@@ -20,9 +20,6 @@ def plot_ipp_on_map(ax, ds, dn, colorbar = False):
         
         ticks = np.arange(0, 2, 0.5)
         
-        
-
-        
         img = ax.scatter(
             sel.lon,
             sel.lat, 
@@ -38,6 +35,8 @@ def plot_ipp_on_map(ax, ds, dn, colorbar = False):
             img, ax, ticks, 
             anchor = (.05, 0., 1, 1)
             )
+        
+    return None 
         
 def plot_ipp_map_and_timeseries(
         df, 

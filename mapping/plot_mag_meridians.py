@@ -123,12 +123,12 @@ def plot_meridian(
         plot_meridian_range(
                 ax,x, y, nx, ny, rlat)
 
-        ax.scatter(nx, ny,
-            marker = "^", 
-            s = 300, 
-            c = 'r',
-            label = 'Intersecção com o Equador'
-            )
+        # ax.scatter(nx, ny,
+        #     marker = "^", 
+        #     s = 300, 
+        #     c = 'r',
+        #     label = 'Intersecção com o Equador'
+        #     )
     
     return None        
 
