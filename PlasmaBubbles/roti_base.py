@@ -3,6 +3,7 @@ import PlasmaBubbles as pb
 import GEO as gg
 import numpy as np 
 import digisonde as dg 
+import datetime as dt 
 
 b.config_labels()
 
@@ -17,15 +18,19 @@ args = dict(
     
 def plot_occurrence_events(
         ax, 
-        ds, 
+        ds,
         threshold = 0.25,
-        color = 'b'
+        color = 'b', 
+        false_filter = None
         ):
     
-    events = pb.events_by_longitude(ds['max'], threshold)
+    ev = pb.events_by_longitude(ds['max'], threshold)
     
+    if false_filter is not None:
+        ev.loc[ev.index < false_filter] = 0
+        
     line, = ax.plot(
-          events, 
+          ev, 
           marker = 'o',
           markersize = 3,
           color = 'b'
@@ -51,7 +56,7 @@ def plot_occurrence_events(
             linestyle = '--'
             )
         
-    return events
+    return ev
         
 
 def plot_roti_points(
@@ -60,7 +65,8 @@ def plot_roti_points(
         label = False, 
         points_max = True,
         vmax = 3,
-        occurrence = True
+        occurrence = True, 
+        false_filter = None
         ):
         
     ax.plot(ds['roti'], **args, label = 'ROTI points')
@@ -106,8 +112,10 @@ def plot_roti_points(
             plot_occurrence_events(
                 ax1, 
                 df1, 
-                threshold, 
-                color = 'b'
+                threshold,
+                color = 'b',
+                false_filter = false_filter
+                
                 )
             
             # ax1.set_ylabel('Ocorrência', color = 'b')

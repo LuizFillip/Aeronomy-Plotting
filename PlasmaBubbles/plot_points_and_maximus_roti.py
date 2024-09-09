@@ -33,6 +33,7 @@ def plot_points_and_maximus_roti(
     
     threshold  = pb.threshold(dn, factor = 4)['noise'].item()
     threshold = round(threshold, 3)
+    threshold = 0.25
     
     if translate:
         occurrence = 'Occurrence'
@@ -62,6 +63,9 @@ def plot_points_and_maximus_roti(
             
         ds = pb.filter_region(df1, dn.year, sector)
         
+        if sector == - 80:
+            ds = ds.loc[~(ds['roti']> 0.25)]
+            
         ds = pl.plot_roti_points(
                 ax[row], ds, 
                 threshold = threshold,
@@ -70,7 +74,7 @@ def plot_points_and_maximus_roti(
                 )
                 
         l = b.chars()[row]                
-        info = f'({l}) {sector_name} {row + 1} ({sector}°)'
+        info = f'({l}) {sector_name} {row + 1}'
         
         ax[row].text(
             0.01, 0.8, info, 
@@ -120,6 +124,7 @@ def plot_points_and_maximus_roti(
             fontsize = 32, 
             s = 80, 
             threshold = threshold,
+            translate = translate,
             anchor = (0.5, 4.8), 
             ncol = 3
             )
@@ -137,12 +142,14 @@ def main():
     dn = dates[2]
     dn = dt.datetime(2019, 12, 6, 21)
     dn = dt.datetime(2018, 12, 12, 21)
+    dn = dt.datetime(2019, 2, 24, 21)
+    
     
     df = pb.concat_files(
         dn, 
         days = 2, 
         root = 'E:\\', 
-        hours = 12, 
+        hours = 11, 
         remove_noise = True
         )
     
@@ -151,14 +158,14 @@ def main():
             df, 
             dn, 
             fontsize = 35, 
-            translate = False
+            translate = True
             )
     
-    FigureName = dn.strftime('occurrence_%Y%m%d')
+    FigureName = dn.strftime('en/%Y%m%d')
     
     
     # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'timeseries'),
+    #       b.LATEX(FigureName, folder = 'ROTI'),
     #       dpi = 400
     #       )
     
