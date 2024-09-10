@@ -40,7 +40,7 @@ def plot_seasonal_occurrence(
             
     df = c.count_occurences(ds).month
     # df = df[df.columns[::-1]]
-    # df = df[[-50, -60, -70]]
+    df = df[[-50, -60, -70]]
     
     df.plot(
         kind = 'bar', 
@@ -93,25 +93,26 @@ def plot_seasonal_occurrence(
 def main():
 
     df = b.load('features_one_hour')
+    df = b.load('events_class2')
     # df = df.loc[df.index.year < 2023]
     translate = False
     
-    # for typing in ['sunset', 'midnight']:
-    typing = 'sunset' 
-    typing = 'midnight'
-        
-    ds = pb.sel_typing(df, typing = typing)
-    
+    for typing in ['sunset', 'midnight']:
 
-    fig = plot_seasonal_occurrence(
-        ds, typing, translate = translate)
+        ds = pb.sel_typing(df, typing = typing)
+        
     
-    FigureName = f'seasonal_{typing}'
-          
-        # fig.savefig(
-    #           b.LATEX(FigureName, folder = 'bars'),
-    #           dpi = 400
-    #           )
+        fig = plot_seasonal_occurrence(
+            ds, typing, translate = translate)
+        if translate:
+            FigureName = f'pt/seasonal_{typing}'
+        else:
+            FigureName = f'en/seasonal_{typing}'
+              
+        fig.savefig(
+              b.LATEX(FigureName, folder = 'bars'),
+              dpi = 400
+              )
     # # 
 main()
 

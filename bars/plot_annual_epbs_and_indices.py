@@ -84,7 +84,8 @@ def plot_F107(
     ax.legend(ncol= 2, loc = 'upper right')
     
     plt.xticks(rotation = 0, ha = 'center')
-
+    
+    return None 
 
 
 def plot_Kp(
@@ -128,6 +129,18 @@ def plot_Kp(
     
     ax.legend(ncol = 2, loc = 'upper right')
 
+def plot_gamma(ax):
+    PATH_GAMMA = 'database/gamma/p1_saa.txt'
+    
+    df = b.load(PATH_GAMMA)
+
+    df = df.loc[
+        (df.index.time == dt.time(22, 0)) & 
+        (df.index.year < 2023)]
+    
+    
+    pl.plot_gamma(ax, df['gamma'], avg_run = 27)
+    
 def plot_annually_epbs_and_indices(
         df,
         kp_level = 3,
@@ -148,6 +161,7 @@ def plot_annually_epbs_and_indices(
     xlim = plot_EPBs(ax[0], df, col = col, translate = translate)
     
     df['Kpmean'] = df['kp'].rolling('30D').mean()
+    
     df.index = df.index.map(gg.year_fraction)
     
     plot_F107(
@@ -158,18 +172,7 @@ def plot_annually_epbs_and_indices(
         xlim = xlim
         )
     
-    
-    
-    PATH_GAMMA = 'database/gamma/p1_saa.txt'
-    
-    df = b.load(PATH_GAMMA)
-
-    df = df.loc[
-        (df.index.time == dt.time(22, 0)) & 
-        (df.index.year < 2023)]
-    
-    
-    pl.plot_gamma(ax[1], df['gamma'], avg_run = 27)
+ 
 
     ax[-1].set(
         xlabel = 'Years',
@@ -192,11 +195,5 @@ def main():
     # fig.savefig(b.LATEX('annual_variation2', folder = 'bars'))
 
 
-# df = c.epbs(col = -50, geo = True, eyear = 2022)
-# df.loc[(df['dst'] < -30) | (df['dst'] <= -50)]
-# df.loc[(df['dst'] < -50) | (df['dst'] <= -100)]
 
-# len(df.loc[(df['dst'] < -100)]) / len(df)
-
-# 760 / len(df) * 100
 main()
