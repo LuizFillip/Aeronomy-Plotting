@@ -46,7 +46,7 @@ def plot_with_without_ESF():
 def main():
     fig = plot_with_without_ESF()
     
-    FigureName  = '20131224_with_without_ESF'
+    FigureName = '20131224_with_without_ESF'
     fig.savefig(
             b.LATEX(FigureName, folder = 'Iono'),
             dpi = 400

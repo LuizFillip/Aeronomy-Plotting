@@ -76,12 +76,7 @@ def plot_multiples_sites(
     for i, site in enumerate(codes):
     
         df = dg.IonoAverage(dn, cols, site, ref = ref)
-        
-        if site == 'JI91J':
-            parameter = 'hF'
-        else:
-            parameter = 'hF2'
-            
+              
         plot_heights(ax[i, 0], df, parameter)
         
         plot_drift(ax[i, 1], df, vmax = 50)
@@ -195,21 +190,16 @@ ref = dt.datetime(2015, 12, 20, 20)
 dn = dt.datetime(2015, 12, 2)
 
 
-# dn = dt.datetime(2013, 3, 4, 20)
-
-# ref = dt.datetime(2013, 3, 17)
-
-
-cols = list(range(4, 8, 1))
-
-
-fig = plot_multiples_sites(ref, cols,  dn)
-
-
-FigureName = ref.strftime('Iono_parameters_%Y%m%d')
-fig.savefig(
-      b.LATEX(FigureName, folder = 'Iono'),
-      dpi = 400
-      )
-
-# plt.show()
+def main():
+    cols = list(range(4, 8, 1))
+    
+    fig = plot_multiples_sites(ref, cols,  dn)
+    
+    FigureName = ref.strftime('Iono_parameters_%Y%m%d')
+    
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'Iono'),
+          dpi = 400
+          )
+    
+    # plt.show()
