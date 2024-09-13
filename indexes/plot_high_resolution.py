@@ -14,7 +14,7 @@ def plot_SymH(ax, ds, ylim = [-200, 50]):
     ax.set(
         xlim = [ds.index[0], ds.index[-1]], 
         ylim = [ylim[0], ylim[-1]],
-        yticks = np.arange(ylim[0], ylim[-1] - 30, 50),
+        yticks = np.arange(ylim[0], ylim[-1] - 30, 100),
         ylabel = "SYM-H (nT)"
         )
     
@@ -25,6 +25,7 @@ def plot_SymH(ax, ds, ylim = [-200, 50]):
 def plot_Aurora(ax, ds):
     ax.plot(ds['ae'])
     ax.set(
+        yticks = np.arange(0, 3000, 1000),
         ylabel = 'AE (nT)'
         )
     return None
@@ -39,7 +40,10 @@ def plot_solar_speed(ax, ds):
         )
     return None
 
-def plot_high_resolution(ds, dn):
+def plot_high_resolution(
+        ds, dn, 
+        translate = False
+       ):
     
     fig, ax = plt.subplots(
         dpi = 300,
@@ -59,7 +63,11 @@ def plot_high_resolution(ds, dn):
     pl.plot_kp(ax[4], dn, days = 2)
     
     
-    b.format_time_axes(ax[-1], hour_locator = 12, pad = 80)
+    b.format_time_axes(
+        ax[-1],
+        hour_locator = 6, 
+        pad = 80, 
+        format_date = '%d/%m/%y')
     
     
     for a in ax.flat:
@@ -76,7 +84,12 @@ def plot_high_resolution(ds, dn):
              )
         
         ssc = dt.datetime(2015, 12, 19, 16, 20)
-        a.axvline(ssc, color = 'red', lw = 3, linestyle = '--')
+        a.axvline(
+            ssc, 
+            color = 'red', 
+            lw = 3, 
+            linestyle = '--'
+            )
     
     ax[0].text(
         ssc, 610, 
@@ -84,6 +97,15 @@ def plot_high_resolution(ds, dn):
         color = 'red',
         transform = ax[0].transData
         )
+    
+    b.plot_letters(
+        ax, 
+        y = 0.8, 
+        x = 0.02, 
+        num2white = None
+        )
+    
+    fig.align_ylabels()
         
     return fig 
 
@@ -110,4 +132,4 @@ def main():
           dpi = 400)
     
     
-# main()
+main()
