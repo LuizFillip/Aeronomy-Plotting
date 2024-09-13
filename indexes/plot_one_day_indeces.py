@@ -7,8 +7,11 @@ b.config_labels(fontsize = 30)
 
 PATH = 'database/indices/omni_hourly.txt'
 
-def plot_kp(ax, ds):
+def plot_kp(ax, ds, days = 2):
     
+    if isinstance(ds, dt.datetime) :
+        ds = indexes_in_range(ds, days = days)
+        
     ax1 = ax.twinx()
     
     line, = ax1.plot(ds['f107'], lw = 2, color = 'red')
@@ -70,14 +73,14 @@ def plot_dst(ax, ds, ylim = [-200, 100]):
     return None 
         
 
-def plot_magnetic_fields(ax, ds):
+def plot_magnetic_fields(ax, ds, ylim = 30):
     
     ax.plot(ds[['by', 'bz']], label = ['$B_y$', '$B_z$'] )
     
     ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
     
     ax.set(
-        ylim = [-40, 40], 
+        ylim = [-ylim, ylim], 
         ylabel = '$B_y/B_z$ (nT)'
         )
     
