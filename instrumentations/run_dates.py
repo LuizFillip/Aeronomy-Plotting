@@ -135,6 +135,9 @@ dn =  dt.datetime(2014, 2, 9, 20)
 dn = dt.datetime(2014, 1, 2, 20)
 dn = dt.datetime(2018, 3, 19, 20)
 dn = dt.datetime(2022, 7, 24, 20)
+# dn = dt.datetime(2013, 12, 24, 20)
+# dn = dt.datetime(2019, 5, 2, 20)
+
 main(dn, vmax = 10)
 
 # folder_in = dn.strftime('%Y%m%d')
@@ -144,7 +147,7 @@ main(dn, vmax = 10)
 #         path_out = 'movies/',
 #         movie_name = folder_in,
 #         fps = 10
-#         )
+#         )ffddd
 
 # for dn in [dt.datetime(2017, 9, 17, 20), 
 #            dt.datetime(2014, 2, 9, 20), 

@@ -33,6 +33,8 @@ def plot_regions(ax_tec, site):
              edgecolor = "w"
              )
      
+     return None 
+     
      
 def save_image(fig, target, dn):
     folder = dn.strftime('%Y%m%d')
@@ -41,7 +43,8 @@ def save_image(fig, target, dn):
     name = target.strftime('%Y%m%d%H%M%S')
     
     fig.savefig(f'{path_to_save}/{name}', dpi = 100)
-
+    
+    return None 
 
 def title(dn):
     return dn.strftime('%Y/%m/%d %Hh%M (UT)')
@@ -97,7 +100,8 @@ def plot_time_evolution(
         vmax = vmax, 
         colorbar = True, 
         boxes = True,
-        root = root_tec
+        root = root_tec, 
+        vertical_cbar = False
         )
     
     site, path_of_ionogram = dg.path_ionogram(dn, target)
@@ -184,13 +188,13 @@ def test_single(
     return None 
     
 
-dn =  dt.datetime(2014, 2, 9, 20)
-dn = dt.datetime(2018, 3, 19, 20)
+# dn =  dt.datetime(2014, 2, 9, 20)
+# dn = dt.datetime(2013, 12, 24, 20)
 
 # test_single(
 #     dn, 
 #     start = None, 
-#     vmax = 10, 
+#     vmax = 60, 
 #     offset = 7, 
 #     remove_noise = True
 #     )

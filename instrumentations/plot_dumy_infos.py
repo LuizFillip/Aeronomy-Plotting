@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri May  3 20:12:21 2024
-
-@author: Luiz
-"""
-
+import base as b 
+import matplotlib.pyplot as plt 
+import pandas as pd 
+import numpy as np 
 def dumb_data(start):
-    import pandas as pd 
-    import numpy as np 
+    
     
     end = start + dt.timedelta(hours = 11)
     time = pd.date_range(start, end, freq = '1min')

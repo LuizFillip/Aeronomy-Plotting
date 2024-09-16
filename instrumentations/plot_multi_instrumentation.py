@@ -44,13 +44,7 @@ def plot_ionogram(ax2, PATH_IONO, target, col, site):
     file = target.strftime(f'{site}_%Y%m%d(%j)%H%M%S.PNG')
             
     img = io.imread(os.path.join(PATH_IONO, file))
-    
-    # if target.month == 6:
-        
-    #     y, h = 80, 450
-    #     x, w = 170, 450
-    # else:
-        
+            
     y, h = 300, 560
     x, w = 188, 559
     
@@ -74,12 +68,14 @@ def plot_ionogram(ax2, PATH_IONO, target, col, site):
     
     if col == 0:
         ax2.set(ylabel = 'Virtual Height (km)')
+        
+    return None 
 
 
     
-def plot_roti_curves(ax, dn):
+def plot_roti_curves(ax, dn, root = 'E:\\'):
     
-    ds = pb.concat_files(dn, root = 'D:\\') #os.getcwd()
+    ds = pb.concat_files(dn, root = root) #os.getcwd()
 
     ds = b.sel_times(ds, dn)
     
@@ -141,6 +137,7 @@ def plot_shades(ax1, n, index, y = 4.5):
         edgecolor = 'k', 
         lw = 2
     )
+    return None 
     
 def closest_iono(PATH_IONO, target):
     iono_times = [
@@ -170,7 +167,7 @@ def plot_multi_instrumentation(
     fig.text( 0.07, 0.9, f'({letter})', fontsize = 45)
     
     folder_img = dn.strftime('CA_%Y_%m%d')
-    folder_ion = dn.strftime('%Y%m%d')
+    folder_ion = dn.strftime('%Y/%Y%m%d')
     PATH_SKY = f'database/images/{folder_img}/'
     PATH_IONO = f'database/ionogram/{folder_ion}{site[0]}/'
 
@@ -222,6 +219,12 @@ with_epbs = [
 #     'O6_CA_20131225_024146.tif'
 #     ]
 
+with_epbs = [
+    'O6_CA_20181213_003415.tif',
+    'O6_CA_20181213_003938.tif',
+    'O6_CA_20181213_012430.tif',
+    'O6_CA_20181213_020735.tif'
+    ]
 def main():
 
     figure_1  = plot_multi_instrumentation(with_epbs) 
@@ -231,11 +234,11 @@ def main():
     
     FigureName = 'validation_roti_paper'
     
-    
-    
     fig.savefig(
         b.LATEX(FigureName, 
         folder = 'products'),
         dpi = 400)
     
 # main()
+
+figure_1  = plot_multi_instrumentation(with_epbs) 
