@@ -9,18 +9,18 @@ import datetime as dt
 import numpy as np
 import PlasmaBubbles as pb 
 import cartopy.crs as ccrs
-from skimage import io
 
 b.config_labels(fontsize = 25)
 
 
 
-def roti_limit(dn, sector = -50):
+def roti_limit(dn, sector = -50, root = 'E:\\'):
     
-    df = pb.concat_files(dn, root = 'E:\\')
+    df = pb.concat_files(dn, root = root)
 
-    df = b.sel_times(df, dn, hours = 12)
+    df = b.sel_times(df, dn, hours = 11)
     
+    # return  df.loc[(df['lon']> -40) & (df['lon'] < -30)]
     return pb.filter_region(df, dn.year, sector)
    
 
@@ -64,11 +64,10 @@ def plot_roti_timeseries(ax_rot, dn, ref_long = -50):
      
      pl.plot_roti_points(
              ax_rot, df , 
-             threshold = 0.242,
+             threshold = 0.21,
              label = True
              )
      
-    
      vmax = np.ceil(df['roti'].max()) 
      vmax = 4
      ax_rot.set(
@@ -93,7 +92,8 @@ def TEC_6300_IONOGRAM_ROTI(
         site = 'FZA0M', 
         root = 'E:\\',
         letter = '(a)',
-        tec_max = 40):
+        tec_max = 40
+        ):
     
     PATH_SKY = im.path_all_sky(dn, root = root)
 
@@ -123,7 +123,7 @@ def TEC_6300_IONOGRAM_ROTI(
             infos = False,
             time_infos = False, 
             fontsize = 20,
-            limits = [0.2, 0.95]
+            limits = [0.22, 0.95]
             )
         
         title(ax_img, target, index)
@@ -143,7 +143,7 @@ def TEC_6300_IONOGRAM_ROTI(
             )
         
         title(ax_ion, dn1, index)
-        title(ax_ion, dn1, index)
+        # title(ax_ion, dn1, index)
         
         ax_tec = plt.subplot(
             gs2[2, col], projection = ccrs.PlateCarree())
@@ -205,10 +205,8 @@ def TEC_6300_IONOGRAM_ROTI(
                 xticks = np.arange(-90, -20, 20), 
                 yticks = np.arange(-40, 40, 20), 
                 xlabel = '', 
-                # title = ''
                 )
             
-        # title(ax_tec, dn1, index)
         title(ax_tec, dn1, index)
         
         plot_shades(ax_rot, target, index, y = vmax + 0.3)
@@ -222,7 +220,7 @@ def TEC_6300_IONOGRAM_ROTI(
     return fig 
 
 
-def join_images(site =  'SAA0K'):
+def solar_maximum(site =  'SAA0K'):
     dn = dt.datetime(2013, 12, 24, 20)
     
     files = [
@@ -245,7 +243,7 @@ def join_images(site =  'SAA0K'):
         'O6_CA_20130610_220827.tif',
         'O6_CA_20130610_225828.tif', 
         'O6_CA_20130611_001329.tif', 
-        'O6_CA_20130611_070750.tif',
+        'O6_CA_20130611_023100.tif',
         ]
     
     figure_1 = TEC_6300_IONOGRAM_ROTI(
@@ -260,40 +258,49 @@ def join_images(site =  'SAA0K'):
         dpi = 400
         )
 
-dn = dt.datetime(2022, 7, 24, 20)
-
-files = [ 
-    'O6_CA_20220725_000007.tif',
-    'O6_CA_20220725_021618.tif',
-    'O6_CA_20220725_034219.tif', 
-    'O6_CA_20220725_041809.tif'
-    ]
-
-dn = dt.datetime(2019, 5, 2, 20)
-
-files = [
-    'O6_CA_20190502_222618.tif',
-    'O6_CA_20190503_010603.tif',
-    'O6_CA_20190503_014157.tif',
-    'O6_CA_20190503_023548.tif',
-   # 'O6_CA_20190503_050111.tif',
-    ]
-
-# site =  'FZA0M'
-# # site =  'SAA0K'
 
 
-# fig  = TEC_6300_IONOGRAM_ROTI(
-#     files, dn, site, tec_max = 10,
-#     letter = '')
+def solar_minimum():
+    
+    site =  'SAA0K'
+    
+    dn = dt.datetime(2019, 12, 28, 21)
+    
+    files = [
+        'O6_CA_20191228_230604.tif',
+        'O6_CA_20191229_001044.tif',
+        'O6_CA_20191229_013322.tif', 
+        'O6_CA_20191229_023803.tif'
+        ]
+    
+    
+    figure_1 = TEC_6300_IONOGRAM_ROTI(
+        files, dn, site, tec_max = 10,
+        letter = '(a)')
+    
+    dn = dt.datetime(2019, 6, 24, 21)
+    
+    files = [
+        'O6_CA_20190624_220934.tif',
+        'O6_CA_20190624_231934.tif', 
+        'O6_CA_20190625_003457.tif', 
+        'O6_CA_20190625_010152.tif'
+        ]
+    
+    
+    
+    figure_2  = TEC_6300_IONOGRAM_ROTI(
+        files, dn, site, tec_max = 10,
+        letter = '(b)')
+    
+    
+    fig = b.join_images(figure_1, figure_2)
+    
+    FigureName = dn.strftime('validation_solar_min')
+    
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'products'),
+        dpi = 400
+        )
 
-
-
-# FigureName = dn.strftime('%Y%m%d_validation')
-# fig.savefig(
-#     b.LATEX(FigureName, folder = 'products'),
-#     dpi = 400
-#     )
-
-
-join_images(site =  'SAA0K')
+# solar_maximum(site =  'SAA0K')
