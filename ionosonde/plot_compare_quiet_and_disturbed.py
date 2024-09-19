@@ -7,21 +7,50 @@ import base as b
 import pandas as pd
 
 
+def plot_terminators(ax, df, site):
+    
+    #     for i in range(number):
+            
+    #         delta = dt.timedelta(days = 1)
+            
+    
+    for dn in np.unique(df.index.date):
+        
+        dusk = gg.dusk_from_site(
+                pd.to_datetime(dn), 
+                site = site[:3].lower(),
+                twilight_angle = 18
+                )
+        
+        ax.axvline(
+            dusk, 
+            lw = 2, 
+            linestyle = '--', 
+            color = 'k'
+            )
+        
+        
+# def plot_dusk_time(ax, start, number = 4):
+    
+
+
 def plot_compare_quiet_disturbed(
         translate = False
         ):
     
     if translate:
-        
         ylabel = 'Vertical drift (m/s)'
-        
+        qt_label = 'Quiet time'
+        db_label = 'Disturbance time'
     else:
         ylabel = 'Deriva vertical (m/s)'
-    
+        qt_label = 'Período calmo'
+        db_label = 'Período perturbado'
+        
     fig, ax = plt.subplots(
         dpi = 300, 
         nrows = 3,
-        figsize = (16, 10), 
+        figsize = (16, 12), 
         sharex = True, 
         sharey = True
         )
@@ -35,9 +64,20 @@ def plot_compare_quiet_disturbed(
 
     for i, site in enumerate(sites):
         
-        qt = dg.repeat_quiet_days(site)
+        ref = dt.datetime(2015, 12, 20, 21, 0)
         
-        ax[i].plot(qt, label = 'Período calmo')
+        ax[i].axvspan(
+             ref, 
+             ref + dt.timedelta(hours = 12), 
+             ymin = 0, 
+             ymax = 1,
+             alpha = 0.2, 
+             color = 'gray'
+             )
+        
+        qt = dg.repeat_quiet_days(site,  start)
+        
+        ax[i].plot(qt, label = qt_label)
     
         df = dg.join_iono_days(
                 site, 
@@ -50,30 +90,31 @@ def plot_compare_quiet_disturbed(
         
         df[site] = b.smooth2(df[site], 10)
         
-        ax[i].plot(df, label = 'Período perturbado')
+        ax[i].plot(df, label = db_label)
     
         ax[i].set(
-            ylim = [-30, 40], 
+            ylim = [-20, 43], 
+            yticks = np.arange(-20, 50, 20),
             xlim = [df.index[0], df.index[-1]]
             )
         
-        for dn in np.unique(df.index.date):
-            
-            dusk = gg.dusk_from_site(
-                    pd.to_datetime(dn), 
-                    site = site[:3].lower(),
-                    twilight_angle = 18
-                    )
-            
-            ax[i].axvline(dusk, lw = 1, color = 'k')
+        s = b.chars()[i]
+        name = dg.code_name(site)
+        ax[i].text(
+            0.02, 0.75, 
+            f'({s}) {name}', 
+            transform = ax[i].transAxes
+            )
         
+        plot_terminators(ax[i], df, site)
         
-    ax[1].set_ylabel(ylabel)
+        ax[i].axhline(0, linestyle = ':')
+              
+    ax[1].set_ylabel(ylabel, fontsize = 35)
     
-    
-    
+
     ax[0].legend(
-        bbox_to_anchor = (0.5, 1.4),
+        bbox_to_anchor = (0.5, 1.35),
         loc = 'upper center', 
         ncols = 2)
     
@@ -82,5 +123,14 @@ def plot_compare_quiet_disturbed(
         translate = translate, 
         pad = 80)
     return fig
+
+
+def main():
     
-fig = plot_compare_quiet_disturbed()
+    fig = plot_compare_quiet_disturbed()
+    
+    FigureName = 'quiet_disturbance_time'
+    
+    fig.savefig(b.LATEX(FigureName, 'Iono'), dpi = 400)
+    
+main()

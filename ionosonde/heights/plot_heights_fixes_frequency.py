@@ -43,7 +43,7 @@ def plot_height_fixes_for_multi_sites(
                 parameter = 'heights'
                 )
         
-        name = dg.code_name(site)
+        
         
         ax[i].plot(df)
         
@@ -52,7 +52,7 @@ def plot_height_fixes_for_multi_sites(
             xlim = [df.index[0], df.index[-1]])
         
         s = b.chars()[i]
-        
+        name = dg.code_name(site)
         ax[i].text(
             0.02, 0.75, 
             f'({s}) {name}', 
@@ -70,7 +70,7 @@ def plot_height_fixes_for_multi_sites(
              color = 'gray'
              )
         
-    ax[1].set_ylabel(ylabel)
+    ax[1].set_ylabel(ylabel, fontsize = fontsize)
   
     ax[0].legend(
         cols, 
