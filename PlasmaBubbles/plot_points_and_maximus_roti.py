@@ -46,6 +46,7 @@ def plot_points_and_maximus_roti(
         dpi = 300, 
         nrows = 4,
         sharex = True,
+        sharey = True,
         figsize = (16, 12)
         )
     
@@ -53,7 +54,7 @@ def plot_points_and_maximus_roti(
     
     coords = gg.set_coords(dn.year)
     
-    
+    vmax = 3
     for row, sector in enumerate(coords.keys()):
         
         if sector != -80:
@@ -63,8 +64,8 @@ def plot_points_and_maximus_roti(
             
         ds = pb.filter_region(df1, dn.year, sector)
         
-        if sector == - 80:
-            ds = ds.loc[~(ds['roti']> 0.25)]
+        # if sector <= - 70:
+        #     ds = ds.loc[~(ds['roti']> 0.25)]
             
         ds = pl.plot_roti_points(
                 ax[row], ds, 
@@ -82,7 +83,7 @@ def plot_points_and_maximus_roti(
             )
         
         if row == 0:
-            label_top = vmax + 2.2
+            label_top = vmax + 0.3
         else:
             label_top = None
         
@@ -95,8 +96,8 @@ def plot_points_and_maximus_roti(
                 )
         
         ax[row].set(
-            ylim = [0, vmax + 2], 
-            yticks = list(range(0, 6, 1)), 
+            ylim = [0, vmax + 0.2], 
+            yticks = list(range(0, 4, 1)), 
             xlim = [df.index[0], df.index[-1]], 
             )
         
@@ -142,8 +143,9 @@ def main():
     dn = dates[2]
     dn = dt.datetime(2019, 12, 6, 21)
     dn = dt.datetime(2018, 12, 12, 21)
-    dn = dt.datetime(2019, 2, 24, 21)
-    
+    dn = dt.datetime(2018, 6, 11, 21)
+    dn = dt.datetime(2019, 12, 20, 21)
+    dn = dt.datetime(2019, 12, 27, 21)
     
     df = pb.concat_files(
         dn, 
