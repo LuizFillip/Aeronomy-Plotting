@@ -111,8 +111,9 @@ def main():
     
     translate = True
 
-    df = c.load_results('saa')
+    df = c.load_results('saa', eyear = 2022)
     parameter ='gamma'
+    # print(df)
     
     fig = plot_storm_levels_distribution(
         df, 

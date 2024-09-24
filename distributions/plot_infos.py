@@ -20,7 +20,8 @@ def plot_infos_in_distribution(
         y = 0.20,
         translate = False,
         title = '$V_P$', 
-        offset_y = 0.15
+        offset_y = 0.15, 
+        fontsize = 30
         ):
     
     if title == 'gamma':
@@ -49,14 +50,16 @@ def plot_infos_in_distribution(
             ax.text(
                 x, y, f'{title_p}\n{info}', 
                 transform = ax.transAxes, 
-                color = colors[i]
+                color = colors[i], 
+                fontsize = fontsize
                 ) 
         else:
             ax.text(
                 x, y - offset_y * i,
                 f'{info}', 
                 transform = ax.transAxes, 
-                color = colors[i]
+                color = colors[i], 
+                fontsize = fontsize
                 ) 
     return None 
 

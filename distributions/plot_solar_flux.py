@@ -4,13 +4,12 @@ import core as c
 import plotting as pl 
  
 
-b.config_labels(fontsize = 25, blue = True)
+b.config_labels(fontsize = 30, blue = True)
 
 legend_args = dict(
     ncol = 3, 
     loc = 'upper center', 
     labelcolor = 'linecolor',
-    fontsize = 20,
     columnspacing = 0.2,
     )
 
@@ -22,7 +21,8 @@ def plot_distributions_solar_flux(
         level = 86, 
         translate = False,
         outliner = 10,
-        limit = None
+        limit = None, 
+        fontsize = 30
         ):
     
     
@@ -30,7 +30,7 @@ def plot_distributions_solar_flux(
         dpi = 300, 
         nrows = 2,
         sharex = True,
-        figsize = (12, 12)
+        figsize = (14, 12)
         )
     
     plt.subplots_adjust(hspace = 0.05)
@@ -65,7 +65,7 @@ def plot_distributions_solar_flux(
                 parameter = parameter,
                 axis_label = True,
                 translate = translate, 
-                width = 0.001
+                # width = 0.01
             )
         
         ax[1].set(ylim = [0, 600])
@@ -75,19 +75,22 @@ def plot_distributions_solar_flux(
         
         l = b.chars()[i]
         
-        # ax[i].text(
-        #     0.03, 0.87,
-        #     f'({l})',
-        #     transform = ax[i].transAxes, 
-        #     fontsize = 30
-        #     )
+        ax[i].text(
+            0.03, 0.87,
+            f'({l})',
+            transform = ax[i].transAxes, 
+            fontsize = fontsize
+            
+            )
         
-    x = 0.7
-    y = 0.35
-    offset_y = 0.1
+    x = 0.65
+    y = 0.3
+    offset_y = 0.12
     
-    ax[1].legend(**legend_args)
-    ax[0].legend(**legend_args)
+    ax[1].legend(**legend_args, 
+    fontsize = fontsize)
+    ax[0].legend(**legend_args, 
+    fontsize = fontsize)
     
     pl.plot_infos_in_distribution(
         ax[0], 
@@ -95,7 +98,8 @@ def plot_distributions_solar_flux(
         y = y, 
         translate = translate, 
         values = total_epb, 
-        offset_y = offset_y
+        offset_y = offset_y, 
+        fontsize = fontsize
         )
     
     pl.plot_infos_in_distribution(
@@ -105,7 +109,8 @@ def plot_distributions_solar_flux(
         values = total_day, 
         title = parameter, 
         translate = translate, 
-        offset_y = offset_y
+        offset_y = offset_y, 
+        fontsize = fontsize
         )
     
     return fig
@@ -114,18 +119,18 @@ def plot_distributions_solar_flux(
 
 def main():
     
-    translate = False
+    translate = True
 
-    df = c.load_results('saa', eyear = 2023)
+    df = c.load_results('saa', eyear = 2022)
 
     limit = c.limits_on_parts(df['f107a'], parts = 2 )
 
-    parameter = 'gamma'
+    parameter = 'gamma2'
     
     fig = plot_distributions_solar_flux(
             df, 
             parameter,
-            level = [75, 100], 
+            level = limit, 
             translate = translate, 
             outliner = 10,
             limit = True

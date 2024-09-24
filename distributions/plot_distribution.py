@@ -29,7 +29,7 @@ def plot_histogram(
         index, 
         label = '', 
         parameter = 'gamma',
-        width = 0.07,
+        width = None,
         axis_label = False,
         translate = True
         ):
@@ -37,12 +37,15 @@ def plot_histogram(
     if parameter == 'vp':
         xlabel = b.y_label('vp')
         width = 1.7
-    elif parameter == 'gravity':
+    elif parameter == 'gamma2':
         xlabel = b.y_label('gamma')
         width = 0.015
     else:
         xlabel = b.y_label('gamma')
         width = 0.05
+        
+    # if width is None:
+    #     w
             
     days = int(ds['days'].sum())
     
