@@ -70,27 +70,23 @@ def plot_distributions_seasons(
                 ylim = ylim, 
                 yticks = list(range(ylim[0], ylim[-1] + 50, 100))
                 )
-                    
-            ax[row, 0].text(
-                0.35, 0.82,
-                f'{df_season.name}',
-                transform = ax[row, 0].transAxes
-                )
-        
-            ax[row, 1].text(
-                0.35, 0.82,
-                f'{df_season.name}',
-                transform = ax[row, 1].transAxes
-                )
             
+            for col in range(2):
+                ax[row, col].text(
+                    0.03, 0.82,
+                    f'{df_season.name}',
+                    transform = ax[row, col].transAxes
+                    )
+        
         TOTAL = [total_epb, total_day]
        
         pl.plot_events_infos(
             ax, row, TOTAL, 
-            x = 0.58,
-            y = 0.4, #0.3
+            x = 0.55,
+            y = 0.3, 
             parameter = parameter,
-            translate = translate
+            translate = translate, 
+            fontsize = 25
             )
             
         
@@ -98,7 +94,7 @@ def plot_distributions_seasons(
         fig, 
         translate = translate, 
         parameter = parameter,
-        fontsize = 30
+        fontsize = 35
         )
     
     return fig
@@ -121,7 +117,7 @@ def main():
             limit = True
             )
     
-    FigureName = f'seasonal_{parameter}2'
+    FigureName = f'seasonal_{parameter}'
     
     if translate:
         folder = 'distributions/pt/'
@@ -135,6 +131,6 @@ def main():
         )
     
 
-    plt.show()
+    # plt.show()
 main()
 

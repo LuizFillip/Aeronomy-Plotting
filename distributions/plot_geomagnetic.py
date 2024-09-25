@@ -94,7 +94,7 @@ def plot_distributions_geomagnetic(
                 fontsize = 30
                 )
             
-    x = 0.68
+    x = 0.62
     y = 0.25
     offset_y = 0.1
     ax[1].legend(**legend_args)
@@ -105,7 +105,6 @@ def plot_distributions_geomagnetic(
         x = x, 
         y = y, 
         translate = translate, 
-        title = 'Ocorrência de EPBs',
         values = total_epb, 
         offset_y = offset_y
         )
@@ -115,7 +114,7 @@ def plot_distributions_geomagnetic(
         x = x,
         y = y,
         values = total_day, 
-        title = '$\gamma_{RT}$ total', 
+        title = parameter, 
         translate = translate, 
         offset_y = offset_y
         )
@@ -151,9 +150,7 @@ def main():
         dpi = 400
         )
 
-
-
     plt.show()
     
-main()
+# main()
 

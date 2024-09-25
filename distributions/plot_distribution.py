@@ -43,10 +43,8 @@ def plot_histogram(
     else:
         xlabel = b.y_label('gamma')
         width = 0.05
-        
-    # if width is None:
-    #     w
-            
+    
+
     days = int(ds['days'].sum())
     
     if index == 0:

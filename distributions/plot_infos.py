@@ -30,7 +30,7 @@ def plot_infos_in_distribution(
         title_p = '$V_P$ total'
     else:
         if translate:
-            title_p = 'Ocorrência de EPBs'
+            title_p = 'Ocorrência de BPEs'
         else:
             title_p = 'EPBs occurrence'
         
@@ -70,7 +70,8 @@ def plot_events_infos(
         translate = True, 
         parameter = 'gamma',
         x = 0.68, 
-        y = 0.2
+        y = 0.2, 
+        fontsize = 30
         ):
     
     titles = ['epb', parameter]
@@ -91,6 +92,7 @@ def plot_events_infos(
             y = y,
             translate = translate,
             title = titles[col], 
+            fontsize = fontsize
             )
                 
         ax[0, col].legend(
@@ -104,7 +106,7 @@ def plot_events_infos(
         l = b.chars()[col]
         
         ax[0, col].text(
-            -0.2, 1.25, f'({l})', 
+            -0.1, 1.25, f'({l})', 
             fontsize = 35,
             transform = ax[0, col].transAxes
             )
@@ -170,12 +172,14 @@ def plot_epbs_number(ax, data, color = 'k'):
     return None 
         
         
-def axes_for_seasonal_plot(nrows = 4):
+def axes_for_seasonal_plot(
+        nrows = 4, 
+        figsize = (20, 14)):
     
     fig, ax = plt.subplots(
           ncols = nrows // 2, 
           nrows = nrows,
-          figsize = (20, 14), 
+          figsize = figsize, 
           dpi = 300, 
           sharex = True, 
           sharey = 'col'

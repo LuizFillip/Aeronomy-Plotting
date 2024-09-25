@@ -30,7 +30,7 @@ def plot_distributions_solar_flux(
         dpi = 300, 
         nrows = 2,
         sharex = True,
-        figsize = (14, 12)
+        figsize = (14, 14)
         )
     
     plt.subplots_adjust(hspace = 0.05)
@@ -44,6 +44,7 @@ def plot_distributions_solar_flux(
    
     for i, ds in enumerate(df_index.F107_2(level)):
         
+        # print(ds[parameter].count())
         index = i + 1
         label = f'({index}) {F107_labels[i]}'
     
@@ -65,7 +66,7 @@ def plot_distributions_solar_flux(
                 parameter = parameter,
                 axis_label = True,
                 translate = translate, 
-                # width = 0.01
+              
             )
         
         ax[1].set(ylim = [0, 600])
@@ -79,18 +80,16 @@ def plot_distributions_solar_flux(
             0.03, 0.87,
             f'({l})',
             transform = ax[i].transAxes, 
-            fontsize = fontsize
+            fontsize = fontsize + 5
             
             )
         
-    x = 0.65
-    y = 0.3
-    offset_y = 0.12
+    x = 0.67
+    y = 0.25
+    offset_y = 0.1
     
-    ax[1].legend(**legend_args, 
-    fontsize = fontsize)
-    ax[0].legend(**legend_args, 
-    fontsize = fontsize)
+    ax[1].legend(**legend_args, fontsize = fontsize)
+    ax[0].legend(**legend_args, fontsize = fontsize)
     
     pl.plot_infos_in_distribution(
         ax[0], 
@@ -140,16 +139,19 @@ def main():
         folder = 'distributions/pt/'
     else:
         folder = 'distributions/en/'
-        
-    FigureName = f'solar_flux_{parameter}2'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder),
-    #     dpi = 400
-    #     )
+    if parameter == 'gamma2':
+        FigureName = f'solar_flux_{parameter}_without_vp'
+    else:
+        FigureName = f'solar_flux_{parameter}'
+    
+    fig.savefig(
+        b.LATEX(FigureName, folder),
+        dpi = 400
+        )
 
 
     plt.show()
     
-main()
+# main()
 

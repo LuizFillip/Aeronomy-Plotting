@@ -72,18 +72,17 @@ def plot_storm_levels_distribution(
                     index,
                     parameter = parameter,
                     label = kp_labels[index], 
-                    # limit = limit
                     )
             
             total_day.append(days)
         
             ax[row, 1].set(
-                ylim = [0, vmax - step], 
+                ylim = [0, 350], 
                 yticks = list(range(0, vmax, step))
                 )
                     
             ax[row, index].text(
-                0.35, 0.82,
+                0.02, 0.82,
                 f'{df_season.name}',
                 transform = ax[row, index].transAxes
                 )
@@ -93,7 +92,8 @@ def plot_storm_levels_distribution(
             ax, row, LIST, 
             x = 0.58,
             y = 0.3,
-            translate = translate
+            translate = translate, 
+            fontsize = 25
             )
             
         
@@ -101,7 +101,7 @@ def plot_storm_levels_distribution(
         fig, 
         translate = translate, 
         parameter = parameter,
-        fontsize = 30
+        fontsize = 35
         )
         
     return fig
@@ -113,7 +113,7 @@ def main():
 
     df = c.load_results('saa', eyear = 2022)
     parameter ='gamma'
-    # print(df)
+    
     
     fig = plot_storm_levels_distribution(
         df, 
@@ -130,8 +130,6 @@ def main():
     else:
         folder = 'distributions/en/'
         
-    # FigureName = f'geomagnetic_{parameter}'
-    
     FigureName = 'geomagnetic_seasonal'
     
     fig.savefig(
