@@ -23,9 +23,7 @@ def plot_gamma(ax, df, gamma, avg_run = 27):
     ax.scatter(df.index, df[gamma], **args_scatter)
 
     ax.plot(df['avg'], lw = 2)
-    
-    ax.legend(loc = 'upper right')
-    
+        
     if gamma == 'gamma':
         ylim = [0, 4]
         step = 1
@@ -141,25 +139,26 @@ def plot_annual_GRT(
     fig, ax = plt.subplots(
         sharex = True,
         dpi = 300, 
-        nrows = 5, 
+        nrows = 6, 
         figsize = (16, 20), 
         )
     
     plt.subplots_adjust(hspace = 0.1)
      
     plot_ratio(ax[0], df['ratio'])
-    # plot_vzp(ax[1], df['vp'])
-    plot_wind(ax[1], df['mer_perp'])
-    plot_grad(ax[2], df['K'])
+    plot_vzp(ax[1], df['vp'])
+   
+    plot_wind(ax[2], df['mer_perp'])
+    plot_grad(ax[3], df['K'])
     
-    plot_gravity(ax[3], df['gr'])
+    plot_gravity(ax[4], df['gr'])
     
-    plot_gamma(ax[4], df, gamma)
+    plot_gamma(ax[5], df, gamma)
 
     b.plot_letters(ax, 
         y = 0.8, 
         x = 0.02, 
-        fontsize = 30)
+        fontsize = 35)
     
     if translate:
         xlabel = 'Years'
@@ -175,29 +174,32 @@ def plot_annual_GRT(
     
     plt.gca().xaxis.set_minor_locator(AutoMinorLocator(n = 11))
     # plt.gca().xaxis.set_major_locator(AutoMinorLocator(n=1))
+    
+    fig.align_ylabels()
     return fig
 
 
-def set_data_and_plot():
+def main():
+    
     PATH_GAMMA = 'database/gamma/p1_saa.txt'
     
     df = b.load(PATH_GAMMA)
     
-    gamma = 'gamma2'
+    gamma = 'gamma'
     
     if gamma == 'gamma':
         time = dt.time(22, 0)
     else:
         time = dt.time(3, 0)
 
-    df = df.loc[(df.index.time == time) & (df.index.year < 2023)] #
+    df = df.loc[(df.index.time == time) & (df.index.year < 2023)] 
     
     df['gr'] = df['ge'] / df['nui']
     
     df['gamma2'] = df['ratio'] * df['K'] * (
         - df['mer_perp'] + df['gr'])
     
-    print(df.resample('1M').mean().max())
+        
     fig = plot_annual_GRT(df, translate=True, gamma = gamma)
     
     FigureName = f'annual_{gamma}_parameters'
@@ -207,5 +209,5 @@ def set_data_and_plot():
 
 
 
-# set_data_and_plot()
+main()
 

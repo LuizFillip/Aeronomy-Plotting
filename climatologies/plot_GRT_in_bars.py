@@ -155,7 +155,7 @@ def plot_epbs_rate(ax, translate = True):
     if translate: 
         ylabel = 'Rate of occurrence (\%)'
     else:
-        ylabel = 'Taxa de ocorrência (\%)'
+        ylabel = 'Taxa de \nocorrência (\%)'
         
     ax.set(
         ylim = [0, 120],
@@ -237,7 +237,7 @@ def set_data(file):
 def plot_annualy_quiet_time(translate = False):
     fig, ax = plt.subplots(
         figsize = (18, 14),
-        nrows = 3,
+        nrows = 2,
         sharex = True,
         dpi = 300
         )
@@ -247,7 +247,7 @@ def plot_annualy_quiet_time(translate = False):
     plot_epbs_rate(ax[0], translate)
     plot_gamma(ax[1])
     # plot_vp(ax[1])
-    pl.plot_f107(ax[2], mean = None)
+    # pl.plot_f107(ax[2], mean = None)
     if translate:
         xlabel = 'Years'
         names1 = ['March',  'September', 'December']
@@ -285,7 +285,8 @@ def plot_annualy_quiet_time(translate = False):
         fontsize = 40,
         color = 'red'
         )
-
+    
+    fig.align_ylabels()
     return fig
 
 
@@ -295,7 +296,7 @@ fig = plot_annualy_quiet_time()
   
 FigureName = 'annual_quiet_time'
       
-# fig.savefig(
-#       b.LATEX(FigureName, folder = 'bars'),
-#       dpi = 400
-#       )
+fig.savefig(
+      b.LATEX(FigureName, folder = 'bars'),
+      dpi = 400
+      )
