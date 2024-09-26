@@ -24,7 +24,7 @@ def divide_by_geomgnetic_levels(df):
     
     return cond, labels
 
-def values_by_season(df):
+def values_by_season(df, bins):
     
     cols = np.arange(-80, -40, 10)
     
@@ -32,13 +32,16 @@ def values_by_season(df):
     
     for i, col in enumerate(cols):
           
-        df2 = pb.hourly_distribution(
-            df.loc[(df['lon'] == col)],
-            step = 1, 
-            normalize = False,
-            percent = False).T 
+        # df2 = pb.hourly_distribution(
+        #     df.loc[(df['lon'] == col)],
+        #     step = 1, 
+        #     normalize = False,
+        #     percent = False).T 
         
-        arr[i] = df2.values
+        in_sector = df.loc[(df['lon'] == col)]
+        df = pb.concated_years(in_sector, bins, normalize = True)
+        
+        arr[i] = df.values
 
 
     return arr

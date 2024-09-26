@@ -20,7 +20,8 @@ def plot_histogram(ax, values, i):
     divider = make_axes_locatable(ax)
     
     axHisty = divider.append_axes(
-        "right", 2.5, pad = 0.2, sharey = ax)
+        "right", 2.5, 
+        pad = 0.2, sharey = ax)
     
     
     plt.setp( axHisty.get_yticklabels(), visible=False)

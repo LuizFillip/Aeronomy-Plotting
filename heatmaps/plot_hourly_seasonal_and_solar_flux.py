@@ -15,7 +15,9 @@ def plot_terminator(
         sector, 
         midnight = True, 
         translate = True,
-        label = False
+        label = False, 
+        float_index = True,
+        color = 'k'
         ):
     
     if translate:
@@ -28,18 +30,23 @@ def plot_terminator(
     df = b.load('events_class2')
     
     df = df.loc[df['lon'] == sector]
-    ax.plot(df.index, df['dusk'], lw = 2, color = 'w')
-    
     dn = df.index[0]
-    
     dusk = gg.local_midnight(dn, sector, delta_day = None)
+    
     dusk = round(b.dn2float(dusk))
+    
+    if float_index:
+        df.index = (df.index.year + df.index.day_of_year / 365 )
+        
+        
+    ax.plot(df.index, df['dusk'], lw = 2, color = color)
+   
     
     if label:
         ax.text(
             0.01, 0.05, 
             terminator_label, 
-            color = 'w',
+            color = color,
             transform = ax.transAxes
             )
     
@@ -54,7 +61,7 @@ def plot_terminator(
                 transform = ax.transData
                 )
         
-        ax.axhline(dusk, lw = 2, color = 'w')
+        ax.axhline(dusk, lw = 2, color = color)
         
     
     ax.plot(
@@ -62,7 +69,7 @@ def plot_terminator(
         df['dusk'] + 2,
         linestyle = '--', 
         lw = 2, 
-        color = 'w'
+        color = color
         )
     
     return midnight, dusk
@@ -229,3 +236,15 @@ def main():
     
 # main()
 # 
+
+
+# # Reference datetime (Unix epoch)
+# epoch = dt.datetime(1970, 1, 1)
+
+# # Get current datetime
+# now = dt.datetime.now()
+
+# # Calculate time delta in days (you can also use seconds, minutes, etc.)
+# days_since_epoch = (now - epoch).total_seconds() / (60 * 60 * 24)
+
+# print(days_since_epoch)

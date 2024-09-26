@@ -3,16 +3,16 @@ import base as b
 import matplotlib.pyplot as plt 
 import plotting as pl  
 import numpy as np 
-import pandas as pd 
 
 
-b.config_labels()
+b.config_labels(fontsize = 30)
 
 def plot_seasonal_hourly_all_sectors(
         ds, 
         fontsize = 35, 
         translate = False,
-        sector = 1
+        cmap = 'jet', 
+        line_color = 'w'
         ):
     
     fig, ax = plt.subplots(
@@ -24,36 +24,24 @@ def plot_seasonal_hourly_all_sectors(
            figsize = (16, 14)
            )
 
-    plt.subplots_adjust(wspace = 0.05)
-     
-    values = pb.annual_hourly_all_sectors(
-            ds, 
-            normalize = True,
-            step = 1, 
-            percent = True
-        )
-
-    z, x, y = values.shape
-    step = 1
-    yticks = np.arange(20, 32 + step, step)
-    cmap = 'jet'
-
-
-    start = ds.index[0].strftime('%Y-01-01')
-    end = ds.index[-1].strftime('%Y-12-31')
-
-
-    xticks = pd.date_range(start, end, periods = y)
-
+    plt.subplots_adjust(hspace = 0.05)
+        
     sectors = list(range(-80, -40, 10))[::-1]
+    
+    bins = pb.range_time(ds, step = 0.5)
+   
     for i, sector in enumerate(sectors):
         
-        pl.plot_terminator(ax[i], sector)
+        in_sector = ds.loc[(ds['lon'] == sector)] 
         
-        ax[i].set(title = f'Setor: {i + 1}')
+        df = pb.concated_years(in_sector, bins, normalize = False)
+
+        xticks = df.columns
+        yticks = df.index
+        values = (df.values / 9) * 100
         
         ax[i].imshow(
-              values[i],
+              values[::-1] ,
               aspect = 'auto', 
               extent = [xticks[0], xticks[-1], 
                         yticks[0], yticks[-1]],
@@ -62,16 +50,41 @@ def plot_seasonal_hourly_all_sectors(
               vmin = 0
               )
         
+        pl.plot_terminator(
+            ax[i], 
+            sector, 
+            float_index = True, 
+            color = line_color
+            )
+        
+        l = b.chars()[i]
+        ax[i].text(
+            0.01, 0.8, 
+            f'({l}) Setor {i + 1}', 
+            transform = ax[i].transAxes, 
+            color = line_color
+            )
+        
+        yticks = np.arange(yticks[0], yticks[-1], 2) 
+        ytlabels = np.where(yticks >= 24, yticks - 24, yticks)
+        
+        ax[i].set(
+            ylim = [yticks[0] - 0.5, yticks[-1] + 1],
+            yticks = yticks,
+            xlim = [xticks[0], xticks[-1]],
+            xticks = np.arange(2013, 2024, 1), 
+            yticklabels = ytlabels
+            )
         
 
     if translate:
         ylabel = 'Universal time'
         xlabel = 'Years'
-        zlabel = 'Occurrence (\%)'
+        zlabel = 'Occurrence rate (\%)'
     else:
         xlabel = 'Anos'
         ylabel = 'Hora universal'
-        zlabel = 'Ocorrência (\%)'
+        zlabel = 'Taxa de ocorrência (\%)'
 
 
     b.fig_colorbar(
@@ -79,10 +92,10 @@ def plot_seasonal_hourly_all_sectors(
             vmin = 0, 
             vmax = 100, 
             cmap = cmap,
-            fontsize = 25,
+            fontsize = fontsize,
             step = 10,
             label = zlabel, 
-            sets = [0.32, 0.98, 0.4, 0.02], 
+            sets = [0.13, 0.98, 0.75, 0.02], 
             orientation = 'horizontal', 
             levels = 10
             )
@@ -100,36 +113,30 @@ def plot_seasonal_hourly_all_sectors(
         rotation = 'vertical'
         )
     
-    b.plot_letters(
-        ax, 
-        y = 1.04, 
-        x = 0, 
-        num2white = None
-        )
-     
     return fig
     
 
 def main():
-
+    epb_type = 'midnight'
     ds = b.load('events_class2')
     
     
-    ds = ds.loc[(ds['type'] == 'midnight') & 
+    ds = ds.loc[(ds['type'] == epb_type) & 
                 (ds['drift'] == 'fresh')]
     
+    ds = ds.loc[ds.index.year < 2023]
     fig = plot_seasonal_hourly_all_sectors(
             ds, 
             fontsize = 35, 
-            translate = False,
-            sector = 1
+            translate = False
             )
     
     FigureName = 'seasonal_hourly_all_sectors'
     
-    fig.savefig(
-          b.LATEX(FigureName, 'climatology'),
-          dpi = 400)
+    # fig.savefig(
+    #       b.LATEX(FigureName, 'climatology'),
+    #       dpi = 400)
 
 
-# main()
+main()
+
