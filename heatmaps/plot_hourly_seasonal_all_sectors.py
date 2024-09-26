@@ -3,6 +3,7 @@ import base as b
 import matplotlib.pyplot as plt 
 import plotting as pl  
 import numpy as np 
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 b.config_labels(fontsize = 30)
@@ -12,24 +13,27 @@ def plot_seasonal_hourly_all_sectors(
         fontsize = 35, 
         translate = False,
         cmap = 'jet', 
-        line_color = 'w'
+        line_color = 'w', 
+        midnight = True
         ):
     
     fig, ax = plt.subplots(
            ncols = 1,
            nrows = 4,
            dpi = 300, 
-           sharex = True, 
-           sharey = True,
+            sharex = True, 
+            sharey = True,
            figsize = (16, 14)
            )
 
-    plt.subplots_adjust(hspace = 0.05)
+    plt.subplots_adjust(hspace = 0.1)
         
     sectors = list(range(-80, -40, 10))[::-1]
     
     bins = pb.range_time(ds, step = 0.5)
-   
+    
+    vmax = 29 # sunset
+    vmax = 9
     for i, sector in enumerate(sectors):
         
         in_sector = ds.loc[(ds['lon'] == sector)] 
@@ -38,38 +42,58 @@ def plot_seasonal_hourly_all_sectors(
 
         xticks = df.columns
         yticks = df.index
-        values = (df.values / 9) * 100
+        values = df.values 
         
+        vls = in_sector['start'].values
+        
+            # print(values.max())
+        pl.plot_histogram(ax[i], vls, i, bins)
+        
+                
         ax[i].imshow(
-              values[::-1] ,
+              (values[::-1] / vmax) * 100,
               aspect = 'auto', 
-              extent = [xticks[0], xticks[-1], 
-                        yticks[0], yticks[-1]],
+              extent = [
+                  xticks[0], xticks[-1], 
+                  yticks[0], yticks[-1]
+                  ],
               cmap = cmap, 
               vmax = 100, 
               vmin = 0
               )
         
+      
         pl.plot_terminator(
             ax[i], 
             sector, 
             float_index = True, 
-            color = line_color
+            color = line_color,
+            midnight = midnight
             )
         
         l = b.chars()[i]
+        
+        if midnight:
+            y = 0.8
+        else:
+            if i == 3:
+                y = 0.1
+            else:
+                y = 0.8
+            
         ax[i].text(
-            0.01, 0.8, 
+            0.01, y, 
             f'({l}) Setor {i + 1}', 
             transform = ax[i].transAxes, 
-            color = line_color
+            color = line_color, 
+            fontsize = 40
             )
         
         yticks = np.arange(yticks[0], yticks[-1], 2) 
         ytlabels = np.where(yticks >= 24, yticks - 24, yticks)
         
         ax[i].set(
-            ylim = [yticks[0] - 0.5, yticks[-1] + 1],
+            ylim = [yticks[0], yticks[-1]],
             yticks = yticks,
             xlim = [xticks[0], xticks[-1]],
             xticks = np.arange(2013, 2024, 1), 
@@ -100,16 +124,12 @@ def plot_seasonal_hourly_all_sectors(
             levels = 10
             )
         
-    fig.text(
-        0.5, 0.05,
-        xlabel, 
-        fontsize = fontsize
-        )
+    ax[-1].set_xlabel(xlabel, fontsize = fontsize + 5)
 
     fig.text(
         0.045, 0.41, 
         ylabel, 
-        fontsize = fontsize, 
+        fontsize = fontsize  + 5, 
         rotation = 'vertical'
         )
     
@@ -128,15 +148,16 @@ def main():
     fig = plot_seasonal_hourly_all_sectors(
             ds, 
             fontsize = 35, 
-            translate = False
+            translate = False, 
+            midnight = True
             )
     
-    FigureName = 'seasonal_hourly_all_sectors'
+    FigureName = f'seasonal_hourly_{epb_type}'
     
-    # fig.savefig(
-    #       b.LATEX(FigureName, 'climatology'),
-    #       dpi = 400)
+    fig.savefig(
+          b.LATEX(FigureName, 'climatology'),
+          dpi = 400)
 
 
-main()
+# main()
 

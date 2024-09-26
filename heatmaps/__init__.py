@@ -1,2 +1,2 @@
-from .plot_hourly_seasonal_and_solar_flux import plot_seasonal_hourly, plot_terminator
-from . 
+from .plot_hourly_seasonal_and_solar_flux import plot_seasonal_hourly
+from .heatmap_tools import plot_histogram, plot_terminator

@@ -133,10 +133,10 @@ def plot_hourly_and_histograms(
               vmin = 0
               )
         
-        plot_histogram(ax[i], ds1['start'].values, i)
+        # plot_histogram(ax[i], ds1['start'].values, i)
 
         ax[i].set(xlim = [xticks[0], xticks[-1]])
-        pl.plot_terminator(ax[i], sector, translate = False)
+        # pl.plot_terminator(ax[i], sector, translate = False)
         
         l = b.chars()[i]
         s = f'({l}) Setor {i + 1}'
@@ -181,24 +181,3 @@ def plot_hourly_and_histograms(
         )
     return fig 
 
-def main():
-    ds = b.load('events_class2')
-    ds = ds.loc[ds.index.year < 2023]
-    
-    # for type_in in ['sunset', 'midnight']:
-    type_in = 'midnight'
-    ds = ds.loc[(ds['drift'] == 'fresh') & 
-                (ds['type'] == type_in)]
-    
-    fig = plot_hourly_and_histograms(
-        ds,
-        translate = False )
-         
-    FigureName = f'seasonal_hourly_{type_in}'
-    
-    fig.savefig(
-          b.LATEX(FigureName, 'climatology'),
-          dpi = 400)
-
-
-main()

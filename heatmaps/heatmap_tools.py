@@ -1,14 +1,31 @@
-import PlasmaBubbles as pb 
 import base as b 
 import matplotlib.pyplot as plt 
-import plotting as pl  
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import pandas as pd
 import numpy as np 
+import GEO as gg 
 
-b.config_labels(fontsize = 30)
+def plot_mean_std(
+        ax, 
+        vls, x = 0.1, y = 0.7, unit = 'HU'):
+    
+    mu = round(vls.mean(), 2)
+    sigma = round(vls.std(), 2)
+    mu = str(mu).replace('.', ',')
+    sigma = str(sigma).replace('.', ',')
+    
+    
+    
+    info =  f'$\mu = $ {mu} {unit}\n$\sigma = $ {sigma} {unit}'
+    
+    ax.text(x, y, info, transform = ax.transAxes)
+    
+    return None 
+    
 
-def plot_histogram(ax, values, i):
+
+def plot_histogram(
+        ax, values, i, bins, xy = ()):
        
     args = dict(
         facecolor = 'lightgrey', 
@@ -21,37 +38,35 @@ def plot_histogram(ax, values, i):
     
     axHisty = divider.append_axes(
         "right", 2.5, 
-        pad = 0.2, sharey = ax)
+        pad = 0.4, 
+        sharey = ax)
     
     
     plt.setp( axHisty.get_yticklabels(), visible=False)
     
-    bins = np.linspace(20, 32, 30)
+    bins = np.arange(min(bins), max(bins), 0.2)
     
     vls = values.ravel()
     
-    axHisty.hist(
+    counts, _, _ = axHisty.hist(
         vls,
         bins = bins, 
-        orientation='horizontal',
+        orientation = 'horizontal',
         **args
         )
     
-
+    step = 50
     axHisty.set(
-        ylim = [20, 32], 
-        xlim = [0, 250],
-        yticks = np.arange(20, 28 + 4, 4),
-        xticks = np.arange(0, 250, 100),
+        xlim = [0, max(counts) + step ],
+        xticks = np.arange(10, max(counts) + step, step),
         xlabel = 'Frequência \n de ocorrência'
         )
     
     if i != 3:
-        axHisty.set(xticklabels = [], 
-                    xlabel = '')
-    
-    b.plot_mean_std(axHisty, vls, x = 0.09, y = 0.1)
-    
+        axHisty.set(
+            xticklabels = [], 
+            xlabel = ''
+            )
     return axHisty 
 
 def get_ticks(values, ds, step = 1):
@@ -66,118 +81,67 @@ def get_ticks(values, ds, step = 1):
     return xticks, yticks
 
 
-def plot_hourly_and_histograms(
-        ds,
-        translate = False, 
-        fontsize = 45
+def plot_terminator(
+        ax, 
+        sector, 
+        midnight = True, 
+        translate = True,
+        label = False, 
+        float_index = True,
+        color = 'k'
         ):
     
-    
-
-    fig, ax = plt.subplots(
-           ncols = 1,
-           nrows = 4,
-           dpi = 300, 
-           sharex = True, 
-           sharey = True,
-           figsize = (18, 14)
-           )
-    
-    
-    plt.subplots_adjust(hspace = 0.1)
-    values = pb.annual_hourly_all_sectors(
-            ds, 
-            normalize = True,
-            step = 1, 
-            percent = True
-        )
-    
-    
-    xticks, yticks = get_ticks(values, ds, step = 1)
-  
-    sectors = list(range(-80, -40, 10))[::-1]
-    
-    
-    for i, sector in enumerate(sectors):
-        
-        ds1 = ds.loc[ds['lon'] == sector]
-            
-        ax[i].imshow(
-              values[i],
-              aspect = 'auto', 
-              extent = [xticks[0], xticks[-1], 
-                        yticks[0], yticks[-1]],
-              cmap = 'jet', 
-              vmax = 100, 
-              vmin = 0
-              )
-        
-        plot_histogram(ax[i], ds1['start'].values, i)
-
-        ax[i].set(xlim = [xticks[0], xticks[-1]])
-        pl.plot_terminator(ax[i], sector, translate = False)
-        
-        l = b.chars()[i]
-        s = f'({l}) Setor {i + 1}'
-        
-        ax[i].text(
-            0.01, 0.82, s, 
-            transform = ax[i].transAxes, 
-            color = 'w',
-            fontsize = 35
-            )
-        
     if translate:
-        ylabel = 'Universal time'
-        xlabel = 'Years'
-        zlabel = 'Occurrence (\%)'
+        terminator_label = 'Solar terminator (300 km)'
+        midnight_label = 'Local midnight'
     else:
-        xlabel = 'Anos'
-        ylabel = 'Hora universal'
-        zlabel = 'Ocorrência (\%)'
+        terminator_label = 'Terminadouro solar (300 km)'
+        midnight_label = 'Meia-noite local'
+    
+    df = b.load('events_class2')
+    
+    df = df.loc[df['lon'] == sector]
+    dn = df.index[0]
+    dusk = gg.local_midnight(dn, sector, delta_day = None)
+    
+    dusk = round(b.dn2float(dusk))
+    
+    if float_index:
+        df.index = (df.index.year + df.index.day_of_year / 365 )
         
-    b.fig_colorbar(
-            fig,
-            vmin = 0, 
-            vmax = 100, 
-            cmap = 'jet',
-            fontsize = 35,
-            step = 10,
-            label = zlabel, 
-            sets = [0.32, 0.96, 0.4, 0.02], 
-            orientation = 'horizontal', 
-            levels = 10
+    df['dusk'] = b.smooth2(df['dusk'], 4)
+    
+    ax.plot(df.index, df['dusk'], lw = 2, color = color)
+   
+    
+    if label:
+        ax.text(
+            0.01, 0.05, 
+            terminator_label, 
+            color = color,
+            transform = ax.transAxes
             )
-
     
-    ax[-1].set_xlabel(xlabel, fontsize = fontsize)
+    if midnight:
+        
+        if label:
+            
+            ax.text(
+                dn, dusk + 0.5, 
+                midnight_label, 
+                color = 'w',
+                transform = ax.transData
+                )
+        
+        ax.axhline(dusk, lw = 2, color = color)
+        
     
-    fig.text(
-        0.05, 0.38, 
-        ylabel, 
-        fontsize = fontsize, 
-        rotation = 'vertical'
+    ax.plot(
+        df.index, 
+        df['dusk'] + 2,
+        linestyle = '--', 
+        lw = 2, 
+        color = color
         )
-    return fig 
-
-def main():
-    ds = b.load('events_class2')
-    ds = ds.loc[ds.index.year < 2023]
     
-    # for type_in in ['sunset', 'midnight']:
-    type_in = 'midnight'
-    ds = ds.loc[(ds['drift'] == 'fresh') & 
-                (ds['type'] == type_in)]
-    
-    fig = plot_hourly_and_histograms(
-        ds,
-        translate = False )
-         
-    FigureName = f'seasonal_hourly_{type_in}'
-    
-    fig.savefig(
-          b.LATEX(FigureName, 'climatology'),
-          dpi = 400)
-
-
-main()
+    return midnight, dusk

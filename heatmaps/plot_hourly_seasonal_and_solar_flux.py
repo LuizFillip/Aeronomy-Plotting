@@ -4,75 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from matplotlib.ticker import AutoMinorLocator
 import datetime as dt
-import GEO as gg 
 
 b.config_labels(fontsize = 22)
 
 PATH_INDEX =  'database/indices/omni_pro2.txt'
 
-def plot_terminator(
-        ax, 
-        sector, 
-        midnight = True, 
-        translate = True,
-        label = False, 
-        float_index = True,
-        color = 'k'
-        ):
-    
-    if translate:
-        terminator_label = 'Solar terminator (300 km)'
-        midnight_label = 'Local midnight'
-    else:
-        terminator_label = 'Terminadouro solar (300 km)'
-        midnight_label = 'Meia-noite local'
-    
-    df = b.load('events_class2')
-    
-    df = df.loc[df['lon'] == sector]
-    dn = df.index[0]
-    dusk = gg.local_midnight(dn, sector, delta_day = None)
-    
-    dusk = round(b.dn2float(dusk))
-    
-    if float_index:
-        df.index = (df.index.year + df.index.day_of_year / 365 )
-        
-        
-    ax.plot(df.index, df['dusk'], lw = 2, color = color)
-   
-    
-    if label:
-        ax.text(
-            0.01, 0.05, 
-            terminator_label, 
-            color = color,
-            transform = ax.transAxes
-            )
-    
-    if midnight:
-        
-        if label:
-            
-            ax.text(
-                dn, dusk + 0.5, 
-                midnight_label, 
-                color = 'w',
-                transform = ax.transData
-                )
-        
-        ax.axhline(dusk, lw = 2, color = color)
-        
-    
-    ax.plot(
-        df.index, 
-        df['dusk'] + 2,
-        linestyle = '--', 
-        lw = 2, 
-        color = color
-        )
-    
-    return midnight, dusk
     
 def plot_seasonal_hourly(
         ax,
