@@ -147,11 +147,12 @@ def plot_directions(ax, path, translate = True):
         yticks = yticks
         )
     ax[2, 0].set(
-        ylim = [0, 200],
-        # ylim = [-2, 2],
+        # ylim = [0, 200],
+        ylim = [-2, 2],
+        yticks = np.arange(-2, 3, 1),
         ylabel = label_rel) 
 
-    anchor = (0.5, 1.45)
+    anchor = (0.5, 1.47)
     
     ax[0, 0].legend(
          ncol = 2, 
@@ -196,6 +197,8 @@ def plot_winds_temp_intensity(PATH_FPI):
     b.plot_letters(ax, y = 0.85, x = 0.03, fontsize = 40)
     
     title_site(fig, PATH_FPI)
+    
+    fig.align_ylabels()
     return fig
         
 
@@ -212,7 +215,7 @@ def main():
 def main():
         
     PATH_FPI = 'database/FabryPerot/car/minime01_car_20151220.cedar.003.txt'
-    PATH_FPI = 'database/FabryPerot/cj/bfp220724g.7100.txt'
+    # PATH_FPI = 'database/FabryPerot/cj/bfp220724g.7100.txt'
     fig = plot_winds_temp_intensity(PATH_FPI)
     FigureName = 'bfp_20220724'
     fig.savefig(
@@ -221,4 +224,4 @@ def main():
           )
 
 
-# main()
+main()
