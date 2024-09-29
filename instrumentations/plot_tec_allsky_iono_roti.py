@@ -304,3 +304,24 @@ def solar_minimum():
         )
 
 # solar_maximum(site =  'SAA0K')
+
+
+dn = dt.datetime(2019, 5, 2, 20)
+
+files = [
+    'O6_CA_20190502_222618.tif',
+    'O6_CA_20190503_010603.tif',
+    'O6_CA_20190503_014157.tif',
+    'O6_CA_20190503_023548.tif'
+    ]
+site =  'FZA0M'
+fig = TEC_6300_IONOGRAM_ROTI(
+    files, dn, site, tec_max = 10,
+    letter = '')
+
+FigureName = dn.strftime('20190502_validation')
+ 
+fig.savefig(
+     b.LATEX(FigureName, folder = 'products'),
+     dpi = 400
+     )
