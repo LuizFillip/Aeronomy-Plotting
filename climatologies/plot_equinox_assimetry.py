@@ -4,8 +4,7 @@ import base as b
 import matplotlib.pyplot as plt 
 import PlasmaBubbles as pb 
 import numpy as np 
-import datetime as dt 
-import plotting as pl 
+
 
 PATH_GAMMA = 'database/gamma/p1_saa.txt'
 
@@ -110,17 +109,25 @@ def seasonal_by_year(df, parameter = 'gamma'):
     return pd.concat(out_year)
 
 def plot_equinox_difference(ax, ds):
+    
     ds['eq_diff'] = 100 *(
         ds['september']- ds['march']) / ds['september']
     
     ax1 = ax.twinx()
     
-    ax1.plot(ds.index, ds['eq_diff'],  color = 'red',
-             lw = 1.5, markersize = 10, marker = 's')
+    ax1.plot(
+        ds.index, 
+        ds['eq_diff'], 
+        color = 'red',
+        lw = 1.5, 
+        markersize = 10, marker = 's')
     
     ax1.axhline(0, linestyle = '--')
     
-    ax1.set(ylim = [-60, 60])
+    ax1.set(
+        ylim = [-60, 60], 
+        yticks = np.arange(-60, 80, 20)
+        )
     
     
     b.change_axes_color(
@@ -194,7 +201,7 @@ def plot_gamma(ax):
 def plot_vp(ax, translate = False):
     df = c.load_results()
     
-    df = df.loc[df['dst'] >= -30]
+    df = df.loc[df['dst'] > -30]
     
     df = df.loc[df.index.year < 2023]
     
@@ -220,23 +227,10 @@ def plot_vp(ax, translate = False):
     return 
     
 
-def set_data(file):
+def plot_seasonal_assimetry(translate = False):
     
-    df = b.load('database/FabryPerot/' + file)
-    
-    df['zon'] = df[['west', 'east']].mean(axis = 1)
-    df['mer'] = df[['south', 'north']].mean(axis = 1)
-    df['time'] = df.index.to_series().apply(b.dn2float)
-    df['day'] = (df.index.year + 
-                 df.index.month / 12  +
-                 df.index.day / 31)
-    
-    return df
-
-
-def plot_annualy_quiet_time(translate = False):
     fig, ax = plt.subplots(
-        figsize = (18, 14),
+        figsize = (18, 12),
         nrows = 2,
         sharex = True,
         dpi = 300
@@ -246,17 +240,21 @@ def plot_annualy_quiet_time(translate = False):
     
     plot_epbs_rate(ax[0], translate)
     plot_gamma(ax[1])
-    # plot_vp(ax[1])
-    # pl.plot_f107(ax[2], mean = None)
+  
+    
     if translate:
         xlabel = 'Years'
         names1 = ['March',  'September', 'December']
+        label = "Equinox difference (\%)"
 
     else:
         xlabel = 'Anos'
         names1 = ['Março',  'Setembro', 'Dezembro']
+        label = 'Diferença equinocial (\%)'
+        
         
     ax[-1].set_xlabel(xlabel)
+    
     ax[0].legend(
          names1,
          ncol = 5, 
@@ -273,13 +271,10 @@ def plot_annualy_quiet_time(translate = False):
         x = 0.03, 
         fontsize = 40
         )
-    if translate:
-        label = "Equinox difference (\%)"
-    else:
-        label = 'Diferença equinocial (\%)'
+
         
     fig.text(
-        0.96, 0.45, 
+        0.96, 0.3, 
         label,
         rotation = 'vertical',
         fontsize = 40,
@@ -292,7 +287,7 @@ def plot_annualy_quiet_time(translate = False):
 
   
    
-fig = plot_annualy_quiet_time()
+fig = plot_seasonal_assimetry()
   
 FigureName = 'annual_quiet_time'
       

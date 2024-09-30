@@ -19,7 +19,7 @@ def plot_percent_gamma_weigths(
         ):
     
     fig, ax = plt.subplots(
-        figsize = (22, 10), 
+        figsize = (18, 8), 
         dpi = 300, 
         sharex = True, 
         nrows = 1
@@ -42,7 +42,7 @@ def plot_percent_gamma_weigths(
     
     ds.index = ds.index.map(gg.year_fraction)
     
-    names = [ lb.drift, lb.winds,  lb.gravity]
+    names = [ lb.drift, lb.winds, lb.gravity]
     colors = ['red', 'blue',  'k']
     markers = ['^', 's', 'o']
     out = []
@@ -73,16 +73,17 @@ def plot_percent_gamma_weigths(
     ax.scatter(su.index, su, s = 10, c = 'k')
     
     ax.text(
-        0.6, 0.9, 
+        0.55, 0.9, 
         sum_label, 
         transform = ax.transAxes
         )
     
     ax.legend(
         ncol = 3, 
-        bbox_to_anchor = (0.5, 1.2),
+        bbox_to_anchor = (0.5, 1.17),
         columnspacing = 0.3,
-        loc = "upper center"      
+        loc = "upper center", 
+        fontsize = 27
         )
        
     ax.set(
@@ -124,4 +125,4 @@ def main():
         dpi = 300
         )
     
-main()
+# main()

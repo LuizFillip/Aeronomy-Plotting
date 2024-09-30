@@ -135,25 +135,35 @@ def plot_annual_GRT(
         df, 
         translate = False, 
         gamma = 'gamma'):
+    
+    if gamma == 'gamma':
+        nrows = 6
+    else:
+        nrows = 5
 
     fig, ax = plt.subplots(
         sharex = True,
         dpi = 300, 
-        nrows = 6, 
+        nrows = nrows, 
         figsize = (16, 20), 
         )
     
     plt.subplots_adjust(hspace = 0.1)
      
-    plot_ratio(ax[0], df['ratio'])
-    plot_vzp(ax[1], df['vp'])
-   
-    plot_wind(ax[2], df['mer_perp'])
-    plot_grad(ax[3], df['K'])
-    
-    plot_gravity(ax[4], df['gr'])
-    
-    plot_gamma(ax[5], df, gamma)
+    if gamma == 'gamma':
+        plot_ratio(ax[0], df['ratio'])
+        plot_vzp(ax[1], df['vp'])
+        plot_wind(ax[2], df['mer_perp'])
+        plot_grad(ax[3], df['K'])
+        plot_gravity(ax[4], df['gr'])
+        plot_gamma(ax[5], df, gamma)
+    else:
+        plot_ratio(ax[0], df['ratio'])
+        plot_wind(ax[1], df['mer_perp'])
+        plot_grad(ax[2], df['K'])
+        plot_gravity(ax[3], df['gr'])
+        plot_gamma(ax[4], df, gamma)
+        
 
     b.plot_letters(ax, 
         y = 0.8, 
@@ -185,7 +195,7 @@ def main():
     
     df = b.load(PATH_GAMMA)
     
-    gamma = 'gamma'
+    gamma = 'gamma2'
     
     if gamma == 'gamma':
         time = dt.time(22, 0)
@@ -200,12 +210,12 @@ def main():
         - df['mer_perp'] + df['gr'])
     
         
-    fig = plot_annual_GRT(df, translate=True, gamma = gamma)
+    fig = plot_annual_GRT(df, translate = False, gamma = gamma)
     
     FigureName = f'annual_{gamma}_parameters'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder = 'paper2'), dpi = 300)
+    fig.savefig(
+        b.LATEX(FigureName, folder = 'climatology'), dpi = 300)
 
 
 
