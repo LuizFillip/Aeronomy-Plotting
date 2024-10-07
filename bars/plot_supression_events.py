@@ -26,11 +26,12 @@ def plot_seasonal_supression(
         ylabel = 'Number of cases'
         xlabel = 'Months'
         ln = 'en'
+        title = 'Total of EPBs supressions (2013 - 2022)'
     else:
         ylabel = 'Número de supressões'
         xlabel = 'Meses'
         ln = 'pt'
-        title = 'Total de supressões de EPBs (2013 - 2022)'
+        title = 'Total de supressões de BPEs (2013 - 2022)'
         
         
     fig, ax = plt.subplots(

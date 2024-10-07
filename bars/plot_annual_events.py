@@ -16,24 +16,25 @@ def plot_annually_events_count(
     
     e_year = ds.index[-1].year
     s_year = ds.index[0].year
-
     
-    if typing == 'sunset':
-        vmax = 300
-        if translate:
-            typing = 'pós-pôr do sol'
+    if translate:
+        ylabel = 'Número de casos'
+        xlabel = 'Anos'
+        sector = 'Setor'
+        if typing == 'sunset':
+            vmax = 300
+            title = f'Eventos de BPEs pós-pôr do sol ({s_year} - {e_year})'
         else:
-            typing = 'Sunset'
-        
+            vmax = 150
+            title = f'Eventos de BPEs próxima da meia-noite ({s_year} - {e_year})'
+            
     else:
-        vmax = 150
-        if translate:
-            typing = 'pós-meia-noite'
-        else:
-            typing = 'post-midnight'
-        
-        
+        ylabel = 'Number of cases'
+        xlabel = 'Years'
+        sector = 'Sector'
+        title = f'Events of {typing} EPBs ({s_year} - {e_year})'
     
+
     fig, ax = plt.subplots(
         dpi = 300, 
         sharex = True,
@@ -41,7 +42,7 @@ def plot_annually_events_count(
         )
         
     df = c.count_occurences(ds).year
-    df = df[[-50, -60, -70]]
+    # df = df[[-50, -60, -70]]
     
  
     df.plot(
@@ -53,16 +54,7 @@ def plot_annually_events_count(
     
     plt.xticks(rotation = 0)
     
-    if translate:
-        ylabel = 'Número de casos'
-        xlabel = 'Anos'
-        sector = 'Setor'
-        title = f'Eventos de EPBs {typing} ({s_year} - {e_year})'
-    else:
-        ylabel = 'Number of cases'
-        xlabel = 'Years'
-        sector = 'Sector'
-        title = f'Events of {typing} EPBs ({s_year} - {e_year})'
+    
     
     ax.set(
         ylabel = ylabel,
@@ -89,9 +81,9 @@ def main():
     df = b.load('features_one_hour')
     df = b.load('events_class2')
     
-    # df = df.loc[df.index.year < 2023]
+    df = df.loc[df.index.year < 2023]
     
-    translate = False
+    translate = True
     for typing in ['sunset', 'midnight']:
     
         if translate:

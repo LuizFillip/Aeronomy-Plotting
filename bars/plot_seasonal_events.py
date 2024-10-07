@@ -28,7 +28,7 @@ def plot_seasonal_occurrence(
     else:
         vmax = 160
         if translate:
-            typing = 'pós-meia-noite'
+            typing = 'próximo da meia-noite'
         else:
             typing = 'post-midnight'
         
@@ -40,7 +40,7 @@ def plot_seasonal_occurrence(
             
     df = c.count_occurences(ds).month
     # df = df[df.columns[::-1]]
-    df = df[[-50, -60, -70]]
+    # df = df[[-50, -60, -70]]
     
     df.plot(
         kind = 'bar', 
@@ -94,14 +94,13 @@ def main():
 
     df = b.load('features_one_hour')
     df = b.load('events_class2')
-    # df = df.loc[df.index.year < 2023]
-    translate = False
+    df = df.loc[df.index.year < 2023]
+    translate = True
     
     for typing in ['sunset', 'midnight']:
 
         ds = pb.sel_typing(df, typing = typing)
         
-    
         fig = plot_seasonal_occurrence(
             ds, typing, translate = translate)
         if translate:

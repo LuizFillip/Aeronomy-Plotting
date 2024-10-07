@@ -3,9 +3,9 @@ import base as b
 import core as c
 import GEO as gg 
 import numpy as np 
-from matplotlib.ticker import AutoMinorLocator
-import plotting as pl 
-import datetime as dt 
+# from matplotlib.ticker import AutoMinorLocator
+# import plotting as pl 
+# import datetime as dt 
 import PlasmaBubbles as pb 
 
 b.config_labels(fontsize = 25)
@@ -42,33 +42,45 @@ def plot_EPBs(ax, df, col = -50, translate = True):
         
     return ax.get_xlim()
 
-fig, ax = plt.subplots(
-     nrows = 3, 
-     dpi = 300, 
-     sharex = True,
-     figsize = (14, 12)
-     )
 
-plt.subplots_adjust(hspace = 0.1)
-
-ds = b.load('events_class2')
-
-
-df = pb.sel_typing(
-         ds, 
-         typing = 'midnight', 
-         indexes = False, 
-         year = 2023
+def plot_seasonal_and_annual_multi_sector():
+    
+    fig, ax = plt.subplots(
+         nrows = 3, 
+         dpi = 300, 
+         sharex = True,
+         sharey = True,
+         figsize = (14, 12)
          )
+    
+    plt.subplots_adjust(hspace = 0.1)
+    
+    ds = b.load('events_class2')
+    
+    
+    df = pb.sel_typing(
+             ds, 
+             typing = 'midnight', 
+             indexes = True, 
+             year = 2023
+             )
+    
+    sectors = np.arange(-70, -40, 10)[::-1]
+    
+    # df = df.loc[df['dst'] <= -30]
+    
+    for i, sector in enumerate(sectors):
+        
+        ax[i].text(
+            0.02, 0.85, 
+            f'Sector {i + 1}', 
+            transform = ax[i].transAxes
+            )
+        plot_EPBs(ax[i], df, col = sector, translate = False)
+    
+    ax[-1].set(xlabel = 'Years')
+    
+    return fig
 
-sectors = np.arange(-70, -40, 10)[::-1]
 
-for i, sector in enumerate(sectors):
-    ax[i].text(
-        0.02, 0.85, 
-        f'Sector {i + 1}', 
-        transform = ax[i].transAxes
-        )
-    plot_EPBs(ax[i], df, col = sector, translate = False)
-
-ax[-1].set(xlabel = 'Years')
+fig = plot_seasonal_and_annual_multi_sector()
