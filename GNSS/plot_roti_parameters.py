@@ -16,10 +16,11 @@ def plot_rot(ax, tec, prn):
     ax.axhline(0, color = 'k', linestyle = '--')
     ax.plot(ds['drot'])
     
-    ax.set(ylabel = "ROT (TECU/min)", 
-           ylim = [-12, 12], 
-           yticks = np.arange(-10, 15, 5)
-           )
+    ax.set(
+        ylabel = "ROT (TECU/min)", 
+        ylim = [-12, 12], 
+        yticks = np.arange(-10, 15, 5)
+        )
     return None 
     
         
@@ -49,8 +50,8 @@ def plot_stec(ax, path, station, prn):
     ax.set(
         ylabel = "STEC (TECU)", 
         xlim = [dt.datetime(2013, 12, 24, 20), 
-                dt.datetime(2013, 12, 24, 23, 59)], 
-                yticks = np.arange(50, 250, 50)
+                dt.datetime(2013, 12, 25, 0)], 
+        yticks = np.arange(50, 250, 50)
         )
     return tec
 
@@ -58,9 +59,12 @@ def plot_stec(ax, path, station, prn):
 def plot_elevation(ax, el):
     ax.plot(el)
 
-    ax.set(ylabel = 'Elevação (°)', 
-           ylim = [20, 60], 
-           yticks = np.arange(20, 70, 10))
+    ax.set(
+        ylabel = 'Elevação (°)', 
+        ylim = [20, 60], 
+        yticks = np.arange(20, 70, 10)
+        )
+    return None 
 
 
 def plot_shades(ax, start, end):
@@ -92,9 +96,7 @@ def plot_roti_parameters(dn, station, prn):
     path = gs.paths(dn.year, doy, root = 'E:\\')
     
     tec = plot_stec(ax[0], path, station, prn)
-    
-    print(tec)
-    
+        
     plot_rot(ax[1], tec, prn)
     
     plot_roti(ax[2], path, prn)
@@ -103,7 +105,7 @@ def plot_roti_parameters(dn, station, prn):
     ax[0].set(
         title = f'Estação: {station.upper()} - PRN: {prn}')
     
-    b.format_time_axes(ax[-1], pad = 70)
+    b.format_time_axes(ax[-1], pad = 70, day_locator = 2)
     
     b.plot_letters(ax, y = 0.8, x = 0.02)
     
@@ -114,13 +116,20 @@ def plot_roti_parameters(dn, station, prn):
         
         if i == 0:
             d1 = dt.timedelta(hours = 1.5)
-            ax.text(start - d1, 150, 'Sem EPBs', 
-                    transform = ax.transData)
+            ax.text(
+                start - d1, 150, 
+                'Sem BPEs', 
+                transform = ax.transData
+                )
             
             d1 = dt.timedelta(minutes = 20)
-            ax.text(start + d1, 150, 'Com EPBs', 
-                    transform = ax.transData)
-        
+            ax.text(
+                start + d1, 150, 
+                'Com BPEs', 
+                transform = ax.transData
+                )
+    
+    fig.align_ylabels()
     return fig
 
 def main():
@@ -138,4 +147,4 @@ def main():
         dpi = 400
         )
     
-main()
+# main()
