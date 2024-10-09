@@ -1,5 +1,4 @@
 import base as b 
-import matplotlib.pyplot as plt 
 import core as c
 import plotting as pl 
 
@@ -38,25 +37,28 @@ def plot_distributions_seasons(
         solar_flux_data = df_index.F107_2(solar_level)
         
         for index, df_level in enumerate(solar_flux_data):
+            
+            label = f'({index + 1}) {F107_labels[index]}'
     
             data, epb = pl.plot_distribution(
                     ax[row, 0], 
                     df_level, 
                     parameter,
-                    label = F107_labels[index],
+                    label = label,
                     outliner = outliner, 
                     translate = translate,
                     limit = limit
                     )
             
             total_epb.append(epb)
-            
+     
             days = pl.plot_histogram(
                     ax[row, 1], 
                     data, 
                     index,
-                    parameter = parameter,
-                    label = F107_labels[index]
+                    label = label,
+                    parameter = parameter
+                   
                     )
             
             total_day.append(days)
@@ -65,10 +67,10 @@ def plot_distributions_seasons(
                 ylim = [0, 350]
             else:
                 ylim = [0, 250]
-                
+            yticks = list(range(ylim[0], ylim[-1] + 50, 100))                
             ax[row, 1].set(
                 ylim = ylim, 
-                yticks = list(range(ylim[0], ylim[-1] + 50, 100))
+                yticks = yticks
                 )
             
             for col in range(2):
@@ -103,8 +105,8 @@ def plot_distributions_seasons(
 def main():
     
     translate = True
-    parameter = 'gamma2'
-    df = c.load_results('saa', eyear = 2023)
+    parameter = 'gamma'
+    df = c.load_results('saa', eyear = 2022)
     
     solar_limit = c.limits_on_parts(df['f107a'])
     
@@ -125,12 +127,11 @@ def main():
         folder = 'distributions/en/'
         
         
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, folder),
+        dpi = 400
+        )
     
 
-    # plt.show()
 main()
 

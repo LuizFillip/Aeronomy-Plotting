@@ -4,7 +4,7 @@ import core as c
 import plotting as pl 
 import numpy as np  
 
-b.config_labels(fontsize = 25, blue = True)
+b.config_labels(fontsize = 30, blue = True)
 
 legend_args = dict(
     ncol = 3, 
@@ -17,6 +17,23 @@ legend_args = dict(
 
 df = c.load_results(typing = 'midnight')
 
+def plot_infos(ax, ds, x = 0.6):
+    total_epbs = ds['epbs'].sum()
+    
+    
+    ax[0].text(
+        x, 0.4, 
+        'Ocorrência de BPEs\n' + f'{total_epbs} eventos',
+        transform = ax[0].transAxes
+        )
+    
+    total_days = ds['days'].sum()
+    
+    ax[1].text(
+        x, 0.4, 
+        '$\gamma_{RT}$ total\n' + f'{total_days} eventos',
+        transform = ax[1].transAxes
+        )
 
 def plot_midnight_distribuition(df):
         
@@ -24,7 +41,7 @@ def plot_midnight_distribuition(df):
         dpi = 300, 
         nrows = 2,
         sharex = True,
-        figsize = (12, 12)
+        figsize = (14, 10)
         )
     
     plt.subplots_adjust(hspace = 0.05)
@@ -48,29 +65,18 @@ def plot_midnight_distribuition(df):
         width = 0.02
         )
     
-    total = ds['epbs'].sum()
     
+    plot_infos(ax, ds)
     
-    ax[0].text(
-        0.6, 0.4, 
-        'Ocorrência de EPBs\n' + f'{total} eventos',
-        transform = ax[0].transAxes
+    ax[0].set(
+        ylabel = 'Probabilidade de \n ocorrência (\%)', 
+        xlabel = '',
+        ylim = [-10, 110]
         )
-    
-    total = ds['days'].sum()
-    
-    ax[1].text(
-        0.6, 0.4, 
-        '$\gamma_{RT}$ total\n' + f'{total} eventos',
-        transform = ax[1].transAxes
-        )
-    
-    ax[0].set(xlabel = '', 
-              ylim = [-10, 110])
     ax[1].set(
         ylabel = 'Número de eventos',
         xlim = [0, 0.8], 
-        xlabel = '$\gamma_{RT} (10^{-3} s^{-1})$ ',
+        xlabel = '$\gamma_{RT} ~(10^{-3} s^{-1})$ ',
         xticks = np.arange(0, 1, 0.1))
     
     b.plot_letters(
@@ -96,3 +102,4 @@ def main():
     
     plt.show()
     
+# main()

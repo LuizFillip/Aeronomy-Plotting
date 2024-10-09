@@ -136,7 +136,7 @@ def FigureLabels(
         ylabel2 = "Number of events"
         
     fig.text(
-        0.07, 0.33, 
+        0.07, 0.31, 
         ylabel1, 
         fontsize = fontsize, 
         rotation = 'vertical'

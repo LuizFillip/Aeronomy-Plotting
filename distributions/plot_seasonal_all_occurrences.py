@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jun 17 13:40:08 2024
-
-@author: Luiz
-"""
-
 import base as b 
 import matplotlib.pyplot as plt 
 import core as c
@@ -124,5 +117,5 @@ def main():
     
 
     plt.show()
-main()
+# main()
 # 
