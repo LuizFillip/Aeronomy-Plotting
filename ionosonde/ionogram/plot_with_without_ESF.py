@@ -4,7 +4,7 @@ import base as b
 
 b.config_labels()
 
-path = 'E:\\ionogram\\20131224S\\'
+path = 'E:\\ionogram\\2013\\20131224S\\'
 
 def plot_ionogram(ax, fname):
     pl.plot_single_ionogram(
@@ -29,17 +29,20 @@ def plot_with_without_ESF():
     plot_ionogram(ax[0], 'SAA0K_20131224(358)215000.PNG')
     plot_ionogram(ax[1], 'SAA0K_20131224(358)235000.PNG')
     
-    ax[1].set(yticklabels = [], 
-              ylabel = '', 
-              xlabel = '', 
-              title = '23h50 UT - Com ESF')
-    ax[0].set(xlabel = '', 
-              title = '21h50 UT - Sem ESF')
+    ax[1].set(
+        yticklabels = [], 
+        ylabel = '', 
+        xlabel = '', 
+        title = '23h50 HU')
+    ax[0].set(
+        xlabel = '', 
+        title = '21h50 HU'
+        )
     
     
     b.plot_letters(ax, y = 1.1, x = -0.1, fontsize = 40)
     
-    fig.text(0.35, 0.01, 'Frequência (MHz)')
+    fig.text(0.4, 0.01, 'Frequência (MHz)')
     fig.suptitle('24 de dezembro de 2013', y = 1.1)
     return fig 
 
@@ -51,3 +54,6 @@ def main():
             b.LATEX(FigureName, folder = 'Iono'),
             dpi = 400
             )
+    
+    
+# main()

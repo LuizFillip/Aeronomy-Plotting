@@ -42,9 +42,12 @@ def plot_heights(ax, df, cols):
 
 def plot_drift(ax, df, cols, site, vmax = 60):
         
-    ax.plot(df[cols].mean(axis =1), label = cols, lw = 1.5)
+    ax.plot(
+        df[cols],
+        label = cols, lw = 1.5)
+    
     ax.set(
-        ylabel = 'Deriva vertical (m/s)', 
+        ylabel = 'Velocidade de \nderiva vertical (m/s)', 
           ylim = [-vmax, vmax], 
           yticks = np.arange(-vmax + 20, vmax + 20, 20),
           )
@@ -84,9 +87,9 @@ def plot_hF2(ax, df):
 
 def plot_vz_and_frequencies(dn, cols, site):
     
-    file = dn.strftime(f'{site}_%Y%m%d(%j).TXT')
+    file = dg.dn2fn(dn, site)
     
-    df = dg.IonoChar(file, cols, sel_from = 17)
+    df = dg.IonoChar(file, cols, sum_from = None)
    
     fig, ax = plt.subplots(
         figsize = (14, 10), 
@@ -97,20 +100,20 @@ def plot_vz_and_frequencies(dn, cols, site):
     
     plt.subplots_adjust(hspace = 0.05)
     
-    # plot_heights(ax[0], df.heights, cols)
+    plot_heights(ax[0], df.heights, cols)
     
-    plot_hF2(ax[0], df.chars)
+    # plot_hF2(ax[0], df.chars)
     plot_drift(ax[1], df.drift(), cols, site)
     
     
-    # ax[0].legend( 
-    #     ncol = 5, 
-    #     title = 'Frequências fixas (MHz)',
-    #     bbox_to_anchor = (.5, 1.45), 
-    #     loc = "upper center", 
-    #     columnspacing = 0.3,
-    #     fontsize = 30
-    #      )
+    ax[0].legend( 
+        ncol = 5, 
+        title = 'Frequências fixas (MHz)',
+        bbox_to_anchor = (.5, 1.45), 
+        loc = "upper center", 
+        columnspacing = 0.3,
+        fontsize = 30
+          )
     
     dusk = gg.dusk_from_site(
            dn, 
@@ -123,7 +126,7 @@ def plot_vz_and_frequencies(dn, cols, site):
     ax[1].axvline(
         dusk, lw = 1, linestyle = '--')
     ax[0].text(
-        dusk, 605, 
+        dusk, 500, 
         'Terminadouro local', 
         transform = ax[0].transData)
     # ax1 = ax[1].twinx()
@@ -147,21 +150,22 @@ def plot_vz_and_frequencies(dn, cols, site):
     
 def main():
     
-    cols = list(range(4, 8, 1))
+    cols = list(range(3, 8, 1))
     site = 'SAA0K'
-    site = 'FZA0M'
+    # site = 'FZA0M'
     #dn = dt.datetime(2022, 7, 24)
     dn = dt.datetime(2013, 12, 24)
     dn = dt.datetime(2019, 5, 2)
-    
+    dn = dt.datetime(2016, 10, 3)
+
     fig = plot_vz_and_frequencies(dn, cols, site)
     
     FigureName = dn.strftime(f'{site}_%Y%m%d')
        
-    # fig.savefig(
-    #         b.LATEX(FigureName, folder = 'Iono'),
-    #         dpi = 400
-    #         )
+    fig.savefig(
+            b.LATEX(FigureName, folder = 'Iono'),
+            dpi = 400
+            )
     
     
-# main()
+main()

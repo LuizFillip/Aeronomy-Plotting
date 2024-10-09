@@ -1,38 +1,12 @@
-import GEO as gg 
 import matplotlib.pyplot as plt
 import datetime as dt 
 import numpy as np 
 import digisonde as dg 
 import base as b 
-import pandas as pd
+import plotting as pl
 
 
-def plot_terminators(ax, df, site):
-    
-    #     for i in range(number):
-            
-    #         delta = dt.timedelta(days = 1)
-            
-    
-    for dn in np.unique(df.index.date):
-        
-        dusk = gg.dusk_from_site(
-                pd.to_datetime(dn), 
-                site = site[:3].lower(),
-                twilight_angle = 18
-                )
-        
-        ax.axvline(
-            dusk, 
-            lw = 2, 
-            linestyle = '--', 
-            color = 'k'
-            )
-        
-        
-# def plot_dusk_time(ax, start, number = 4):
-    
-
+b.config_labels()
 
 def plot_compare_quiet_disturbed(
         translate = False
@@ -43,14 +17,14 @@ def plot_compare_quiet_disturbed(
         qt_label = 'Quiet time'
         db_label = 'Disturbance time'
     else:
-        ylabel = 'Deriva vertical (m/s)'
+        ylabel = 'Velocidade de deriva vertical (m/s)'
         qt_label = 'Período calmo'
         db_label = 'Período perturbado'
         
     fig, ax = plt.subplots(
         dpi = 300, 
-        nrows = 3,
-        figsize = (16, 12), 
+        nrows = 2,
+        figsize = (16, 10), 
         sharex = True, 
         sharey = True
         )
@@ -58,9 +32,9 @@ def plot_compare_quiet_disturbed(
     plt.subplots_adjust(hspace = 0.1)
     
     start = dt.datetime(2015, 12, 19)
-    cols = np.arange(2, 7, 1)
+    cols = list(range(3, 10, 1))
     
-    sites = ['SAA0K', 'BVJ03', 'CAJ2M']
+    sites = ['SAA0K', 'BVJ03'] #'CAJ2M']
 
     for i, site in enumerate(sites):
         
@@ -83,17 +57,17 @@ def plot_compare_quiet_disturbed(
                 site, 
                 start,
                 cols = cols, 
-                smooth = None 
+                smooth = 3
                 )
         
         df = df.interpolate()
         
-        df[site] = b.smooth2(df[site], 10)
+        df[site] = b.smooth2(df[site], 3)
         
-        ax[i].plot(df, label = db_label)
+        ax[i].plot(df, label = db_label, lw = 2)
     
         ax[i].set(
-            ylim = [-20, 43], 
+            ylim = [-20, 45], 
             yticks = np.arange(-20, 50, 20),
             xlim = [df.index[0], df.index[-1]]
             )
@@ -101,27 +75,37 @@ def plot_compare_quiet_disturbed(
         s = b.chars()[i]
         name = dg.code_name(site)
         ax[i].text(
-            0.02, 0.75, 
+            0.02, 0.8, 
             f'({s}) {name}', 
             transform = ax[i].transAxes
             )
         
-        plot_terminators(ax[i], df, site)
+        pl.plot_terminators(ax[i], df, site)
         
         ax[i].axhline(0, linestyle = ':')
               
-    ax[1].set_ylabel(ylabel, fontsize = 35)
+    fig.text(
+        0.03, 0.2, 
+        ylabel, 
+        fontsize = 35, 
+        rotation = 'vertical'
+        )
     
 
     ax[0].legend(
-        bbox_to_anchor = (0.5, 1.35),
+        bbox_to_anchor = (0.5, 1.32),
         loc = 'upper center', 
-        ncols = 2)
+        ncols = 2
+        )
     
     b.format_time_axes(
-        ax[-1], hour_locator = 12, 
+        ax[-1], 
+        hour_locator = 12, 
         translate = translate, 
-        pad = 80)
+        pad = 85, 
+        format_date = '%d/%m/%y'
+        )
+    
     return fig
 
 
@@ -133,4 +117,4 @@ def main():
     
     fig.savefig(b.LATEX(FigureName, 'Iono'), dpi = 400)
     
-main()
+# main()

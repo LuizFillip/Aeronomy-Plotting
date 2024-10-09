@@ -2,18 +2,21 @@ import matplotlib.pyplot as plt
 import digisonde as dg 
 import datetime as dt 
 import base as b 
+import plotting as pl
 
-sites = ['SAA0K', 'BVJ03', 'CAJ2M']
+sites = ['SAA0K', 'BVJ03'] #, 'CAJ2M']
 
 
 def plot_height_fixes_for_multi_sites(
         sites,
         translate = True,
-        cols = list(range(2, 7, 1))
+        cols = list(range(2, 7, 1)),
+        fontsize = 35
+
         ):
     
     fig, ax = plt.subplots(
-        nrows = 3,
+        nrows = len(sites),
         dpi = 300,
         sharey = True, 
         sharex = True,
@@ -32,7 +35,6 @@ def plot_height_fixes_for_multi_sites(
         title = 'Frequência fixas (MHz)'
         
         
-    fontsize = 35
     
     for i, site in enumerate(sites):
         
@@ -44,6 +46,7 @@ def plot_height_fixes_for_multi_sites(
                 )
         
         
+        # pl.plot_terminators(ax[i], df, site)
         
         ax[i].plot(df)
         
@@ -70,13 +73,18 @@ def plot_height_fixes_for_multi_sites(
              color = 'gray'
              )
         
-    ax[1].set_ylabel(ylabel, fontsize = fontsize)
+    fig.text(
+        0.03, 0.35, 
+        ylabel, 
+        fontsize = fontsize + 5, 
+        rotation = 'vertical'
+        )
   
     ax[0].legend(
         cols, 
         ncol = len(cols), 
         title = title,
-        bbox_to_anchor = (0.5, 1.8), 
+        bbox_to_anchor = (0.5, 1.5), 
         loc = 'upper center', 
         columnspacing = 0.7
         )
@@ -85,7 +93,8 @@ def plot_height_fixes_for_multi_sites(
         ax[-1], 
         hour_locator = 12, 
         pad = 80, 
-        translate = translate
+        translate = translate, 
+         # = '%d/%m/%y'
         )
         
     return fig
@@ -103,4 +112,4 @@ def main():
           b.LATEX(FigureName, 'Iono'),
           dpi = 400)
 
-# main()
+main()
