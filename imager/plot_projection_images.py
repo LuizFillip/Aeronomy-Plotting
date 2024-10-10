@@ -11,42 +11,35 @@ b.config_labels()
 
 
 
-def set_image(
+
+def plot_projection_over_map():
+
+    fig, ax = plt.subplots(
+        figsize = (12, 12),
+        dpi = 300, subplot_kw = 
+         {'projection': ccrs.PlateCarree()}
+        )
+    
+     
+    lat_lims = dict(min = -30, max = 0, stp = 5)
+    lon_lims = dict(min = -60, max = -30, stp = 5) 
+    
+    
+    gg.map_attrs(
         ax, 
-        path_of_image, 
-        area_factor = 0.5, 
-        color = 'red'
-        ):
-    
-    all_sky = im.processing_img(path_of_image)
-    
-    areap = 512 * area_factor
-    
-    # img = all_sky.linear(all_sky.bright(), area = areap)
-    img = im.crop_circle(all_sky.bright())
-    
-    site = all_sky.site.lower()
-    
-    plot_projection(
-        ax,
-        img, 
-        site = site,
-        areap = areap,
-        color = color
+        lon_lims = lon_lims, 
+        lat_lims = lat_lims, 
+        year = 2022,
+        grid = False
         )
         
-
-def plot_projection(
-        ax, 
-        img, 
-        site, 
-        areap = 1024,
-        color = 'red'
-        ):
     
-    center_lat, center_lon = gg.sites[site]['coords']
-
-
+    img = linearized(fname, areap, alt_ag)
+    
+    info = im.sites_infos(site)
+    
+    center_lon, center_lat = info.coords 
+    
     radius_deg = (areap / 111) / 2
     
     extent = [
@@ -54,19 +47,16 @@ def plot_projection(
         center_lon + radius_deg,
         center_lat - radius_deg,
         center_lat + radius_deg
-    ]
+        ]
     
     ax.imshow(
         img, 
-        transform=ccrs.PlateCarree(), 
         extent = extent, 
-        cmap='gray'
+        cmap ='gray'
         )
     
-    ax.scatter(center_lon, center_lat, 
-               s = 250, marker = '^',
-               color = color)
-    
+    ax.grid()
+
     
 def plot_images_projection(dn):
     
@@ -116,23 +106,6 @@ def plot_images_projection(dn):
     
     return fig
 
-from tqdm import tqdm 
-times = pd.date_range(
-    '2022-07-24 21:00', 
-    '2022-07-25 07:00', 
-    freq = '2min'
-    )
-
-# for dn in tqdm(times):
-    
-#     plt.ioff()
-#     fig = plot_images_projection(dn)
-
-#     name = dn.strftime('temp/%Y%m%d%H%M')    
-#     fig.savefig(name, dpi = 100)
-    
-#     plt.clf()
-#     plt.close()
 
 import datetime as dt 
 dn = dt.datetime(2022, 7, 25, 2)

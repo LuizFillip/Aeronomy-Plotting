@@ -1,7 +1,7 @@
 import imager as im
 import matplotlib.pyplot as plt 
-import numpy as np 
 import base as b
+import datetime as dt 
 
 b.config_labels()
 
@@ -42,7 +42,6 @@ def plot_keogram(
         merid, 
         extent, 
         date,
-        ytick = 200, 
         layer = 'O6', 
         site = 'BJL', 
         cmap = 'Greys_r'
@@ -81,19 +80,16 @@ def plot_keogram(
         layer, 
         transform = ax[0].transAxes)
     
-    step =  keo.y_limit() / 2
-    yticks = np.arange(-ytick, ytick + step, step)
-    xticks = np.arange(round(extent[0]), 
-                       round(extent[1]) + 1, 1)    
+   
     ax[0].set(
         ylabel = 'Zonal (W-E)', 
-        yticks = yticks, 
+        yticks = keo.yticks(), 
         title = date
         )
     ax[1].set(
-        xticks = xticks,
+        xticks = keo.xticks(),
         ylabel = 'Meridional (N-S)', 
-        yticks = yticks, 
+        yticks = keo.yticks(), 
         xlabel = 'Universal time'
         )
     
@@ -103,13 +99,12 @@ def plot_keogram(
     return fig, ax
 
 
-infile = 'database/images/CA_2013_1224/'
-# infile = 'database/images/CA_2022_0724/'
-infile = 'database/images/BJL_2022_0724/'
-# infile = 'D:/images/CA_2014_0102/'
 
+dn = dt.datetime(2024, 9, 24, 23)
 
-area_factor = 2
+infile = im.path_asi(dn, site = 'BJL', root = 'E:\\images\\')
+
+area_factor = 4
 
 keo = im.KeogramAnalysis(infile, area_factor = area_factor)
 
@@ -120,12 +115,9 @@ fig, ax = plot_keogram(
         merid, 
         extent = keo.extend_values(), 
         date = keo.date, 
-        ytick = keo.y_limit(), 
         layer = keo.layer, 
         site = keo.site, 
         cmap = 'Greys_r'
         )
 
 
-
-# plot_velocities(ax[0])
