@@ -2,35 +2,31 @@ import matplotlib.pyplot as plt
 from skimage import io
 import numpy as np
 import digisonde as dg 
-
-def redefine_ticks(ax, img):
+import os 
+def ionogram_path(dn, site, root = 'E:\\'):
     
-    xticks = np.arange(1, 17, 3)
-    yticks = np.arange(150, 1350, 150)
-
-    x_positions = np.linspace(
-        0, img.shape[1] - 1, 
-        len(xticks)
-        )
-    y_positions = np.linspace(
-        0, img.shape[0] - 1, 
-        len(yticks)
-        )
+    start = dn - dt.timedelta(days = 1)
+    folder_ion = start.strftime(f'%Y/%Y%m%d{site[0]}')
     
-    ax.set_xticks(x_positions, xticks)
-    ax.set_yticks(y_positions, yticks)
+    fmt = f'{site}_%Y%m%d(%j)%H%M%S.PNG'
     
-    return None 
-        
+    target = dn.strftime(fmt)
+    
+    return os.path.join(root, 'ionogram', folder_ion, target)
+    
+ 
 
     
-def crop_region_E(img):
+def crop_image(img):
     
     img = np.flipud(img)
-    
-    y, h = 130, 750
-    x, w = 186, 560
-    return img[y: y + h, x: x + w]
+
+    y, h = 50, 900
+    x, w = 150, 600
+    img =  img[y: y + h, x: x + w]
+    img = np.flipud(img)
+
+    return img
 
 def plot_single_ionogram(
         fname, 
@@ -50,14 +46,18 @@ def plot_single_ionogram(
         
     
     img = io.imread(fname)
-    img = crop_region_E(img)
-    ax.imshow(img, aspect = aspect)
-    ax.invert_yaxis()
+    img = crop_image(img)
+
+
+    ax.imshow(img, aspect = 'auto', extent = [-1, 15, 50, 1280])
+
+
+    ax.set(ylim = [150, 1000], 
+           xlim = [0, 10])
     
     
     if label:
-        redefine_ticks(ax, img)
-        
+       
         ax.set(
             ylabel = 'Altitude (km)', 
             xlabel = 'Frequency (MHz)'
@@ -94,28 +94,25 @@ def plot_single_ionogram(
     
     if ax is None:
         return fig
+    
 
-infile = 'database/ionogram/20130114S/'
+import datetime as dt 
 
-def run():
-    import os 
-    
-    for file in os.listdir(infile):
-        if 'PNG' in file:
-            dn = dg.ionosonde_fname(file)
-            
-            plt.ioff()
-            
-            fig = plot_single_ionogram(
-                os.path.join(infile, file), 
-                label = True, 
-                title = True
-                )
-            
-            FigureName = dn.strftime('%Y%m%d%H%M')
-            
-            fig.savefig('temp/' + FigureName)
-            plt.close()
-    
-    
-    # plt.show()
+
+dn = dt.datetime(2022, 7, 25)
+
+site = 'CAJ2M'
+
+target = dt.datetime(2022, 7, 25, 2)
+# site, fname = dg.path_ionogram(
+#         dn, 
+#         target = target, 
+#         site = 'CAJ2M', #'SAA0K'
+#         root = 'E:\\'
+#         )
+
+fname = ionogram_path(dn, site, root = 'E:\\')
+
+
+
+plot_single_ionogram(fname, label = True)
