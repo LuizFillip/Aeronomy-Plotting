@@ -98,17 +98,17 @@ def plot_linear_images_sequence(
     fig.suptitle(f'({ext}) {infos.name}', y = 0.95)
     return fig
 
-
-start = dt.datetime(2022, 7, 25, 1, 20)
-
-times = pd.date_range(start, freq  = '30min', periods = 12)
-
-fig_1 = plot_linear_images_sequence(times, site = 'CA', ext = 'I')
-fig_2 = plot_linear_images_sequence(times, site = 'BJL', ext = 'II')
-
-fig = b.join_images(fig_1, fig_2)
-
-# fig.savefig(
-#     b.LATEX(FigureName, folder = 'products'),
-#     dpi = 400
-#     )
+def main():
+    start = dt.datetime(2022, 7, 25, 1, 20)
+    
+    times = pd.date_range(start, freq  = '30min', periods = 12)
+    
+    fig_1 = plot_linear_images_sequence(times, site = 'CA', ext = 'I')
+    fig_2 = plot_linear_images_sequence(times, site = 'BJL', ext = 'II')
+    
+    fig = b.join_images(fig_1, fig_2)
+    
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder = 'products'),
+    #     dpi = 400
+    #     )

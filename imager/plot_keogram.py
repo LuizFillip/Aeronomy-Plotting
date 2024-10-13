@@ -35,6 +35,8 @@ def plot_velocities(ax):
     plot_vel_info(ax, time_1, dist_1, line1)
     plot_vel_info(ax, time_2, dist_2, line2)
     plot_vel_info(ax, time_3, dist_3, line3)
+    
+    return None 
 
 
 def plot_keogram(
