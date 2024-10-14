@@ -3,18 +3,7 @@ from skimage import io
 import numpy as np
 import digisonde as dg 
 import os 
-def ionogram_path(dn, site, root = 'E:\\'):
-    
-    start = dn - dt.timedelta(days = 1)
-    folder_ion = start.strftime(f'%Y/%Y%m%d{site[0]}')
-    
-    fmt = f'{site}_%Y%m%d(%j)%H%M%S.PNG'
-    
-    target = dn.strftime(fmt)
-    
-    return os.path.join(root, 'ionogram', folder_ion, target)
-    
- 
+
 
     
 def crop_image(img):
@@ -34,7 +23,8 @@ def plot_single_ionogram(
         label = False, 
         ylabel_position = "left",
         aspect = 'auto', 
-        title = False
+        title = False, 
+        ylim = [150, 1000]
         ):
     
   
@@ -48,12 +38,19 @@ def plot_single_ionogram(
     img = io.imread(fname)
     img = crop_image(img)
 
-
-    ax.imshow(img, aspect = 'auto', extent = [-1, 15, 50, 1280])
-
-
-    ax.set(ylim = [150, 1000], 
-           xlim = [0, 10])
+    ax.imshow(
+        img, 
+        aspect = 'auto', 
+        extent = [-1, 15, 50, 1280]
+        )
+    
+    xlim = [0, 10]
+    step = 2
+    ax.set(
+        ylim = ylim, 
+        xlim = [0, 10], 
+        xticks = np.arange(xlim[0], xlim[-1] + step, step)
+        )
     
     
     if label:
@@ -99,20 +96,109 @@ def plot_single_ionogram(
 import datetime as dt 
 
 
-dn = dt.datetime(2022, 7, 25)
+def main():
 
-site = 'CAJ2M'
+    dn = dt.datetime(2022, 7, 25)
 
-target = dt.datetime(2022, 7, 25, 2)
-# site, fname = dg.path_ionogram(
-#         dn, 
-#         target = target, 
-#         site = 'CAJ2M', #'SAA0K'
-#         root = 'E:\\'
-#         )
+    site = 'CAJ2M'
+    
+    
+    # site, fname = dg.path_ionogram(
+    #         dn, 
+    #         target = target, 
+    #         site = 'CAJ2M', #'SAA0K'
+    #         root = 'E:\\'
+    #         )
+    
+    fname = dg.path_from_site_dn(dn, site, root = 'E:\\')
+    
+    
+    plot_single_ionogram(fname, label = True)
+    
 
-fname = ionogram_path(dn, site, root = 'E:\\')
+
+# main()
+
+import pandas as pd 
+start = dt.datetime(2022, 7, 25, 1)
+
+times = pd.date_range(start, freq = '1H', periods = 6)
 
 
+fig, ax = plt.subplots(
+    figsize = (18, 16), 
+    ncols = len(times), 
+    nrows = 2, 
+    # sharex = True, 
+    # sharey = True
+    )
 
-plot_single_ionogram(fname, label = True)
+plt.subplots_adjust(hspace = 0.2, wspace=0)
+
+
+for i, dn in enumerate(times):
+    
+    title = dn.strftime('%Hh%M')
+    
+    fname = dg.path_from_site_dn(dn, 'FZA0M')
+    
+    plot_single_ionogram(
+        fname, 
+        ax[0, i], 
+        label = True, 
+        ylim = [100, 1200]
+        )
+    
+    ax[0, i].set(
+      
+        yticklabels = [], 
+        xticklabels = [], 
+        xlabel = '', 
+        ylabel = ''
+        )
+    ax[0, i].text(
+        0.3, 0.85, 
+        title, color = 'w',
+        transform = ax[0, i].transAxes
+        )
+    
+    fname = dg.path_from_site_dn(dn, 'CAJ2M')
+    
+    plot_single_ionogram(
+        fname, 
+        ax[1, i],
+        label = True, 
+        ylim = [100, 1200]
+        )
+    
+    ax[1, i].text(
+        0.3, 0.85, title, color = 'w',
+                  transform = ax[1,i].transAxes)
+    
+    if i != 0:
+      
+        ax[1, i].set(
+            yticklabels = [], 
+            xticklabels = [], 
+            xlabel = '', 
+            ylabel = ''
+            )
+
+y = 1.01
+x = 0.01
+fontsize = 45
+ax[1, 0].text(
+    x, y, 
+    'Cachoeira Paulista', 
+    fontsize = fontsize,
+    transform = ax[1, 0].transAxes
+    )
+
+
+ax[0, 0].text(
+    x, y,
+    'Fortaleza', 
+    fontsize = 40,
+    transform = ax[0, 0].transAxes
+    
+    )
