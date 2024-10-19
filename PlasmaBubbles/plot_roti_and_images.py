@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from skimage import io
-from PlasmaBubbles as pb 
+import PlasmaBubbles as pb 
 import os 
 import imager as im
 import base as b 
@@ -13,8 +13,16 @@ def roti_limit(dn, sector = -50, root = 'E:\\'):
 
     df = b.sel_times(df, dn, hours = 11)
     
-    # return  df.loc[(df['lon']> -40) & (df['lon'] < -30)]
     return pb.filter_region(df, dn.year, sector)
+
+args = dict(
+     marker = 'o', 
+     markersize = 3,
+     linestyle = 'none', 
+     color = 'gray', 
+     alpha = 0.2, 
+     )
+    
 
 def plot_roti_points(
         ax, ds, 

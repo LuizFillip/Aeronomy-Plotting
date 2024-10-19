@@ -100,12 +100,12 @@ def plot_region_shades(
     #     midn_name, 
     #     transform = ax.transData
     #     )
-    delta = dt.timedelta(hours = 1.3)
+    delta = dt.timedelta(hours = 1.5)
     
     ax.text(
         midnight - delta, 
         0.45, 
-        'Próximo da meia-noite', 
+        'Próximas da meia-noite', 
         transform = ax.transData
         )
     
@@ -164,4 +164,4 @@ def main():
           dpi = 400
           )
     
-# main()
+main()
