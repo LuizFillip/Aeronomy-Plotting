@@ -1,186 +1,113 @@
 import matplotlib.pyplot as plt
 from skimage import io
-from matplotlib.gridspec import GridSpec
+from PlasmaBubbles as pb 
 import os 
 import imager as im
 import base as b 
 import datetime as dt 
 import GEO as gg
 
-b.config_labels(fontsize = 20)
-
-
-def plot_roti(ax, dn, glon = -50):
+def roti_limit(dn, sector = -50, root = 'E:\\'):
     
-    infile = f'database/epbs/longs/{dn.year}.txt'
+    df = pb.concat_files(dn, root = root)
 
-    ds = b.sel_times(b.load(infile), dn)
+    df = b.sel_times(df, dn, hours = 11)
     
-    args = dict(
-        marker = 'o', 
-        markersize = 3,
-        linestyle = 'none'
-        )
-    
-    dusk = gg.dusk_time(
-            dn,  
-            lat = -5, 
-            lon = glon, 
-            twilight = 18
-            )
-    
-    ax.axvline(dusk, lw = 2.5, linestyle = '--')
-    ax.text(dusk, 1.02, 'Terminator', transform = ax.transData)
-    
-    ax.plot(ds[str(glon)], **args)
-    
-    ax.set(
-        ylim = [0, 1], 
-        ylabel = 'ROTI (TECU/min)'
-        )
-    
-    b.format_time_axes(ax, pad = 50, hour_locator = 2)
-    
-    return None
-    
-    
+    # return  df.loc[(df['lon']> -40) & (df['lon'] < -30)]
+    return pb.filter_region(df, dn.year, sector)
 
-def plot_imager(ax, fname):
-    
-    ax.imshow(
-        io.imread(fname, as_gray = True), 
-        cmap = 'gray'
-        )
-       
-    ax.set_axis_off()
-
-    return ax
-
-def plot_shade_bars(ax, times, ytext = 0.85):
-
-    delta = dt.timedelta(minutes = 12)
-    
-    for index, time in enumerate(times):
-        
-        ax.text(
-            time, 
-            ytext, 
-            index + 1, 
-            transform = ax.transData
-            )
-        
-        ax.axvspan(
-            time, 
-            time + delta,
-            alpha = 0.7, 
-            color = 'gray',
-            edgecolor = 'k', 
-            lw = 2
-        )
-        
-    return None
-
-
-def plot_image_in_sequence(gs2, path_images):
-
-    times = []
-
-    for col, file in enumerate(path_images):
-        
-        fn = os.path.split(file)[-1]
-        
-        dn = im.imager_fname(fn).datetime
-        times.append(dn)
-        title = dn.strftime(f'({col + 1}) %H:%M')
-        
-        
-        if col <= 1:
-            ax1 = plt.subplot(gs2[0, col])
-            x, y = (.1, 1.05)
-        
-        else:
-            ax1 = plt.subplot(gs2[1, col - 2])
-            x, y = (.1, -0.16)
-
-        ax = plot_imager(ax1, file)
-        
-        ax.text(
-            x, y, 
-            title, 
-            transform = ax.transAxes
-            )
-        
-        if col == 0:
-            ax.text(
-                -0.3, 0.75, '(a)', 
-                fontsize = 25,
-                transform = ax.transAxes,
-                # color = 'white'
-                )
-    return times
-
-
-
-def plot_roti_and_images(
-        dn,
-        path_images, 
-        fontsize = 25
+def plot_roti_points(
+        ax, ds, 
+        threshold = 0.25,
+        label = False, 
+        points_max = True,
+        vmax = 3,
+        occurrence = True, 
+        false_filter = None
         ):
-
-    fig = plt.figure(
-        dpi = 300,
-        figsize = (16, 5),
-        layout = 'constrained'
-        )
         
-    gs2 = GridSpec(2, 5)
+    ax.plot(ds['roti'], **args, label = 'ROTI points')
     
-    gs2.update(hspace = 0, wspace = 0.5)
-        
-    times = plot_image_in_sequence(gs2, path_images)
-    
-    ax2 = plt.subplot(gs2[:, 2:])
-    
-    plot_roti(ax2, dn)
-    
-    plot_shade_bars(ax2, times, ytext = 0.85)
-    
-    
-    ax2.text(
-        0.05, 0.85, '(b)', 
-        fontsize = fontsize,
-        transform = ax2.transAxes
-        )
-    
-    # ax2.tick_params(
-    #     axis='y', 
-    #     labelright = True, 
-    #     labelleft = False, 
-    #     right = True, 
-    #     left = False)
-    
-    # ax2.yaxis.set_label_position("right")
-   
-    return fig 
 
-
-def main():
-    
-    path_images = [ 
-        'database/CA_2017_0403P/O6_CA_20170404_022551.png',
-        'database/CA_2017_0403P/O6_CA_20170404_030245.png',
-        'database/CA_2017_0403P/O6_CA_20170404_061121.png',
-        'database/CA_2017_0403P/O6_CA_20170404_040009.png'
+    if len(ds) != 0:
         
-        ]
+        
+        ax.axhline(
+            threshold, 
+            color = 'red', 
+            lw = 2, 
+            label = f'{threshold} TECU/min' 
+            )
+        
+        times = pb.time_range(ds)
+        
+        df1 = pb.maximum_in_time_window(ds, 'max', times)
+        
+        if points_max:
+            extra_args = dict(
+                marker = 'o', 
+                linestyle = 'none', 
+                markersize = 3
+                )
+        else:
+            extra_args = dict(markersize = 3)
+        
+        ax.plot(
+            df1, 
+            color = 'k',                
+            label = 'Valor máximo',
+            **extra_args
+            )
+                
+        
+        if label:
+            ax.set(ylabel = 'ROTI (TECU/min)')
+            
+        if occurrence:
+        
+            ax1 = ax.twinx()
+            plot_occurrence_events(
+                ax1, 
+                df1, 
+                threshold,
+                color = 'b',
+                false_filter = false_filter
+                
+                )
+            
+            # ax1.set_ylabel('Ocorrência', color = 'b')
+            
+        if occurrence:
+            return ax1
     
-    dn = dt.datetime(2017, 4, 3, 20)
-    
-    fig = plot_roti_and_images(dn, path_images)
-    
-    save_in = 'G:\\Meu Drive\\Doutorado\Travels\\O6_CA_20170404'
-    
-    # fig.savefig(save_in, dpi = 300)
-    
-    
-main()
+    return ds
+
+def plot_roti_timeseries(ax_rot, dn, ref_long = -50):
+     
+     df = roti_limit(dn)
+     
+     plot_roti_points(
+             ax_rot, df , 
+             threshold = 0.21,
+             label = True
+             )
+     
+     vmax = np.ceil(df['roti'].max()) 
+     vmax = 4
+     ax_rot.set(
+         ylim = [0, vmax + 1], 
+         xlim = [df.index[0], df.index[-1]],
+         yticks = np.arange(0, vmax + 2, 1)
+         )
+     
+     pl.plot_references_lines(
+             ax_rot,
+             -50, 
+             dn, 
+             label_top = 5.2,
+             translate = False
+             )
+     
+     b.format_time_axes(ax_rot, translate = False)
+     
+     return vmax
