@@ -8,14 +8,7 @@ import datetime as dt
 b.config_labels()
 
 
-args = dict(
-     marker = 'o', 
-     markersize = 3,
-     linestyle = 'none', 
-     color = 'gray', 
-     alpha = 0.2, 
-     )
-    
+
 def plot_occurrence_events(
         ax, 
         ds,
@@ -59,71 +52,7 @@ def plot_occurrence_events(
     return ev
         
 
-def plot_roti_points(
-        ax, ds, 
-        threshold = 0.25,
-        label = False, 
-        points_max = True,
-        vmax = 3,
-        occurrence = True, 
-        false_filter = None
-        ):
-        
-    ax.plot(ds['roti'], **args, label = 'ROTI points')
-    
 
-    if len(ds) != 0:
-        
-        
-        ax.axhline(
-            threshold, 
-            color = 'red', 
-            lw = 2, 
-            label = f'{threshold} TECU/min' 
-            )
-        
-        times = pb.time_range(ds)
-        
-        df1 = pb.maximum_in_time_window(ds, 'max', times)
-        
-        if points_max:
-            extra_args = dict(
-                marker = 'o', 
-                linestyle = 'none', 
-                markersize = 3
-                )
-        else:
-            extra_args = dict(markersize = 3)
-        
-        ax.plot(
-            df1, 
-            color = 'k',                
-            label = 'Valor máximo',
-            **extra_args
-            )
-                
-        
-        if label:
-            ax.set(ylabel = 'ROTI (TECU/min)')
-            
-        if occurrence:
-        
-            ax1 = ax.twinx()
-            plot_occurrence_events(
-                ax1, 
-                df1, 
-                threshold,
-                color = 'b',
-                false_filter = false_filter
-                
-                )
-            
-            # ax1.set_ylabel('Ocorrência', color = 'b')
-            
-        if occurrence:
-            return ax1
-    
-    return ds
 
 
 def plot_references_lines(
