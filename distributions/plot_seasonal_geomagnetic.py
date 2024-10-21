@@ -53,12 +53,13 @@ def plot_storm_levels_distribution(
         
         for index, df_level in enumerate(datasets):
             
+            label =f'({index + 1}) {kp_labels[index]}'
             
             data, epb = pl.plot_distribution(
                     ax[row, 0], 
                     df_level, 
                     parameter,
-                    label = kp_labels[index],
+                    label = label,
                     outliner = outliner, 
                     translate = translate,
                     limit = limit
@@ -71,7 +72,7 @@ def plot_storm_levels_distribution(
                     data, 
                     index,
                     parameter = parameter,
-                    label = kp_labels[index], 
+                    label = label, 
                     )
             
             total_day.append(days)
@@ -117,7 +118,7 @@ def main():
     
     fig = plot_storm_levels_distribution(
         df, 
-        parameter= parameter,
+        parameter = parameter,
         level = -30, 
         translate = translate,
         limit = True, 

@@ -44,7 +44,6 @@ def plot_distributions_solar_flux(
    
     for i, ds in enumerate(df_index.F107_2(level)):
         
-        # print(ds[parameter].count())
         index = i + 1
         label = f'({index}) {F107_labels[i]}'
     
