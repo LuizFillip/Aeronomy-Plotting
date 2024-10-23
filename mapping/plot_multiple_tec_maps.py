@@ -38,7 +38,7 @@ def arrow(ax, xy, xytext, text = '$B_1$', color = 'red'):
         )
     return None 
 
-def pplot_arrows(axs):
+def plot_arrows_bubbles(axs):
     arrow(axs[0, 1], (-60, -10), (-60, 10), text = '$B_1$')
     arrow(axs[0, 2], (-55, -10), (-55, 10), text = '$B_1$')
     arrow(axs[0, 2], (-65, -10), (-65, 10), text = '$B_2$', 
@@ -80,6 +80,7 @@ def plot_multiple_tec_maps(
         hspace = 0.1
         )
     
+    plot_arrows_bubbles(axs)
     for i, ax in enumerate(axs.flat):
                 
         dn = start + dt.timedelta(hours = int(hours[i]))
@@ -92,7 +93,7 @@ def plot_multiple_tec_maps(
             colorbar = False
             )
         
-        ax.set(title = dn.strftime('%Hh%M UT'))
+        ax.set(title = dn.strftime('%Hh%M HU'))
         
         if i != 0:
             ax.set(xticklabels = [], 
@@ -121,17 +122,17 @@ def main():
     
     start =  dt.datetime(2015, 12, 20, 20)
     start =  dt.datetime(2014, 2, 9, 23)
-    start = dt.datetime(2017, 9, 17, 0)
+    # start = dt.datetime(2017, 9, 17, 0)
     hours = np.arange(0, 7, 1)
-    fig = plot_multiple_tec_maps(start, hours, vmax = 20)
+    fig = plot_multiple_tec_maps(start, hours, vmax = 80)
     
     FigureName = start.strftime('%Y%m%d')
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, 
-    #             folder = 'maps'),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, 
+                folder = 'maps'),
+        dpi = 400
+        )
     
 main()
 

@@ -15,7 +15,7 @@ args = dict(
 def plot_sites(ax, year):
         
     sites  = ['jic', 'saa', 'bvj', 'ca', 'cp', 'bjl']
-    sites = ['jic', 'saa', 'bvj', 'ca']
+    sites = ['jic', 'saa', 'bvj', 'ca', 'caj']
     for i, site in enumerate(sites):
         
         site = gg.sites[site]
@@ -49,6 +49,7 @@ def plot_GNSS(ax, year, translate = False):
     return None 
 
 lat_lims = dict(min = -40, max = 20, stp = 10)
+lon_lims = dict(min = -100, max = -30, stp = 10)
 
 def plot_regions_over_map(year = 2013):
     
@@ -69,17 +70,18 @@ def plot_regions_over_map(year = 2013):
         degress = None, 
         grid = False, 
         lat_lims = lat_lims,
+        lon_lims = lon_lims
 )
     gg.plot_rectangles_regions(ax)
-    # plot_sites(ax, year)
-    plot_GNSS(ax, year)
+    plot_sites(ax, year)
+    plot_GNSS(ax, year, translate = True)
     
     ax.legend(
-        loc = 'upper right',
-        ncol = 3, 
-        # bbox_to_anchor = (1., 1.0), 
+        loc = 'lower left',
+        ncol = 1, 
+        bbox_to_anchor = (-0.05, 0.), 
         columnspacing = 0, 
-        fontsize = 35
+        fontsize = 25
         
         )
     
