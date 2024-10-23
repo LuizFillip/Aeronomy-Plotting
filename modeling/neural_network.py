@@ -1,7 +1,38 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import base as b 
 
-def draw_neural_network(layers):
+b.config_labels()
+
+def plot_rectangle(
+        ax, 
+        x0, x1, 
+        y0 = -5, 
+        y1 = 5, 
+        color = 'lime'
+        ,name = ''):
+    rect = plt.Rectangle(
+        (x0, y0), 
+        x1 - x0, 
+        y1 - y0,
+        edgecolor = 'k', 
+        facecolor = color, 
+        linewidth = 1, 
+        alpha = 0.3
+        )
+    
+    ax.add_patch(rect)
+    middle = x0 + (x1 - x0)/ 2
+    ax.text(
+        middle, 
+        y1 + 0.5, 
+        name,
+        fontsize = 25, 
+        ha = 'center', 
+        va = 'center', 
+        color = 'black'
+        )
+def draw_neural_network(layers, labels):
     fig, ax = plt.subplots(dpi = 300, figsize=(10, 6))
     ax.axis('off')  # Remove os eixos
     
@@ -42,13 +73,11 @@ def draw_neural_network(layers):
     
     index, positions = neuron_positions[0]
     
-    labels = ['F10.7', 'SYM-H', 'h`F2', 
-              'Convecção', 'Dia do ano']
     for i, y in enumerate(positions):
         
         
         ax.text(
-            -0.5, y, 
+            -0.7, y, 
             labels[i],
             fontsize = 25, 
             ha = 'center', 
@@ -56,54 +85,53 @@ def draw_neural_network(layers):
             color = 'black'
             )
         
-    ax.text(
-        3.5, 0, 
-        'saída',
-        fontsize = 25, 
-        ha = 'center', 
-        va = 'center', 
-        color = 'black'
-        )
+   
     
-    
-    def plot_rectangle(
-            ax, 
-            x0, x1, 
-            y0 = -5, 
-            y1 = 5, 
-            color = 'lime'
-            ):
-        rect = plt.Rectangle(
-            (x0, y0), 
-            x1 - x0, 
-            y1 - y0,
-            edgecolor = 'k', 
-            facecolor = color, 
-            linewidth = 1, 
-            alpha = 0.3
-            )
-        
-        ax.add_patch(rect)
+    y1 = len(layers)
+
         
     plot_rectangle(
             ax, 
-            -0.15, 0.15
+        
+            -0.15, 0.15, 
+            
+            y0 = -y1, 
+            y1 = y1,
+            name = 'Entrada'
             )
     
     plot_rectangle(
             ax, 
-            0.7, 2.2, 
-            color = 'lightblue'
+            0.7, 3.2, 
+            y0 = -y1, 
+            y1 = y1,
+            color = 'lightblue', 
+            name = 'Modelos'
             )
     
     plot_rectangle(
             ax, 
-            2.8, 3.2, 
-            color = 'red'
+            3.8, 4.2, 
+            y0 = -y1, 
+            y1 = y1,
+            color = 'red', 
+            name = 'Saída'
             )
 
     return fig 
 
-# Exemplo: rede neural com 3 neurônios na entrada, 4 e 3 neurônios em duas camadas ocultas, e 2 neurônios na saída
-layers = [5, 6, 4, 1]
-fig = draw_neural_network(layers)
+
+def main():
+    labels = ['F10.7', 'SYM-H', '$V_z$',
+                  'Convecção', 'Dia do ano']
+    
+    num = len(labels)
+    layers = [num, num + 1, num + 2, num + 1, 1]
+    fig = draw_neural_network(layers, labels)
+    FigureName = 'RedeNeural'
+    fig.savefig(
+        b.LATEX(FigureName, 'posdoc'),
+        dpi = 400
+        )
+    
+    
