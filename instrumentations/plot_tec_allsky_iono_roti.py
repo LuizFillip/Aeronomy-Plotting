@@ -7,21 +7,13 @@ import imager as im
 import base as b 
 import datetime as dt 
 import numpy as np
-import PlasmaBubbles as pb 
 import cartopy.crs as ccrs
 
 b.config_labels(fontsize = 25)
 
 
 
-def roti_limit(dn, sector = -50, root = 'E:\\'):
-    
-    df = pb.concat_files(dn, root = root)
 
-    df = b.sel_times(df, dn, hours = 11)
-    
-    # return  df.loc[(df['lon']> -40) & (df['lon'] < -30)]
-    return pb.filter_region(df, dn.year, sector)
    
 
 def ionogram_path(target, dn, site = 'FZA0M'):
@@ -53,39 +45,13 @@ def plot_shades(ax1, n, index, y = 4):
         edgecolor = 'k', 
         lw = 2
     )
+    
+    return None 
   
 def title(ax, dn, index):
     title = dn.strftime(f'({index}) %Hh%M')
     ax.set(title = title)
  
-def plot_roti_timeseries(ax_rot, dn, ref_long = -50):
-     
-     df = roti_limit(dn)
-     
-     pl.plot_roti_points(
-             ax_rot, df , 
-             threshold = 0.21,
-             label = True
-             )
-     
-     vmax = np.ceil(df['roti'].max()) 
-     vmax = 4
-     ax_rot.set(
-         ylim = [0, vmax + 1], 
-         xlim = [df.index[0], df.index[-1]],
-         yticks = np.arange(0, vmax + 2, 1)
-         )
-     
-     pl.plot_references_lines(
-             ax_rot,
-             -50, 
-             dn, 
-             label_top = 5.2,
-             translate = False
-             )
-     
-     b.format_time_axes(ax_rot, translate = False)
-     return vmax
 
 def TEC_6300_IONOGRAM_ROTI(
         files, dn, 
@@ -95,9 +61,8 @@ def TEC_6300_IONOGRAM_ROTI(
         tec_max = 40
         ):
     
-    PATH_SKY = im.path_all_sky(dn, root = root)
-
-
+    PATH_SKY = im.path_asi(dn, root = root)
+    
     fig = plt.figure(
         dpi = 300,
         figsize = (11,  16),
@@ -110,7 +75,7 @@ def TEC_6300_IONOGRAM_ROTI(
     
     ax_rot = plt.subplot(gs2[-1, :])
     
-    vmax = plot_roti_timeseries(ax_rot, dn)
+    vmax = pl.plot_roti_timeseries(ax_rot, dn)
     vmax = 5
     for col, file in enumerate(files):
         index = col + 1
@@ -302,26 +267,44 @@ def solar_minimum():
         b.LATEX(FigureName, folder = 'products'),
         dpi = 400
         )
+    
+    return None
 
 # solar_maximum(site =  'SAA0K')
 
 
-dn = dt.datetime(2019, 5, 2, 20)
+# dn = dt.datetime(2019, 5, 2, 20)
 
-files = [
-    'O6_CA_20190502_222618.tif',
-    'O6_CA_20190503_010603.tif',
-    'O6_CA_20190503_014157.tif',
-    'O6_CA_20190503_023548.tif'
-    ]
-site =  'FZA0M'
-fig = TEC_6300_IONOGRAM_ROTI(
-    files, dn, site, tec_max = 10,
-    letter = '')
+# files = [
+#     'O6_CA_20190502_222618.tif',
+#     'O6_CA_20190503_010603.tif',
+#     'O6_CA_20190503_014157.tif',
+#     'O6_CA_20190503_023548.tif'
+#     ]
 
-FigureName = dn.strftime('20190502_validation')
- 
-fig.savefig(
-     b.LATEX(FigureName, folder = 'products'),
-     dpi = 400
-     )
+
+def bubble_valid_2():
+    
+
+    dn = dt.datetime(2016, 10, 3, 20)
+    
+    site = 'FZA0M'
+    site = 'SAA0K'
+    
+    files = [
+        'O6_CA_20161003_232538.tif', 
+        'O6_CA_20161004_022602.tif',
+        'O6_CA_20161004_031109.tif',
+        'O6_CA_20161004_042903.tif'
+        
+        ]
+    fig = TEC_6300_IONOGRAM_ROTI(
+        files, dn, site, tec_max = 30,
+        letter = '')
+    
+    FigureName = dn.strftime('%Y%m%d_validation')
+     
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'products'),
+          dpi = 400
+          )
