@@ -24,7 +24,7 @@ def plot_mean_std(
     
 
 
-def plot_histogram(
+def plot_histogram_heat(
         ax, values, i, bins, xy = ()):
        
     args = dict(
