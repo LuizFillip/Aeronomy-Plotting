@@ -5,6 +5,7 @@ import GEO as gg
 import base as b
 import cartopy.crs as ccrs
 
+
 b.config_labels()
 
 def plot_image(ax, dn, site = 'CA'):
@@ -17,32 +18,33 @@ def plot_image(ax, dn, site = 'CA'):
             dn, 
             site = site, 
             )
-    # print(path_asi)
+   
+    
     asi = im.DisplayASI(
         path_asi, 
         site = site, 
         areap = areap, 
-        limits = [0.23, 0.99]
+        limits = [0.27, 0.99]
         )
     
     asi.display_linear(ax)
-    site = im.sites_infos(site)
-    lon, lat = site.coords
+    site_in = im.sites_infos(site)
+    lon, lat = site_in.coords
     
-    ax.scatter(lon, lat, s = 200, label = site.name, 
+    ax.scatter(lon, lat, s = 200, 
                marker = '^')
     
-    ax.legend(loc = 'lower right', 
-              handletextpad = 0.1,
-              fontsize = 25)
+
+    time = im.fn2dn(path_asi).strftime('%H:%M UT - ')
     
-    time = im.fn2dn(path_asi).strftime('%H:%M UT')
+    yset = area_factor + 1.5
+    xset = area_factor + 2.5
     
     ax.text(
-        lon - 5, lat + 4, time,
+        lon - xset, lat + yset, time + site,
         color = 'w',
         transform = ax.transData, 
-        fontsize = 30
+        fontsize = 25
         )
     return None
 
@@ -58,8 +60,8 @@ def plot_linear_images_over_map():
           {'projection': ccrs.PlateCarree()}
         )
     
-    lat_lims = dict(min = -30, max = 0, stp = 5)
-    lon_lims = dict(min = -55, max = -25, stp = 5) 
+    lat_lims = dict(min = -30, max = 0, stp = 10)
+    lon_lims = dict(min = -60, max = -30, stp = 10) 
     
     
     gg.map_attrs(
@@ -74,12 +76,19 @@ def plot_linear_images_over_map():
     dn = dt.datetime(2022, 3, 9, 5, 21)
     
     
+    plt.grid(which='major')
     
     plot_image(ax, dn, site = 'CA')
     plot_image(ax, dn, site = 'BJL')
     plot_image(ax, dn, site = 'CP')
     
-    
-    ax.set(title = dn.strftime('%B, %d %Y'))
+    plt.gca().xaxis.set_major_locator(plt.MultipleLocator(10))
+    plt.gca().yaxis.set_major_locator(plt.MultipleLocator(10))
+    ax.set(
+        title = dn.strftime('%Y_%m_08-%d')
+        )
     
     return fig
+
+
+fig = plot_linear_images_over_map()
