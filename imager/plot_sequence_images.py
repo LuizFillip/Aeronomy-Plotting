@@ -80,8 +80,11 @@ def plot_sequence_of_images(
     
     for num, ax in enumerate(ax.flat):
         
-        file = im.get_closest(times[num], site = site)
-        path_of_image = os.path.join(path, file)
+        dn = times[num]
+        path_of_image = im.path_from_closest_dn(
+                dn, 
+                site = site, 
+                )
     
         im.plot_images(
             path_of_image, 

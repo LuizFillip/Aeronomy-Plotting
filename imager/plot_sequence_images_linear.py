@@ -60,7 +60,7 @@ def plot_linear_images_sequence(
         
         asi.display(ax)
         
-        file_time = im.fn2datetime(path_of_image)
+        file_time = im.fn2dn(path_of_image)
         title = file_time.strftime(f'({l}) %Hh%M UT')
         ax.set_title(title, fontsize = fontsize)
         
