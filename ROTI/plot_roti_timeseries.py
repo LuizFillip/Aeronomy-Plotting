@@ -1,11 +1,8 @@
-import matplotlib.pyplot as plt
-from skimage import io
 import PlasmaBubbles as pb 
-import os 
-import imager as im
+import numpy as np  
 import base as b 
-import datetime as dt 
-import GEO as gg
+import plotting as pl 
+
 
 def roti_limit(dn, sector = -50, root = 'E:\\'):
     
@@ -74,7 +71,7 @@ def plot_roti_points(
         if occurrence:
         
             ax1 = ax.twinx()
-            plot_occurrence_events(
+            pl.plot_occurrence_events(
                 ax1, 
                 df1, 
                 threshold,
@@ -83,14 +80,17 @@ def plot_roti_points(
                 
                 )
             
-            # ax1.set_ylabel('Ocorrência', color = 'b')
-            
         if occurrence:
             return ax1
     
     return ds
 
-def plot_roti_timeseries(ax_rot, dn, ref_long = -50):
+def plot_roti_timeseries(
+        ax_rot, 
+        dn, 
+        ref_lines = False, 
+        ref_long = -50
+        ):
      
      df = roti_limit(dn)
      
@@ -108,14 +108,16 @@ def plot_roti_timeseries(ax_rot, dn, ref_long = -50):
          yticks = np.arange(0, vmax + 2, 1)
          )
      
-     pl.plot_references_lines(
-             ax_rot,
-             -50, 
-             dn, 
-             label_top = 5.2,
-             translate = False
-             )
+     if ref_lines:
      
-     b.format_time_axes(ax_rot, translate = False)
+         pl.plot_references_lines(
+                 ax_rot,
+                 ref_long, 
+                 dn, 
+                 label_top = 5.2,
+                 translate = False
+                 )
+         
+     b.format_time_axes(ax_rot, translate = False, pad = 80)
      
      return vmax

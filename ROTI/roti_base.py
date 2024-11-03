@@ -3,7 +3,7 @@ import PlasmaBubbles as pb
 import GEO as gg
 import numpy as np 
 import digisonde as dg 
-import datetime as dt 
+import plotting as pl 
 
 b.config_labels()
 
@@ -35,7 +35,7 @@ def plot_occurrence_events(
             axis = "y", 
             position = "right"
             )
-    
+    ax.set_ylabel('Ocorrência', color = 'b')
     ax.set(
         yticks = [0, 1], 
         xlim = [ds.index[0], ds.index[-1]],
@@ -229,7 +229,7 @@ def plot_roti_timeseries(
              
         sel = pb.filter_region_and_dn(df, target, sectors[i])
         
-        plot_roti_points(
+        pl.plot_roti_points(
             ax, sel, 
             threshold,
             label = False, 
