@@ -54,7 +54,7 @@ def plot_drift(ax, df, cols, site, vmax = 60):
 
     ax.axhline(0, linestyle = '--')
     
-    # plot_infos(ax, df, site = 'saa')
+    plot_infos(ax, df, site = 'saa')
     
     return None
 
@@ -85,11 +85,16 @@ def plot_hF2(ax, df):
 
 
 
-def plot_vz_and_frequencies(dn, cols, site):
+def plot_vz_and_frequencies(
+        dn, 
+        cols, 
+        site, 
+        sum_from = 17
+        ):
     
     file = dg.dn2fn(dn, site)
     
-    df = dg.IonoChar(file, cols, sum_from = None)
+    df = dg.IonoChar(file, cols, sum_from = sum_from)
    
     fig, ax = plt.subplots(
         figsize = (14, 10), 
@@ -129,8 +134,8 @@ def plot_vz_and_frequencies(dn, cols, site):
         dusk, 500, 
         'Terminadouro local', 
         transform = ax[0].transData)
-    # ax1 = ax[1].twinx()
-    # plot_QF(ax1, df.chars )
+    ax1 = ax[1].twinx()
+    plot_QF(ax1, df.chars )
     b.plot_letters(
         ax, 
         y = 0.85, 
@@ -152,11 +157,11 @@ def main():
     
     cols = list(range(3, 8, 1))
     site = 'SAA0K'
-    # site = 'FZA0M'
-    #dn = dt.datetime(2022, 7, 24)
-    dn = dt.datetime(2013, 12, 24)
-    dn = dt.datetime(2019, 5, 2)
-    dn = dt.datetime(2016, 10, 3)
+    site = 'FZA0M'
+    dn = dt.datetime(2022, 7, 25, 0)
+    # dn = dt.datetime(2013, 12, 24, 16)
+    # dn = dt.datetime(2019, 5, 2)
+    # dn = dt.datetime(2016, 10, 3)
 
     fig = plot_vz_and_frequencies(dn, cols, site)
     
@@ -168,4 +173,4 @@ def main():
             )
     
     
-main()
+# main()
