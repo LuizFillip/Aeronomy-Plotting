@@ -7,23 +7,26 @@ import base as b
 b.config_labels()
 
 def plot_seasonal_RTI_contribution(
-        df, fontsize = 35):
+        df, 
+        fontsize = 35
+        ):
+    
     fig, ax = plt.subplots(
         nrows = 2, 
         ncols = 2, 
         sharey = 'row',
         dpi = 300,
-        figsize = (14, 12)
+        figsize = (16, 12)
         )
     
     plt.subplots_adjust(
-        hspace = 0.25,
-        wspace = 0.1
+        hspace = 0.3,
+        wspace = 0.05
         )
     
    
     cols = ['vp', 'K', 'gr', 'mer_perp']
- 
+    xlims = [[0, 120], [0, 5], [0, 30], [-8, 8]]
     for i , a in enumerate(ax.flat):
         
         vls = cols[i]
@@ -37,7 +40,10 @@ def plot_seasonal_RTI_contribution(
             )
         
     
-        a.set(xlabel = b.y_label(vls))
+        a.set(
+            xlim = xlims[i],
+            xlabel = b.y_label(vls)
+            )
     
     
     
@@ -50,7 +56,7 @@ def plot_seasonal_RTI_contribution(
     
    
     
-    b.plot_letters(ax, y = 1.04, x = 0.01, num2white = None)
+    b.plot_letters(ax, y = 0.85, x = 0.02, fontsize = fontsize)
     return fig
 
 
@@ -63,10 +69,10 @@ def main():
     
     fig = plot_seasonal_RTI_contribution(df)
     
-    FigureName = 'correlation_vp_K_nui'
+    FigureName = 'correlation_all_RTI_terms'
     
     fig.savefig(b.LATEX(
         FigureName, 
         folder = 'correlations'), dpi = 400)
     
-main()
+# main()

@@ -25,17 +25,20 @@ def plot_labels(fig, fontsize = 30):
     return None 
     
 
-def plot_infos(ax, fit, i = 0, color = 'k', dep = 'vp'):
+def plot_infos(
+        ax, 
+        fit, 
+        color = 'k', 
+        col = 'vp', 
+        fontsize = 25, 
+        xy = (0.2, 0.75)
+        ):
+    
     intercept = round(fit.intercept, 2)
     slope = round(fit.slope[0], 2)
     
-    if dep == 'vp':
-        dep = '$V_P$'
-    elif dep == 'K':
-        dep = '$K^F$'
-    else:
-        dep = '$g_e /\\nu_{eff}^F$'
-
+    dep = b.labels[col]['symbol']
+   
     if intercept < 0: 
         str_int = f'- {abs(intercept)}'
     else:
@@ -52,10 +55,11 @@ def plot_infos(ax, fit, i = 0, color = 'k', dep = 'vp'):
     
     
     ax.text(
-        0.05, 0.75, 
+        xy[0], xy[1], 
         f'$R^2$ = {r2}\n{eq}', 
         transform = ax.transAxes,
-        color = color
+        color = color, 
+        fontsize = fontsize
         )
     return None 
 
@@ -89,13 +93,14 @@ def plot_single_correlation(
         col = 'gamma',
         color = 'k',
         index = 0,
-        label = ''
+        label = '', 
+        fontsize = 30
         ):
     
     
     if ax is None:
-        fig, ax = plt.subplots(
-            dpi = 300)
+        fig, ax = plt.subplots(dpi = 300)
+        
         ax.set(ylabel = b.y_label('gamma'), 
                xlabel = b.y_label(col))
     
@@ -106,16 +111,20 @@ def plot_single_correlation(
     
     fit = b.linear_fit(x_vls, y_vls)
     
-    ax.plot(x_vls, fit.y_pred,
-            lw = 3, color = 'red', 
-            label = label)
+    ax.plot(
+        x_vls, 
+        fit.y_pred,
+        lw = 3, 
+        color = 'red', 
+        label = label
+        )
     
     ax.set(ylim = [0, 6])
     plot_infos(
-        ax, fit, 
-        i = index, 
-        dep = col,
-        color = color
+        ax, fit,
+        col = col,
+        color = color, 
+        fontsize= fontsize
         )
       
     if ax is None:
@@ -204,3 +213,4 @@ def main():
 
 
 # main()
+

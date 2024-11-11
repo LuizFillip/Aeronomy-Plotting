@@ -68,7 +68,7 @@ def plot_seasonal_RTI_contribution(
     
     ax[-1, 0].set(xlabel = b.y_label('vp'))
     ax[-1, 1].set(xlabel = b.y_label('K'), xlim = [1, 4.2])
-    ax[-1, 2].set(xlabel = b.y_label('g_nui_eff'), xlim = [0, 30])
+    ax[-1, 2].set(xlabel = b.y_label('gr'), xlim = [0, 30])
     
     
     
@@ -94,7 +94,9 @@ def main():
     
     FigureName = 'correlation_vp_K_nui'
     
-    fig.savefig(b.LATEX(
-        FigureName, 
-        folder = 'correlations'), dpi = 400)
+    # fig.savefig(b.LATEX(
+    #     FigureName, 
+    #     folder = 'correlations'), dpi = 400)
     
+
+main()
