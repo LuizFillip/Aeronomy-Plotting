@@ -21,15 +21,18 @@ def plot_gradient(ax, ds):
     K = []
     for i, col in enumerate(['north', 'south']):
         
-        df = ds.loc[ds['hem'] == col, 'K'] 
+        df = ds.loc[ds['hem'] == col, 'K'] * 1e5
          
         K.append(df)
-        ax.plot(b.smooth2(df * 1e5, 3), df.index, 
-                label = names[i])
+    
+        ax.plot(
+            df, df.index, 
+            label = names[i]
+            )
     
     total = pd.concat(K, axis = 1).dropna().sum(axis = 1)
 
-    ax.plot(total * 1e5, total.index, label = 'Total')
+    ax.plot(total, total.index, label = 'Total')
     
     ax.set(
         xlim = [-5, 15], 
@@ -39,8 +42,9 @@ def plot_gradient(ax, ds):
     
     ax.axvline(0, color = 'k', linestyle = '--')
     
-    ax.legend(loc = 'upper right')
-    return 
+ 
+    
+    return None 
 
 
 def plot_density(ax, ds):
@@ -50,19 +54,19 @@ def plot_density(ax, ds):
         
         df = ds.loc[ds['hem'] == col, 'N'] * 1e-18
         out.append(df)
-        ax.plot(df, df.index, 
-                label = names[i])
+        # print(df)
+        ax.plot(df, df.index,  label = names[i])
     
     total = pd.concat(out, axis = 1).dropna().sum(axis = 1)
 
     ax.plot(
         total, total.index, 
-            label  = names[-1])
+        label  = names[-1])
     
     ax.set(
         ylabel = 'Altura de Apex',
         xlim = [-1, 3], 
-        xlabel = b.y_label('N', factor = 18)
+        xlabel = b.y_label('N')
         )
     
     return None
@@ -82,15 +86,17 @@ def plot_local_profiles(ax, ds):
         lw = 2,
         color = 'k', 
         linestyle = '--', 
-        label = 'Perfil local no equador'
+        label = 'Perfil local \nno equador'
         )
     
-    ax1.set(xlabel = b.y_label('ne'), 
-            xlim = [-1, 3])
+    ax1.set(
+        xlabel = b.y_label('ne'), 
+        xlim = [-1, 3]
+        )
 
     ax1.axvline(0, lw = 1, linestyle = ':')
-    
-    ax1 = ax[1].twiny()
+    ax1.legend(loc = 'lower right')
+    ax1 = ax[1] #.twiny()
     
     ax1.plot(
         df['L'] * 1e5,
@@ -98,7 +104,7 @@ def plot_local_profiles(ax, ds):
         color = 'k', 
         linestyle = '--', 
         lw = 2,
-        label = 'Perfil local \nno equador')
+        label = '$L^{-1}$')
 
     ax1.set(
         xlim = [-5, 15],
@@ -108,7 +114,7 @@ def plot_local_profiles(ax, ds):
         )
     
     ax1.axvline(0, lw = 1, linestyle = ':')
-    ax1.legend(loc = 'center right')
+    ax1.legend(loc = 'upper right')
     return 
 
 
@@ -135,6 +141,12 @@ def plot_ft_density_profiles(ds):
     plot_gradient(ax[1], ds)
     
     b.plot_letters(ax, y = 0.92, x = 0.05)
+    
+    ax[0].legend(
+        ncol = 3, 
+        bbox_to_anchor = (1, 1.2), 
+        loc = 'upper center'
+        )
     return fig
 
 def main():
@@ -150,3 +162,4 @@ def main():
         )
     
 
+# main()

@@ -9,8 +9,8 @@ import GEO as gg
 b.config_labels(fontsize = 25)
 
 def pipe_data(dn):
-    
-    df = pd.read_csv('total_20131224', index_col=0)
+    infile = 'plotting/FluxTube/data/total_20131224'
+    df = pd.read_csv(infile, index_col=0)
 
     df = df.loc[df.index == 300]
 
@@ -29,7 +29,8 @@ def pipe_data(dn):
     
     return b.sel_times(ds, dn, hours = 24)
 
-def plot_growth_rate_parameters():
+def plot_IRT_timeseries():
+    
     fig, ax = plt.subplots(
         nrows = 5,
         figsize = (12, 14),
@@ -75,23 +76,24 @@ def plot_growth_rate_parameters():
                 suni = 'dawn'
                 )
         
-        ax[i].axvline(d, lw = 1, linestyle = '--')
+        ax[i].axvline(d, lw = 1, color = 'b', linestyle = '--')
         
         for j, hem in enumerate(['north', 'south']):
             
             ds = df.loc[df['hem'] == hem]
             
             out.append(ds[col])
-            ax[i].plot(ds[col],
-                       lw = 1.5,
-                       label = names[j])
+            ax[i].plot(
+                ds[col],
+                lw = 1.5,
+                label = names[j]
+                )
             
             ax[i].set(
                 ylabel = b.y_label(col),
                 ylim = lims[i])
         
-        tl= pd.concat(out, axis = 1).sum(
-            axis = 1)
+        tl= pd.concat(out, axis = 1).sum(axis = 1)
         
         if col == 'ratio':
             tl = tl / 2
@@ -108,7 +110,7 @@ def plot_growth_rate_parameters():
     
     ax[0].legend( 
         ncol = 4, 
-          bbox_to_anchor = (0.5, 1.5),
+          bbox_to_anchor = (0.5, 1.4),
           loc = "upper center",
           columnspacing = 0.5
           )
@@ -120,21 +122,24 @@ def plot_growth_rate_parameters():
         )
     
     b.plot_letters(ax, y = 0.75, x = 0.02)
-
+    
+    fig.align_ylabels()
+    
     return fig
 
      
 
 def main():
     
-    fig = plot_growth_rate_parameters()
+    fig = plot_IRT_timeseries()
     
     
     FigureName = 'gamma_parameters'
     
-    fig.savefig(
-        b.LATEX(FigureName, 
-                folder = 'timeseries'),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, 
+    #             folder = 'timeseries'),
+    #     dpi = 400
+        # )
     
+main()

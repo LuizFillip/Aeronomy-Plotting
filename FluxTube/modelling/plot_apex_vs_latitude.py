@@ -27,6 +27,8 @@ def plot_hlines(ax, label = False, x = -18):
                 transform = ax.transData,
                 color = 'k'
                 )
+            
+    return None
     
 
 def plot_arrow(ax, lat_mag = 3):
@@ -35,9 +37,11 @@ def plot_arrow(ax, lat_mag = 3):
         
     ax.arrow(
         x = lat_mag, y= 0, 
-        dx = 0, dy=zeq, width= 0.1, 
+        dx = 0, dy = zeq, width= 0.1, 
         color='red', head_length = 5,
-        label = 'Altura local') 
+        label = 'Altura local'
+        ) 
+    return None 
 
 def sel_height(h, height = 300):
     if h == 300:
@@ -63,6 +67,7 @@ def grad(ax, xy, xytext):
         fontsize = 40, 
         color = 'green')
     return None 
+
 def total_U(ax, xy, xytext):
 
     ax.annotate(
@@ -78,11 +83,12 @@ def total_U(ax, xy, xytext):
     return None 
 
 def info(ax, text, x, y, color = 'k', font = 40):
-    ax.text(x, y, text, 
-            color = color,
-            fontsize = font,
-            transform = ax.transData)
-    return 
+    ax.text(
+        x, y, text, 
+    color = color,
+    fontsize = font,
+    transform = ax.transData)
+    return None 
 
 
 
@@ -104,7 +110,6 @@ def plot_apex_vs_latitude(
     heights = np.arange(base, max_height, step )
     
     heights = [120, 180, 350, 500, 600]
-    # heights.extend(np.arange(30, max_height + 100, 100))
     
     for h in heights:
         
@@ -117,11 +122,6 @@ def plot_apex_vs_latitude(
             points = 30, 
             base = 75
             )
-        
-        # if h == ref_height:
-        #     color = 'black'
-        # else:
-        #     color = '#0C5DA5'
         
         color = 'k'
         args = dict(color = color, lw = 2, linestyle = '-')
