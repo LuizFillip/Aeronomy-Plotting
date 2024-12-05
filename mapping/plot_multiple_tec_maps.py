@@ -61,8 +61,9 @@ def plot_arrows_bubbles(axs):
 
 def plot_multiple_tec_maps(
         start, 
-        hours,
+        times,
         vmax = 50, 
+        step = 1,
         root = 'E:\\'
         ):
 
@@ -80,37 +81,49 @@ def plot_multiple_tec_maps(
         hspace = 0.1
         )
     
-    plot_arrows_bubbles(axs)
+    # plot_arrows_bubbles(axs)
+    
+    
     for i, ax in enumerate(axs.flat):
-                
-        dn = start + dt.timedelta(hours = int(hours[i]))
+        
+        delta = dt.timedelta(hours = int(times[i]))
+        
+        dn = start + delta
+        print(dn)
         
         pl.plot_tec_map(
-            dn, ax = ax, 
+            dn, 
+            ax = ax, 
             vmax = vmax, 
             root = root,
             boxes = True,
             colorbar = False
             )
         
-        ax.set(title = dn.strftime('%Hh%M HU'))
+        ax.set(title = dn.strftime('%Hh%M UT'))
         
         if i != 0:
-            ax.set(xticklabels = [], 
-                   yticklabels = [], 
-                   xlabel = '', 
-                   ylabel = '')
+            ax.set(
+                xticklabels = [], 
+                yticklabels = [], 
+                xlabel = '', 
+                ylabel = ''
+                )
     
         l = b.chars()[i]
-        ax.text(0.02, 1.05, f'({l})', 
-                fontsize = 30,
-                transform = ax.transAxes)
+        ax.text(
+            0.02, 1.05,
+            f'({l})', 
+            fontsize = 30,
+            transform = ax.transAxes
+            )
     
     
     b.fig_colorbar(
             fig,
             vmin = 0, 
             vmax = vmax, 
+            step = step,
             orientation = 'horizontal',
             sets = [0.3, 0.97, 0.4, 0.02] 
             )
@@ -122,17 +135,17 @@ def main():
     
     start =  dt.datetime(2015, 12, 20, 20)
     start =  dt.datetime(2014, 2, 9, 23)
-    # start = dt.datetime(2017, 9, 17, 0)
-    hours = np.arange(0, 7, 1)
-    fig = plot_multiple_tec_maps(start, hours, vmax = 80)
+    start = dt.datetime(2022, 7, 25, 1)
+    hours = np.arange(0, 6, 1)
+    fig = plot_multiple_tec_maps(start, hours, vmax = 8)
     
     FigureName = start.strftime('%Y%m%d')
     
-    fig.savefig(
-        b.LATEX(FigureName, 
-                folder = 'maps'),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, 
+    #             folder = 'maps'),
+    #     dpi = 400
+    #     )
     
 main()
 

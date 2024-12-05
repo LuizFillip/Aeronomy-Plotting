@@ -24,8 +24,11 @@ def plot_dst(ax, dst, limit = -100 ):
     return None
 
 def plot_f107(
-        ax, mean = None, float_index = True, 
-              color = 'k'):
+        ax, 
+        mean = None, 
+        float_index = True, 
+        color = 'k'
+        ):
     
     
     df = b.load(PATH_INDEX)

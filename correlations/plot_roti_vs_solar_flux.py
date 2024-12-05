@@ -1,26 +1,34 @@
 import matplotlib.pyplot as plt
 import base as b
 import PlasmaBubbles as pb
-from math import ceil 
 import core as c
 import pandas as pd 
 
-def join_data():
-    df = b.load('events_class2')
-    df = df.loc[df.index.year < 2023]
-    ds = pb.sel_typing(df, typing = 'midnight')
-    ds1 = c.count_occurences(ds).year
-    # df = df[[-50, -60, -70]]
-      
-    df = c.geo_index()
+def join_data(year = 2019, lon = -70):
     
-    df = df.resample('1Y').mean()
+    df = c.potential_energy(year)
     
-    # print(df)
+    df = df.loc[(
+        (df['Lon'] >= lon - 10) &
+        (df['Lon'] <= lon) 
+        )]
     
-    df.index = df.index.year 
+    df = df.resample('1M').mean()
     
-    return pd.concat([df, ds1], axis = 1)
+    df.index = df.index.month
+    
+    ds = c.clima_epb(year = year, sec = 'month')
+    
+    df = pd.concat([ds[lon], df['mean_90_110']], axis = 1)
+    
+    df = df.rename(
+        columns = {lon: 'epb',
+                   'mean_90_110': 'ep'}
+        )
+    
+    return  df
+
+
 def plot_month(
         ax, 
         x, y
@@ -50,15 +58,12 @@ def plot_month(
     return ax
 
 
-def plot_roti_vs_solar_flux(
+def plot_correlation_epb_Ep(
         flux = 'f107a',
         roti = 'mean', 
         lon = -40,
         norm = True
         ):
-
-    
-    ds = join_data().dropna()
     
     sectors = [-50, -60, -70]
         
@@ -74,8 +79,10 @@ def plot_roti_vs_solar_flux(
     
     for i, sector in enumerate(sectors):
         
-        x = ds['f107a'].values
-        y = ds[sector].values
+        ds = join_data(lon = sector)
+        
+        x = ds['ep'].values
+        y = ds['epb'].values
         
 
         plot_month(
@@ -86,26 +93,13 @@ def plot_roti_vs_solar_flux(
         
         ax[i].set(title = f'Sector: {sector}')
         
-        # name = ds1.index[0].strftime('%B')
-        # ax.set(title = name)
-        
+
 
     return fig
 
-# fig = plot_roti_vs_solar_flux()
+fig = plot_correlation_epb_Ep()
 
-df = c.geo_index()
-  
-df = df.resample('1M').mean()
 
-df['month'] = df.index.month
-df['year'] = df.index.year
 
-ds = pd.pivot_table(
-    df, 
-    columns = 'year', 
-    index = 'month', 
-    values = 'kp'
-    ) 
 
-ds.mean(axis = 1).plot()
+

@@ -26,7 +26,7 @@ def sel_coord(ax, wd, direction, parameter = 'vnu',
         }
     
     if translate:
-        label = direction
+        label = direction.title()
     else:
         label = dir_name[direction]
         
@@ -71,11 +71,16 @@ def plot_total_component(ax, dn, parameter = 'VN1'):
     return None
     
     
-def plot_directions(ax, path, translate = True):
+def plot_directions(
+        ax, 
+        path, 
+        translate = True, 
+        site = 'bfp'
+        ):
     
     if translate:
         label_temp = "Temperature (K)"
-        label_rel = "Relative intensity (R)"
+        label_rel = "Relative \n intensity (R)"
         label_vel = "Velocity (m/s)"
     else:
         label_temp = 'Temperatura (K)'
@@ -98,19 +103,22 @@ def plot_directions(ax, path, translate = True):
             sel_coord(
                 ax[0, col], wd, 
                 direction, 
-                parameter = 'vnu'
+                parameter = 'vnu', 
+                translate = translate
                 )
             
             sel_coord(
                 ax[1, col], tp, 
                 direction, 
-                parameter = 'tn'
+                parameter = 'tn', 
+                translate = translate
                 )
             
             sel_coord(
                 ax[2, col], rl, 
                 direction, 
-                parameter = 'rle'
+                parameter = 'rle', 
+                translate = translate
                 )
             
             ax[0, row].axhline(
@@ -119,37 +127,43 @@ def plot_directions(ax, path, translate = True):
                 linestyle = "--"
                 )
             
-            ax[-1, row].axhline(
-                0, 
-                color = "k", 
-                linestyle = "--"
-                )
+            # ax[-1, row].axhline(
+            #     0, 
+            #     color = "k", 
+            #     linestyle = "--"
+            #     )
             
         b.format_time_axes(
-            ax[-1, col],
+            ax[-1, col], 
+            translate = translate,
             hour_locator = 1, pad = 80)
-         
-    yticks = np.arange(-200, 400, 100)
+        
+    def built_ticks(df, step = 100):
+        
+        vmax = b.roundup(df.max())
+        vmin = b.roundup(df.min())
+        
+        return np.arange(vmin - step // 2, vmax + step, step)
+   
     
     ax[0, 0].set(
         ylabel = label_vel, 
-        yticks = yticks,
-        ylim = [yticks[0] - 50, 
-                yticks[-1] + 50]
+        yticks = built_ticks(wd['vnu'], step = 100),
+        # ylim = [yticks[0] - 50, 
+        #         yticks[-1] + 50]
         )
-    
-    yticks = np.arange(500, 1400, 200)
-    
+        
     ax[1, 0].set(
         ylabel = label_temp, 
-        ylim = [yticks[0] - 100,
-                yticks[-1] + 100], 
-        yticks = yticks
+        # ylim = [yticks[0] - 100,
+        #         yticks[-1] + 100], 
+        yticks = built_ticks(tp['tn'], step = 200)
         )
+   
     ax[2, 0].set(
         # ylim = [0, 200],
-        ylim = [-2, 2],
-        yticks = np.arange(-2, 3, 1),
+        # ylim = [-2, 2],
+        yticks = built_ticks(rl['rle'], step = 400),
         ylabel = label_rel) 
 
     anchor = (0.5, 1.47)
@@ -189,7 +203,7 @@ def plot_winds_temp_intensity(PATH_FPI):
         hspace = 0.1
         )
     
-    plot_directions(ax, PATH_FPI, translate = False)
+    plot_directions(ax, PATH_FPI, translate = True)
     
     # plot_total_component(ax[0, 0], dn, parameter = 'VN1')
     # plot_total_component(ax[0, 1], dn, parameter = 'VN2')
@@ -215,13 +229,13 @@ def main():
 def main():
         
     PATH_FPI = 'database/FabryPerot/car/minime01_car_20151220.cedar.003.txt'
-    # PATH_FPI = 'database/FabryPerot/cj/bfp220724g.7100.txt'
+    PATH_FPI = 'database/FabryPerot/cj/bfp240924g.7100.txt'
     fig = plot_winds_temp_intensity(PATH_FPI)
-    FigureName = 'bfp_20220724'
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'FPI'),
-          dpi = 400
-          )
+    FigureName = 'bfp_20240924'
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'FPI'),
+    #       dpi = 400
+    #       )
 
 
 main()

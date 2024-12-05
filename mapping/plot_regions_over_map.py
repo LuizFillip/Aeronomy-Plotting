@@ -23,8 +23,12 @@ def plot_sites(ax, year):
         name = site['name']
         glat, glon = site['coords']
         
-        ax.scatter(glon, glat, s = 150,
-                   marker = 's', label = name)
+        ax.scatter(
+            glon, glat, 
+            s = 150,
+            marker = 's', 
+            label = name
+            )
         
         # ax.text(glon - 3, glat + 1, name)
         
@@ -49,7 +53,7 @@ def plot_GNSS(ax, year, translate = False):
     return None 
 
 lat_lims = dict(min = -40, max = 20, stp = 10)
-lon_lims = dict(min = -100, max = -30, stp = 10)
+lon_lims = dict(min = -90, max = -30, stp = 10)
 
 def plot_regions_over_map(year = 2013):
     
@@ -73,15 +77,15 @@ def plot_regions_over_map(year = 2013):
         lon_lims = lon_lims
 )
     gg.plot_rectangles_regions(ax)
-    plot_sites(ax, year)
-    plot_GNSS(ax, year, translate = True)
+    # plot_sites(ax, year)
+    plot_GNSS(ax, year, translate = False)
     
     ax.legend(
-        loc = 'lower left',
+        loc = 'upper right',
         ncol = 1, 
-        bbox_to_anchor = (-0.05, 0.), 
+        # bbox_to_anchor = (-0.05, 0.), 
         columnspacing = 0, 
-        fontsize = 25
+        fontsize = 35
         
         )
     
@@ -91,7 +95,7 @@ def plot_regions_over_map(year = 2013):
 def main():
     fig = plot_regions_over_map(year = 2013)
     
-    FigureName = 'en/gnss_receivers'
+    FigureName = 'en/gnss_receivers_paper'
     
     fig.savefig(
         b.LATEX(FigureName, folder = 'maps'),

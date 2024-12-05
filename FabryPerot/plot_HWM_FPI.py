@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import base as b 
+import base as s 
 from FabryPerot import load_FPI
 
 
@@ -20,7 +20,7 @@ def plot_component(
         label = "meridional"
         vmin, vmax, step = -100, 100, 50
         
-    res["time2"] = time2float(res.index)
+    res["time2"] = s.time2float(res.index)
 
     
     df = pd.pivot_table(res, 

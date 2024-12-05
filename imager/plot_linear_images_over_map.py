@@ -19,12 +19,16 @@ def plot_image(ax, dn, site = 'CA'):
             site = site, 
             )
    
-    
+    if site == 'CA':
+        limits = [0.35, 0.99]
+    else:
+        limits = [0.29, 0.99]
+        
     asi = im.DisplayASI(
         path_asi, 
         site = site, 
         areap = areap, 
-        limits = [0.27, 0.99]
+        limits = limits
         )
     
     asi.display_linear(ax)
@@ -35,13 +39,15 @@ def plot_image(ax, dn, site = 'CA'):
                marker = '^')
     
 
-    time = im.fn2dn(path_asi).strftime('%H:%M UT - ')
+    time = im.fn2dn(path_asi).strftime('29:%M UT - ')
     
     yset = area_factor + 1.5
     xset = area_factor + 2.5
     
     ax.text(
-        lon - xset, lat + yset, time + site,
+        lon - xset, 
+        lat + yset, 
+        time + site,
         color = 'w',
         transform = ax.transData, 
         fontsize = 25
@@ -50,7 +56,7 @@ def plot_image(ax, dn, site = 'CA'):
 
 
 
-def plot_linear_images_over_map():
+def plot_linear_images_over_map(dn):
     
     
     fig, ax = plt.subplots(
@@ -71,11 +77,7 @@ def plot_linear_images_over_map():
         year = 2022,
         grid = False
         )
-    
-    
-    dn = dt.datetime(2022, 3, 9, 5, 21)
-    
-    
+
     plt.grid(which='major')
     
     plot_image(ax, dn, site = 'CA')
@@ -90,5 +92,7 @@ def plot_linear_images_over_map():
     
     return fig
 
-
+    
+dn = dt.datetime(2022, 3, 9, 5, 21)
+    
 fig = plot_linear_images_over_map()

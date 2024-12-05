@@ -5,7 +5,7 @@ import plotting as pl
 
 
 
-b.config_labels(fontsize = 25, blue = True)
+b.config_labels(fontsize = 30, blue = True)
 
 def plot_distributions_seasons(
         df, 
@@ -17,16 +17,16 @@ def plot_distributions_seasons(
         ):
     
     fig, axs = plt.subplots(
-          ncols = 1, 
-          nrows = 4,
-          figsize = (8, 14), 
+          ncols = 2, 
+          nrows = 2,
+          figsize = (18, 12), 
           dpi = 300, 
           sharex = True, 
           sharey = True
         )
     
     plt.subplots_adjust(
-        hspace = 0.1, 
+        hspace = 0.05, 
         wspace = 0.05
         )
 
@@ -49,50 +49,62 @@ def plot_distributions_seasons(
         solar_flux_data = df_index.F107_2(solar_level)
         
         for index, df_level in enumerate(solar_flux_data):
-    
+            
+            label = f'({index + 1}) {F107_labels[index]}'
+            
             data, epb = pl.plot_distribution(
                     ax, 
                     df_level, 
                     parameter,
-                    label = F107_labels[index],
+                    label = label,
                     outliner = outliner, 
                     translate = translate,
                     limit = limit
                     )
             
             total_epb.append(epb)
+            
+            l = b.chars()[row]
            
             ax.text(
-                0.02, 0.82,
-                f'{df_season.name}',
+                0.02, 0.89,
+                f'({l}) {df_season.name}',
                 transform = ax.transAxes
                 )
+            
+            ax.set(ylim = [-10, 120])
             
         pl.plot_infos_in_distribution(
                 ax, 
                 total_epb, 
-                x = 0.52, 
-                y = 0.28,
+                x = 0.47, 
+                y = 0.25,
                 translate = True,
                 title = '$V_P$', 
                 offset_y = 0.12
                 )
         
-    axs[0].legend(
-        ncol = 2, bbox_to_anchor = (0.5, 1.3), 
-        loc = 'upper center')
     
-    axs[-1].set(
-        xlabel = b.y_label('gamma')
+    axs[0][0].legend(
+        ncol = 2, 
+        bbox_to_anchor = (1, 1.2), 
+        loc = 'upper center'
         )
-    ylabel1 = "Probabilidade de ocorrência (\%)"
     
+
     fontsize = 30
     fig.text(
-         -0.01, 0.3, 
-         ylabel1, 
-         fontsize = fontsize, 
+         0.04, 0.25, 
+         "Probabilidade de ocorrência (\%)", 
+         fontsize = fontsize  + 5, 
          rotation = 'vertical'
+         )
+
+    
+    fig.text(
+         0.45, 0.04, 
+         "$\gamma_{RT} ~(10^{-3} ~s^{-1}) $", 
+         fontsize = fontsize + 5, 
          )
     
     return fig
@@ -123,12 +135,11 @@ def main():
         folder = 'distributions/en/'
         
         
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder),
-    #     dpi = 400
-    #     )
+    fig.savefig(
+        b.LATEX(FigureName, 'posdoc'),
+        dpi = 400
+        )
     
 
     plt.show()
 # main()
-

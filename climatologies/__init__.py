@@ -1,1 +1,1 @@
-from .plot_growth_rate import plot_gamma
+from .plot_annual_variation_of_IRT import plot_gamma

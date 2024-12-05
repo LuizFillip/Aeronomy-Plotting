@@ -42,8 +42,8 @@ def plot_declination_difference(ax):
     
     doy = np.arange(1, 366, 1)
 
-    
-    for dec_site in [-20.9123, -1.193]:
+    #-1.193
+    for dec_site in [-20.9123, ]:
    
         ax_new.plot(
             doy, 
@@ -71,7 +71,8 @@ def plot_PRE_monthly():
     
     names = ['São Luís', 'Jicamarca']
     marker = ['s', 'o']
-    for i, site in enumerate(['saa', 'jic']):
+    codes = ['saa']
+    for i, site in enumerate(codes):
         ds = set_data(site)
         
         ax.errorbar(
@@ -113,10 +114,10 @@ def main():
     
     FigureName = 'seasonal_pre_sites'
       
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'climatology'),
-          dpi = 400
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'climatology'),
+    #       dpi = 400
+    #       )
 
-# main()
+main()
 
