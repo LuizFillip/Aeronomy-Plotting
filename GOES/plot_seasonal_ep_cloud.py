@@ -30,7 +30,7 @@ def load_nucleos(year = 2019, sample = '15D'):
     
     df = df.resample(sample).size()
     
-    df = (df / df.values.max()) *100
+    df = (df / df.values.max()) * 100
     
     return df 
 
@@ -47,7 +47,9 @@ def plot_seasonal(df, ds, title):
     ax.plot(
         df.index,
         sdf, 
-        lw = 3, color = 'blue')
+        lw = 3, color = 'blue'
+        )
+    
     ax.set(
         ylim = [30, 100], 
         ylabel = 'Convective activity (\%)',

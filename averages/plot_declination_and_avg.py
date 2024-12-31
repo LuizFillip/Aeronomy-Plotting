@@ -1,65 +1,123 @@
-from digisonde import filter_values, pivot_data
-import matplotlib.pyplot as plt
-import numpy as np
-from build import monthToNum
+import numpy as np 
+import base as b 
+import core as c 
+import pandas as pd 
+import matplotlib.pyplot as plt 
+import os
+
+site = 'jic'
+
+b.config_labels()
 
 
-def plotDays(ax, df):
-
-    for col in df.columns:
-        ax.plot(df[col], lw = 0.5)
-
-def plotAgerage(ax, avg, std):
- 
-    ax.plot(avg, label = "$\mu$", color = "k", lw = 2)
-    
-    for i in range(1, 3):
-        ax.fill_between(avg.index, 
-                        avg + i * std, 
-                        avg - i * std, 
-                        alpha = 0.3, 
-                        label = f"{i} $\sigma$")
-    
-    ax.axhline(0, color = "red", linestyle = "--")
-    
-    ax.legend(ncol = 3)
-    
-
-def plot_average_and_std(col = "vy", n = 1):
-    
-    df = pivot_data(n, col = col)
+def set_data(site):
+    years = '2013_2021.txt'
         
-    avg = df.mean(axis = 1)
+    PATH_PRE = 'digisonde/data/PRE/'
     
-    std = df.std(axis = 1)
+    path = os.path.join(
+        PATH_PRE,
+        site, 
+        years
+        )    
+    df = b.load(path)
+    df = df.rename(columns = {'vz':'vp'})
+    df = df.loc[:, ['vp']]
+    df = df.resample('1M').mean()
+    df['year'] = df.index.year
+    df['month'] = df.index.month
     
-    if col == "vx":
-        name = "meridional"
-        lim = 200
-    elif col == "vy":
-        name = "zonal"
-        lim = 300
-    
-    new_df = filter_values(avg, std, df, std_factor = 1)
-    
-    fig, ax = plt.subplots(figsize = (10, 8), 
-                           nrows = 2, 
-                           sharex = True, 
-                           sharey = True)
-    
-    plt.subplots_adjust(hspace = 0.1)
-    
-    for n, d in enumerate([df, new_df]):
-        
-        
-        plotDays(ax[n], d)
-        plotAgerage(ax[n], avg, std)
-        
-        ax[n].set(ylabel = f"Velocidade {name} (m/s)")
-        
-    ax[0].set(title = f"{monthToNum(1)} - São Luis")
-    ax[1].set(xticks = np.arange(0, 25, 2),
-              ylim = [-lim, lim],
-              xlabel = "Hora universal")
+    return pd.pivot_table(
+        df, 
+        values = 'vp', 
+        columns = 'year', 
+        index = 'month'
+        )
 
-#plot_average_and_std(col = "vx", n = 1)
+
+
+def plot_declination_difference(ax):
+    
+    ax_new = ax.twinx().twiny()
+    
+    doy = np.arange(1, 366, 1)
+
+    #-1.193
+    for dec_site in [-20.9123, ]:
+   
+        ax_new.plot(
+            doy, 
+            dec_site - b.declination(doy), 
+            lw = 2, 
+            linestyle = '--')
+        
+    
+    ax_new.set(
+        ylim = [-50, 50],
+        xticklabels = [], 
+        ylabel = '$\\alpha$ (°)'
+        )
+    
+    
+    ax_new.axhline(0, lw = 2, linestyle = ':')
+    
+    return ax_new
+def plot_PRE_monthly():
+
+    fig, ax = plt.subplots(
+        dpi = 300, 
+        figsize = (16, 8)
+        )
+    
+    names = ['São Luís', 'Jicamarca']
+    marker = ['s', 'o']
+    codes = ['saa']
+    for i, site in enumerate(codes):
+        ds = set_data(site)
+        
+        ax.errorbar(
+            ds.index, 
+            ds.mean(axis = 1),
+            yerr = ds.std(axis = 1),
+            marker = marker[i],
+            markersize = 20,
+            fillstyle = 'none',
+            capsize = 7,
+            lw = 2, 
+            label = names[i]
+            )
+    ax.legend(
+        bbox_to_anchor = (0.5, 1.2),
+        loc = 'upper center',
+        ncol = 3)
+    
+    ax_new = plot_declination_difference(ax)
+    ax.set(
+           ylim = [0, 50],
+           xlabel = 'Meses', 
+           ylabel = '$V_P$ (m/s)',
+           xticks = np.arange(1, 13, 1),
+           xticklabels = b.month_names(
+               sort = True, language = 'pt'),
+           
+           )
+    fig.text(
+        0.94, 0.46, 
+        '$\\alpha$ (°)', 
+        rotation = 'vertical'
+        )
+    return fig
+    
+
+def main():    
+    fig = plot_PRE_monthly()
+    
+    FigureName = 'seasonal_pre_sites'
+      
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'climatology'),
+    #       dpi = 400
+    #       )
+
+main()
+
