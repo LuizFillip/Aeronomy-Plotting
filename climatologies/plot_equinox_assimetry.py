@@ -142,7 +142,7 @@ def plot_equinox_difference(ax, ds):
 def plot_epbs_rate(ax, translate = True):
     
     df = pb.sel_typing(
-         b.load('events_class2'), 
+         b.load('database/epbs/events_class2'), 
          typing = 'sunset', 
          indexes = True, 
          year = 2022)
@@ -287,11 +287,11 @@ def plot_seasonal_assimetry(translate = False):
 
   
    
-fig = plot_seasonal_assimetry()
+fig = plot_seasonal_assimetry(translate= True)
   
 FigureName = 'annual_quiet_time'
       
-fig.savefig(
-      b.LATEX(FigureName, folder = 'bars'),
-      dpi = 400
-      )
+# fig.savefig(
+#       b.LATEX(FigureName, folder = 'bars'),
+#       dpi = 400
+#       )
