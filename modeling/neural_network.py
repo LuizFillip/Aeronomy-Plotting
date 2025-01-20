@@ -32,7 +32,7 @@ def plot_rectangle(
         va = 'center', 
         color = 'black'
         )
-def draw_neural_network(layers, labels):
+def draw_neural_network(layers, labels, translate = True):
     fig, ax = plt.subplots(dpi = 300, figsize=(10, 6))
     ax.axis('off')  # Remove os eixos
     
@@ -88,16 +88,23 @@ def draw_neural_network(layers, labels):
    
     
     y1 = len(layers)
-
+    
+    if translate:
+        input_name = 'Input'
+        model_name = 'Models'
+        output_name = 'Output'
+        
+    else:
+        input_name = 'Entrada'
+        model_name = 'Modelos'
+        output_name = 'Saida'
         
     plot_rectangle(
             ax, 
-        
             -0.15, 0.15, 
-            
             y0 = -y1, 
             y1 = y1,
-            name = 'Entrada'
+            name = input_name
             )
     
     plot_rectangle(
@@ -106,7 +113,7 @@ def draw_neural_network(layers, labels):
             y0 = -y1, 
             y1 = y1,
             color = 'lightblue', 
-            name = 'Modelos'
+            name = model_name
             )
     
     plot_rectangle(
@@ -115,7 +122,7 @@ def draw_neural_network(layers, labels):
             y0 = -y1, 
             y1 = y1,
             color = 'red', 
-            name = 'Saída'
+            name = output_name
             )
 
     return fig 
@@ -123,15 +130,16 @@ def draw_neural_network(layers, labels):
 
 def main():
     labels = ['F10.7', 'SYM-H', '$V_z$',
-                  'Convecção', 'Dia do ano']
+                  'Planetary\nwaves', 'Day of Year']
     
     num = len(labels)
     layers = [num, num + 1, num + 2, num + 1, 1]
     fig = draw_neural_network(layers, labels)
-    FigureName = 'RedeNeural'
+    FigureName = 'RedeNeural_en'
     fig.savefig(
         b.LATEX(FigureName, 'posdoc'),
         dpi = 400
         )
     
     
+main()
