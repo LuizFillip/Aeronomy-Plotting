@@ -79,7 +79,7 @@ def plot_distributions_seasons(
                 total_epb, 
                 x = 0.47, 
                 y = 0.25,
-                translate = True,
+                translate = translate,
                 title = '$V_P$', 
                 offset_y = 0.12
                 )
@@ -91,11 +91,16 @@ def plot_distributions_seasons(
         loc = 'upper center'
         )
     
-
+    if translate:
+        prob_name = "Probabilidade de ocorrência (\%)"
+    else:
+        prob_name = "EPB occurrence probability (\%)"
+        
+        
     fontsize = 30
     fig.text(
          0.04, 0.25, 
-         "Probabilidade de ocorrência (\%)", 
+         prob_name, 
          fontsize = fontsize  + 5, 
          rotation = 'vertical'
          )
@@ -112,7 +117,8 @@ def plot_distributions_seasons(
 
 def main():
     
-    translate = True
+    translate = False
+    
     parameter = 'gamma'
     df = c.load_results('saa', eyear = 2022)
     
@@ -127,7 +133,7 @@ def main():
             limit = True
             )
     
-    FigureName = f'seasonal_{parameter}'
+    FigureName = f'seasonal_{parameter}_en'
     
     if translate:
         folder = 'distributions/pt/'
