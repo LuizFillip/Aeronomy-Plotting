@@ -15,7 +15,8 @@ def plot_seasonal_occurrence(
         ):
     
     time = 'month'
-    p = pb.BubblesPipe('events_5')
+    p = pb.BubblesPipe('events_5', 
+                       drop_lim = 0.3)
     
     ds = p.sel_type('midnight')
     
@@ -25,10 +26,7 @@ def plot_seasonal_occurrence(
   
     ds = p.time_group(ds, time = time)
     
-    # e_year = ds.index[-1].year
-    # s_year = ds.index[0].year
-    
-   
+
     ylabel = 'Number of cases'
     xlabel = 'Months'
     sector = 'Sector'
@@ -48,13 +46,17 @@ def plot_seasonal_occurrence(
     
     ax1 = ax.twinx()
  
-    ax1.plot(ss, color = 'k', linestyle = '--', lw = 3)
+    ax1.plot(
+        ss, color = 'k', 
+             label = 'post-sunset EPBs',
+             linestyle = '--', 
+             lw = 3)
     
     ax1.set(
-        ylim = [0, 300],
-        yticks = np.arange(0, 350, 50),
+        yticks = np.arange(0, 250, 50),
         ylabel = 'Events of post-sunset EPBs'
         )
+    
     width = 0.2
     
     
@@ -74,14 +76,15 @@ def plot_seasonal_occurrence(
     ax.set(
         ylabel = 'Events of midnight EPBs',
         xlabel = xlabel,
-        ylim = [0, 75],
+        ylim = [0, 100],
         xticks = np.arange(1, 13, 1),
         xticklabels = b.month_names(
             sort = True, language = language),
         
         )
         
-    t = [f'{sector} {i} ({int(vl)})' for i, vl in 
+    t = [f'{sector} {i} ({int(vl)})' 
+         for i, vl in 
          enumerate(df.sum().values, start = 1)]
     
     ax.legend(

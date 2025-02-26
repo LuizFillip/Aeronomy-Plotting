@@ -27,26 +27,37 @@ def set_label(ds, typing, translate = False):
     return xlabel, ylabel, sector
 
 def plot_annually_events_count(
-        ds, 
+        # ds, 
         typing = 'sunset', 
         translate = True
        
         ):
     
-    ss = pb.sel_typing(ds, typing = 'sunset')
+    time = 'year'
+    p = pb.BubblesPipe(
+        'events_5', 
+        drop_lim = 0.3, 
+        storm = None)
+    ss = p.sel_type('sunset')
+    ss = p.time_group(ss, time = time)
+    
+    p = pb.BubblesPipe(
+        'events_5', 
+        drop_lim = 0.3, 
+        storm = 'quiet')
+    
+    ds = p.sel_type('midnight')
     
     e_year = ds.index[-1].year
     s_year = ds.index[0].year
+    ss = p.sel_type('sunset')
+    ss = p.time_group(ss, time = time)
+  
+    ds = p.time_group(ds, time = time)
     
-    
-    ds = pb.sel_typing(ds, typing = typing)
     
     xlabel, ylabel, sector =  set_label(ds, typing, translate)
     
-    if typing == 'sunset':
-        vmax = 300
-    else:
-        vmax = 150
     
 
     fig, ax = plt.subplots(
@@ -55,20 +66,20 @@ def plot_annually_events_count(
         figsize = (18, 8)
         )
         
-    df = c.count_occurences(ds).year
-    ss = c.count_occurences(ss).year
     cols = [-50, -60, -70]
     
     ss = ss[cols].mean(axis = 1).to_frame()
-    df = df[cols]
+    ds = ds[cols]
     
     ax1 = ax.twinx()
  
-    ax1.plot(ss, color = 'k', linestyle = '--', lw = 3)
+    ax1.plot(
+        ss, 
+        color = 'k', 
+        linestyle = '--', lw = 3)
     
     ax1.set(
-        ylim = [100, 250],
-        yticks = np.arange(100, 300, 50),
+        yticks = np.arange(0, 250, 50),
         ylabel = 'Events of post-sunset EPBs'
         )
     width = 0.2
@@ -78,8 +89,8 @@ def plot_annually_events_count(
         offset = (width) * i 
         
         ax.bar(
-            df.index + offset, 
-            df[col],
+            ds.index + offset, 
+            ds[col],
             width = width, 
             edgecolor = 'k',
             )
@@ -90,12 +101,12 @@ def plot_annually_events_count(
         ylabel = 'Events of midnight EPBs',
         xlabel = xlabel,
         xticks = np.arange(s_year, e_year + 1, 1),
-        ylim = [0, vmax]
+        ylim = [0, 100]
         )
     
     
     t = [f'{sector} {i} ({vl})' for i, vl in 
-          enumerate(df.sum().values, start = 1)]
+          enumerate(ds.sum().values, start = 1)]
     
     ax.legend(
         t,
@@ -103,14 +114,14 @@ def plot_annually_events_count(
         bbox_to_anchor = (.5, 1.3), 
         loc = "upper center", 
         columnspacing = 0.3,
-        title = 'Total of EPBs by sector',
+        title = 'Total of midnight EPBs by sector',
         fontsize = 35
         )
     return fig
 
 def main():
 
-    df = b.load('events_class2')
+    df = b.load('database/epbs/events_class2')
     
     df = df.loc[df.index.year < 2023]
     
@@ -126,7 +137,7 @@ def main():
     
     
     fig = plot_annually_events_count(
-        df, typing, translate=translate)
+        typing, translate=translate)
               
         # fig.savefig(
         #       b.LATEX(FigureName, folder = 'bars'),
