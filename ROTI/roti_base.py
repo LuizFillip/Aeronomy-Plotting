@@ -35,7 +35,7 @@ def plot_occurrence_events(
             axis = "y", 
             position = "right"
             )
-    ax.set_ylabel('Ocorrência', color = 'b')
+    # ax.set_ylabel('Ocorrência', color = 'b')
     ax.set(
         yticks = [0, 1], 
         xlim = [ds.index[0], ds.index[-1]],

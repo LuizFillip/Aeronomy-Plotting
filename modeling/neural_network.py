@@ -32,7 +32,12 @@ def plot_rectangle(
         va = 'center', 
         color = 'black'
         )
-def draw_neural_network(layers, labels, translate = True):
+def draw_neural_network(
+        layers, 
+        labels, 
+        translate = True
+        ):
+    
     fig, ax = plt.subplots(dpi = 300, figsize=(10, 6))
     ax.axis('off')  # Remove os eixos
     
@@ -129,17 +134,18 @@ def draw_neural_network(layers, labels, translate = True):
 
 
 def main():
-    labels = ['F10.7', 'SYM-H', '$V_z$',
-                  'Planetary\nwaves', 'Day of Year']
+    labels = ['F10.7', 'SYM-H', 
+              '$V_z$', 'Convective', 
+              'Planetary\nwaves', 'Day of Year']
     
     num = len(labels)
-    layers = [num, num + 1, num + 2, num + 1, 1]
+    layers = [num, num, num + 1, num, 1]
     fig = draw_neural_network(layers, labels)
     FigureName = 'RedeNeural_en'
-    fig.savefig(
-        b.LATEX(FigureName, 'posdoc'),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, 'posdoc'),
+    #     dpi = 400
+    #     )
     
     
-main()
+# main()

@@ -118,6 +118,9 @@ def plot_roti_timeseries(
                  translate = False
                  )
          
-     b.format_time_axes(ax_rot, translate = False, pad = 80)
+     b.format_time_axes(
+         ax_rot, 
+         translate = False, 
+         pad = 80)
      
      return vmax

@@ -50,8 +50,7 @@ def plot_annually_events_count(
     
     e_year = ds.index[-1].year
     s_year = ds.index[0].year
-    ss = p.sel_type('sunset')
-    ss = p.time_group(ss, time = time)
+  
   
     ds = p.time_group(ds, time = time)
     
@@ -79,7 +78,7 @@ def plot_annually_events_count(
         linestyle = '--', lw = 3)
     
     ax1.set(
-        yticks = np.arange(0, 250, 50),
+        yticks = np.arange(0, 350, 50),
         ylabel = 'Events of post-sunset EPBs'
         )
     width = 0.2

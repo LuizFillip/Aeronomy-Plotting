@@ -33,7 +33,7 @@ def plot_points_and_maximus_roti(
     
     threshold  = pb.threshold(dn, factor = 4)['noise'].item()
     threshold = round(threshold, 3)
-    threshold = 0.25
+    threshold = 0.2
     
     if translate:
         occurrence = 'Occurrence'
@@ -54,7 +54,7 @@ def plot_points_and_maximus_roti(
     
     coords = gg.set_coords(dn.year)
     
-    vmax = 3
+    vmax = 4
     for row, sector in enumerate(coords.keys()):
         
         if sector != -80:
@@ -145,13 +145,13 @@ def main():
     dn = dt.datetime(2018, 12, 12, 21)
     dn = dt.datetime(2018, 6, 11, 21)
     dn = dt.datetime(2019, 12, 20, 21)
-    dn = dt.datetime(2019, 12, 27, 21)
+    dn = dt.datetime(2013, 1, 17, 21)
     
     df = pb.concat_files(
         dn, 
         days = 2, 
         root = 'E:\\', 
-        hours = 11, 
+        hours = 12, 
         remove_noise = True
         )
     
