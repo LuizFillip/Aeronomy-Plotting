@@ -21,6 +21,7 @@
 /ionosonde/__pycache__/*
 /heatmaps/__pycache__/*
 /indices/__pycache__/*
+/demo/__pycache__/*
 
 /ionosonde/ionogram/__pycache__/*
 
