@@ -4,6 +4,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import pandas as pd
 import numpy as np 
 import GEO as gg 
+import PlasmaBubbles as pb 
 
 def plot_mean_std(
         ax, 
@@ -98,7 +99,9 @@ def plot_terminator(
         terminator_label = 'Terminadouro solar (300 km)'
         midnight_label = 'Meia-noite local'
     
-    df = b.load('events_class2')
+    p = pb.BubblesPipe('events_5', drop_lim = 0.2)
+
+    df = p.df 
     
     df = df.loc[df['lon'] == sector]
     dn = df.index[0]

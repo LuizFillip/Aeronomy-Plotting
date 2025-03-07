@@ -28,7 +28,7 @@ def plot_seasonal_hourly_all_sectors(
 
     plt.subplots_adjust(hspace = 0.1)
         
-    sectors = list(range(-80, -40, 10))[::-1]
+    sectors = list(range(-70, -40, 10))[::-1]
     
     bins = pb.range_time(ds, step = 0.5)
     
@@ -47,7 +47,7 @@ def plot_seasonal_hourly_all_sectors(
         vls = in_sector['start'].values
         
             # print(values.max())
-        pl.plot_histogram(ax[i], vls, i, bins)
+        # pl.plot_histogram(ax[i], vls, i, bins)
         
                 
         ax[i].imshow(
@@ -137,14 +137,13 @@ def plot_seasonal_hourly_all_sectors(
     
 
 def main():
-    epb_type = 'midnight'
-    ds = b.load('events_class2')
-    
-    
-    ds = ds.loc[(ds['type'] == epb_type) & 
-                (ds['drift'] == 'fresh')]
-    
-    ds = ds.loc[ds.index.year < 2023]
+    p = pb.BubblesPipe(
+        'events_5', 
+        drop_lim = 0.2)
+
+    ds = p.sel_type('midnight')
+
+    ds
     fig = plot_seasonal_hourly_all_sectors(
             ds, 
             fontsize = 35, 
@@ -152,12 +151,12 @@ def main():
             midnight = True
             )
     
-    FigureName = f'seasonal_hourly_{epb_type}'
+    # FigureName = f'seasonal_hourly_{epb_type}'
     
-    fig.savefig(
-          b.LATEX(FigureName, 'climatology'),
-          dpi = 400)
+    # fig.savefig(
+    #       b.LATEX(FigureName, 'climatology'),
+    #       dpi = 400)
 
 
-# main()
+main()
 
