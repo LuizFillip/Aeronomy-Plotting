@@ -95,11 +95,16 @@ def plot_regions_over_map(year = 2013):
 def main():
     fig = plot_regions_over_map(year = 2013)
     
-    FigureName = 'en/gnss_receivers_paper'
+    FigureName = 'gnss_receivers'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder = 'maps'),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder = 'maps'),
+    #     dpi = 400
+    #     )
+    
+    save_in = 'G:\\My Drive\\Papers\\Paper 2\\Midnight EPBs\\Eps\\img\\'
+
+    fig.savefig(save_in + FigureName, dpi = 300
+                )
     
 # main()
