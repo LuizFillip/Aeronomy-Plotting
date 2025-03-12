@@ -129,18 +129,23 @@ def main():
 
     typing = 'midnight'
     if translate:
-        FigureName = f'pt/annual_{typing}'
+        FigureName = f'annual_{typing}'
     else:
-        FigureName = f'en/annual_{typing}'
+        FigureName = f'annual_{typing}'
         
     
     
     fig = plot_annually_events_count(
         typing, translate=translate)
+    
+    save_in = 'G:\\My Drive\\Papers\\Paper 2\\Midnight EPBs\\Eps\\img\\'
+
+    fig.savefig(save_in + FigureName, dpi = 300
+                )
               
         # fig.savefig(
         #       b.LATEX(FigureName, folder = 'bars'),
         #       dpi = 400
         #       )
         
-main()
+# main()

@@ -116,14 +116,21 @@ def main():
     fig = plot_seasonal_occurrence(
         df, typing, translate = translate)
     if translate:
-        FigureName = f'pt/seasonal_{typing}'
+        FigureName = f'seasonal_{typing}'
     else:
-        FigureName = f'en/seasonal_{typing}'
+        FigureName = f'seasonal_{typing}'
           
     # fig.savefig(
     #       b.LATEX(FigureName, folder = 'bars'),
     #       dpi = 400
     #       )
+    
+    save_in = 'G:\\My Drive\\Papers\\Paper 2\\Midnight EPBs\\Eps\\img\\'
+
+    fig.savefig(save_in + FigureName, dpi = 300
+                )
+    
+    
    
 main()
 

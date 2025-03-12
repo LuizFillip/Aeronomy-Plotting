@@ -17,9 +17,11 @@ def plot_seasonal_hourly_all_sectors(
         midnight = True
         ):
     
+    sectors = list(range(-70, -40, 10))[::-1]
+    
     fig, ax = plt.subplots(
            ncols = 1,
-           nrows = 4,
+           nrows = len(sectors),
            dpi = 300, 
             sharex = True, 
             sharey = True,
@@ -28,8 +30,7 @@ def plot_seasonal_hourly_all_sectors(
 
     plt.subplots_adjust(hspace = 0.1)
         
-    sectors = list(range(-70, -40, 10))[::-1]
-    
+ 
     bins = pb.range_time(ds, step = 0.5)
     
     vmax = 29 # sunset
@@ -38,7 +39,13 @@ def plot_seasonal_hourly_all_sectors(
         
         in_sector = ds.loc[(ds['lon'] == sector)] 
         
-        df = pb.concated_years(in_sector, bins, normalize = False)
+        print(in_sector['shift'].min())
+        
+        df = pb.concated_years(
+            in_sector, 
+            bins, 
+            normalize = False
+            )
 
         xticks = df.columns
         yticks = df.index
@@ -49,7 +56,7 @@ def plot_seasonal_hourly_all_sectors(
             # print(values.max())
         # pl.plot_histogram(ax[i], vls, i, bins)
         
-                
+        # print(values.max())
         ax[i].imshow(
               (values[::-1] / vmax) * 100,
               aspect = 'auto', 
@@ -119,7 +126,7 @@ def plot_seasonal_hourly_all_sectors(
             fontsize = fontsize,
             step = 10,
             label = zlabel, 
-            sets = [0.13, 0.98, 0.75, 0.02], 
+            # sets = [0.13, 0.98, 0.75, 0.02], 
             orientation = 'horizontal', 
             levels = 10
             )

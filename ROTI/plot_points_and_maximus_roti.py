@@ -163,7 +163,7 @@ def main():
             translate = True
             )
     
-    FigureName = dn.strftime('en/%Y%m%d')
+    FigureName = dn.strftime('%Y%m%d')
     
     
     # fig.savefig(
@@ -171,8 +171,14 @@ def main():
     #       dpi = 400
     #       )
     
+    save_in = 'G:\\My Drive\\Papers\\Paper 2\\Midnight EPBs\\Eps\\img\\'
+
+    fig.savefig(save_in + FigureName, dpi = 300
+                )
+    
+    
 
     plt.show()
         
 
-main()
+# main()
