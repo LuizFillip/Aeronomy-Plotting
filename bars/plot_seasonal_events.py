@@ -1,4 +1,3 @@
-import core as c
 import matplotlib.pyplot as plt
 import base as b 
 import PlasmaBubbles as pb 
@@ -9,7 +8,6 @@ b.config_labels(blue = False, fontsize = 35)
 
 
 def plot_seasonal_occurrence(
-        ds, 
         typing = 'sunset', 
         translate = False
         ):
@@ -18,7 +16,7 @@ def plot_seasonal_occurrence(
     p = pb.BubblesPipe('events_5', 
                        drop_lim = 0.3)
     
-    ds = p.sel_type('midnight')
+    ds = p.sel_type(typing)
     
    
     ss = p.sel_type('sunset')
@@ -27,7 +25,7 @@ def plot_seasonal_occurrence(
     ds = p.time_group(ds, time = time)
     
 
-    ylabel = 'Number of cases'
+    # ylabel = 'Number of cases'
     xlabel = 'Months'
     sector = 'Sector'
     language = 'en'
@@ -104,8 +102,7 @@ def plot_seasonal_occurrence(
 
 def main():
 
-    df = b.load('database/epbs/events_class2')
-    df = df.loc[df.index.year < 2023]
+   
     translate = False 
     
     # for typing in ['sunset', 'midnight']:
@@ -113,8 +110,7 @@ def main():
     typing = 'midnight'
    
     
-    fig = plot_seasonal_occurrence(
-        df, typing, translate = translate)
+    fig = plot_seasonal_occurrence( typing, translate = translate)
     if translate:
         FigureName = f'seasonal_{typing}'
     else:
