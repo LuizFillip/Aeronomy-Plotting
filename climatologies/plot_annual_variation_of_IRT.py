@@ -3,7 +3,6 @@ import base as b
 import datetime as dt 
 import numpy as np
 from matplotlib.ticker import AutoMinorLocator 
-import GEO as gg 
 
 b.config_labels(fontsize = 30)
 
@@ -195,7 +194,7 @@ def main():
     
     df = b.load(PATH_GAMMA)
     
-    gamma = 'gamma2'
+    gamma = 'gamma'
     
     if gamma == 'gamma':
         time = dt.time(22, 0)
@@ -209,13 +208,13 @@ def main():
     df['gamma2'] = df['ratio'] * df['K'] * (
         - df['mer_perp'] + df['gr'])
     
-        
+   
     fig = plot_annual_GRT(df, translate = False, gamma = gamma)
     
     FigureName = f'annual_{gamma}_parameters'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder = 'climatology'), dpi = 300)
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder = 'climatology'), dpi = 300)
 
 
 
