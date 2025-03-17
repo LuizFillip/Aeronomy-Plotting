@@ -64,17 +64,17 @@ def plot_meridian_range(
         color = 'k'
         )
     
-    x1, y1 = limit_hemisphere(
-            x, y, nx, ny, rlat, 
-            hemisphere = 'south'
-            )
+    # x1, y1 = limit_hemisphere(
+    #         x, y, nx, ny, rlat, 
+    #         hemisphere = 'south'
+    #         )
     
-    ax.plot(
-        x1, y1, 
-        linestyle = '--', 
-        lw = 3, 
-        label = 'Alcance em 300 km'
-        )
+    # ax.plot(
+    #     x1, y1, 
+    #     linestyle = '--', 
+    #     lw = 3, 
+    #     label = 'Alcance em 300 km'
+    #     )
     
 def plot_all_meridians(ax, year):
     
@@ -90,6 +90,15 @@ def plot_all_meridians(ax, year):
         x, y = meridian[num][0], meridian[num][1]
         
         ax.plot(x - 0.1, y - 1.8, lw = 1, color = 'k')
+    
+    return None 
+
+args = dict( 
+    s = 150, 
+    marker = '^',
+    color = 'k', 
+    transform = ccrs.PlateCarree()
+    )
 
 def plot_meridian(
         ax, 
@@ -98,10 +107,30 @@ def plot_meridian(
     
     mlat = Apex(300).apex_lat_base(base = 75)
 
-    rlat = np.degrees(mlat)
+    # rlat = np.degrees(mlat)
     
     plot_all_meridians(ax, year)
     
+    lons, lats = gg.stations_coordinates(year, distance = 10)
+    
+    gg.plot_square_area(
+        ax,
+        lat_min = -10,
+        lon_min = -50,
+        lat_max = 5, 
+        lon_max = -40
+        )
+    
+    for lon, lat in zip(lons, lats):
+        if (lon > -50) and (lon < -40):
+            ax.scatter(
+                lon, lat, **args
+                )
+            
+    ax.scatter(
+        lon, lat, **args, 
+        label = 'GNSS receivers'
+        )
     for i, site in enumerate([ "saa"]): 
     
         glat, glon = gg.sites[site]['coords']  
@@ -118,10 +147,10 @@ def plot_meridian(
              points = 50
              )
         
-        line, = ax.plot(x, y, color = 'r', lw = 2)
+        line, = ax.plot(x, y, color = 'r', lw = 4)
         
-        plot_meridian_range(
-                ax,x, y, nx, ny, rlat)
+        # plot_meridian_range(
+        #         ax,x, y, nx, ny, rlat)
 
         # ax.scatter(nx, ny,
         #     marker = "^", 
@@ -167,8 +196,8 @@ def plot_mag_meridians(
         subplot_kw = {'projection': ccrs.PlateCarree()}
         )
     
-    lat_lims = dict(min = -30, max = 15, stp =  5)
-    lon_lims = dict(min = -80, max = -30, stp = 10) 
+    lat_lims = dict(min = -15, max = 10, stp =  5)
+    lon_lims = dict(min = -55, max = -35, stp = 5) 
 
     gg.map_attrs(
         ax, year, 
@@ -178,7 +207,7 @@ def plot_mag_meridians(
         degress = None
         )
     
-    plot_electron_density(ax)
+    # plot_electron_density(ax)
     
     # gg.plot_rectangles_regions(ax, year)
     
@@ -199,7 +228,8 @@ def plot_mag_meridians(
 
     return fig
 
-# fig = plot_mag_meridians(year = 2013)
+fig = plot_mag_meridians(year = 2013)
+
 
 # fig.savefig(
 #     b.LATEX(FigureName, folder = 'profiles'),

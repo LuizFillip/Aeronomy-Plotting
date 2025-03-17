@@ -76,7 +76,7 @@ def plot_regions_over_map(year = 2013):
         lat_lims = lat_lims,
         lon_lims = lon_lims
 )
-    gg.plot_rectangles_regions(ax)
+    gg.plot_rectangles_regions(ax, stop_index = 5)
     # plot_sites(ax, year)
     plot_GNSS(ax, year, translate = False)
     
