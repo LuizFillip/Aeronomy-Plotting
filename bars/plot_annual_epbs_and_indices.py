@@ -4,35 +4,89 @@ import core as c
 import GEO as gg 
 import numpy as np 
 from matplotlib.ticker import AutoMinorLocator
-import plotting as pl 
 import datetime as dt 
+
+def set_gamma():
+    
+    dn = dt.time(22, 0)
+    
+    PATH_GAMMA = 'database/gamma/p1_saa.txt'
+    
+    df = b.load(PATH_GAMMA)
+    
+    df = df.loc[df.index.time == dn, ['gamma']] * 1e3
+   
+    df.index = df.index.normalize()
+    
+    return c.add_geo(df)
+
+def plot_gamma(ax):
+    df = set_gamma()
+    
+    df_index = c.DisturbedLevels(df)
+    
+    datasets = df_index.Dst(level = -30, random_state = None)
+    clrs = ['gray', 'blue']
+    labs = ['Dst $\geq$ -30 nT', 'Dst $<$ -30 nT']
+    
+    for index, ds in enumerate(datasets):
+        
+        ds.index = ds.index.map(gg.year_fraction)
+        
+        ax.scatter(
+            ds.index, 
+            ds['gamma'], 
+            color = clrs[index], 
+            label = labs[index]
+            )
+    
+    ylim = [0, 5]
+    step = 1
+    
+    ax.set(
+        ylim = ylim, 
+        yticks = np.arange(0, ylim[1] + step, step),
+        ylabel = b.y_label('gamma')
+        )
+    
+    ax.legend(loc = 'upper right', ncol = 2)
+    
+    return None
+
 b.config_labels(fontsize = 25)
 
 
-    
-
 def plot_EPBs(ax, df, col = -50, translate = True):
     
-    ds = c.seasonal_yearly_occurrence(
-            df, 
-            col = col
+    df_index = c.DisturbedLevels(df)
+    
+    datasets = df_index.Dst(level = -30, random_state = None)
+    colors = ['gray', 'blue']
+    labs = ['Dst $\geq$ -30 nT', 'Dst $<$ -30 nT']
+    
+    for index, df_level in enumerate(datasets):
+        
+        ds = c.seasonal_yearly_occurrence(
+                df_level, 
+                col = col
+                )
+        ds.index = ds.index.map(gg.year_fraction)
+    
+        ax.bar(
+            ds.index + (index / 10), 
+            ds[col], 
+            width = 0.08,
+            edgecolor = 'black', 
+            color = colors[index], 
+            alpha = 0.7,
+            linewidth = 2,
+            label = labs[index]
             )
-    ds.index = ds.index.map(gg.year_fraction)
-
-    ax.bar(
-        ds.index + 0.1, 
-        ds[col], 
-        width = 0.08,
-        edgecolor = 'black', 
-        color = 'gray', 
-        alpha = 0.7,
-        linewidth = 2
-        )
      
     if translate:
         ylabel = 'Número de casos'
     else:
-        ylabel = 'Nights with EPB'
+        ylabel = 'Nights with EPBs'
         
         
     ax.set(
@@ -40,7 +94,13 @@ def plot_EPBs(ax, df, col = -50, translate = True):
         yticks = list(range(0, 45, 10)), 
         xlim = [ds.index[0], ds.index[-1]]
         )
-        
+    
+    ax.legend(
+        loc = 'upper right', 
+        ncol = 2, 
+        # bbox_to_anchor = (0.85, 1.25)
+        )
+    # ax.legend(loc = 'upper right')
     return ax.get_xlim()
     
     
@@ -88,59 +148,38 @@ def plot_F107(
     return None 
 
 
-def plot_Kp(
+def plot_storm(
         ax, 
         df, 
-        kp_level = 3, 
+        threshold = -30, 
         translate = True, 
         xlim = None
         ):
-    
-    if translate:
-        label = 'Média mensal'
-        ylabel = 'Índice Kp'
-    else:
-        label = 'Monthly average'
-        ylabel = 'Kp index'
-    
-    
+
     ax.bar(
         df.index, 
-        df['kp'], 
+        df['dst'], 
         width = 0.01,
         alpha = 0.7, 
         color = 'gray'
         )
     
-    if kp_level is not None:
-        ax.axhline(kp_level, color = 'r', lw = 2)
+    if threshold is not None:
+        ax.axhline(threshold, color = 'r', lw = 2, 
+                   label = '-30 nT')
     
-    
-    ax.plot(
-        df['Kpmean'], label = label,
-        lw = 3, 
-        color = 'k'
-        )
         
     ax.set(
-        ylabel = ylabel, 
-        yticks = list(range(0, 12, 3))
+        ylim = [-220, 50],
+        yticks = [-200, -150, -100, -50, 0, 50],
+        ylabel = 'Dst (nT)'
         )
     
-    ax.legend(ncol = 2, loc = 'upper right')
+    ax.legend(ncol = 2, loc = 'lower right')
+    
+    return None 
 
-def plot_gamma(ax):
-    PATH_GAMMA = 'database/gamma/p1_saa.txt'
-    
-    df = b.load(PATH_GAMMA)
 
-    df = df.loc[
-        (df.index.time == dt.time(22, 0)) & 
-        (df.index.year < 2023)]
-    
-    
-    pl.plot_gamma(ax, df['gamma'], avg_run = 27)
-    
 def plot_annually_epbs_and_indices(
         df,
         kp_level = 3,
@@ -158,20 +197,24 @@ def plot_annually_epbs_and_indices(
     
     plt.subplots_adjust(hspace = 0.1)
  
-    xlim = plot_EPBs(ax[0], df, col = col, translate = translate)
+    plot_EPBs(
+        ax[0], df, col = col, 
+        translate = translate
+        )
     
-    df['Kpmean'] = df['kp'].rolling('30D').mean()
+    # df['Kpmean'] = df['kp'].rolling('30D').mean()
+    
+    plot_gamma(ax[1])
     
     df.index = df.index.map(gg.year_fraction)
     
-    plot_F107(
-        ax[2], 
-        df, 
-        solar_level = None,
-        translate = translate, 
-        xlim = xlim
-        )
-    
+    plot_storm(
+            ax[-1], 
+            df, 
+            threshold = -30, 
+            translate = True, 
+            xlim = None
+            )
  
 
     ax[-1].set(
@@ -182,18 +225,21 @@ def plot_annually_epbs_and_indices(
     
     plt.gca().xaxis.set_minor_locator(AutoMinorLocator(n=11))
     b.plot_letters(ax, y = 0.85, x = 0.02)
-    
+    fig.align_ylabels()
     return fig
 
 
 
 def main():
-    df = c.epbs(col = -50, geo = True, eyear = 2022)
-    
+  
+    df = c.add_geo(c.epbs())
+  
     fig = plot_annually_epbs_and_indices(df)
     
-    # fig.savefig(b.LATEX('annual_variation2', folder = 'bars'))
+    fig.savefig(b.LATEX('season_annual_on_Dst', folder = 'bars'))
 
 
 
 main()
+
+
