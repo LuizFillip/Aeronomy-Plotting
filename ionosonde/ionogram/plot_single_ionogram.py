@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
-from skimage import io
+# from skimage import io
 import numpy as np
 import digisonde as dg 
-import os 
+from PIL import Image
+import datetime as dt 
 
 
     
@@ -18,37 +19,52 @@ def crop_image(img):
     return img
 
 def plot_single_ionogram(
-        fname, 
+        img_path, 
         ax = None, 
         label = False, 
         ylabel_position = "left",
         aspect = 'auto', 
         title = False, 
-        ylim = [150, 1000]
+        ylim = [80, 1000]
         ):
     
   
     if ax is None:
         fig, ax = plt.subplots(
             figsize = (10, 8),
-            dpi = 300)
+            dpi = 300
+            )
         
         
     
-    img = io.imread(fname)
-    img = crop_image(img)
+    # img = io.imread(fname)
+    # img = crop_image(img)
+    
+    img = Image.open(img_path)
+
+
+    crop_box = (185, 50, 750, 920)  
+    crop_box = (185, 50, 750, 920)  
+
+    # (left, upper, right, lower) => coordenadas do retângulo de corte
+
+    cropped_img = img.crop(crop_box)
+
 
     ax.imshow(
-        img, 
+        cropped_img, 
         aspect = 'auto', 
-        extent = [-1, 15, 50, 1280]
+        extent=[0, 16, 80, 1280]
         )
     
-    xlim = [0, 10]
-    step = 2
+    ax.set_xlim(0, 16)
+    ax.set_ylim(80, 1280)
+    
+    xlim = [0, 16]
+    step = 4
     ax.set(
-        ylim = ylim, 
-        xlim = [0, 10], 
+        # ylim = ylim, 
+        # xlim = [0, 12], 
         xticks = np.arange(xlim[0], xlim[-1] + step, step)
         )
     
@@ -93,24 +109,21 @@ def plot_single_ionogram(
         return fig
     
 
-import datetime as dt 
 
 
 def main():
 
-    dn = dt.datetime(2022, 7, 25)
+    dn = dt.datetime(2015, 12, 20, 21)
 
     site = 'CAJ2M'
+    site = 'SAA0K'
+
     
-    
-    # site, fname = dg.path_ionogram(
-    #         dn, 
-    #         target = target, 
-    #         site = 'CAJ2M', #'SAA0K'
-    #         root = 'E:\\'
-    #         )
-    
-    fname = dg.path_from_site_dn(dn, site, root = 'E:\\')
+    fname = dg.path_from_site_dn(
+        dn, 
+        site, 
+        root = 'E:\\'
+        )
     
     
     plot_single_ionogram(fname, label = True)
@@ -118,3 +131,4 @@ def main():
 
 
 # main()
+

@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import digisonde as dg
 import plotting as pl 
 import pandas as pd 
+import datetime as dt
+import base as b 
 
 def plot_ionogram(
         ax, 
@@ -54,15 +56,15 @@ def fig_labels(
         fontsize = fontsize
         )
     
+    return None 
 
 
-def plot_sequence_of_ionogram(PATH_IONOGRAM, times, site):
+def plot_sequence_of_ionogram(times, site):
     
     fig, ax = plt.subplots(
          figsize = (16, 10), 
          dpi = 300, 
-          sharex = True,
-        
+         sharex = True,
          ncols = 4, 
          nrows = 3
          )
@@ -73,12 +75,11 @@ def plot_sequence_of_ionogram(PATH_IONOGRAM, times, site):
     for i, ax in enumerate(ax.flat):
         
         dn = times[i]
-        filename = dn.strftime(f'{site}_%Y%m%d(%j)%H%M%S.PNG')
+     
         
-        path_of_ionogram = os.path.join(
-            PATH_IONOGRAM, 
-            filename
-            )
+        path_of_ionogram = dg.path_from_site_dn(
+            dn, site, root = 'E:\\')
+        
         pl.plot_single_ionogram(
             path_of_ionogram, 
             ax = ax, 
@@ -88,6 +89,7 @@ def plot_sequence_of_ionogram(PATH_IONOGRAM, times, site):
             title = False
             )
         time = dn.strftime('%Hh%M')
+        
         ax.set(ylabel = '', xlabel = '', 
                title = time)
         
@@ -101,41 +103,37 @@ def plot_sequence_of_ionogram(PATH_IONOGRAM, times, site):
     fig_labels(
         fig, 
         fontsize = 30, 
-        title = dg.code_name[site] + date
+        title = dg.code_name(site) + date
         )
     
     return fig 
 
-import datetime as dt
-import base as b 
+
 
 def main():
     site = 'SAA0K'
-    # site = 'BVJ03'
-    site = 'FZA0M'
+    site = 'BVJ03'
+    # site = 'FZA0M'
     # site = 'CAJ2M'
     
-    dn = dt.datetime(2015, 12, 20, 23)
-    dn = dt.datetime(2022, 7, 24, 23)
-    PATH_IONO = 'database/ionogram/' 
+    dn = dt.datetime(2015, 12, 20, 21)
 
-    path = dn.strftime(f'{PATH_IONO}%Y%m%d{site[0]}')
     
-    delta= dt.timedelta(hours = 1)
+    # delta= dt.timedelta(hours = 1)
     times = pd.date_range(
-        dn + delta, 
-        freq = '30min', 
+        dn, 
+        freq = '1H', 
         periods = 12
         )
     
-    fig = plot_sequence_of_ionogram(path, times, site)
+    fig = plot_sequence_of_ionogram(times, site)
     
     FigureName = dn.strftime(f'{site}_%Y%m%d')
     
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'paper2'),
-          dpi = 300
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'paper2'),
+    #       dpi = 300
+    #       )
 
     # 
-# main()
+main()
