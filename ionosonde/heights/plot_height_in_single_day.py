@@ -9,7 +9,7 @@ b.config_labels(fontsize = 30)
 
 
 
-sites = ['FZA0M', 'CAJ2M']
+sites = ['FZA0M', 'SAA0K', 'BVJ03']
 fig, ax = plt.subplots(
     nrows = len(sites),
     dpi = 300,
@@ -19,10 +19,10 @@ fig, ax = plt.subplots(
     )
 
 
-dn = dt.datetime(2022, 7, 25, 0)
+dn = dt.datetime(2023, 10, 14, 0)
 cols = list(range(1, 6, 1))
 
-start =  dt.datetime(2022, 7, 24, 21)
+start = dt.datetime(2023, 10, 14, 0)
 
 for i, site in enumerate(sites):
 
@@ -30,7 +30,11 @@ for i, site in enumerate(sites):
     
     df = dg.IonoChar(file, cols, sum_from = None)
     
-    ax[i].plot(df.chars['hF2'], color = 'k', lw = 2)
+    ax[i].plot(
+        df.chars['hF2'], 
+        color = 'k', 
+        lw = 2
+        )
     ds = b.sel_times(df.heights, start)
     
     ax[i].plot(ds)
