@@ -49,6 +49,12 @@ def plot_high_resolution(
         sharex = True
         )
     
+    if translate:
+        name = 'Sudden storm commencement'
+    else:
+        name = 'Ínicio subito de tempestade'
+        
+    
     plt.subplots_adjust(hspace = 0.05)
     
     plot_solar_speed(ax[0], ds)
@@ -67,7 +73,8 @@ def plot_high_resolution(
         ax[-1],
         hour_locator = 12, 
         pad = 80, 
-        format_date = '%d/%m/%y'
+        format_date = '%d/%m/%y', 
+        translate = translate
         )
     
     
@@ -94,7 +101,7 @@ def plot_high_resolution(
     
     ax[0].text(
         ssc, 610, 
-        'Ínicio subito de tempestade', 
+        name, 
         color = 'red',
         transform = ax[0].transData
         )
@@ -113,6 +120,8 @@ def plot_high_resolution(
 
 def main():
     
+    path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
+    
     infile = 'database/indices/omni_high/2015'
     df = b.load(infile)
 
@@ -124,12 +133,12 @@ def main():
     ds = b.range_dates(df, dn, days = 2)
 
 
-    fig = plot_high_resolution(ds, dn)
+    fig = plot_high_resolution(ds, dn, translate=True)
     
-    FigureName = '2015_geomagnetic_storm'
+    FigureName = dn.strftime('%Y%m%d_GeoIndices')
     
     fig.savefig(
-          b.LATEX(FigureName, 'indices'),
+           path_to_save + FigureName,
           dpi = 400)
     
     

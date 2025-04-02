@@ -24,22 +24,28 @@ def plot_solar_flux(
     
     ax.plot(sflux["F10.7obs"], lw = 0.8, color = "k")
     
-    ax.set(ylabel = "$_{F10,7} $ cm", 
-           yticks = np.arange(100, 450, 100), 
-           xlabel = "Anos", 
-           xlim = [datetime(years[0], 1, 1), 
-                   datetime(years[-1], 12, 31)])
+    ax.set(
+        ylabel = "$_{F10.7} $ cm", 
+        yticks = np.arange(100, 450, 100), 
+        xlabel = "Anos", 
+        xlim = [datetime(years[0], 1, 1), 
+                datetime(years[-1], 12, 31)]
+        )
     
     if yshade:
         date = datetime(yshade, 1, 1)
         end = date + timedelta(days = 366)
-        ax.axvspan(date, 
-                   end,
-                   alpha = 0.5, color = "gray")
+        ax.axvspan(
+            date, 
+            end,
+            alpha = 0.5, 
+            color = "gray"
+            )
         
         ax.text(end + timedelta(days = 5), 300, yshade, 
                 transform = ax.transData)
-
+        
+    return None 
     
     
 def plot_disturbance_indexes(
@@ -97,15 +103,19 @@ def plot_auroral_indexes(ax, df):
     
     vmin, vmax, step = compute_ticks(df['ae'])
                         
-    ax1.set(ylabel = "AL (nT)", 
-            ylim = [-vmax, vmax], 
-            yticks = np.arange(-vmax, 
-                                vmax + step, step))
-    
-    ax.set(ylabel = "AE (nT)", 
-            ylim =  [-vmax, vmax], 
-            yticks = np.arange(-vmax, 
-                                vmax + step, step))
+    ax1.set(
+        ylabel = "AL (nT)", 
+        ylim = [-vmax, vmax], 
+        yticks = np.arange(-vmax, 
+                            vmax + step, step)
+        )
+
+    ax.set(
+        ylabel = "AE (nT)", 
+        ylim =  [-vmax, vmax], 
+        yticks = np.arange(-vmax, 
+                            vmax + step, step)
+        )
     
     
     b.format_axes_date(ax)

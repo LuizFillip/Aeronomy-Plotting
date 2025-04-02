@@ -27,7 +27,7 @@ def plot_kp(ax, ds, days = 2):
     vmin = ds['f107'].min()
     ax1.set(
         ylim = [vmin - 5, vmax + 5],
-        ylabel = '$F10,7$ (sfu)'
+        ylabel = '$F10.7$ (sfu)'
         )
     
     ds = ds.resample('3H').mean()
