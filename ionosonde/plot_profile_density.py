@@ -4,7 +4,7 @@ import datetime as dt
 import base as b 
 
 
-def plot_profiles_density_grads(df, year, month):
+def plot_profiles_density_grads(df):
     fig, ax = plt.subplots(
             ncols =2,
             figsize = (10, 8),
@@ -33,13 +33,50 @@ def plot_profiles_density_grads(df, year, month):
 
 year = 2015
 
+import pandas as pd
 
 
-infile = f'digisonde/data/jic/profiles/{year}'
 
-df = dg.load_profilogram(infile)
-# df['L'] = b.smooth(df['L'], 20)
-time = dt.time(1, 0)
+fig, ax = plt.subplots(
+        nrows = 3,
+        figsize = (10, 12),
+        dpi = 300,
+        sharey = True, 
+        sharex= True
+        )
+plt.subplots_adjust(wspace = 0.1)
 
-for month in [1, 6]:
-    plot_profiles_density_grads(df, year, month)
+
+sites = ['FZA0M', 'SAA0K', 'BVJ03']
+
+for i, site in enumerate(sites):
+    
+    infile = f'digisonde/data/SAO/pro_profiles/{site}'
+
+    df = dg.load_profilogram(infile)
+ 
+    ds = pd.pivot_table(
+        df, 
+        index = 'alt', 
+        columns = df.index, 
+        values = 'ne') #.interpolate()
+    
+    ax[i].contourf(
+        ds.columns, 
+        ds.index, 
+        ds.values, 30, cmap = 'jet'
+        )
+    ax[i].text(0.05, 0.8, site, 
+               color = 'white',
+               transform = ax[i].transAxes)
+    delta = dt.timedelta(hours = 12)
+    ax[i].set(xlim = [df.index[0] + delta, 
+                      df.index[-1]])
+    
+b.format_time_axes(
+    ax[-1], 
+    hour_locator = 1, 
+    pad = 70, 
+    translate = True, 
+    
+    )

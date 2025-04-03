@@ -111,10 +111,13 @@ def plot_compare_quiet_disturbed(
 
 def main():
     
-    fig = plot_compare_quiet_disturbed()
+    fig = plot_compare_quiet_disturbed(translate= True)
     
     FigureName = 'quiet_disturbance_time'
     
-    fig.savefig(b.LATEX(FigureName, 'Iono'), dpi = 400)
+    path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
+    
+    
+    fig.savefig(path_to_save + FigureName, dpi = 400)
     
 # main()

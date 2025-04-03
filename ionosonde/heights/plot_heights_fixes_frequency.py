@@ -102,7 +102,7 @@ def plot_height_fixes_for_multi_sites(
     return fig
 
 def main():
-    sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CAJ2M']
+    sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CAJ2M', 'CGK21']
 
     fig = plot_height_fixes_for_multi_sites(
         sites,
@@ -114,9 +114,9 @@ def main():
     
     FigureName = 'fixed_heights_sites'
     
-    fig.savefig(
-          path_to_save + FigureName,
-          dpi = 400
-          )
+    # fig.savefig(
+    #       path_to_save + FigureName,
+    #       dpi = 400
+    #       )
 
 main()

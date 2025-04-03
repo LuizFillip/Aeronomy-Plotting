@@ -3,6 +3,7 @@ import base as b
 import digisonde as dg 
 import numpy as np 
 import datetime as dt 
+import GEO as gg 
 
 b.config_labels()
 
@@ -23,7 +24,6 @@ def plot_QF(ax, df, color):
     
     return None 
 
-import GEO as gg 
 
 def plot_terminator(ax, dn, site):
     
@@ -197,9 +197,9 @@ def main():
     
     FigureName = ref.strftime('Iono_parameters_%Y%m%d')
     
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'Iono'),
-          dpi = 400
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'Iono'),
+    #       dpi = 400
+    #       )
     
     # plt.show()
