@@ -2,87 +2,95 @@ import matplotlib.pyplot as plt
 import plotting as pl
 import datetime as dt 
 import digisonde as dg 
-import os 
+import base as b
 import pandas as pd 
 
 
-start = dt.datetime(2022, 7, 25, 1)
-
-times = pd.date_range(start, freq = '1H', periods = 6)
 
 
-fig, ax = plt.subplots(
-    figsize = (20, 14), 
-    ncols = len(times), 
-    nrows = 2,
-    )
+def plot_site_ionogram_sequence(ax, dn, site = 'FZA0M'):
 
-plt.subplots_adjust(hspace = 0.15, wspace=0)
-
-
-for i, dn in enumerate(times):
+    fname = dg.IonoDir(site, dn).path_from_dn
+        
+    pl.plot_single_ionogram(
+        fname, 
+        ax, 
+        label = True, 
+        ylim = [100, 1200]
+        )
     
     title = dn.strftime('%Hh%M')
     
-    fname = dg.path_from_site_dn(dn, 'FZA0M')
-    
-    pl.plot_single_ionogram(
-        fname, 
-        ax[0, i], 
-        label = True, 
-        ylim = [100, 1200]
-        )
-    
-    ax[0, i].set(
-      
-        yticklabels = [], 
-        xticklabels = [], 
-        xlabel = '', 
-        ylabel = ''
-        )
-    ax[0, i].text(
+    ax.text(
         0.3, 0.85, 
-        title, color = 'w',
-        transform = ax[0, i].transAxes
+        title, 
+        color = 'w',
+        transform = ax.transAxes
         )
     
-    fname = dg.path_from_site_dn(dn, 'CAJ2M')
+    return dg.code_name(site)
     
-    plot_single_ionogram(
-        fname, 
-        ax[1, i],
-        label = True, 
-        ylim = [100, 1200]
+
+def suptitle(fig, times):
+    
+    s = times[0]
+    e = times[-1].day
+    
+    name = s.strftime(f'%d - {e} %B, %Y')
+    return fig.suptitle(name)
+
+def plot_ionograms_on_multisites(times, sites):
+    
+    ncols = len(times)
+    nrows = len(sites)
+    
+    fig, ax = plt.subplots(
+        figsize = (20, 16), 
+        ncols = ncols, 
+        nrows = nrows,
+        dpi = 300
         )
     
-    ax[1, i].text(
-        0.3, 0.85, title, color = 'w',
-                  transform = ax[1,i].transAxes)
+    plt.subplots_adjust(hspace = 0.2, wspace=0)
     
-    if i != 0:
-      
-        ax[1, i].set(
-            yticklabels = [], 
-            xticklabels = [], 
-            xlabel = '', 
-            ylabel = ''
-            )
-
-y = 1.03
-x = 0.01
-fontsize = 45
-ax[1, 0].text(
-    x, y, 
-    '(b) Cachoeira Paulista', 
-    fontsize = fontsize,
-    transform = ax[1, 0].transAxes
-    )
-
-
-ax[0, 0].text(
-    x, y,
-    '(a) Fortaleza', 
-    fontsize = 40,
-    transform = ax[0, 0].transAxes
+    end = nrows - 1
     
-    )
+    for j, site in enumerate(sites):
+        
+        for i, dn in enumerate(times):
+        
+            site_name = plot_site_ionogram_sequence(
+                ax[j, i], dn, site
+                )
+            s = b.chars()[j]
+            
+            y = 1.03
+            x = 0.01
+            
+            ax[j, 0].text(
+                x, y, 
+                f'({s}) {site_name}', 
+                fontsize = 35,
+                transform = ax[j, 0].transAxes
+                )
+          
+            if (i != 0) or (j != end):
+              
+                ax[j, i].set(
+                    yticklabels = [], 
+                    xticklabels = [], 
+                    xlabel = '', 
+                    ylabel = ''
+                    )
+
+    suptitle(fig, times)
+    
+    return fig 
+
+sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CAJ2M', 'CGK21']
+
+start = dt.datetime(2015, 12, 20, 20)
+
+times = pd.date_range(start, freq = '2H', periods = 8)
+
+fig = plot_ionograms_on_multisites(times, sites)

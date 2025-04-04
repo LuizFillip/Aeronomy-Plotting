@@ -1,34 +1,10 @@
-import cv2
-import os
 import matplotlib.pyplot as plt
 import digisonde as dg
 import plotting as pl 
 import pandas as pd 
 import datetime as dt
-import base as b 
 
-def plot_ionogram(
-        ax, 
-        infile, 
-        crop = True, 
-        format_ = '%H:%M'
-        ):
 
-    img = cv2.imread(infile)
-
-    if crop:
-        img = dg.crop_image(img) 
-
-    ax.imshow(img)
-    
-    filename = os.path.split(infile)[-1]
-    dn = dg.ionosonde_fname(filename)
-    
-    ax.set(title = dn.strftime(format_))
-    
-    ax.axis("off")
-    
-    return dn
         
 def fig_labels(
         fig, 
