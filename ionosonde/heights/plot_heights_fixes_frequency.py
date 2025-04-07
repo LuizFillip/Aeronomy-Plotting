@@ -19,7 +19,7 @@ def plot_height_fixes_for_multi_sites(
         dpi = 300,
         sharey = True, 
         sharex = True,
-        figsize = (16, 12)
+        figsize = (16, 14)
         )
     
     plt.subplots_adjust(hspace = 0.1)
@@ -84,19 +84,18 @@ def plot_height_fixes_for_multi_sites(
               )
         
     fig.text(
-        0.03, 0.35, 
+        0.03, 0.42, 
         ylabel, 
         fontsize = fontsize + 5, 
         rotation = 'vertical'
         )
   
-    
-    
     b.format_time_axes(
         ax[-1], 
         hour_locator = 12, 
-        pad = 80, 
+        pad = 85, 
         translate = translate, 
+        format_date = '%d/%m/%y'
         )
         
     return fig
@@ -114,9 +113,9 @@ def main():
     
     FigureName = 'fixed_heights_sites'
     
-    # fig.savefig(
-    #       path_to_save + FigureName,
-    #       dpi = 400
-    #       )
+    fig.savefig(
+          path_to_save + FigureName,
+          dpi = 400
+          )
 
 main()

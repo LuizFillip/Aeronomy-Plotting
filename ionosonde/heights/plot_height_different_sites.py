@@ -5,12 +5,7 @@ import digisonde as dg
 import base as b 
 import plotting as pl
 
- # file =  dg.dn2fn(dn, site)
- 
- # df = dg.IonoChar(
- #     file, cols, 
- #     sum_from = None
- #     ).heights.interpolate()
+
  
  # df = df.between_time('17:00', '21:00')
  
