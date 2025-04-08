@@ -87,10 +87,21 @@ def plot_ionograms_on_multisites(times, sites):
     
     return fig 
 
-sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CAJ2M', 'CGK21']
-
-start = dt.datetime(2015, 12, 20, 20)
-
-times = pd.date_range(start, freq = '2H', periods = 8)
-
-fig = plot_ionograms_on_multisites(times, sites)
+def main():
+    sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CAJ2M', 'CGK21']
+    
+    start = dt.datetime(2015, 12, 20, 20)
+    
+    times = pd.date_range(start, freq = '2H', periods = 8)
+    
+    fig = plot_ionograms_on_multisites(times, sites)
+    
+    
+    path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
+    
+    FigureName = 'multionogram_sequen'
+    
+    fig.savefig(
+          path_to_save + FigureName,
+          dpi = 400
+          )

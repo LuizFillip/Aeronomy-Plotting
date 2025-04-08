@@ -9,6 +9,7 @@ import plotting as pl
 b.config_labels()
 
 def plot_compare_quiet_disturbed(
+        sites, 
         translate = False
         ):
     
@@ -20,11 +21,13 @@ def plot_compare_quiet_disturbed(
         ylabel = 'Velocidade de deriva vertical (m/s)'
         qt_label = 'Período calmo'
         db_label = 'Período perturbado'
-        
+    
+    
+    
     fig, ax = plt.subplots(
         dpi = 300, 
-        nrows = 2,
-        figsize = (16, 10), 
+        nrows = len(sites),
+        figsize = (16, 16), 
         sharex = True, 
         sharey = True
         )
@@ -34,15 +37,14 @@ def plot_compare_quiet_disturbed(
     start = dt.datetime(2015, 12, 19)
     cols = list(range(3, 10, 1))
     
-    sites = ['SAA0K', 'BVJ03'] #'CAJ2M']
-
+ 
     for i, site in enumerate(sites):
         
-        ref = dt.datetime(2015, 12, 20, 21, 0)
+        ref_day = dt.datetime(2015, 12, 20, 21, 0)
         
         ax[i].axvspan(
-             ref, 
-             ref + dt.timedelta(hours = 12), 
+             ref_day, 
+             ref_day + dt.timedelta(hours = 12), 
              ymin = 0, 
              ymax = 1,
              alpha = 0.2, 
@@ -73,7 +75,9 @@ def plot_compare_quiet_disturbed(
             )
         
         s = b.chars()[i]
+        
         name = dg.code_name(site)
+        
         ax[i].text(
             0.02, 0.8, 
             f'({s}) {name}', 
@@ -85,7 +89,7 @@ def plot_compare_quiet_disturbed(
         ax[i].axhline(0, linestyle = ':')
               
     fig.text(
-        0.03, 0.2, 
+        0.03, 0.42, 
         ylabel, 
         fontsize = 35, 
         rotation = 'vertical'
@@ -110,14 +114,14 @@ def plot_compare_quiet_disturbed(
 
 
 def main():
-    
-    fig = plot_compare_quiet_disturbed(translate= True)
+    sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CAJ2M', 'CGK21']
+    fig = plot_compare_quiet_disturbed(sites, translate= True)
     
     FigureName = 'quiet_disturbance_time'
     
     path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
     
     
-    fig.savefig(path_to_save + FigureName, dpi = 400)
+    # fig.savefig(path_to_save + FigureName, dpi = 400)
     
-# main()
+main()

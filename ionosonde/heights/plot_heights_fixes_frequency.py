@@ -4,8 +4,51 @@ import datetime as dt
 import base as b 
 import plotting as pl 
 import numpy as np 
+import pandas as pd 
 
+def plot_hmF2(ax, site):
+    
+    dates = pd.date_range(
+        '2015-12-19', 
+        freq = '1D', 
+        periods = 4
+        )
+    
+    out = []
+    for dn in dates:
+        
+        file =  dg.dn2fn(dn, site)
 
+        out.append(
+            dg.IonoChar(
+                file,  
+                sum_from = None
+            ).chars
+        )
+        
+    df = pd.concat(out).sort_index()
+
+    df['hmF2'] = b.smooth2(df['hmF2'], 3)
+    
+    ax.plot(
+        df['hmF2'], 
+        color = 'magenta', 
+        lw = 2, 
+        linestyle = '--'
+        )
+    ax1 = ax.twinx()
+    ax1.bar(
+        df.index, df['QF'], 
+        width = 0.02, 
+        alpha = 0.3, 
+        color = 'gray'
+        ) 
+    ax1.set(
+        ylim = [-1, 60], 
+        yticks = np.arange(0, 80, 20)
+        )
+    return 
+    
 def plot_height_fixes_for_multi_sites(
         sites,
         translate = True,
@@ -57,6 +100,7 @@ def plot_height_fixes_for_multi_sites(
         
         pl.plot_terminators(ax[i], df, site)
         
+        plot_hmF2(ax[i], site)
 
         ax[i].set(
             ylim = [0, 600],
@@ -89,6 +133,13 @@ def plot_height_fixes_for_multi_sites(
         fontsize = fontsize + 5, 
         rotation = 'vertical'
         )
+    
+    fig.text(
+        0.95, 0.35, 
+        'Spread F index (km)', 
+        fontsize = fontsize + 5, 
+        rotation = 'vertical'
+        )
   
     b.format_time_axes(
         ax[-1], 
@@ -113,9 +164,9 @@ def main():
     
     FigureName = 'fixed_heights_sites'
     
-    fig.savefig(
-          path_to_save + FigureName,
-          dpi = 400
-          )
+    # fig.savefig(
+    #       path_to_save + FigureName,
+    #       dpi = 400
+    #       )
 
 main()
