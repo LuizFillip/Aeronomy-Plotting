@@ -24,7 +24,7 @@ def plot_storm_levels_distribution(
         vmax = 150
         step = 50
     else:
-        vmax = 400
+        vmax = 500
         step = 100
         
     for row, name in enumerate(names):
@@ -37,7 +37,6 @@ def plot_storm_levels_distribution(
             name, 
             translate = translate
             )
-        
         
         df_index = c.DisturbedLevels(df_season.sel_season)
         
@@ -53,7 +52,7 @@ def plot_storm_levels_distribution(
         
         for index, df_level in enumerate(datasets):
             
-            label =f'({index + 1}) {kp_labels[index]}'
+            label =f'({index + 1}) {kp_labels[index]} nT'
             
             data, epb = pl.plot_distribution(
                     ax[row, 0], 
@@ -78,13 +77,14 @@ def plot_storm_levels_distribution(
             total_day.append(days)
         
             ax[row, 1].set(
-                ylim = [0, 350], 
+                # ylim = [0, 450], 
                 yticks = list(range(0, vmax, step))
                 )
                     
             ax[row, index].text(
-                0.02, 0.82,
+                0.5, 0.82,
                 f'{df_season.name}',
+                ha='center',
                 transform = ax[row, index].transAxes
                 )
     
@@ -110,9 +110,10 @@ def plot_storm_levels_distribution(
 
 def main():
     
-    translate = True
+    translate = False
 
-    df = c.load_results('saa', eyear = 2022)
+    df = c.load_results()
+    # df = df.interpolate()
     parameter ='gamma'
     
     
@@ -139,4 +140,4 @@ def main():
         )
     
     
-# main()
+main()

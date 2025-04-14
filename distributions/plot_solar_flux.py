@@ -36,13 +36,16 @@ def plot_distributions_solar_flux(
     plt.subplots_adjust(hspace = 0.05)
         
     df_index = c.DisturbedLevels(df)
+   
     
     F107_labels = df_index.solar_labels(level)
      
     total_epb = []
     total_day = []
    
-    for i, ds in enumerate(df_index.F107_2(level)):
+    for i, ds in enumerate(df_index.F107(level)):
+        
+        # print(ds)
         
         index = i + 1
         label = f'({index}) {F107_labels[i]}'
@@ -57,6 +60,9 @@ def plot_distributions_solar_flux(
                 translate = translate,
                 limit = limit
             )
+        
+        
+        
         days = pl.plot_histogram(
                 ax[1], 
                 data, 
@@ -119,16 +125,22 @@ def main():
     
     translate = True
 
-    df = c.load_results('saa', eyear = 2022)
+    df = c.load_results()
+    
+    # df = df.interpolate()
 
-    limit = c.limits_on_parts(df['f107a'], parts = 2 )
-
-    parameter = 'gamma2'
+    level_threshold = c.limits_on_parts(df['f107a'], parts = 2 )
+    
+    print(level_threshold)
+    # level_threshold =  84.3
+    # df = df.interpolate()
+    
+    parameter = 'gamma'
     
     fig = plot_distributions_solar_flux(
             df, 
             parameter,
-            level = limit, 
+            level = level_threshold, 
             translate = translate, 
             outliner = 10,
             limit = True
@@ -144,13 +156,22 @@ def main():
     else:
         FigureName = f'solar_flux_{parameter}'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder),
+    #     dpi = 400
+    #     )
 
 
     plt.show()
     
-# main()
+main()
 
+# df = c.load_results('saa', eyear = 2022)
+
+# df = df.interpolate()
+
+# level_threshold = c.limits_on_parts(df['f107a'], parts = 2 )
+
+# level_threshold 
+
+# df['gamma'].min()

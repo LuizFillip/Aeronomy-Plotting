@@ -11,7 +11,21 @@ def titles_infos(parameter):
         return ['EPBs occurrence', '$\gamma_{RT}$ total']
     else:
         return ['EPBs occurrence', '$V_P$ total']
-      
+     
+def plot_epbs_number(ax, data, color = 'k'):
+    if color == 'k':
+        offset = -12
+        
+    else:
+        offset = 5
+    for x, y, z in data[['start', 'rate', 'epbs']].values:
+        
+        ax.text(
+            x - 0.05, (y *100) + offset, 
+              int(z),
+                transform = ax.transData, 
+                color = color)
+        
 
 def plot_infos_in_distribution(
         ax, 

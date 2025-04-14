@@ -128,6 +128,7 @@ def plot_distribution(
         vmin, vmax, step = c.compute_limits(df, parameter)
     
     # vmin, vmax, step = 0, 1, 0.2
+
     
     if parameter == 'vp':
         xlabel = b.y_label('vp')
@@ -136,9 +137,9 @@ def plot_distribution(
     
     ax.set(
         xlim = [vmin - 0.1, vmax],
-        ylim = [-ylim[0]* factor, ylim[-1]* factor], 
-        yticks = np.arange(0, 1.2* factor, 0.25* factor),
-        xticks = np.arange(vmin, vmax + step, step*2),
+        ylim = [-ylim[0]* factor, ylim[-1] * factor], 
+        yticks = np.arange(0, 1.2* factor, 0.25 * factor),
+        xticks = np.arange(vmin, vmax + step, step * 2),
        
         )
     

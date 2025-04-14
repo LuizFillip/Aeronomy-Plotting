@@ -13,19 +13,18 @@ legend_args = dict(
     
     )
 
-def plot_epbs_number(ax, data, color = 'k'):
-    if color == 'k':
-        offset = -12
-        
-    else:
-        offset = 5
-    for x, y, z in data[['start', 'rate', 'epbs']].values:
-        
-        ax.text(x - 0.05, (y *100) + offset, 
-                int(z),
-                transform = ax.transData, 
-                color = color)
-        
+def difference(out_shift):
+    
+    import pandas as pd 
+    df = pd.concat(out_shift, axis = 1)
+    
+    
+    df.columns = ['rate1', 'rate2']
+
+# Subtrai as colunas
+    df['difference'] = df['rate1'] - df['rate2']
+    return df['difference'].mean() 
+# print(difference(out_shift))
 def plot_distributions_geomagnetic(
         df, 
         parameter = 'gamma',
@@ -51,11 +50,12 @@ def plot_distributions_geomagnetic(
     total_epb = []
     total_day = []
    
+    out_shift = []
     
     for i, ds in enumerate(df_index.Dst(level)):
         
         index = i + 1
-        label = f'({index}) {kp_labels[i]}'
+        label = f'({index}) {kp_labels[i]} nT'
     
         data, epbs = pl.plot_distribution(
                 ax[0], 
@@ -68,7 +68,8 @@ def plot_distributions_geomagnetic(
                 limit = limit
             )
         
-          
+        out_shift.append(data.loc[df.index 'rate'])
+         
         days = pl.plot_histogram(
                 ax[1], 
                 data, 
@@ -94,7 +95,7 @@ def plot_distributions_geomagnetic(
                 fontsize = 30
                 )
             
-    x = 0.62
+    x = 0.68
     y = 0.25
     offset_y = 0.1
     ax[1].legend(**legend_args)
@@ -108,6 +109,7 @@ def plot_distributions_geomagnetic(
         values = total_epb, 
         offset_y = offset_y
         )
+    
     
     pl.plot_infos_in_distribution(
         ax[1], 
@@ -125,8 +127,8 @@ def plot_distributions_geomagnetic(
 
 def main():
     
-    translate = True
-    df = c.load_results('saa', eyear = 2022)
+    translate = False
+    df = c.load_results()
     parameter = 'gamma'
     
     fig = plot_distributions_geomagnetic(
@@ -152,5 +154,5 @@ def main():
 
     plt.show()
     
-# main()
+main()
 
