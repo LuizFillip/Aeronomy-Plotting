@@ -3,6 +3,10 @@ import FabryPerot as fp
 import base as b
 import datetime as dt
 import numpy as np
+import pandas as pd 
+
+
+
 b.config_labels()
 
 PATH_FPI = 'database/FabryPerot/'
@@ -13,7 +17,7 @@ def get_dn(wd):
         wd.index[0].month, 
         wd.index[0].day, 21, 0)
 
-def sel_coord(ax, wd, direction, parameter = 'vnu', 
+def plot_coord(ax, wd, direction, parameter = 'vnu', 
               translate = False):
     
     ds = wd.loc[(wd["dir"] == direction)]
@@ -39,6 +43,12 @@ def sel_coord(ax, wd, direction, parameter = 'vnu',
         capsize = 5,
         lw = 2
             )
+    
+    ax.axhline(
+        0, 
+        color = "k", 
+        linestyle = "--"
+        )
     
     return None 
         
@@ -69,7 +79,46 @@ def plot_total_component(ax, dn, parameter = 'VN1'):
             )
     
     return None
+
+def plot_monthly_avg(ax, vl, coord):
     
+    co = coord[:5].lower()
+    
+    df = b.load('FabryPerot/data/201512')
+
+    df['time'] = df.index.to_series().apply(b.dn2float)
+    df['day'] = df.index.day
+    df = df.loc[~df.index.duplicated()]
+
+    ds = pd.pivot_table(
+        df, 
+        values = f'{vl}_{co}', 
+        columns ='day', 
+        index = 'time'
+        )
+    
+    mean = ds.mean(axis = 1)
+    
+    ax1 = ax.twiny()
+   
+    ax1.plot(
+       mean, 
+       lw = 2, 
+       color = 'magenta', 
+       label = 'Montly average'
+       )
+    ax1.set(
+       xlim = [21, 32], 
+       xticklabels = []
+       )
+
+def built_ticks(df, step = 100):
+    
+    vmax = b.roundup(df.max())
+    vmin = b.roundup(df.min())
+    
+    return np.arange(vmin - step // 2, vmax + step, step)
+   
     
 def plot_directions(
         ax, 
@@ -87,93 +136,70 @@ def plot_directions(
         label_rel = 'Intensidade (R)' 
         label_vel = 'Velocidade (m/s)'
     
-    wd = fp.FPI(path).wind
-    tp = fp.FPI(path).temp
-    rl = fp.FPI(path).bright
+    fpi = fp.FPI(path)
     
+   
     coords = {
         "Zonal": ("east", "west"), 
         "Meridional": ("north", "south")
         }
     
+    # plot_models(ax[0, 0], 'zon')
+    # plot_models(ax[0, 1], 'mer')
+    # plot_models(ax[1, 0], 'Tn')
+    # plot_models(ax[1, 1], 'Tn')
+    
     for col, coord in enumerate(coords.keys()):
                 
         for row, direction in enumerate(coords[coord]):
             
-            sel_coord(
-                ax[0, col], wd, 
-                direction, 
-                parameter = 'vnu', 
-                translate = translate
-                )
+            for i, (vl, df) in enumerate(fpi.zips):
+                
+                plot_coord(
+                    ax[i, col], 
+                    df, 
+                    direction, 
+                    parameter = vl, 
+                    translate = translate
+                    )
+                
+                plot_monthly_avg(ax[row, col], vl, coord)
             
-            sel_coord(
-                ax[1, col], tp, 
-                direction, 
-                parameter = 'tn', 
-                translate = translate
-                )
-            
-            sel_coord(
-                ax[2, col], rl, 
-                direction, 
-                parameter = 'rle', 
-                translate = translate
-                )
-            
-            ax[0, row].axhline(
-                0, 
-                color = "k", 
-                linestyle = "--"
-                )
-            
-            # ax[-1, row].axhline(
-            #     0, 
-            #     color = "k", 
-            #     linestyle = "--"
-            #     )
+        
             
         b.format_time_axes(
             ax[-1, col], 
             translate = translate,
             hour_locator = 1, pad = 80)
         
-    def built_ticks(df, step = 100):
-        
-        vmax = b.roundup(df.max())
-        vmin = b.roundup(df.min())
-        
-        return np.arange(vmin - step // 2, vmax + step, step)
-   
-    
+
     ax[0, 0].set(
         ylabel = label_vel, 
-        yticks = built_ticks(wd['vnu'], step = 100),
+        ylim = [-300, 300],
+        yticks = np.arange(-300, 300, 100),
         # ylim = [yticks[0] - 50, 
-        #         yticks[-1] + 50]
+                # yticks[-1] + 50]
         )
         
     ax[1, 0].set(
         ylabel = label_temp, 
-        # ylim = [yticks[0] - 100,
-        #         yticks[-1] + 100], 
-        yticks = built_ticks(tp['tn'], step = 200)
+        ylim = [500, 1500], 
+        yticks = np.arange(500, 1500, 300)
         )
    
     ax[2, 0].set(
-        # ylim = [0, 200],
-        # ylim = [-2, 2],
-        yticks = built_ticks(rl['rle'], step = 400),
-        ylabel = label_rel) 
+        ylim = [-2, 2],
+        ylabel = label_rel
+        ) 
 
-    anchor = (0.5, 1.47)
+    anchor = (0.5, 1.49)
     
     ax[0, 0].legend(
          ncol = 2, 
          title = 'Zonal',
          loc = 'upper center', 
          bbox_to_anchor = anchor,
-         columnspacing=0.3
+         columnspacing = 0.3
          )
     
     ax[0, 1].legend(
@@ -181,7 +207,7 @@ def plot_directions(
          title = 'Meridional',
          loc = 'upper center', 
          bbox_to_anchor = anchor,
-         columnspacing=0.3
+         columnspacing = 0.3
          )
     
     return None
@@ -229,13 +255,13 @@ def main():
 def main():
         
     PATH_FPI = 'database/FabryPerot/car/minime01_car_20151220.cedar.003.txt'
-    PATH_FPI = 'database/FabryPerot/cj/bfp240924g.7100.txt'
+    # PATH_FPI = 'database/FabryPerot/cj/bfp240924g.7100.txt'
     fig = plot_winds_temp_intensity(PATH_FPI)
-    FigureName = 'bfp_20240924'
-    # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'FPI'),
-    #       dpi = 400
-    #       )
+    FigureName = 'FPI_mesuraments'
+    path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
+    
+    
+    # fig.savefig(path_to_save + FigureName, dpi = 400)
 
 
 main()

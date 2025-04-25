@@ -88,7 +88,8 @@ def plot_sky_component(ax, dn, direction, parameter = 'vnu'):
     ax.legend(ncol = 3, loc = 'upper center')
     
     ax.axhline(0, linestyle = '--')
-
+    
+    return None 
 
 def plot_quiet_variation(ax, ds, d = 'zon'):
     
@@ -102,6 +103,7 @@ def plot_quiet_variation(ax, ds, d = 'zon'):
          color = 'gray'
              )
      
+    return None 
 
 def plot_quiet_disturbed_winds(date):
     
@@ -159,7 +161,9 @@ def main():
         
     FigureName = date.strftime('winds_%Y%m%d')
     
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'paper2'),
-          dpi = 400
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'paper2'),
+    #       dpi = 400
+    #       )
+
+# main()
