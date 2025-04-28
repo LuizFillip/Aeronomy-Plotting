@@ -17,8 +17,13 @@ def get_dn(wd):
         wd.index[0].month, 
         wd.index[0].day, 21, 0)
 
-def plot_coord(ax, wd, direction, parameter = 'vnu', 
-              translate = False):
+def plot_coord(
+        ax, 
+        wd, 
+        direction, 
+        parameter = 'vnu', 
+        translate = False
+        ):
     
     ds = wd.loc[(wd["dir"] == direction)]
     
@@ -64,32 +69,20 @@ def title_site(fig, path):
     
     return None 
     
-    
-def plot_total_component(ax, dn, parameter = 'VN1'):
-    file = fp.dn_to_filename(dn, site = 'bfp', code = 7101)
-    
-    ds = fp.read_file(PATH_FPI + file, drop = True)
-    ds = ds.loc[:, [parameter, f'D{parameter}']].dropna()
-    ax.errorbar(
-        ds.index, 
-        ds[parameter], 
-        yerr = ds[f'D{parameter}'], 
-        capsize = 5,
-        lw = 2
-            )
-    
-    return None
-
-def plot_monthly_avg(ax, vl, coord):
-    
-    co = coord[:5].lower()
+def load_month_avgs():
     
     df = b.load('FabryPerot/data/201512')
 
     df['time'] = df.index.to_series().apply(b.dn2float)
     df['day'] = df.index.day
-    df = df.loc[~df.index.duplicated()]
+    return df.loc[~df.index.duplicated()]
 
+
+
+def get_mean_std(df, vl, coord):
+    
+    co = coord[:5].lower()
+    
     ds = pd.pivot_table(
         df, 
         values = f'{vl}_{co}', 
@@ -97,28 +90,37 @@ def plot_monthly_avg(ax, vl, coord):
         index = 'time'
         )
     
-    mean = ds.mean(axis = 1)
+    ds = pd.concat(
+        [ds.mean(axis = 1).to_frame('mean'), 
+         ds.std(axis = 1).to_frame('std')],
+        axis = 1)
     
-    ax1 = ax.twiny()
-   
-    ax1.plot(
-       mean, 
-       lw = 2, 
-       color = 'magenta', 
-       label = 'Montly average'
-       )
-    ax1.set(
-       xlim = [21, 32], 
-       xticklabels = []
-       )
+    
+    dn = dt.datetime(2015, 12, 20)
+    
+    return b.renew_index_from_date(ds, dn)
 
-def built_ticks(df, step = 100):
+
+def plot_avg(ax, avg, vl, coord):
     
-    vmax = b.roundup(df.max())
-    vmin = b.roundup(df.min())
+    ds = get_mean_std(avg, vl, coord)
+
+    ds1 = ds.resample('1H').asfreq()
+
+    ax.errorbar(
+        x = ds1.index, 
+        y = ds1['mean'], 
+        yerr = ds1['std'], 
+        capsize = 5, 
+        marker = 'o',
+        markersize = 10, 
+        lw = 2,
+        color = 'magenta', 
+        fillstyle = 'none'
+        )
     
-    return np.arange(vmin - step // 2, vmax + step, step)
-   
+    return None 
+
     
 def plot_directions(
         ax, 
@@ -138,23 +140,26 @@ def plot_directions(
     
     fpi = fp.FPI(path)
     
+    avg =  load_month_avgs()
+
    
     coords = {
         "Zonal": ("east", "west"), 
         "Meridional": ("north", "south")
         }
-    
-    # plot_models(ax[0, 0], 'zon')
-    # plot_models(ax[0, 1], 'mer')
-    # plot_models(ax[1, 0], 'Tn')
-    # plot_models(ax[1, 1], 'Tn')
+           
+    for i, vl in enumerate(['vnu', 'tn', 'rle']):
+        
+        plot_avg(ax[i, 0], avg, vl, 'zonal')
+        plot_avg(ax[i, 1], avg, vl, 'merid')
+
     
     for col, coord in enumerate(coords.keys()):
                 
         for row, direction in enumerate(coords[coord]):
             
             for i, (vl, df) in enumerate(fpi.zips):
-                
+
                 plot_coord(
                     ax[i, col], 
                     df, 
@@ -162,23 +167,20 @@ def plot_directions(
                     parameter = vl, 
                     translate = translate
                     )
-                
-                plot_monthly_avg(ax[row, col], vl, coord)
-            
         
-            
+                
         b.format_time_axes(
             ax[-1, col], 
             translate = translate,
-            hour_locator = 1, pad = 80)
+            hour_locator = 2, 
+            pad = 85
+            )
         
 
     ax[0, 0].set(
         ylabel = label_vel, 
-        ylim = [-300, 300],
-        yticks = np.arange(-300, 300, 100),
-        # ylim = [yticks[0] - 50, 
-                # yticks[-1] + 50]
+        ylim = [-200, 200],
+        yticks = np.arange(-200, 300, 100),
         )
         
     ax[1, 0].set(
@@ -189,6 +191,7 @@ def plot_directions(
    
     ax[2, 0].set(
         ylim = [-2, 2],
+        yticks = np.arange(-2, 3, 1),
         ylabel = label_rel
         ) 
 
@@ -231,9 +234,6 @@ def plot_winds_temp_intensity(PATH_FPI):
     
     plot_directions(ax, PATH_FPI, translate = True)
     
-    # plot_total_component(ax[0, 0], dn, parameter = 'VN1')
-    # plot_total_component(ax[0, 1], dn, parameter = 'VN2')
-    
     b.plot_letters(ax, y = 0.85, x = 0.03, fontsize = 40)
     
     title_site(fig, PATH_FPI)
@@ -265,3 +265,8 @@ def main():
 
 
 main()
+
+
+    
+    
+    
