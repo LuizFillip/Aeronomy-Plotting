@@ -35,8 +35,6 @@ def plot_days_range(ax, site):
     
     ax1 = ax.twinx()
     
-    ax.bar(df.index, df['QF'], width = 0.05, color = 'gray') 
-    
     ax1.plot(df['hmF2'], color = 'b', lw = 2)
     
     delta = dt.timedelta(hours = 24)
@@ -55,6 +53,13 @@ def plot_days_range(ax, site):
         
         )
     
+    b.change_axes_color(
+            ax1, 
+            color = 'b',
+            axis = "y", 
+            position = "right"
+            )
+    
     pl.plot_terminators(ax, df, site)
     
     ax.axhline(0, linestyle = ':')
@@ -63,51 +68,58 @@ def plot_days_range(ax, site):
     return None 
 
 sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CAJ2M', 'CGK21']
-
-nrows = len(sites)
-fig, ax = plt.subplots(
-    dpi = 300, 
-    nrows = nrows,
-    figsize = (12, 16), 
-    sharex = True, 
-    sharey = True
-    )
+sites = ['SAA0K', 'CAJ2M']
 
 
-plt.subplots_adjust(hspace = 0.1)
-
-for i, site in enumerate(sites):
-
-    plot_days_range(ax[i], site)
+def plot_foF2_hmF2(sites):
     
-    name = dg.code_name(site)
+    nrows = len(sites)
     
-    s = b.chars()[i]
     
-    ax[i].text(
-        0.02, 0.8, 
-        f'({s}) {name}', 
-        transform = ax[i].transAxes
+    fig, ax = plt.subplots(
+        dpi = 300, 
+        nrows = nrows,
+        figsize = (14, 8), 
+        sharex = True, 
+        sharey = True
         )
-
-fig.text(
-    0.032, 0.42, 
-    'foF2 (MHz)', 
-    fontsize = 35, 
-    rotation = 'vertical'
-    )
-
-fig.text(
-    0.95, 0.42, 
-    'hmF2 (km)', 
-    fontsize = 35, 
-    rotation = 'vertical'
-    )
-
-b.format_time_axes(
-    ax[-1], 
-    translate = True,
-    hour_locator = 12, 
-    pad = 85, 
-    format_date = '%d/%m/%y'
-    )
+    
+    
+    plt.subplots_adjust(hspace = 0.1)
+    
+    for i, site in enumerate(sites):
+    
+        plot_days_range(ax[i], site)
+        
+        name = dg.code_name(site)
+        
+        s = b.chars()[i]
+        
+        ax[i].text(
+            0.02, 0.8, 
+            f'({s}) {name}', 
+            transform = ax[i].transAxes
+            )
+    
+    fig.text(
+        0.032, 0.42, 
+        'foF2 (MHz)', 
+        fontsize = 35, 
+        rotation = 'vertical'
+        )
+    
+    fig.text(
+        0.95, 0.42, 
+        'hmF2 (km)', 
+        fontsize = 35, 
+        rotation = 'vertical', 
+        color = 'b'
+        )
+    
+    b.format_time_axes(
+        ax[-1], 
+        translate = True,
+        hour_locator = 12, 
+        pad = 85, 
+        format_date = '%d/%m/%y'
+        )
