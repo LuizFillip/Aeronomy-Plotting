@@ -3,18 +3,12 @@ import cartopy.crs as ccrs
 import datetime as dt
 import plotting as pl
 import matplotlib.pyplot as plt
-import numpy as np 
-
-
 
 b.config_labels(fontsize = 25)
 
 
-
-
 def plot_multiple_tec_maps(
         start, 
-        times,
         vmax = 50, 
         step = 10,
         root = 'E:\\'
@@ -63,7 +57,7 @@ def plot_multiple_tec_maps(
                 ax = ax, 
                 vmax = vmax, 
                 root = root,
-                boxes = True,
+                boxes = False,
                 colorbar = False
                 )
             
@@ -91,20 +85,17 @@ def plot_multiple_tec_maps(
 
 def main():
     
-    start =  dt.datetime(2015, 12, 19, 22)
-    # start =  dt.datetime(2014, 2, 9, 23)
-    # start = dt.datetime(2022, 7, 25, 1)
-    hours = np.arange(0, 6, 1)
-    fig = plot_multiple_tec_maps(start, hours, vmax = 50)
+    start =  dt.datetime(2015, 12, 20, 5)
+    # start =  dt.datetime(2014, 2, 2, 22)
+    fig = plot_multiple_tec_maps(start, vmax = 10, step = 1)
     
     FigureName = start.strftime('%Y%m%d')
     
     # fig.savefig(
-    #     b.LATEX(FigureName, 
-    #             folder = 'maps'),
+    #     b.LATEX(FigureName, folder = 'maps'),
     #     dpi = 400
     #     )
     
-main()
-
+# main()
+# 
 # plt.show()
