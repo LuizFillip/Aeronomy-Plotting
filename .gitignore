@@ -22,7 +22,8 @@
 /heatmaps/__pycache__/*
 /indices/__pycache__/*
 /demo/__pycache__/*
-
+/TEC/__pycache__/*
+/TEC/data/*
 /ionosonde/ionogram/__pycache__/*
 
 /bars/__pycache__/*
