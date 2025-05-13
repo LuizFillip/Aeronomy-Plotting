@@ -15,7 +15,7 @@ args = dict(
 def plot_sites(ax, year):
         
     sites  = ['jic', 'saa', 'bvj', 'ca', 'cp', 'bjl']
-    sites = ['jic', 'saa', 'bvj', 'ca', 'caj']
+    sites = ['saa', 'fza', 'ca', 'bvj']
     for i, site in enumerate(sites):
         
         site = gg.sites[site]
@@ -36,11 +36,13 @@ def plot_sites(ax, year):
 
 def plot_GNSS(ax, year, translate = False):
 
-    lon, lat = gg.stations_coordinates(year, distance = 10)
+    lon, lat = gg.stations_coordinates(year, distance = 100)
     if translate:
         label = 'Receptores GNSS'
     else:
         label = 'GNSS receivers'
+        
+    sits, lon, lat = gg.arr_coords(year = 2021)
     ax.scatter(lon, lat, **args, label = label)
     
     # ax.annotate(
@@ -76,14 +78,14 @@ def plot_regions_over_map(year = 2013):
         lat_lims = lat_lims,
         lon_lims = lon_lims
 )
-    gg.plot_rectangles_regions(ax, stop_index = 5)
-    # plot_sites(ax, year)
+    # gg.plot_rectangles_regions(ax, stop_index = 5)
+    plot_sites(ax, year)
     plot_GNSS(ax, year, translate = False)
     
     ax.legend(
         loc = 'upper right',
         ncol = 1, 
-        # bbox_to_anchor = (-0.05, 0.), 
+        bbox_to_anchor = (1.6, 0.5), 
         columnspacing = 0, 
         fontsize = 35
         
@@ -104,7 +106,7 @@ def main():
     
     save_in = 'G:\\My Drive\\Papers\\Paper 2\\Midnight EPBs\\Eps\\img\\'
 
-    fig.savefig(save_in + FigureName, dpi = 300
-                )
+    # fig.savefig(save_in + FigureName, dpi = 300
+    #             )
     
-# main()
+main()

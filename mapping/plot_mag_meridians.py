@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd 
 import datetime as dt
 
-b.config_labels(fontsize = 25)
+b.config_labels(fontsize = 30)
 
 
 def limit_hemisphere(
@@ -135,8 +135,10 @@ def plot_meridian(
     
         glat, glon = gg.sites[site]['coords']  
 
-        ax.scatter(glon, glat,  s = 300, 
-                    marker = 's', c = 'r')
+        ax.scatter(
+            glon, glat,  s = 1000, 
+                    marker = '*', c = 'r', 
+                    label = 'São Luís')
             
         nx, ny, x, y = gg.load_meridian(year, site)
         
@@ -147,7 +149,7 @@ def plot_meridian(
              points = 50
              )
         
-        line, = ax.plot(x, y, color = 'r', lw = 4)
+        line, = ax.plot(x, y, color = 'b', lw = 4)
         
         # plot_meridian_range(
         #         ax,x, y, nx, ny, rlat)
@@ -182,17 +184,21 @@ def plot_electron_density(ax):
     
     ticks = np.arange(0, 2, 0.01)
     
-    b.colorbar(img, ax, ticks, 
-               label = '$N_e (\\times 10^{12}~ m^{-3})$')
+    b.colorbar(
+        img, ax,
+        ticks, 
+        label = '$N_e (\\times 10^{12}~ m^{-3})$'
+        )
     
-    return 
+    return None 
+
 def plot_mag_meridians(
         year = 2013
         ):
     
     fig, ax = plt.subplots(
         dpi = 300,
-        figsize = (10, 10),
+        figsize = (12, 10),
         subplot_kw = {'projection': ccrs.PlateCarree()}
         )
     
@@ -221,18 +227,19 @@ def plot_mag_meridians(
     
     ax.legend(
         ncol = 2, 
-        loc = "upper right",
+        loc = "upper center",
         columnspacing = 0.5,
-        bbox_to_anchor = (1.2, 1.1)
+        bbox_to_anchor = (0.5, 1.15)
         )
 
     return fig
 
-fig = plot_mag_meridians(year = 2013)
+# fig = plot_mag_meridians(year = 2013)
 
+# FigureName = 'SaoLuis_GNSSRecivers'
 
 # fig.savefig(
-#     b.LATEX(FigureName, folder = 'profiles'),
+#     b.LATEX(FigureName, folder = 'maps/en'),
 #     dpi = 400
 #     )
 
