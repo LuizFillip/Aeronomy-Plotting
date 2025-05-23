@@ -28,14 +28,14 @@ def plot_days_range(ax, site):
         
     df = pd.concat(out).sort_index()
 
-    df['hmF2'] = b.smooth2(df['hmF2'], 3)
+    df['hF'] = b.smooth2(df['hF'], 2)
     
     ax.plot(df['foF2'], color = 'k', lw = 2) 
    
     
     ax1 = ax.twinx()
     
-    ax1.plot(df['hmF2'], color = 'b', lw = 2)
+    ax1.plot(df['hF'], color = 'b', lw = 2)
     
     delta = dt.timedelta(hours = 24)
 
@@ -48,8 +48,8 @@ def plot_days_range(ax, site):
     
     ax1.set(
         # ylabel = 'hmF2 (km)',     
-        ylim = [180, 600],
-        yticks = np.arange(200, 700, 100)
+        ylim = [0, 600],
+        yticks = np.arange(0, 700, 200)
         
         )
     
@@ -67,8 +67,7 @@ def plot_days_range(ax, site):
         
     return None 
 
-sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CAJ2M', 'CGK21']
-sites = ['SAA0K', 'CAJ2M']
+# sites = ['SAA0K', 'CAJ2M']
 
 
 def plot_foF2_hmF2(sites):
@@ -79,7 +78,7 @@ def plot_foF2_hmF2(sites):
     fig, ax = plt.subplots(
         dpi = 300, 
         nrows = nrows,
-        figsize = (14, 8), 
+        figsize = (14, nrows * 3), 
         sharex = True, 
         sharey = True
         )
@@ -110,7 +109,7 @@ def plot_foF2_hmF2(sites):
     
     fig.text(
         0.95, 0.42, 
-        'hmF2 (km)', 
+        'h`F (km)', 
         fontsize = 35, 
         rotation = 'vertical', 
         color = 'b'
@@ -123,3 +122,8 @@ def plot_foF2_hmF2(sites):
         pad = 85, 
         format_date = '%d/%m/%y'
         )
+    
+    return fig 
+    
+sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CGK21']
+plot_foF2_hmF2(sites)

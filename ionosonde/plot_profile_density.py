@@ -66,11 +66,13 @@ for i, site in enumerate(sites):
         ds.index, 
         ds.values, 30, cmap = 'jet'
         )
-    ax[i].text(0.05, 0.8, site, 
+    ax[i].text(
+        0.05, 0.8, site, 
                color = 'white',
                transform = ax[i].transAxes)
     delta = dt.timedelta(hours = 12)
-    ax[i].set(xlim = [df.index[0] + delta, 
+    ax[i].set(
+        xlim = [df.index[0] + delta, 
                       df.index[-1]])
     
 b.format_time_axes(

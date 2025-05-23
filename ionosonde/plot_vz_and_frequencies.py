@@ -187,10 +187,10 @@ def main():
     
     FigureName = dn.strftime(f'{site}_%Y%m%d')
        
-    fig.savefig(
-            b.LATEX(FigureName, folder = 'posdoc'),
-            dpi = 400
-            )
+    # fig.savefig(
+    #         b.LATEX(FigureName, folder = 'posdoc'),
+    #         dpi = 400
+    #         )
     
     
-main()
+# main()

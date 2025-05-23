@@ -45,7 +45,7 @@ def plot_ionograms_on_multisites(times, sites):
     nrows = len(sites)
     
     fig, ax = plt.subplots(
-        figsize = (20, 16), 
+        figsize = (20, 12), 
         ncols = ncols, 
         nrows = nrows,
         dpi = 300
@@ -88,7 +88,7 @@ def plot_ionograms_on_multisites(times, sites):
     return fig 
 
 def main():
-    sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CAJ2M', 'CGK21']
+    sites = [ 'SAA0K', 'BVJ03', 'FZA0M'] #'CAJ2M', 'CGK21'
     
     start = dt.datetime(2015, 12, 20, 20)
     
@@ -101,7 +101,9 @@ def main():
     
     FigureName = 'multionogram_sequen'
     
-    fig.savefig(
-          path_to_save + FigureName,
-          dpi = 400
-          )
+    # fig.savefig(
+    #       path_to_save + FigureName,
+    #       dpi = 400
+    #       )
+    
+main()

@@ -34,7 +34,8 @@ def plot_terminator(ax, dn, site):
            )
         
     ax.axvline(
-        dusk, lw = 2, linestyle = '--')
+        dusk, 
+        lw = 2, linestyle = '--')
     
     start = dt.datetime(2015, 12, 21, 6, 30)
     ax.axvspan(
@@ -203,3 +204,5 @@ def main():
     #       )
     
     # plt.show()
+
+# main()

@@ -44,7 +44,7 @@ def plot_hmF2(ax, site):
         color = 'gray'
         ) 
     ax1.set(
-        ylim = [-1, 60], 
+        ylim = [-5, 60], 
         yticks = np.arange(0, 80, 20)
         )
     return 
@@ -164,9 +164,9 @@ def main():
     
     FigureName = 'fixed_heights_sites'
     
-    # fig.savefig(
-    #       path_to_save + FigureName,
-    #       dpi = 400
-    #       )
+    fig.savefig(
+          path_to_save + FigureName,
+          dpi = 400
+          )
 
 main()

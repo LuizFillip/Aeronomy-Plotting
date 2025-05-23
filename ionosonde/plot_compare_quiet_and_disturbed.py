@@ -15,8 +15,8 @@ def plot_compare_quiet_disturbed(
     
     if translate:
         ylabel = 'Vertical drift (m/s)'
-        qt_label = 'Quiet time'
-        db_label = 'Disturbance time'
+        qt_label = 'Quiet-time'
+        db_label = 'Storm-time'
     else:
         ylabel = 'Velocidade de deriva vertical (m/s)'
         qt_label = 'Período calmo'
@@ -27,7 +27,7 @@ def plot_compare_quiet_disturbed(
     fig, ax = plt.subplots(
         dpi = 300, 
         nrows = len(sites),
-        figsize = (16, 16), 
+        figsize = (16, 18), 
         sharex = True, 
         sharey = True
         )
@@ -35,10 +35,12 @@ def plot_compare_quiet_disturbed(
     plt.subplots_adjust(hspace = 0.1)
     
     start = dt.datetime(2015, 12, 19)
-    cols = list(range(3, 10, 1))
-    
+    # cols = list(range(3, 10, 1))
+    cols = [5, 6]
  
     for i, site in enumerate(sites):
+        
+        
         
         ref_day = dt.datetime(2015, 12, 20, 21, 0)
         
@@ -51,7 +53,19 @@ def plot_compare_quiet_disturbed(
              color = 'gray'
              )
         
-        qt = dg.repeat_quiet_days(site,  start)
+        if site == 'BVJ03':
+            window = 4
+        else:
+            window = 3
+            
+        qt = dg.repeat_quiet_days(
+            site, 
+            start, 
+            parameter = 'drift', 
+            cols = cols, 
+            window = window + 1
+            )
+        
         
         ax[i].plot(qt, label = qt_label)
     
@@ -59,18 +73,19 @@ def plot_compare_quiet_disturbed(
                 site, 
                 start,
                 cols = cols, 
-                smooth = 3
+                window = window
                 )
         
-        df = df.interpolate()
         
-        df[site] = b.smooth2(df[site], 3)
+        if site in ['BVJ03', 'CAJ2M', 'CGK21']:
+            
+            df[site] = b.smooth2(df[site], 2)
         
         ax[i].plot(df, label = db_label, lw = 2)
     
         ax[i].set(
-            ylim = [-20, 45], 
-            yticks = np.arange(-20, 50, 20),
+            ylim = [-60, 60], 
+            yticks = np.arange(-50, 60, 20),
             xlim = [df.index[0], df.index[-1]]
             )
         
@@ -79,7 +94,7 @@ def plot_compare_quiet_disturbed(
         name = dg.code_name(site)
         
         ax[i].text(
-            0.02, 0.8, 
+            0.02, 0.85, 
             f'({s}) {name}', 
             transform = ax[i].transAxes
             )
@@ -87,9 +102,10 @@ def plot_compare_quiet_disturbed(
         pl.plot_terminators(ax[i], df, site)
         
         ax[i].axhline(0, linestyle = ':')
-              
+        ax[i].axhline(40, linestyle = ':')
+        
     fig.text(
-        0.03, 0.42, 
+        0.03, 0.4, 
         ylabel, 
         fontsize = 35, 
         rotation = 'vertical'
@@ -97,7 +113,7 @@ def plot_compare_quiet_disturbed(
     
 
     ax[0].legend(
-        bbox_to_anchor = (0.5, 1.32),
+        bbox_to_anchor = (0.5, 1.4),
         loc = 'upper center', 
         ncols = 2
         )
@@ -114,14 +130,15 @@ def plot_compare_quiet_disturbed(
 
 
 def main():
-    sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CAJ2M', 'CGK21']
-    fig = plot_compare_quiet_disturbed(sites, translate= True)
+    sites = ['SAA0K',  'FZA0M', 'BVJ03', 'CAJ2M', 'CGK21']
+    fig = plot_compare_quiet_disturbed(sites, translate = True)
     
     FigureName = 'quiet_disturbance_time'
     
     path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
     
     
-    # fig.savefig(path_to_save + FigureName, dpi = 400)
+    fig.savefig(path_to_save + FigureName, dpi = 400)
     
-main()
+# main()
+
