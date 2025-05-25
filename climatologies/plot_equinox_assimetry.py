@@ -8,9 +8,6 @@ import numpy as np
 
 PATH_GAMMA = 'database/gamma/p1_saa.txt'
 
-b.config_labels(blue = False, fontsize = 35)
-
-
 names = ['march',  'september', 'december']
 
 def mean_compose(ds, direction = 'zonal'):

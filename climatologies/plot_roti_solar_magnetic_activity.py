@@ -1,12 +1,9 @@
 import matplotlib.pyplot as plt 
 import base as b 
-import plotting as pl 
 import core as c 
 
 df = b.load('all_maximus2')
 df['mean'] = df.mean(axis = 1)
-
-#%%%
 
 PATH_INDEX =  'database/indices/omni_pro2.txt'
 import numpy as np 

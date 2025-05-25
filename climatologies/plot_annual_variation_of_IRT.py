@@ -4,8 +4,6 @@ import datetime as dt
 import numpy as np
 from matplotlib.ticker import AutoMinorLocator 
 
-b.config_labels(fontsize = 30)
-
 lbs = b.labels
 
 args_scatter = dict(s = 30, alpha = 0.4, color = 'gray')
