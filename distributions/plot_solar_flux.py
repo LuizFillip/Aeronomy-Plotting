@@ -164,14 +164,3 @@ def main():
 
     plt.show()
     
-main()
-
-# df = c.load_results('saa', eyear = 2022)
-
-# df = df.interpolate()
-
-# level_threshold = c.limits_on_parts(df['f107a'], parts = 2 )
-
-# level_threshold 
-
-# df['gamma'].min()
