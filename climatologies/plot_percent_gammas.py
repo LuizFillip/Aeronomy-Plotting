@@ -7,8 +7,6 @@ import pandas as pd
 import numpy as np 
 import GEO as gg 
 
-b.config_labels()
-
 args_scatter = dict(s = 30, alpha = 0.4)
 
 
