@@ -1,1 +1,2 @@
 from .plot_mag_meridians_with_vectors import plot_mag_meridians
+from .plot_mag_meridians import plot_mag_meridians, plot_meridian

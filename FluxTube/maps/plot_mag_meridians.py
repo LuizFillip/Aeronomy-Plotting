@@ -7,8 +7,6 @@ import numpy as np
 import pandas as pd 
 import datetime as dt
 
-b.config_labels(fontsize = 30)
-
 
 def limit_hemisphere(
         x, 

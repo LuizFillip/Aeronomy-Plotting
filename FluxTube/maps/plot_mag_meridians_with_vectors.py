@@ -5,9 +5,6 @@ import base as b
 from FluxTube import Apex
 import numpy as np
 
-
-b.config_labels(fontsize = 35)
-
 def total_B(ax, xy, xytext):
 
     ax.annotate(

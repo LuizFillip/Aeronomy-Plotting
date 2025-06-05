@@ -80,5 +80,5 @@ def plot_meridian_and_apex(year = 2013):
 
 fig = plot_meridian_and_apex()
 
-fig.savefig(b.LATEX('apex_meridian', folder = 'modeling'), dpi = 400)
-plt.show()
+# fig.savefig(b.LATEX('apex_meridian', folder = 'modeling'), dpi = 400)
+# plt.show()
