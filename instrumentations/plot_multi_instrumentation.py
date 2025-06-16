@@ -1,199 +1,157 @@
+import os
+import datetime as dt
+
 import matplotlib.pyplot as plt
-from skimage import io
 from matplotlib.gridspec import GridSpec
-import digisonde as dg 
-import os 
+from skimage import io
+
+import digisonde as dg
 import imager as im
-import base as b 
-import datetime as dt 
-import PlasmaBubbles as pb 
-import plotting as pl  
+import base as b
+import PlasmaBubbles as pb
+import plotting as pl
+
+# Configurações globais de 
+
+# def get_datetime_from_file(filename: str) -> dt.datetime:
+#     """Extrai datetime de nome de arquivo de imagem All-Sky."""
+#     date = im.fn2dn(filename).date()
+#     time = dt.time(20, 0)
+#     return dt.datetime.combine(date, time)
 
 
-b.config_labels(fontsize = 35)
+def folder_date(date: dt.datetime) -> str:
+    return date.strftime('%Y%m%d')
 
-def get_datetime_from_file(fn):
-    date_obj = im.fn2datetime(fn).date() 
-    time_obj = dt.time(20, 0)
-    
-    return dt.datetime.combine(date_obj, time_obj)
-    
 
-def folder_date(dn):
-    return dn.strftime('%Y%m%d')
+def plot_imager(ax, path_sky: str, filename: str, index: int) -> dt.datetime:
+    """Plota imagem All-Sky processada em um eixo."""
+    
+    image = im.DisplayASI(path_sky)
+    
+    image.display_original(ax)
 
-def plot_imager(ax_img, PATH_SKY, file, index):
-    
-    
-    all_sky = im.processing_img(
-        os.path.join(PATH_SKY, file)
-        )
-    
-    new_img = all_sky.bright()
-    
-    all_sky.display(ax_img, new_img)
-    dn = im.fn2datetime(file)
-    title = dn.strftime(f'({index}) %Hh%M')
-    ax_img.set(title = title)
-    
-    return dn 
+    dn = image.dn
+    ax.set(title = dn.strftime(f'({index}) %Hh%M'))
+    return dn
 
-def plot_ionogram(ax2, PATH_IONO, target, col, site):
-    
-    
-    file = target.strftime(f'{site}_%Y%m%d(%j)%H%M%S.PNG')
-            
-    img = io.imread(os.path.join(PATH_IONO, file))
-            
-    y, h = 300, 560
-    x, w = 188, 559
-    
-    img = img[y: y + h, x: x + w]
-   
-    ax2.imshow(img)
-    
-    ax2.tick_params(
-        labelbottom = False, 
-        labelleft = False
-        )
-    
-    title = target.strftime(f'({col + 1}) %Hh%M')
-    
-    ax2.set(title = title)
-    
+
+def plot_ionogram(
+        ax, 
+        path_iono: str, 
+        target: dt.datetime, 
+        col: int, 
+        site: str
+        ) -> None:
+    """Plota ionograma recortado."""
+    filename = target.strftime(f'{site}_%Y%m%d(%j)%H%M%S.PNG')
+    filepath = os.path.join(path_iono, filename)
+
+    img = io.imread(filepath)
+    cropped = img[300:860, 188:747]
+    ax.imshow(cropped)
+
+    ax.tick_params(labelbottom=False, labelleft=False)
+    ax.set(title=target.strftime(f'({col + 1}) %Hh%M'))
+
     if col == 1:
-        ax2.text(0.6, -0.2, 'Frequency (MHz)',
-        transform = ax2.transAxes
-        )
-    
+        ax.text(0.6, -0.2, 'Frequency (MHz)', transform=ax.transAxes)
     if col == 0:
-        ax2.set(ylabel = 'Virtual Height (km)')
+        ax.set(ylabel='Virtual Height (km)')
         
     return None 
 
-
     
-def plot_roti_curves(ax, dn, root = 'E:\\'):
-    
-    ds = pb.concat_files(dn, root = root) #os.getcwd()
-
+def plot_roti_curves(
+        ax, 
+        dn: dt.datetime, 
+        root: str = 'E:\\'
+        ) -> None:
+    """Plota as curvas de ROTI para o dia selecionado."""
+    ds = pb.concat_files(dn, root=root)
     ds = b.sel_times(ds, dn)
-    
-    # ds = ds.loc[(ds['lon'] > -50) & 
-    #             (ds['lon'] < -40) &
-    #             (ds['lat'] > -5) & 
-    #             (ds['lat'] < -1 )]
-    
-    # ds = ds[~ds['prn'].str.contains('R')]
-        
+
     ax.plot(
         ds['roti'], 
-        marker = 'o', 
-        markersize = 1,
-        linestyle = 'none', 
-        color = 'gray', 
-        alpha = 0.3)
-    
+        marker='o', 
+        markersize=1, 
+        linestyle='none',
+        color='gray', 
+        alpha=0.3
+        )
+
     times = pb.time_range(ds)
-
     df1 = pb.maximum_in_time_window(ds, 'max', times)
-    
-    ax.plot(
-        df1, 
-        color = 'k',
-        marker = 'o', 
-        markersize = 5, 
-        linestyle = 'none'
-        )
 
-    
+    ax.plot(df1, color='k', marker='o', markersize=5, linestyle='none')
+
     ax.set(
-        ylim = [0, 5], 
-        yticks = range(0, 6, 1),
-        ylabel = 'ROTI (TECU/min)', 
-        xlim = [df1.index[0], df1.index[-1]]
-        )
- 
-    pl.legend_max_points_roti(ax, fontsize = 25)
-    
-    b.format_time_axes(ax, pad = 80)
-    
-    return None
-    
-    
-def plot_shades(ax1, n, index, y = 4.5):
-    
-    delta = dt.timedelta(minutes = 10)
-    
-    ax1.text(
-        n, y, index, 
-        transform = ax1.transData
-        )
-    
-    ax1.axvspan(
-        n, n + delta,
-        alpha = 0.5, 
-        color = 'gray',
-        edgecolor = 'k', 
-        lw = 2
+        ylim=[0, 5],
+        yticks=range(0, 6),
+        ylabel='ROTI (TECU/min)',
+        xlim=[df1.index[0], df1.index[-1]]
     )
+
+    pl.legend_max_points_roti(ax, fontsize=25)
+    b.format_time_axes(ax, pad=80)
+    
     return None 
+
+
+def plot_shades(
+        ax, 
+        time: dt.datetime, index: int, y: float = 4.5) -> None:
+    """Destaca a região de tempo com uma barra sombreada e rótulo."""
+    delta = dt.timedelta(minutes=10)
+
+    ax.text(time, y, str(index), transform=ax.transData)
+    ax.axvspan(time, time + delta, alpha=0.5, color='gray',
+               edgecolor='k', lw=2)
     
-def closest_iono(PATH_IONO, target):
+    return None 
+
+def closest_iono(path_iono: str, target: dt.datetime) -> dt.datetime:
+    """Retorna o ionograma mais próximo ao tempo alvo."""
     iono_times = [
-        dg.ionosonde_fname(f) 
-        for f in os.listdir(PATH_IONO) if 'PNG' in f ]
-    
-    dn = b.closest_datetime(iono_times, target)
-    
-    return dn
-  
-    
+        dg.ionosonde_fname(f)
+        for f in os.listdir(path_iono) if 'PNG' in f
+    ]
+    return b.closest_datetime(iono_times, target)
+
+
 def plot_multi_instrumentation(
-        images_files, 
-        site =  'SAA0K', 
-        letter = 'a'
-        ):
+    image_files: list[str],
+    site: str = 'SAA0K',
+    letter: str = 'a'
+) -> plt.Figure:
+    """Gera visualização combinada de imagens All-Sky, ionogramas e ROTI."""
     
-    dn = get_datetime_from_file(images_files[0])
+    # dn = get_datetime_from_file(image_files[0])
+    dn = im.fn2dn(with_epbs[0])
+    fig = plt.figure(dpi=300, figsize=(12, 16), layout="constrained")
+    fig.text(0.07, 0.9, f'({letter})', fontsize=45)
 
-    fig = plt.figure(
-        dpi = 300,
-        figsize = (12, 16),
-        layout = "constrained"
-        )
-
-    
-    fig.text( 0.07, 0.9, f'({letter})', fontsize = 45)
-    
     folder_img = dn.strftime('CA_%Y_%m%d')
     folder_ion = dn.strftime('%Y/%Y%m%d')
-    PATH_SKY = f'database/images/{folder_img}/'
-    PATH_IONO = f'database/ionogram/{folder_ion}{site[0]}/'
+    path_sky = f'database/images/{folder_img}/'
+    path_iono = f'database/ionogram/{folder_ion}{site[0]}/'
 
+    gs = GridSpec(3, len(image_files))
+    gs.update(hspace=0.1, wspace=0)
+    ax_roti = plt.subplot(gs[2, :])
 
-    gs2 = GridSpec(3, len(images_files))
-    
-    gs2.update(hspace = 0.1, wspace = 0)
-        
-    ax3 = plt.subplot(gs2[-1, :])
+    plot_roti_curves(ax_roti, dn)
 
-    plot_roti_curves(ax3, dn)
-    
-    for col, fn_sky in enumerate(images_files):
-                
-        ax1 = plt.subplot(gs2[0, col])
-        
-        time_imager = plot_imager(ax1, PATH_SKY, fn_sky, col + 1)
-        
-        ax2 = plt.subplot(gs2[1, col])
-        
-        target = closest_iono(PATH_IONO, time_imager)
-        
-        plot_ionogram(ax2, PATH_IONO, target, col, site)
-        
-        plot_shades(ax3, target, col + 1)
-     
+    for col, fn_sky in enumerate(image_files):
+        ax_sky = plt.subplot(gs[0, col])
+        time_sky = plot_imager(ax_sky, path_sky, fn_sky, col + 1)
+
+        ax_iono = plt.subplot(gs[1, col])
+        time_iono = closest_iono(path_iono, time_sky)
+        plot_ionogram(ax_iono, path_iono, time_iono, col, site)
+
+        plot_shades(ax_roti, time_iono, col + 1)
+
     return fig
 
 non_epbs = [ 
@@ -234,11 +192,13 @@ def main():
     
     FigureName = 'validation_roti_paper'
     
-    fig.savefig(
-        b.LATEX(FigureName, 
-        folder = 'products'),
-        dpi = 400)
+    # fig.savefig(
+    #     b.LATEX(FigureName, 
+    #     folder = 'products'),
+    #     dpi = 400)
     
 # main()
 
 figure_1  = plot_multi_instrumentation(with_epbs) 
+
+
