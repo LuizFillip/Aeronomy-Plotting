@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 import datetime as dt
 
-b.config_labels(fontsize = 22)
-
 PATH_INDEX =  'database/indices/omni_pro2.txt'
 
     

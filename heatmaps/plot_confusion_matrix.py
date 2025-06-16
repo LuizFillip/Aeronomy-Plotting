@@ -1,10 +1,8 @@
-
 import matplotlib.pyplot as plt
 import numpy as np
 import core as c 
 import base as b
 
-b.config_labels()
 
 
 def plot_matrix(ax, conf_matrix):

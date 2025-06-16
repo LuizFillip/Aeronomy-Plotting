@@ -2,12 +2,7 @@ import PlasmaBubbles as pb
 import base as b 
 import numpy as np
 import matplotlib.pyplot as plt 
-from matplotlib.ticker import AutoMinorLocator
-import datetime as dt
 import core as c
-import plotting as pl  
-
-b.config_labels(fontsize = 30)
 
 def divide_by_geomgnetic_levels(df):
     
