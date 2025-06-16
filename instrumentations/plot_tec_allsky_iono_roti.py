@@ -4,29 +4,30 @@ import digisonde as dg
 import plotting as pl
 import os 
 import imager as im
-import base as b 
 import datetime as dt 
 import numpy as np
 import cartopy.crs as ccrs
 
-b.config_labels(fontsize = 25)
 
 
-
-
-   
-
-def ionogram_path(target, dn, site = 'FZA0M'):
+def iono_path_from_target(target, site, root = 'E:\\'):
+    '''
+    Localize o caminho de um arquivo de um ionograma
+    (formato PNG) para um tempo de entrada (target)
+    de um tempo mais próximo (e.g, imagem do imageador)
+    '''
+    folder_fmt = f'%Y/%Y%m%d{site[0]}'
     
-    PATH_IONO = dg.path_ionogram(dn, site = site)
+    folder_ion = target.strftime(folder_fmt)
+    
+    PATH_IONO = os.path.join(root, 'ionogram', folder_ion)
     
     dn = dg.closest_iono(target, PATH_IONO)
     
-    file = dn.strftime(f'{site}_%Y%m%d(%j)%H%M%S.PNG')
+    fmt = f'{site}_%Y%m%d(%j)%H%M%S.PNG'
     
-    return dn, os.path.join(PATH_IONO, file)
-    
-    
+    return dn, os.path.join(PATH_IONO, dn.strftime(fmt))
+
     
 def plot_shades(ax1, n, index, y = 4):
     
@@ -48,10 +49,60 @@ def plot_shades(ax1, n, index, y = 4):
     
     return None 
   
-def title(ax, dn, index):
+def plot_imager(path_sky: str, ax, index) -> dt.datetime:
+    """Plota imagem All-Sky processada em um eixo."""
+    
+    image = im.DisplayASI(path_sky)
+    
+    image.display_original(ax)
+
+    dn = image.dn
     title = dn.strftime(f'({index}) %Hh%M')
     ax.set(title = title)
- 
+    return dn
+
+def plot_tecmaps_rows(gs2, target, index, col, vmax = 30):
+    
+    ax_tec = plt.subplot(
+        gs2[2, col], projection = ccrs.PlateCarree())
+    
+    
+    if index == 4:
+        colorbar = True
+    else:
+        colorbar = False
+        
+    pl.plot_tec_map(
+        target, ax_tec, 
+        vmax = vmax, 
+        colorbar = colorbar, 
+        root = 'E:\\'
+        )
+    
+    if index == 2:
+        ax_tec.text(
+            0.6, -0.2, 'Longitude (°)',
+            transform = ax_tec.transAxes
+        )
+    
+
+    if index != 1:
+        ax_tec.set(
+            xticks = np.arange(-90, -20, 20), 
+            yticks = np.arange(-40, 40, 20), 
+            xticklabels = [], 
+            yticklabels = [], 
+            xlabel = '', 
+            ylabel = '', 
+            title = ''
+            )
+    else:
+        ax_tec.set(
+            xticks = np.arange(-90, -20, 20), 
+            yticks = np.arange(-40, 40, 20), 
+            xlabel = '', 
+            )
+
 
 def TEC_6300_IONOGRAM_ROTI(
         files, dn, 
@@ -65,11 +116,11 @@ def TEC_6300_IONOGRAM_ROTI(
     
     fig = plt.figure(
         dpi = 300,
-        figsize = (11,  16),
+        figsize = (12,  12),
         layout = 'constrained'
         )
     
-    gs2 = GridSpec(len(files), len(files))
+    gs2 = GridSpec(3, len(files))
     
     gs2.update(hspace = 0.4, wspace = 0)
     
@@ -77,103 +128,64 @@ def TEC_6300_IONOGRAM_ROTI(
     
     vmax = pl.plot_roti_timeseries(ax_rot, dn)
     vmax = 5
-    for col, file in enumerate(files):
+    for col, fn in enumerate(files):
         index = col + 1
         
         ax_img = plt.subplot(gs2[0, col])
         
-        target = im.plot_images(
-            os.path.join(PATH_SKY, file),  
+        target = plot_imager(
+            os.path.join(PATH_SKY, fn),  
             ax_img, 
-            infos = False,
-            time_infos = False, 
-            fontsize = 20,
-            limits = [0.22, 0.95]
+            index
             )
         
-        title(ax_img, target, index)
+        ax_iono = plt.subplot(gs2[1, col])
         
-        ax_ion = plt.subplot(gs2[1, col])
+        time_image = im.fn2dn(fn)
         
-        dn1, path_ion = ionogram_path(
-            target, dn, site = site)
+        dn1, path_iono = iono_path_from_target(
+            time_image, site)
         
         pl.plot_single_ionogram(
-            path_ion, 
-            ax = ax_ion, 
+            path_iono, 
+            ax = ax_iono, 
             aspect = 'auto',
             label = True,
             ylabel_position = 'left',
             title = False
             )
         
-        title(ax_ion, dn1, index)
-        # title(ax_ion, dn1, index)
         
-        ax_tec = plt.subplot(
-            gs2[2, col], projection = ccrs.PlateCarree())
+        title = dn1.strftime(f'({index}) %Hh%M')
+        ax_iono.set(title = title)
         
         
         
         if index == 2:
             
-            ax_ion.text(
+            ax_iono.text(
                 0.6, -0.15, 'Frequência (MHz)',
-                transform = ax_ion.transAxes
-            )
-            ax_tec.text(
-                0.6, -0.2, 'Longitude (°)',
-                transform = ax_tec.transAxes
-            )
-        
-        
-        if index == 4:
-            colorbar = True
-        else:
-            colorbar = False
-            
-        pl.plot_tec_map(
-            target, ax_tec, 
-            vmax = tec_max, 
-            colorbar = colorbar, 
-            root = root
+                transform = ax_iono.transAxes
             )
             
         if index == 1:
-            ax_ion.set(ylabel = 'Altura virtual (km)')
+            ax_iono.set(ylabel = 'Altura virtual (km)')
             
         if index != 1:
-            ax_tec.set(
-                xticks = np.arange(-90, -20, 20), 
-                yticks = np.arange(-40, 40, 20), 
-                xticklabels = [], 
-                yticklabels = [], 
-                xlabel = '', 
-                ylabel = '', 
-                title = ''
-                )
             
-            ax_ion.set(
+            ax_iono.set(
                 xticklabels = [], 
                 yticklabels = [], 
                 xlabel = '', 
                 ylabel = '', 
                 )
-            
         else:
-            
-            ax_ion.set(
+             
+            ax_iono.set(
                 xlabel = '', 
                 )
+                
             
-            ax_tec.set(
-                xticks = np.arange(-90, -20, 20), 
-                yticks = np.arange(-40, 40, 20), 
-                xlabel = '', 
-                )
-            
-        title(ax_tec, dn1, index)
-        
         plot_shades(ax_rot, target, index, y = vmax + 0.3)
     
     ax_img.text(
@@ -185,126 +197,27 @@ def TEC_6300_IONOGRAM_ROTI(
     return fig 
 
 
-def solar_maximum(site =  'SAA0K'):
-    dn = dt.datetime(2013, 12, 24, 20)
-    
-    files = [
-        # 'O6_CA_20131224_222810.tif', 
-        'O6_CA_20131224_231957.tif',
-        'O6_CA_20131225_011602.tif',
-        'O6_CA_20131225_021645.tif',
-        'O6_CA_20131225_024146.tif'
-        ]
-    
-    
-    
-    figure_2 = TEC_6300_IONOGRAM_ROTI(
-        files, dn, site, tec_max = 60)
-    
-    dn = dt.datetime(2013, 6, 10, 20)
-    
-    files = [ 
-            
-        'O6_CA_20130610_220827.tif',
-        'O6_CA_20130610_225828.tif', 
-        'O6_CA_20130611_001329.tif', 
-        'O6_CA_20130611_023100.tif',
-        ]
-    
-    figure_1 = TEC_6300_IONOGRAM_ROTI(
-        files, dn, site, tec_max = 60, letter = '(b)')
-    
-    fig = b.join_images(figure_2, figure_1)
-
-    FigureName = dn.strftime('validation')
-    
-    fig.savefig(
-        b.LATEX(FigureName, folder = 'products'),
-        dpi = 400
-        )
 
 
 
-def solar_minimum():
-    
-    site =  'SAA0K'
-    
-    dn = dt.datetime(2019, 12, 28, 21)
-    
-    files = [
-        'O6_CA_20191228_230604.tif',
-        'O6_CA_20191229_001044.tif',
-        'O6_CA_20191229_013322.tif', 
-        'O6_CA_20191229_023803.tif'
-        ]
-    
-    
-    figure_1 = TEC_6300_IONOGRAM_ROTI(
-        files, dn, site, tec_max = 10,
-        letter = '(a)')
-    
-    dn = dt.datetime(2019, 6, 24, 21)
-    
-    files = [
-        'O6_CA_20190624_220934.tif',
-        'O6_CA_20190624_231934.tif', 
-        'O6_CA_20190625_003457.tif', 
-        'O6_CA_20190625_010152.tif'
-        ]
-    
-    
-    
-    figure_2  = TEC_6300_IONOGRAM_ROTI(
-        files, dn, site, tec_max = 10,
-        letter = '(b)')
-    
-    
-    fig = b.join_images(figure_1, figure_2)
-    
-    FigureName = dn.strftime('validation_solar_min')
-    
-    fig.savefig(
-        b.LATEX(FigureName, folder = 'products'),
-        dpi = 400
-        )
-    
-    return None
 
-# solar_maximum(site =  'SAA0K')
+# bubble_valid_2()
 
+dn = dt.datetime(2016, 10, 3, 20)
 
-# dn = dt.datetime(2019, 5, 2, 20)
+site = 'FZA0M'
+site = 'SAA0K'
 
-# files = [
-#     'O6_CA_20190502_222618.tif',
-#     'O6_CA_20190503_010603.tif',
-#     'O6_CA_20190503_014157.tif',
-#     'O6_CA_20190503_023548.tif'
-#     ]
-
-
-def bubble_valid_2():
+files = [
+    'O6_CA_20161003_232538.tif', 
+    'O6_CA_20161004_022602.tif',
+    'O6_CA_20161004_031109.tif',
+    'O6_CA_20161004_042903.tif'
     
+    ]
+fig = TEC_6300_IONOGRAM_ROTI(
+    files, dn, site, tec_max = 30,
+    letter = '')
 
-    dn = dt.datetime(2016, 10, 3, 20)
-    
-    site = 'FZA0M'
-    site = 'SAA0K'
-    
-    files = [
-        'O6_CA_20161003_232538.tif', 
-        'O6_CA_20161004_022602.tif',
-        'O6_CA_20161004_031109.tif',
-        'O6_CA_20161004_042903.tif'
-        
-        ]
-    fig = TEC_6300_IONOGRAM_ROTI(
-        files, dn, site, tec_max = 30,
-        letter = '')
-    
-    FigureName = dn.strftime('%Y%m%d_validation')
-     
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'products'),
-          dpi = 400
-          )
+# FigureName = dn.strftime('%Y%m%d_validation')
+
