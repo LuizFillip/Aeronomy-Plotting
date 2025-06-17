@@ -3,10 +3,8 @@ from tqdm import tqdm
 import plotting as pl 
 import datetime as dt
 import imager as im 
-import os 
 import digisonde as dg
 import GEO as gg 
-import matplotlib.pyplot as plt 
 
 def plot_regions(ax_tec, site):
      
@@ -32,6 +30,7 @@ def plot_regions(ax_tec, site):
              edgecolor = "w"
              )
      
+     return None 
      
 def save_image(fig, target, dn):
     folder = dn.strftime('%Y%m%d')
@@ -47,31 +46,40 @@ def title(dn, kind):
     dn -= delta
     return dn.strftime(f'{kind} - %Y/%m/%d %Hh%M (LT)')
 
+def plot_imager(path_sky: str, ax) -> dt.datetime:
+    """Plota imagem All-Sky processada em um eixo."""
+    
+    image = im.DisplayASI(path_sky)
+    
+    image.display_original(ax)
+
+    return  image.dn
 
 def plot_ion_tec_img(
-        file, 
         dn, 
+        site,
+        vtec = 30,
         kind = 'With EPB', 
         title_dn = None, 
         root = 'E:\\'
         ):
         
-    fig, ax_img, ax_ion, ax_tec   = b.layout3(
+    fig, ax_img, ax_ion, ax_tec  = b.layout3(
         figsize = (19, 8), 
         wspace = 0.5, 
         hspace = 0.2
         )
+  
+    path_of_image = im.path_from_closest_dn(
+            dn, 
+            site = 'CA', 
+            layer = 'O6', 
+            file_like = True
+            )
     
-   
-    
-    path_of_image = os.path.join(
-        im.path_all_sky(dn, root = root), file)
-    
-    target = im.plot_images(
+    target = plot_imager(
         path_of_image, 
-        ax_ion, 
-        time_infos = False,
-        fontsize = 15
+        ax_ion
         )
     
 
@@ -80,14 +88,15 @@ def plot_ion_tec_img(
     pl.plot_tec_map(
         target, 
         ax = ax_tec, 
-        vmax = 60, 
+        vmax = vtec, 
         colorbar = True, 
-        boxes = True,
-        root = root
+        boxes = False,
+        root = root,
+        vertical_cbar = False
         )
     
-    site, path_of_ionogram = dg.path_ionogram(
-        dn, target, root = root)
+    dn1, path_of_ionogram = dg.iono_path_from_target(
+        target, site)
     
     plot_regions(ax_tec, site)
     
@@ -104,76 +113,47 @@ def plot_ion_tec_img(
         
         time_title = title(target, kind)
         
-        fig.suptitle(time_title, y = 0.90, fontsize = 40)
+        fig.suptitle(
+            time_title, 
+            y = 0.90, 
+            fontsize = 40)
     
     return fig 
 
 
+import matplotlib.pyplot as plt 
 
+start = dt.datetime(2017, 9, 17, 21)
 
-def plot_with_and_without_epb(
-        with_epb, 
-        without_epb, 
-        delta
-        ):
+site = 'FZA0M'
+site = 'SAA0K'
+# fig = plot_ion_tec_img(
+#         dn, 
+#         site,
+#         kind = '', 
+#         title_dn = dn, 
+#         root = 'E:\\'
+#         )
+
+for minute in tqdm(range(2 * 60, 12 * 60, 2)):
     
-    file = im.get_closest(
-        with_epb + delta, 
-        file_like = True
-        )
-    figure_1 = plot_ion_tec_img(
-            file, 
-            with_epb, 
-            kind = 'With EPB', 
-            title_dn = True)
+    delta = dt.timedelta(minutes = minute)
     
+    dn = start + delta
     
-    file = im.get_closest(
-        without_epb + delta, 
-        file_like = True
-        )
-    figure_2 = plot_ion_tec_img(
-            file, 
-            without_epb, 
-            kind = 'Without EPB', 
-            title_dn = True)
-    
-    fig = b.join_images(figure_1, figure_2)
-    
-    dn = with_epb + delta
+    plt.ioff()
+
+    fig = plot_ion_tec_img(
+            dn, 
+            site,
+            kind = '', 
+            title_dn = dn, 
+            root = 'E:\\'
+            )
     
     fn = dn.strftime('%Y%m%d%H%M%S')
     fig.savefig('temp/' + fn)
-    return fig
-
-def run():
-    with_epb = dt.datetime(2014, 1, 2, 21)
-    without_epb = dt.datetime(2014, 6, 21, 21)
-
-    for minute in tqdm(range(2*60, 12 * 60, 2)):
-        
-        delta = dt.timedelta(minutes = minute)
-        
-        plt.ioff()
     
-        fig = plot_with_and_without_epb(
-                with_epb, 
-                without_epb, 
-                delta
-                )
-        
-        plt.clf()   
-        plt.close()   
-
-# run()
-
-# with_epb = dt.datetime(2014, 1, 2, 21)
-# without_epb = dt.datetime(2014, 6, 21, 21)
-
-# delta = dt.timedelta(hours = 3)
-# fig =  plot_with_and_without_epb(
-#         with_epb, 
-#         without_epb, 
-#         delta
-#         )
-
+    
+    plt.clf()   
+    plt.close()   
