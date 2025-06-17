@@ -10,23 +10,7 @@ import cartopy.crs as ccrs
 
 
 
-def iono_path_from_target(target, site, root = 'E:\\'):
-    '''
-    Localize o caminho de um arquivo de um ionograma
-    (formato PNG) para um tempo de entrada (target)
-    de um tempo mais próximo (e.g, imagem do imageador)
-    '''
-    folder_fmt = f'%Y/%Y%m%d{site[0]}'
-    
-    folder_ion = target.strftime(folder_fmt)
-    
-    PATH_IONO = os.path.join(root, 'ionogram', folder_ion)
-    
-    dn = dg.closest_iono(target, PATH_IONO)
-    
-    fmt = f'{site}_%Y%m%d(%j)%H%M%S.PNG'
-    
-    return dn, os.path.join(PATH_IONO, dn.strftime(fmt))
+
 
     
 def plot_shades(ax1, n, index, y = 4):
@@ -126,7 +110,8 @@ def TEC_6300_IONOGRAM_ROTI(
     
     ax_rot = plt.subplot(gs2[-1, :])
     
-    vmax = pl.plot_roti_timeseries(ax_rot, dn)
+    vmax = pl.plot_roti_timeseries(
+        ax_rot, dn, translate = False)
     vmax = 5
     for col, fn in enumerate(files):
         index = col + 1
@@ -143,7 +128,7 @@ def TEC_6300_IONOGRAM_ROTI(
         
         time_image = im.fn2dn(fn)
         
-        dn1, path_iono = iono_path_from_target(
+        dn1, path_iono = dg.iono_path_from_target(
             time_image, site)
         
         pl.plot_single_ionogram(
@@ -201,23 +186,22 @@ def TEC_6300_IONOGRAM_ROTI(
 
 
 
-# bubble_valid_2()
-
-dn = dt.datetime(2016, 10, 3, 20)
-
-site = 'FZA0M'
-site = 'SAA0K'
-
-files = [
-    'O6_CA_20161003_232538.tif', 
-    'O6_CA_20161004_022602.tif',
-    'O6_CA_20161004_031109.tif',
-    'O6_CA_20161004_042903.tif'
+def main():
+    dn = dt.datetime(2016, 10, 3, 20)
     
-    ]
-fig = TEC_6300_IONOGRAM_ROTI(
-    files, dn, site, tec_max = 30,
-    letter = '')
+    site = 'FZA0M'
+    site = 'SAA0K'
+    
+    files = [
+        'O6_CA_20161003_232538.tif', 
+        'O6_CA_20161004_022602.tif',
+        'O6_CA_20161004_031109.tif',
+        'O6_CA_20161004_042903.tif'
+        
+        ]
+    fig = TEC_6300_IONOGRAM_ROTI(
+        files, dn, site, tec_max = 30,
+        letter = '')
 
 # FigureName = dn.strftime('%Y%m%d_validation')
 
