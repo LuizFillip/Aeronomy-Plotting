@@ -138,15 +138,15 @@ def plot_equinox_difference(ax, ds):
 
 def plot_epbs_rate(ax, translate = True):
     
-    df = pb.sel_typing(
-         b.load('database/epbs/events_class2'), 
-         typing = 'sunset', 
-         indexes = True, 
-         year = 2022)
-    
-    df = df.loc[df['dst'] >= -30]
-    
-    df = df.rename(columns = {-50: 'epb'})
+    p = pb.BubblesPipe(
+        'events_5', 
+        drop_lim = 0.3, 
+        storm = 'quiet'
+        )
+
+    df = p.sel_type('sunset')
+
+    # df = df.rename(columns = {-50: 'epb'})
     
     ds = seasonal_by_year(df, parameter = 'epb')
 
@@ -284,11 +284,22 @@ def plot_seasonal_assimetry(translate = False):
 
   
    
-fig = plot_seasonal_assimetry(translate= True)
+# fig = plot_seasonal_assimetry(translate= True)
   
-FigureName = 'annual_quiet_time'
+# FigureName = 'annual_quiet_time'
       
 # fig.savefig(
 #       b.LATEX(FigureName, folder = 'bars'),
 #       dpi = 400
 #       )
+
+    
+p = pb.BubblesPipe(
+    'events_5', 
+    drop_lim = 0.3, 
+    storm = 'quiet'
+    )
+
+df = p.sel_type('sunset')
+
+df 
