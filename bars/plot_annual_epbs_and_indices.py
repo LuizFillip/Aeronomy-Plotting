@@ -23,23 +23,24 @@ def set_gamma():
 def plot_gamma(ax):
     df = set_gamma()
     
-    df_index = c.DisturbedLevels(df)
+    # df_index = c.DisturbedLevels(df)
     
-    datasets = df_index.Dst(level = -30, random_state = None)
-    clrs = ['gray', 'blue']
-    labs = ['Dst $\geq$ -30 nT', 'Dst $<$ -30 nT']
+    # datasets = df_index.Dst(level = -30, random_state = None)
+    # clrs = ['gray', 'blue']
+    # labs = ['Dst $\geq$ -30 nT', 'Dst $<$ -30 nT']
     
-    for index, ds in enumerate(datasets):
-        
-        ds.index = ds.index.map(gg.year_fraction)
-        
-        ax.scatter(
-            ds.index, 
-            ds['gamma'], 
-            color = clrs[index], 
-            label = labs[index]
-            )
+    # for index, ds in enumerate(datasets):
+    ds = df.copy()
     
+    ds.index = ds.index.map(gg.year_fraction)
+    
+    ax.scatter(
+        ds.index, 
+        ds['gamma'], 
+        color = 'gray', 
+        # label = labs[index]
+        )
+
     ylim = [0, 5]
     step = 1
     
@@ -64,25 +65,27 @@ def plot_EPBs(ax, df, col = -50, translate = True):
     colors = ['gray', 'blue']
     labs = ['Dst $\geq$ -30 nT', 'Dst $<$ -30 nT']
     
-    for index, df_level in enumerate(datasets):
+    # for index, df_level in enumerate(datasets):
         
-        ds = c.seasonal_yearly_occurrence(
-                df_level, 
-                col = col
-                )
-        ds.index = ds.index.map(gg.year_fraction)
-    
-        ax.bar(
-            ds.index + (index / 10), 
-            ds[col], 
-            width = 0.08,
-            edgecolor = 'black', 
-            color = colors[index], 
-            alpha = 0.7,
-            linewidth = 2,
-            label = labs[index]
+    ds = c.seasonal_yearly_occurrence(
+            df, 
+            col = col
             )
-     
+    
+ 
+    ds.index = ds.index.map(gg.year_fraction)
+
+    ax.bar(
+        ds.index , 
+        ds[col], 
+        width = 0.08,
+        edgecolor = 'black', 
+        color = colors[0], 
+        alpha = 0.7,
+        linewidth = 2,
+        # label = labs[index]
+        )
+ 
     if translate:
         ylabel = 'Número de casos'
     else:
@@ -189,10 +192,10 @@ def plot_annually_epbs_and_indices(
         ):
     
     fig, ax = plt.subplots(
-        nrows = 3, 
+        nrows = 2, 
         dpi = 300, 
         sharex = True,
-        figsize = (14, 12)
+N        figsize = (14, 8)
         )
     
     plt.subplots_adjust(hspace = 0.1)
@@ -208,13 +211,13 @@ def plot_annually_epbs_and_indices(
     
     df.index = df.index.map(gg.year_fraction)
     
-    plot_storm(
-            ax[-1], 
-            df, 
-            threshold = -30, 
-            translate = True, 
-            xlim = None
-            )
+    # plot_storm(
+    #         ax[-1], 
+    #         df, 
+    #         threshold = -30, 
+    #         translate = True, 
+    #         xlim = None
+    #         )
  
 
     ax[-1].set(
@@ -236,7 +239,7 @@ def main():
   
     fig = plot_annually_epbs_and_indices(df)
     
-    fig.savefig(b.LATEX('season_annual_on_Dst', folder = 'bars'))
+    # fig.savefig(b.LATEX('season_annual_on_Dst', folder = 'bars'))
 
 
 

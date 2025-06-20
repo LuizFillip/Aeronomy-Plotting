@@ -14,7 +14,7 @@ def plot_seasonal_occurrence(
     
     time = 'month'
     p = pb.BubblesPipe('events_5', 
-                       drop_lim = 0.3)
+                       drop_lim = 0.3, storm = 'quiet')
     
     ds = p.sel_type(typing)
     
@@ -42,18 +42,21 @@ def plot_seasonal_occurrence(
     ss = ss[cols].mean(axis = 1).to_frame()
     df = ds[cols]
     
-    ax1 = ax.twinx()
- 
-    ax1.plot(
-        ss, color = 'k', 
-             label = 'post-sunset EPBs',
-             linestyle = '--', 
-             lw = 3)
-    
-    ax1.set(
-        yticks = np.arange(0, 250, 50),
-        ylabel = 'Events of post-sunset EPBs'
-        )
+    def plot_sunset_curve(ax, ss):
+        ax1 = ax.twinx()
+     
+        ax1.plot(
+            ss, 
+            color = 'k', 
+            label = 'post-sunset EPBs',
+            linestyle = '--', 
+            lw = 3
+            )
+        
+        ax1.set(
+            yticks = np.arange(0, 250, 50),
+            ylabel = 'Events of post-sunset EPBs'
+            )
     
     width = 0.2
     
@@ -122,7 +125,7 @@ def main():
     #       )
     
     save_in = 'G:\\My Drive\\Papers\\Paper 2\\Midnight EPBs\\Eps\\img\\'
-
+    FigureName = 'abstract'
     fig.savefig(save_in + FigureName, dpi = 300
                 )
     

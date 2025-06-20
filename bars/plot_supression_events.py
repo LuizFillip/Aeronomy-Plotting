@@ -60,7 +60,7 @@ def plot_seasonal_suppression(
         
         )
     
-    df = c.seasonal_storm_events(normalize = True)
+    df = c.seasonal_storm_events(normalize = False)
 
     df['dst'].plot(
         kind = 'bar', 
@@ -68,17 +68,26 @@ def plot_seasonal_suppression(
         legend = False, 
         **args
         )
+    # ax1 = ax[0].twinx()
+    
+    df['dst'].plot(
+        
+        # kind = 'bar', 
+        # ax = ax[1], 
+        # legend = False, 
+        # **args
+        )
 
     ax[1].set(
-        ylim = [-10, 0],
-        ylabel = '$\\overline{Dst} - Dst_{max}$ (nT)',
+        ylim = [-40, 0],
+        ylabel = '$\\overline{Dst}$ (nT)',
         xticklabels = b.month_names(language = ln),
         xlabel = xlabel
         )
     
     a = '(a) Total of EPBs supressions (2013 - 2022)'
     ax[0].text(0.02, 0.85, a, transform = ax[0].transAxes)
-    b1 = '(b) Dst index average minus Dst maximum'
+    b1 = '(b) Dst index average'
     ax[1].text(0.02, 0.1, b1, transform = ax[1].transAxes)
     
     plt.xticks(rotation = 0)
@@ -94,9 +103,9 @@ def main():
     
     FigureName = 'seasonality_supression_events_sector_2'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder = 'bars\en'),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder = 'bars\en'),
+    #     dpi = 400
+    #     )
     
 main()
