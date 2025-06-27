@@ -7,13 +7,11 @@ import base as b
 import GEO as gg 
 
 
-b.config_labels(fontsize = 25)
-
 def filter_data(df):
     for col in df.columns:
         if col < -60:
             df[col] = np.nan 
-
+    return df
 
 
 def plot_matrix(
@@ -79,7 +77,7 @@ def plot_tec_map(
         boxes = False,
         title = False,
         invert_axis = False,
-        root = 'D:\\',
+        root = 'E:\\',
         vertical_cbar = True
         ):
     
@@ -96,7 +94,7 @@ def plot_tec_map(
     
     path = b.get_path(dn_min, root = root)
      
-    img = plot_matrix(
+    plot_matrix(
         ax, path,
         vmax = vmax, 
         colorbar = colorbar,
@@ -124,7 +122,7 @@ def plot_tec_map(
         ax.yaxis.set_label_position("right")
         ax.xaxis.set_label_position("top")
         
-    
+
     if boxes:
         gg.plot_rectangles_regions(ax, dn.year)
         
@@ -134,16 +132,3 @@ def plot_tec_map(
     
     # return fig
         
-
-
-def main():
-    
-    dn = dt.datetime(2016, 1, 13, 23, 30)
-    # dn = dt.datetime(2017, 9, 18, 3)
-
-    # df = load_tec(b.get_path(dn))
-    
-    plot_tec_map(dn, ax = None, vmax = 12, invert_axis=False)
-    plt.show()
-
-

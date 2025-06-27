@@ -4,7 +4,7 @@ import datetime as dt
 import plotting as pl
 import matplotlib.pyplot as plt
 
-b.config_labels(fontsize = 25)
+b.sci_format(fontsize = 25)
 
 
 def plot_multiple_tec_maps(
@@ -61,6 +61,20 @@ def plot_multiple_tec_maps(
                 colorbar = False
                 )
             
+            x, y = pl.valleys_and_peaks(dn, desired_dx = 5 )
+            
+            # if row != 2:
+            #     if hour
+            #     for lon in x:
+            #         delta = 3
+            #         if lon > -70:
+            #             pl.arrow(
+            #                 ax, 
+            #                 (lon + delta, -10), 
+            #                 (lon + delta, 10), 
+            #                  text = '')
+            
+            
             ax.set(title = dn.strftime(f' ({col + 1}) %Hh%M UT'))
             
             if not ((row == 2) and (col == 0)):
@@ -70,7 +84,11 @@ def plot_multiple_tec_maps(
                     xlabel = '', 
                     ylabel = ''
                     )
-  
+                
+    
+    
+
+                
     b.fig_colorbar(
             fig,
             vmin = 0, 
@@ -85,17 +103,17 @@ def plot_multiple_tec_maps(
 
 def main():
     
-    start =  dt.datetime(2015, 12, 20, 5)
+    start =  dt.datetime(2015, 12, 19, 22)
     # start =  dt.datetime(2014, 2, 2, 22)
-    fig = plot_multiple_tec_maps(start, vmax = 10, step = 1)
+    fig = plot_multiple_tec_maps(start, vmax = 60, step = 10)
     
-    FigureName = start.strftime('%Y%m%d')
+    path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
+    
+    FigureName = 'TECmaps_on_sunset'
     
     # fig.savefig(
-    #     b.LATEX(FigureName, folder = 'maps'),
-    #     dpi = 400
-    #     )
+    #       path_to_save + FigureName,
+    #       dpi = 400
+    #       )
     
 # main()
-# 
-# plt.show()

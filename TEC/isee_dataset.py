@@ -79,7 +79,8 @@ df = pd.concat(out, axis = 1)
 
 
 fig, ax = plt.subplots(
-    dpi = 300
+    dpi = 300, 
+    figsize = (10, 10)
     )
 df['avg'] = df.mean(axis = 1)
 

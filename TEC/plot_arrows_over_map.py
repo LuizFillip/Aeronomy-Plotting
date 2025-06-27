@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Apr 25 18:28:14 2025
-
-@author: Luiz
-"""
 
 def arrow(ax, xy, xytext, text = '$B_1$', color = 'red'):
 
