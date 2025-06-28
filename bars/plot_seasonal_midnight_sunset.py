@@ -4,9 +4,6 @@ import base as b
 import core as c
 import PlasmaBubbles as pb 
 
-b.config_labels()
-
-
 
 def plot_annually_both_and_indexes(
         df, 
@@ -87,18 +84,11 @@ def plot_annually_both_and_indexes(
 
 
 
-df = b.load('events_class2')
+df = b.load('events_5')
 
 fig = plot_annually_both_and_indexes(
         df,  
         translate = False
         )
 
-#         FigureName = f'annual_{typing}'
-          
-#         fig.savefig(
-#               b.LATEX(FigureName, folder = 'bars'),
-#               dpi = 400
-#               )
-        
-plt.show()
+

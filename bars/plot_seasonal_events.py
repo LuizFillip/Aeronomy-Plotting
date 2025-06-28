@@ -3,10 +3,6 @@ import base as b
 import PlasmaBubbles as pb 
 import numpy as np 
 
-b.config_labels(blue = False, fontsize = 35)
-
-
-
 def plot_seasonal_occurrence(
         typing = 'sunset', 
         translate = False
@@ -126,8 +122,8 @@ def main():
     
     save_in = 'G:\\My Drive\\Papers\\Paper 2\\Midnight EPBs\\Eps\\img\\'
     FigureName = 'abstract'
-    fig.savefig(save_in + FigureName, dpi = 300
-                )
+    # fig.savefig(save_in + FigureName, dpi = 300
+    #             )
     
     
    

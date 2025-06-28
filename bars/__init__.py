@@ -1,1 +1,5 @@
-# from .plot_annual_epbs_and_indices import plot_F107, plot_Kp
+import base as b 
+
+b.sci_format(
+    fontsize = 30 
+    )
