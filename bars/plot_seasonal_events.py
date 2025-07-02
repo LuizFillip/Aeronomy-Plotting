@@ -3,14 +3,43 @@ import base as b
 import PlasmaBubbles as pb 
 import numpy as np 
 
+b.sci_format()
+
+def plot_sunset_curve(ax, ss):
+    ax1 = ax.twinx()
+    
+    color = 'red'
+    
+    b.change_axes_color(
+            ax1, 
+            color = color,
+            axis = "y", 
+            position = "right"
+            )
+    ax1.plot(
+        ss, 
+        color = color, 
+        label = 'post-sunset EPBs',
+        linestyle = '--', 
+        lw = 3
+        )
+    
+    ax1.set(
+        yticks = np.arange(0, 250, 50),
+        ylabel = 'Events of post-sunset EPBs'
+        )
+
 def plot_seasonal_occurrence(
         typing = 'sunset', 
         translate = False
         ):
     
     time = 'month'
-    p = pb.BubblesPipe('events_5', 
-                       drop_lim = 0.3, storm = 'quiet')
+    p = pb.BubblesPipe(
+        'events_5', 
+        drop_lim = 0.3, 
+        storm = 'quiet'
+        )
     
     ds = p.sel_type(typing)
     
@@ -21,7 +50,6 @@ def plot_seasonal_occurrence(
     ds = p.time_group(ds, time = time)
     
 
-    # ylabel = 'Number of cases'
     xlabel = 'Months'
     sector = 'Sector'
     language = 'en'
@@ -29,7 +57,10 @@ def plot_seasonal_occurrence(
    
     fig, ax = plt.subplots(
         dpi = 300, 
-        figsize = (18, 8)
+        figsize = (16, 8), 
+        # nrows = 3, 
+        sharex = True, 
+        sharey = True
         )
     
     cols = [-50, -60, -70]
@@ -38,34 +69,27 @@ def plot_seasonal_occurrence(
     ss = ss[cols].mean(axis = 1).to_frame()
     df = ds[cols]
     
-    def plot_sunset_curve(ax, ss):
-        ax1 = ax.twinx()
-     
-        ax1.plot(
-            ss, 
-            color = 'k', 
-            label = 'post-sunset EPBs',
-            linestyle = '--', 
-            lw = 3
-            )
-        
-        ax1.set(
-            yticks = np.arange(0, 250, 50),
-            ylabel = 'Events of post-sunset EPBs'
-            )
+    plot_sunset_curve(ax, ss)
     
     width = 0.2
     
     
     for i, col in enumerate(cols):
-        offset = (width) * i 
         
+        # ax = axs[i]
+        
+        offset = (width) * i 
+        l = b.chars()[i]
         ax.bar(
             df.index + offset, 
             df[col],
             width = width, 
             edgecolor = 'k',
+            # color = 'gray'
             )
+        
+        # ax.text(0.01, 0.8, '{l}')
+        
     plt.xticks(rotation = 0)
     
     
@@ -76,7 +100,8 @@ def plot_seasonal_occurrence(
         ylim = [0, 100],
         xticks = np.arange(1, 13, 1),
         xticklabels = b.month_names(
-            sort = True, language = language),
+            sort = True, language = language
+        ),
         
         )
         
