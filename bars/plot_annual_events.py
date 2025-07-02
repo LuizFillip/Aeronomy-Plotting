@@ -1,10 +1,9 @@
-import core as c
 import matplotlib.pyplot as plt
 import base as b 
 import PlasmaBubbles as pb 
 import numpy as np 
 
-b.config_labels(blue = False, fontsize = 35)
+b.sci_format(blue = False, fontsize = 35)
 
 def set_label(ds, typing, translate = False):
     
@@ -25,6 +24,30 @@ def set_label(ds, typing, translate = False):
   
     
     return xlabel, ylabel, sector
+
+def plot_sunset_curve(ax, ss):
+    ax1 = ax.twinx()
+    
+    color = 'magenta'
+    
+    b.change_axes_color(
+            ax1, 
+            color = color,
+            axis = "y", 
+            position = "right"
+            )
+    ax1.plot(
+        ss, 
+        color = color, 
+        label = 'post-sunset EPBs',
+        linestyle = '--', 
+        lw = 3
+        )
+    
+    ax1.set(
+        yticks = np.arange(0, 250, 50),
+        ylabel = 'Events of post-sunset EPBs'
+        )
 
 def plot_annually_events_count(
         # ds, 
@@ -70,17 +93,7 @@ def plot_annually_events_count(
     ss = ss[cols].mean(axis = 1).to_frame()
     ds = ds[cols]
     
-    ax1 = ax.twinx()
- 
-    ax1.plot(
-        ss, 
-        color = 'k', 
-        linestyle = '--', lw = 3)
-    
-    ax1.set(
-        yticks = np.arange(0, 350, 50),
-        ylabel = 'Events of post-sunset EPBs'
-        )
+    plot_sunset_curve(ax, ss)
     width = 0.2
     
     
@@ -138,7 +151,7 @@ def main():
     fig = plot_annually_events_count(
         typing, translate=translate)
     
-    save_in = 'G:\\My Drive\\Papers\\Paper 2\\Midnight EPBs\\Eps\\img\\'
+    save_in = 'G:\\My Drive\\Papers\\Midnight EPBs\\Eps\\img\\'
 
     fig.savefig(save_in + FigureName, dpi = 300
                 )
@@ -148,4 +161,4 @@ def main():
         #       dpi = 400
         #       )
         
-# main()
+main()
