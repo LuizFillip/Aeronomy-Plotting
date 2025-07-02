@@ -30,10 +30,12 @@ def load_EPB(n, lat = -5):
     
     df["time"] = time2float(df.index.time)
 
-    return pd.pivot_table(df, 
-                         columns = df.index.date, 
-                         index = "time", 
-                         values = "vel")
+    return pd.pivot_table(
+        df, 
+        columns = df.index.date, 
+        index = "time", 
+        values = "vel"
+        )
     
 def load_HWM(n):
     infile = "database/HWM/car_250_2013.txt"
