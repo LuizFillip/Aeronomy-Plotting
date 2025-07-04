@@ -37,6 +37,40 @@ def plot_solar_speed(ax, ds):
         )
     return None
 
+
+def plot_electric_field(ax, ds):
+    ds = ds.loc[ds['electric'] < 100]
+    ax.plot(ds['electric'])
+    ax.set(ylabel = 'Ey (mV/m)')
+    return None 
+
+import digisonde as dg 
+
+
+def plot_hF(ax):
+
+    ds = dg.concat_quiet_and_disturb()
+    
+    ax.plot(ds['SAA0K'], lw = 2, label = 'storm-time')
+    
+    ax.errorbar(
+        ds.index,
+        ds['q_mean'], 
+        # yerr = ds['q_std'], 
+        capsize = 3, 
+        lw = 2, 
+        label = 'quiet', 
+        # alpha= 0.4
+        )
+    ax.legend(ncol = 2, loc = 'upper right')
+    ax.set(
+        ylim = [100, 500],
+        ylabel = 'h`F (km)', 
+        xlim = [ds.index[0], ds.index[-1]]
+        )
+    
+    return None
+
 def plot_high_resolution(
         ds, dn, 
         translate = False
@@ -45,7 +79,7 @@ def plot_high_resolution(
     fig, ax = plt.subplots(
         dpi = 300,
         figsize = (14, 14), 
-        nrows = 5, 
+        nrows = 4, 
         sharex = True
         )
     
@@ -57,21 +91,23 @@ def plot_high_resolution(
     
     plt.subplots_adjust(hspace = 0.05)
     
-    plot_solar_speed(ax[0], ds)
+    # plot_solar_speed(ax[0], ds)
     
-    plot_SymH(ax[1], ds)
+    # plot_SymH(ax[0], ds)
     
-    pl.plot_magnetic_fields(ax[2], ds)
+    plot_electric_field(ax[0], ds)
     
-    plot_Aurora(ax[3], ds)
+    pl.plot_magnetic_fields(ax[1], ds)
     
+    plot_Aurora(ax[2], ds)
     
-    pl.plot_kp(ax[4], dn, days = 2)
+    plot_hF(ax[-1])
+    # pl.plot_kp(ax[4], dn, days = 2)
     
     
     b.format_time_axes(
         ax[-1],
-        hour_locator = 12, 
+        hour_locator = 6, 
         pad = 80, 
         format_date = '%d/%m/%y', 
         translate = translate
@@ -91,19 +127,19 @@ def plot_high_resolution(
              color = 'gray'
              )
         
-        ssc = dt.datetime(2015, 12, 19, 16, 20)
-        a.axvline(
-            ssc, 
-            color = 'red', 
-            lw = 3, 
-            linestyle = '--'
-            )
+        # ssc = dt.datetime(2015, 12, 19, 16, 20)
+        
+        # a.axvline(
+        #     ssc, 
+        #     color = 'red', 
+        #     lw = 3, 
+        #     linestyle = '--'
+        #     )
     
-    ax[0].text(
-        ssc, 610, 
-        name, 
-        color = 'red',
-        transform = ax[0].transData
+    ax[-1].text(
+        0.07, 0.8, 
+        'São Luís', 
+        transform = ax[-1].transAxes
         )
     
     b.plot_letters(
@@ -122,13 +158,12 @@ def main():
     
     path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
     
-    infile = 'database/indices/omni_high/2015'
+    infile = 'database/indices/omni_high/20151'
     df = b.load(infile)
 
     df = df.loc[df['by'] < 1000]
 
     dn = dt.datetime(2015, 12, 21)
-
 
     ds = b.range_dates(df, dn, days = 2)
 
@@ -137,9 +172,10 @@ def main():
     
     FigureName = dn.strftime('%Y%m%d_GeoIndices')
     
-    fig.savefig(
-           path_to_save + FigureName,
-          dpi = 400)
+    # fig.savefig(
+    #       path_to_save + FigureName,
+    #       dpi = 400
+    #       )
     
     
 main()

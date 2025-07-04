@@ -3,8 +3,6 @@ import base as b
 import datetime as dt
 import numpy as np
 
-b.config_labels(fontsize = 30)
-
 PATH = 'database/indices/omni_hourly.txt'
 
 def plot_kp(ax, ds, days = 2):
