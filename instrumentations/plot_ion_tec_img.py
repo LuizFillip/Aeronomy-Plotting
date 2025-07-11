@@ -121,39 +121,59 @@ def plot_ion_tec_img(
     return fig 
 
 
-import matplotlib.pyplot as plt 
+
 
 start = dt.datetime(2017, 9, 17, 21)
 
 site = 'FZA0M'
 site = 'SAA0K'
-# fig = plot_ion_tec_img(
-#         dn, 
-#         site,
-#         kind = '', 
-#         title_dn = dn, 
-#         root = 'E:\\'
-#         )
 
-for minute in tqdm(range(2 * 60, 12 * 60, 2)):
+def save_figures(start):
+    import matplotlib.pyplot as plt 
+    s = start.strftime('%Y%m%d')
+    for minute in tqdm(range(2 * 60, 12 * 60, 2), s):
+        
+        delta = dt.timedelta(minutes = minute)
+        
+        dn = start + delta
+        
+        plt.ioff()
     
-    delta = dt.timedelta(minutes = minute)
+        fig = plot_ion_tec_img(
+                dn, 
+                site,
+                kind = '', 
+                title_dn = dn, 
+                root = 'E:\\'
+                )
+        
+        fn = dn.strftime('%Y%m%d%H%M%S')
+        fig.savefig('temp2/' + fn, dpi = 100)
+        
+        
+        plt.clf()   
+        plt.close()   
     
-    dn = start + delta
-    
-    plt.ioff()
-
-    fig = plot_ion_tec_img(
-            dn, 
-            site,
-            kind = '', 
-            title_dn = dn, 
-            root = 'E:\\'
+    b.images_to_gif(
+            name = 'midnight2016', 
+            path_out = 'movies', 
+            path_in = 'temp2/', 
+            fps = 10,
+            ext = 'png'
             )
     
-    fn = dn.strftime('%Y%m%d%H%M%S')
-    fig.savefig('temp/' + fn)
-    
-    
-    plt.clf()   
-    plt.close()   
+start = dt.datetime(2016, 10, 3, 21)
+
+# save_figures(start)
+# import shutil
+
+# shutil.rmtree('temp/')
+
+b.images_to_gif(
+         name = 'midnight2016_2', 
+         path_out = 'movies', 
+         path_in = 'temp2/', 
+         fps = 6,
+         ext = 'png'
+         )
+ 

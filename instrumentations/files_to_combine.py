@@ -1,10 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Sep 17 19:48:50 2024
-
-@author: Luiz
-"""
-
+import datetime as dt
 
 dn = dt.datetime(2022, 7, 24, 20)
 
