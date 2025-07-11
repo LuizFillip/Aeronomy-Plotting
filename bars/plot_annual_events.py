@@ -45,7 +45,7 @@ def plot_sunset_curve(ax, ss):
         )
     
     ax1.set(
-        yticks = np.arange(0, 250, 50),
+        yticks = np.arange(100, 250, 50),
         ylabel = 'Events of post-sunset EPBs'
         )
 

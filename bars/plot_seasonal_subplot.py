@@ -1,4 +1,4 @@
-
+import core as c 
 
 import matplotlib.pyplot as plt
 import base as b 
@@ -21,6 +21,9 @@ def plot_sunset_curve(ax, ss):
     ax1.plot(
         ss, 
         color = color, 
+        marker = 'o',
+        markersize = 20,
+        fillstyle = 'none',
         label = 'post-sunset EPBs',
         linestyle = '--', 
         lw = 3
@@ -33,12 +36,27 @@ def plot_sunset_curve(ax, ss):
     
     return ax1
 
+def plot_f107(axs):
+    df = c.geo_index()
+
+    import GEO as gg
+    
+    df.index = df.index.map(gg.year_fraction)
+    axs[0].plot(df['f107'])
+    axs[0].set(xlim = [2013, 2022.5], 
+               ylabel = 'F10.7 (sfu)')
+    name = '(a) Solar flux'
+    axs[0].text(
+        0.01, 0.8, name, 
+        transform = axs[0].transAxes
+        )
 def plot_seasonal_occurrence(
-        typing = 'sunset', 
+        typing = 'sunset',
+        time = 'month',
         translate = False
         ):
     
-    time = 'month'
+
     p = pb.BubblesPipe(
         'events_5', 
         drop_lim = 0.3, 
@@ -47,66 +65,89 @@ def plot_seasonal_occurrence(
     
     ds = p.sel_type(typing)
     
-   
-    ss = p.sel_type('sunset')
-    ss = p.time_group(ss, time = time)
+
   
     ds = p.time_group(ds, time = time)
     
-
-    xlabel = 'Months'
-    sector = 'Sector'
-    language = 'en'
     
+    if time == 'month':
+        nrows = 3
+        start = 0
+        bc = [
+            'gray',
+            '#0C5DA5',
+            '#00B945', 
+        
+             ]
+    else:
+        nrows = 4
+        start = 1
+        bc = [
+            '',
+            'gray',
+            '#0C5DA5',
+            '#00B945', 
+        
+             ]
    
     fig, axs = plt.subplots(
         dpi = 300, 
-        figsize = (18, 14), 
-        nrows = 3, 
+        figsize = (14, 14), 
+        nrows = nrows, 
         sharex = True, 
-        sharey = True
+        # sharey = True
         )
+    
+    plt.subplots_adjust(hspace = 0.1)
     
     cols = [-50, -60, -70]
           
-    for i, col in enumerate(cols):
+    for i, col in enumerate(cols, start = start):
         
         ax = axs[i]
         
         l = b.chars()[i]
           
-        ax1 = plot_sunset_curve(ax, ss[col])
         ax.bar(
             ds.index, 
             ds[col],
-            width = 0.6, 
+            width = 0.4, 
             edgecolor = 'k',
-            color = 'gray'
+            color = bc[i]
             )
+        
+        ax.set(ylim = [0, 100])
         sum_pb = int(ds[col].sum())
         
         name = f'({l}) Sector {i + 1} ({sum_pb} EPBs)'
-        ax.text(0.01, 0.8, name, 
-                transform = ax.transAxes)
-        
-        if i == 1:
-            ylabel = 'Events of post-sunset EPBs'
-            ax1.set_ylabel(ylabel)
+        ax.text(
+            0.01, 0.8, name, 
+            transform = ax.transAxes
+            )
         
     plt.xticks(rotation = 0)
     
-    axs[1].set_ylabel('Events of midnight EPBs')
-    axs[-1].set(xlabel = xlabel)
-    ax.set(
-        
-        ylim = [0, 100],
-        xticks = np.arange(1, 13, 1),
-        xticklabels = b.month_names(
-            sort = True, language = language
-        ),
-        
-        )
-        
+    axs[start + 1].set_ylabel('Events of midnight EPBs')
+    
+    
+    if time == 'month':
+        ax.set(
+            xlabel = 'Months',
+            ylim = [0, 100],
+            xticks = np.arange(1, 13, 1),
+            xticklabels = b.month_names(
+                sort = True, 
+                language = 'en'
+                ),
+            
+            )
+    else:
+        plot_f107(axs)
+        ax.set(
+            xticks = np.arange(2013, 2023, 1),
+            xlabel = 'Years'
+            )
+            
     
     return fig
     
@@ -118,28 +159,23 @@ def main():
    
     translate = False 
     
-    # for typing in ['sunset', 'midnight']:
 
     typing = 'midnight'
-   
+    time = 'month'
     
-    fig = plot_seasonal_occurrence( typing, translate = translate)
+    fig = plot_seasonal_occurrence( typing, time, translate = translate)
     if translate:
         FigureName = f'seasonal_{typing}'
     else:
-        FigureName = f'seasonal_{typing}'
+        FigureName = f'seasonal_{typing}2'
           
-    # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'bars'),
-    #       dpi = 400
-    #       )
-    
+
     save_in = 'G:\\My Drive\\Papers\\Midnight EPBs\\Eps\\img\\'
-    # FigureName = 'abstract'
+    FigureName = 'annual_midnight2'
     # fig.savefig(save_in + FigureName, dpi = 300
     #             )
     
     
    
-main()
+# main()
 

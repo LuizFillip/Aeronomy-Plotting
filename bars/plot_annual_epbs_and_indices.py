@@ -54,9 +54,6 @@ def plot_gamma(ax):
     
     return None
 
-b.config_labels(fontsize = 25)
-
-
 def plot_EPBs(ax, df, col = -50, translate = True):
     
     df_index = c.DisturbedLevels(df)
@@ -195,7 +192,7 @@ def plot_annually_epbs_and_indices(
         nrows = 2, 
         dpi = 300, 
         sharex = True,
-N        figsize = (14, 8)
+        figsize = (14, 8)
         )
     
     plt.subplots_adjust(hspace = 0.1)
@@ -243,6 +240,7 @@ def main():
 
 
 
-main()
+# main()
 
 
+c.geo()
