@@ -5,7 +5,7 @@ import PlasmaBubbles as pb
 import GEO as gg 
 import plotting as pl 
 
-b.config_labels(fontsize = 30)
+b.sci_format(fontsize = 25)
 
 args = dict(
     marker = 'o', 
@@ -46,7 +46,8 @@ def dusk(dn, col):
     
     lon, lat = gg.first_edge(dn.year)[int(col)]
     
-    return gg.dusk_time(dn, lat = lat, 
+    return gg.dusk_time(
+        dn, lat = lat, 
                         lon = lon, twilight = 18)
 
 def plot_terminator_shift(ax, dusk, occur):
@@ -89,19 +90,30 @@ def plot_shift(ax, ds, col, lon = -50):
     dn = ds.index[0]
     occur = ds[ds[col] == 1].index.min()
     
-    ds = pb.track_time_diff(
-        ds, 'max', floatType = False)
-  
-    plot_terminator_shift(ax, dusk(dn, lon), occur)
-    
-    for i in range(len(ds)):
-        sel = ds.iloc[i, :]
-        start = sel['start']
-        end = sel['end']
-        time = sel['duration']     
-        if time > 2:
-            plot_arrow_and_note(ax, start, end, time)
 
+    # ds = pb.track_times_and_duration(
+    #     remove_day_occurrence(ds, lon), lon
+    #     )
+  
+    # plot_terminator_shift(ax, dusk(dn, lon), occur)
+    
+    # for i in range(len(ds)):
+    #     sel = ds.iloc[i, :]
+    #     start = sel['start']
+    #     end = sel['end']
+    #     time = sel['duration']     
+    #     if time > 2:
+    #         plot_arrow_and_note(ax, start, end, time)
+    
+    delta = dt.timedelta(hours = 2)
+    
+    ax.annotate(
+        'EPBs start time', 
+        xy = (occur, 0.5), 
+        xytext = (occur + delta, 0.46), 
+        arrowprops = dict(arrowstyle='<-'),
+        fontsize = 30, 
+        )
     
     return None 
 
@@ -123,10 +135,12 @@ def plot_terminator_line(
         lw = 2
         )
     
+    # if translate:
+    
     if label:
         ax.text(
             dusk_time, 5.1, 
-                'Terminadouro local',
+                'Sunset terminator',
             transform = ax.transData)
     return None
 
@@ -248,7 +262,7 @@ def plot_epb_time_feadtures(
         )
     
     dn = ds.index[0]
-    b.format_time_axes(ax[-1], translate = False)
+    b.format_time_axes(ax[-1], translate = True)
     plot_terminator_line(
         ax[-1], dn, lon = -50, label = False)
     plot_shift(ax[1], events, col = 'max')
@@ -260,8 +274,7 @@ def plot_epb_time_feadtures(
 
 
 def main():
-    import os 
-    
+  
     dn = dt.datetime(2013, 12, 24, 20)
     
     df = pb.concat_files(
@@ -271,16 +284,17 @@ def main():
          hours = 11
          )
     
-    fig = plot_epb_time_feadtures(df,  col = '-50')
+    fig = plot_epb_time_feadtures(
+        df,  col = '-50', translate=True)
     
     FigureName = dn.strftime('occurrence_%Y%m%d')
     
 
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'timeseries'),
-          dpi = 400
-          )
-    plt.show()
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'timeseries'),
+    #       dpi = 400
+    #       )
+    # plt.show()
     
     
-# main()
+main()

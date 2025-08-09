@@ -5,7 +5,6 @@ import datetime as dt
 import os 
 import numpy as np
 
-b.config_labels()
 
 args = dict(
     marker = 'o', 

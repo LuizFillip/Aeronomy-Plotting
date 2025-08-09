@@ -5,9 +5,6 @@ import numpy as np
 import digisonde as dg 
 import plotting as pl 
 
-b.config_labels()
-
-
 
 def plot_occurrence_events(
         ax, 
@@ -172,7 +169,12 @@ def plot_vertical_drift(
         xticklabels = []
         )
     
-    plot_references_lines(ax, -50, dn, label_top = vmax + 6)
+    plot_references_lines(
+        ax, 
+        -50, 
+        dn, 
+        label_top = vmax + 6
+        )
     
     s = f'(a) {ds.site} ionosonde'
     ax.text(0.01, 0.8, s, transform = ax.transAxes)
@@ -226,8 +228,13 @@ def plot_roti_timeseries(
     plot_lines(axes, dn, y = vmax + 1.2, st = st)
     
     for i, ax in enumerate(axes[st:]):
-             
-        sel = pb.filter_region_and_dn(df, target, sectors[i])
+        sector = sectors[i]  
+        
+        sel = pb.filter_region_and_dn(
+            df, 
+            target, 
+            sector
+            )
         
         pl.plot_roti_points(
             ax, sel, 
@@ -253,7 +260,7 @@ def plot_roti_timeseries(
         
         if right_ticks:
             ax.tick_params(
-                axis='y', 
+                axis = 'y', 
                 labelright = True, 
                 labelleft = False, 
                 right = True, 

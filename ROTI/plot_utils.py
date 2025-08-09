@@ -7,7 +7,7 @@ def legend_max_points_roti(
         threshold = 0.25,
         anchor = (1.07, 1), 
         ncol = 1, 
-        translate = False
+        translate = True
         ):
     
     l1 = plt.scatter(

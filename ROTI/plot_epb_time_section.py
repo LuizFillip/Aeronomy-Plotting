@@ -159,9 +159,9 @@ def main():
     
     FigureName = 'time_section_in_sectors'
       
-    fig.savefig(
-          b.LATEX(FigureName, folder = 'products'),
-          dpi = 400
-          )
+    # fig.savefig(
+    #       b.LATEX(FigureName, folder = 'products'),
+    #       dpi = 400
+    #       )
     
 main()

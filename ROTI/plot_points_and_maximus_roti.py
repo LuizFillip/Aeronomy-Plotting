@@ -5,8 +5,6 @@ import PlasmaBubbles as pb
 import plotting as pl
 import base as b  
 
-b.config_labels(fontsize = 30)
-
 def get_infos(ds, lon):
     df1 = pb.bubble_features(ds)
     

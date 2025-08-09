@@ -11,9 +11,6 @@ args = dict(
     linestyle = 'none'
     )
 
-b.config_labels()
-
-
 
 def plot_epbs_occurrences_roti(
         ds,
