@@ -8,7 +8,6 @@ import numpy as np
 
 PATH_GAMMA = 'database/gamma/p1_saa.txt'
 
-names = ['march',  'september', 'december']
 
 def mean_compose(ds, direction = 'zonal'):
     
@@ -17,7 +16,8 @@ def mean_compose(ds, direction = 'zonal'):
         ds, 
         values = direction, 
         index = 'time', 
-        columns = 'day')
+        columns = 'day'
+        )
 
     data  = {
         'mean': df1.mean(axis = 1), 
@@ -51,19 +51,6 @@ def simple_avg(df):
     return pd.DataFrame(out, index = range(1, 13, 1))
 
 
-def sel_season(df, season):
-    
-    if season == 'march':
-        num = [3, 4]
-    elif season == 'september':
-        num = [9, 10]
-    else:
-        num = [12, 11]
-        
-        
-    return df.loc[
-        (df.index.month == num[0]) |
-        (df.index.month == num[1])]
 
 
 def run_by_season(df, year, parameter = 'gamma'):
@@ -73,11 +60,6 @@ def run_by_season(df, year, parameter = 'gamma'):
     out = {name: [] for name in names}
     
     for season in names:
-        # ss = c.SeasonsSplit(
-        #     df, season, translate = True
-        #     )
-        
-        
         ss = sel_season(df, season)
         
         if parameter == 'epb':
@@ -213,7 +195,8 @@ def plot_vp(ax, translate = False):
                ds[col], width, label=col)
     
     ax.set(
-        xlim = [ds.index[0] - 0.5, ds.index[-1] + 1],
+        xlim = [ds.index[0] - 0.5, 
+                ds.index[-1] + 1],
         xticks = np.arange(2013, 2023, 1),
         ylim = [0, 80],
         
@@ -294,12 +277,3 @@ def plot_seasonal_assimetry(translate = False):
 #       )
 
     
-p = pb.BubblesPipe(
-    'events_5', 
-    drop_lim = 0.3, 
-    storm = 'quiet'
-    )
-
-df = p.sel_type('sunset')
-
-df 

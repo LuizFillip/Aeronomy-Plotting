@@ -28,20 +28,22 @@ df = p.sel_type('sunset')
 
 df.columns 
 
-df = df.loc[df.lon == -50]
+df = df.loc[df.lon == -70]
 year = 2013
 
-def count_epbs_by_year():
+def count_epbs_by_year(df):
     
     out_df = []
     for year in range(2013, 2023):
         
-        sel_year = df.loc[df.index.year == year]
+        sel_year = df.loc[
+            df.index.year == year
+            ]
         
         out = {name: [] for name in names}
         
         for season in names:
-            ds = sel_season(df, season)
+            ds = sel_season(sel_year, season)
             
             out[season].append(len(ds))
             
@@ -50,3 +52,9 @@ def count_epbs_by_year():
                 out, index = [year])
             ) 
     return pd.concat(out_df)
+
+ds = count_epbs_by_year(df)
+
+ds[['march', 'september']].plot(kind = 'bar')
+
+df 
