@@ -6,7 +6,7 @@ import base as b
 import plotting as pl
 
 
-b.config_labels()
+b.sci_format()
 
 def plot_compare_quiet_disturbed(
         sites, 
@@ -54,9 +54,9 @@ def plot_compare_quiet_disturbed(
              )
         
         if site == 'BVJ03':
-            window = 4
-        else:
             window = 3
+        else:
+            window = 2
             
         qt = dg.repeat_quiet_days(
             site, 
@@ -66,8 +66,26 @@ def plot_compare_quiet_disturbed(
             window = window + 1
             )
         
+        qt = qt[~qt.index.duplicated(keep="first")]
+
+        qt = qt.resample('30min').asfreq()
         
-        ax[i].plot(qt, label = qt_label)
+        ax[i].errorbar(
+            qt.index,
+            qt['vz'],
+            yerr = qt['svz'], 
+            label = qt_label, 
+            capsize = 5
+            )
+        
+        # ax[i].fill_between(
+        #     qt.index, 
+        #     qt['vz'] - qt['svz'], 
+        #     qt['vz'] + qt['svz'], 
+        #     color = "gray", 
+        #     alpha = 0.4
+        #     )
+
     
         df = dg.join_iono_days(
                 site, 
@@ -76,10 +94,14 @@ def plot_compare_quiet_disturbed(
                 window = window
                 )
         
+        df = df[~df.index.duplicated(keep = "first")]
         
-        if site in ['BVJ03', 'CAJ2M', 'CGK21']:
+        df = df.resample('30min').asfreq()
+        
+        
+        # if site in ['BVJ03', 'CAJ2M', 'CGK21']:
             
-            df[site] = b.smooth2(df[site], 2)
+        #     df[site] = b.smooth2(df[site], 2)
         
         ax[i].plot(df, label = db_label, lw = 2)
     
@@ -130,15 +152,15 @@ def plot_compare_quiet_disturbed(
 
 
 def main():
-    sites = ['SAA0K',  'FZA0M', 'BVJ03', 'CAJ2M', 'CGK21']
+    sites = ['SAA0K',  'FZA0M',  'CAJ2M', 'CGK21'] #
     fig = plot_compare_quiet_disturbed(sites, translate = True)
     
     FigureName = 'quiet_disturbance_time'
     
-    path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
+    # path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
     
     
-    fig.savefig(path_to_save + FigureName, dpi = 400)
+    # fig.savefig(path_to_save + FigureName, dpi = 400)
     
-# main()
+main()
 

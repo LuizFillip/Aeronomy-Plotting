@@ -160,13 +160,13 @@ def main():
         
         )
     
-    path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
+    # path_to_save = 'G:\\My Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
-    FigureName = 'fixed_heights_sites'
+    # FigureName = 'fixed_heights_sites'
     
-    fig.savefig(
-          path_to_save + FigureName,
-          dpi = 400
-          )
+    # fig.savefig(
+    #       path_to_save + FigureName,
+    #       dpi = 400
+    #       )
 
 main()
