@@ -25,5 +25,5 @@
 /TEC/__pycache__/*
 /TEC/data/*
 /ionosonde/ionogram/__pycache__/*
-
+/Taka/data/*
 /bars/__pycache__/*
