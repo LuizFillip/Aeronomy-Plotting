@@ -78,13 +78,18 @@ def plot_compare_quiet_disturbed(
             capsize = 5
             )
         
-        # ax[i].fill_between(
-        #     qt.index, 
-        #     qt['vz'] - qt['svz'], 
-        #     qt['vz'] + qt['svz'], 
-        #     color = "gray", 
-        #     alpha = 0.4
-        #     )
+        ax[i].plot(
+            qt.index,
+            qt['vz'], 
+            
+            )
+        ax[i].fill_between(
+            qt.index, 
+            qt['vz'] - qt['svz'], 
+            qt['vz'] + qt['svz'], 
+            color = "gray", 
+            alpha = 0.4
+            )
 
     
         df = dg.join_iono_days(

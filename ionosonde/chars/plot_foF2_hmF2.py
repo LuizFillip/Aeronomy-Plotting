@@ -126,4 +126,4 @@ def plot_foF2_hmF2(sites):
     return fig 
     
 sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CGK21']
-plot_foF2_hmF2(sites)
+fig = plot_foF2_hmF2(sites)

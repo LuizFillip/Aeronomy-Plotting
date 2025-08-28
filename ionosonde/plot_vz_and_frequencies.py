@@ -5,7 +5,7 @@ import GEO as gg
 import datetime as dt 
 import numpy as np
 
-b.config_labels(fontsize = 30)
+b.sci_format(fontsize = 30)
 
 
 def plot_infos(ax, vz, site = 'saa'):
@@ -70,8 +70,12 @@ def plot_drift(
 
 def plot_QF(ax, df):
     
-    ax.bar(df.index, df["QF"],
-           width = 0.009, alpha = 0.5)
+    ax.bar(
+        df.index, 
+        df["QF"],
+        width = 0.009, 
+        alpha = 0.5
+        )
     
     ax.set(
         ylim = [0, 80], 
