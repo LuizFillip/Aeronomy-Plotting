@@ -3,9 +3,9 @@ import datetime as dt
 import digisonde as dg 
 import base as b 
 from matplotlib.ticker import MultipleLocator
+import numpy as np 
 
-b.sci_format()
-
+b.sci_format(fontsize = 30)
 
 
 def plot_compare_quiet_disturbed_for_chars(
@@ -58,7 +58,8 @@ def plot_compare_quiet_disturbed_for_chars(
             qt.index, 
             qt['mean'], 
             color = 'purple', 
-            lw = 2
+            lw = 2, 
+            label = 'Quiet-time'
             )
         
         ax[i].fill_between(
@@ -78,11 +79,15 @@ def plot_compare_quiet_disturbed_for_chars(
                 )
         
         df.iloc[:, 0] = b.smooth2(df.iloc[:, 0], 3)
-        ax[i].plot(df, lw = 2)
+        ax[i].plot(df, lw = 2, label = 'Storm-time')
         
         ax[i].set(xlim = [df.index[0], df.index[-1]])
-        
-        
+    
+        dates = (np.unique(df.index.date))
+            
+        for dn in dates:
+            ax[i].axvline(dn, lw = 1, linestyle = '--')
+    
     b.format_time_axes(
          ax[-1], 
          hour_locator = 12, 
@@ -90,14 +95,6 @@ def plot_compare_quiet_disturbed_for_chars(
          pad = 85, 
          format_date = '%d/%m/%y'
          )
-    
-    
-    # major ticks de 1h
-    major_tick = 0.5
-    subdivison =  4
-    ax[-1].xaxis.set_major_locator(MultipleLocator(major_tick))
-    # minor ticks: 4 subdivisões por intervalo → 1/4 = 0.25
-    ax[-1].xaxis.set_minor_locator(MultipleLocator(major_tick / subdivison))
     
     return fig 
 

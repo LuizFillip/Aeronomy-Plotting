@@ -6,9 +6,9 @@ import base as b
 import plotting as pl
 
 
-b.sci_format()
+b.sci_format(fontsize = 30)
 
-def plot_compare_quiet_disturbed(
+def plot_compare_quiet_disturbed_for_drift(
         sites, 
         translate = False
         ):
@@ -36,7 +36,7 @@ def plot_compare_quiet_disturbed(
     
     start = dt.datetime(2015, 12, 19)
     # cols = list(range(3, 10, 1))
-    cols = [5, 6]
+    cols = [5, 6, 7]
  
     for i, site in enumerate(sites):
         
@@ -66,29 +66,25 @@ def plot_compare_quiet_disturbed(
             window = window + 1
             )
         
-        qt = qt[~qt.index.duplicated(keep="first")]
-
-        qt = qt.resample('30min').asfreq()
+        # for col in qt.columns:
+        #     qt[col] = b.smooth2(qt[col], 10)
         
-        ax[i].errorbar(
-            qt.index,
-            qt['vz'],
-            yerr = qt['svz'], 
-            label = qt_label, 
-            capsize = 5
-            )
+        qt = qt.apply(lambda s: b.smooth2(s, 10))
         
         ax[i].plot(
             qt.index,
             qt['vz'], 
-            
+            color = 'purple', 
+            lw = 2, 
+            label = 'Quiet-time'
             )
+        
         ax[i].fill_between(
             qt.index, 
             qt['vz'] - qt['svz'], 
             qt['vz'] + qt['svz'], 
-            color = "gray", 
-            alpha = 0.4
+            color = "purple", 
+            alpha = 0.3
             )
 
     
@@ -99,20 +95,16 @@ def plot_compare_quiet_disturbed(
                 window = window
                 )
         
-        df = df[~df.index.duplicated(keep = "first")]
+        idx = df.index.indexer_between_time(
+            '00:00', '20:00', include_end=False)
+
+        df.iloc[idx] = df.iloc[idx].apply(lambda s: b.smooth2(s, 5))
         
-        df = df.resample('30min').asfreq()
-        
-        
-        # if site in ['BVJ03', 'CAJ2M', 'CGK21']:
-            
-        #     df[site] = b.smooth2(df[site], 2)
-        
-        ax[i].plot(df, label = db_label, lw = 2)
+        ax[i].plot(df.interpolate(), label = db_label, lw = 2)
     
         ax[i].set(
-            ylim = [-60, 60], 
-            yticks = np.arange(-50, 60, 20),
+            ylim = [-70, 70], 
+            yticks = np.arange(-60, 80, 20),
             xlim = [df.index[0], df.index[-1]]
             )
         
@@ -126,7 +118,12 @@ def plot_compare_quiet_disturbed(
             transform = ax[i].transAxes
             )
         
-        pl.plot_terminators(ax[i], df, site)
+        # pl.plot_terminators(ax[i], df, site)
+        
+        dates = (np.unique(df.index.date))
+            
+        for dn in dates:
+            ax[i].axvline(dn, lw = 1, linestyle = '--')
         
         ax[i].axhline(0, linestyle = ':')
         ax[i].axhline(40, linestyle = ':')
@@ -157,8 +154,8 @@ def plot_compare_quiet_disturbed(
 
 
 def main():
-    sites = ['SAA0K',  'FZA0M',  'CAJ2M', 'CGK21'] #
-    fig = plot_compare_quiet_disturbed(sites, translate = True)
+    sites = ['SAA0K',  'FZA0M',  'BVJ03', 'CAJ2M', 'CGK21'] #
+    fig = plot_compare_quiet_disturbed_for_drift(sites, translate = True)
     
     FigureName = 'quiet_disturbance_time'
     
