@@ -7,21 +7,11 @@ import numpy as np
 
 PATH = 'database/indices/omni_hourly.txt'
 
-df = b.load(PATH)
-df = df.loc[df.index.year >= 2013]
-ds = c.find_storms(df)
 
-
-
- 
-b.config_labels()
-
-
-dn = dt.datetime(2015, 12, 20)    
 # dn = dt.datetime(2015, 3, 17 )
 
 
-def plot_geomagnetic_storms_phases(ds, df1):
+def plot_geomagnetic_storms_phases( df1):
     
     
     fig, ax = plt.subplots(
@@ -31,10 +21,10 @@ def plot_geomagnetic_storms_phases(ds, df1):
     
     ax.plot(df1['dst'])
     
-    ax.axvline(ds.loc[dn, 'main'])
+    # ax.axvline(ds.loc[dn, 'main'])
     
-    for col in ['main', 'end', 'start']:    
-        ax.axvline(ds.loc[dn, col], lw = 2)
+    # for col in ['main', 'end', 'start']:    
+    #     ax.axvline(ds.loc[dn, col], lw = 2)
     
     
     ax.axhline(0, linestyle = '--')
@@ -47,33 +37,39 @@ def plot_geomagnetic_storms_phases(ds, df1):
         ylabel = 'Dst (nT)'
         )
     
-    for long in np.arange(-80, -40, 10)[::-1]:
-        dusk = gg.terminator(
-            long, 
-            ds.index[0], 
-            float_fmt = False
-            )
+    # for long in np.arange(-80, -40, 10)[::-1]:
+    #     dusk = gg.terminator(
+    #         long, 
+    #         ds.index[0], 
+    #         float_fmt = False
+    #         )
     
-        ax.axvline(dusk, lw = 1, linestyle = '-')
+    #     ax.axvline(dusk, lw = 1, linestyle = '-')
     
-    b.format_days_axes(ax, second_axes = True)
+    b.format_days_axes(ax, day_locator = 10,  second_axes = True)
     
     return fig 
 
 
 # dn = ds.index[1]
+df = b.load(PATH)
 
-      
-end = ds.loc[dn, 'end']
-start = ds.loc[dn, 'start']
+dn = dt.datetime(2022, 1, 1)    
+end = dn + dt.timedelta(days = 120)
+
+# end = ds.loc[dn, 'end']
+# start = ds.loc[dn, 'start']
     
     
 df1 = b.sel_dates(
-     df, 
-     start - dt.timedelta(days = 2), 
-     end + dt.timedelta(days = 2)
-     )
+      df, 
+      dn, 
+      end 
+      )
  
-fig = plot_geomagnetic_storms_phases(ds, df1)
+# ds = c.find_storms(df1)
+
+fig = plot_geomagnetic_storms_phases(df1)
 
 
+# df1 
