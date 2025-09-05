@@ -4,7 +4,6 @@ import digisonde as dg
 import base as b 
 import numpy as np 
 
-b.sci_format(fontsize = 30)
 
 def plot_quiettime(ax, site, parameter, start):
 
@@ -34,9 +33,61 @@ def plot_quiettime(ax, site, parameter, start):
     
     return None 
 
+def plot_QF(ax, df):
+    ax1 = ax.twinx()
+    ax1.bar(
+        df.index, 
+        df['QF'], 
+        width = 0.03, 
+        alpha = 0.5, 
+        color = 'gray'
+        ) 
+    ax1.set(
+        ylim = [0, 60], 
+        yticks = np.arange(10, 80, 20)
+        )
+
+def plot_extra_props(ax, df):
+    dates = (np.unique(df.index.date))
+    
+    for dn in dates:
+        ax.axvline(dn, lw = 1, linestyle = '--')
+      
+    
+    x_target = dt.datetime(2015, 12, 21, 7)
+    
+    y_top = 450
+    
+    ax.annotate(
+        '', 
+        xy = (x_target, y_top),   
+        xytext = (x_target, y_top * 1.5),
+        arrowprops = dict(
+            facecolor = 'red',    
+            edgecolor = 'red',
+            arrowstyle ='-|>', 
+            lw = 5
+            )
+        )
+    
+    ref_day = dt.datetime(2015, 12, 20, 21, 0)
+    
+    ax.axvspan(
+         ref_day, 
+         ref_day + dt.timedelta(hours = 12), 
+         ymin = 0, 
+         ymax = 1,
+         alpha = 0.2, 
+         color = 'gray'
+         )
+ 
+    
+    return dates
 def plot_compare_quiet_disturbed_for_chars(
         sites, 
-        parameter = 'hF', cols = [5, 6]
+        parameter = 'hF', 
+        window = 3,
+        cols = [5, 6]
         ):
 
     nrows = len(sites)
@@ -53,22 +104,11 @@ def plot_compare_quiet_disturbed_for_chars(
     start = dt.datetime(2015, 12, 19)
    
     plt.subplots_adjust(hspace = 0.1)
-    window = 3
     
     
     for i, site in enumerate(sites):
         
-        ref_day = dt.datetime(2015, 12, 20, 21, 0)
-        
-        ax[i].axvspan(
-             ref_day, 
-             ref_day + dt.timedelta(hours = 12), 
-             ymin = 0, 
-             ymax = 1,
-             alpha = 0.2, 
-             color = 'gray'
-             )
-     
+       
         name = dg.code_name(site)
         
         s = b.chars()[i]
@@ -90,42 +130,33 @@ def plot_compare_quiet_disturbed_for_chars(
                 window = window
                 )
         
-        
-        ax1 = ax[i].twinx()
-        ax1.bar(
-            df.index, 
-            df['QF'], 
-            width = 0.03, 
-            alpha = 0.5, 
-            color = 'gray'
-            ) 
-        ax1.set(
-            ylim = [0, 60], 
-            yticks = np.arange(10, 80, 20)
-            )
+
+        plot_QF(ax[i], df)
         
         df[parameter] = b.smooth2(df[parameter], 3)
+        
         ax[i].plot(
             df[parameter].interpolate(), 
-            lw = 2, label = 'Storm-time'
+            lw = 2, 
+            label = 'Storm-time'
             )
         
-        ax[i].set(xlim = [df.index[0], df.index[-1]])
-    
-        dates = (np.unique(df.index.date))
+        
         
         ax[i].set(
-            ylim = [0, 700], 
-            yticks = np.arange(0, 800, 200)
+            xlim = [df.index[0], df.index[-1]],
+            ylim = [100, 700], 
+            yticks = np.arange(200, 700, 200)
             )
-        for dn in dates:
-            ax[i].axvline(dn, lw = 1, linestyle = '--')
-    
+        
+        dates = plot_extra_props(ax[i], df)
+        
+
     fontsize = 30
     
     ax[0].legend(
         loc = 'upper center', ncol = 2, 
-        bbox_to_anchor = (0.5, 1.4)
+        bbox_to_anchor = (0.5, 1.7)
               )
     
     fig.text(
@@ -142,25 +173,33 @@ def plot_compare_quiet_disturbed_for_chars(
         rotation = 'vertical'
         )
     
-    b.format_time_axes(
+    b.axes_hour_format(
          ax[-1], 
          hour_locator = 6, 
-         translate = True, 
-         pad = 85, 
-         format_date = '%d/%m/%y'
+         tz = "UTC"
          )
+    ax[-1].set(xlabel = 'Universal time')
+ 
+        
+    b.adding_dates_on_the_top(
+        ax[0], 
+        start = '2015-12-19', 
+        end = '2015-12-23'
+        )
     
     return fig 
 
-
-sites = [ 'SAA0K', 'FZA0M', 'BVJ03', 'CAJ2M', 'CGK21']
-
-fig = plot_compare_quiet_disturbed_for_chars(sites,  parameter = 'hmF2')
-
-path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
-
-FigureName = 'hmF2_comparation_time'
+def main():
+    
+    sites = [ 'SAA0K', 'FZA0M', 'BVJ03', 'CAJ2M', 'CGK21']
+    
+    fig = plot_compare_quiet_disturbed_for_chars(sites,  parameter = 'hmF2')
+    
+    path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
+    
+    FigureName = 'hmF2_comparation_time'
   
 
-# fig.savefig(path_to_save + FigureName, dpi = 400)
+    fig.savefig(path_to_save + FigureName, dpi = 400)
   
+main()

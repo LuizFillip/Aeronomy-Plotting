@@ -53,8 +53,7 @@ def plot_sequence_of_ionogram(times, site):
         dn = times[i]
      
         
-        path_of_ionogram = dg.path_from_site_dn(
-            dn, site, root = 'E:\\')
+        path_of_ionogram = dg.ionogram_path(dn, site, root = 'E:\\')
         
         pl.plot_single_ionogram(
             path_of_ionogram, 
@@ -66,7 +65,9 @@ def plot_sequence_of_ionogram(times, site):
             )
         time = dn.strftime('%Hh%M')
         
-        ax.set(ylabel = '', xlabel = '', 
+        ax.set(
+            ylabel = '',
+               xlabel = '', 
                title = time)
         
         if ((i == 0) or (i == 4) or (i == 8)):
@@ -88,7 +89,7 @@ def plot_sequence_of_ionogram(times, site):
 
 def main():
     site = 'SAA0K'
-    site = 'BVJ03'
+    # site = 'BVJ03'
     # site = 'FZA0M'
     # site = 'CAJ2M'
     
@@ -98,7 +99,7 @@ def main():
     # delta= dt.timedelta(hours = 1)
     times = pd.date_range(
         dn, 
-        freq = '1H', 
+        freq = '30min', 
         periods = 12
         )
     
@@ -112,4 +113,4 @@ def main():
     #       )
 
     # 
-# main()
+main()

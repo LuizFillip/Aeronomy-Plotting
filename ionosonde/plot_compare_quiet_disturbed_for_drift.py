@@ -40,8 +40,6 @@ def plot_compare_quiet_disturbed_for_drift(
  
     for i, site in enumerate(sites):
         
-        
-        
         ref_day = dt.datetime(2015, 12, 20, 21, 0)
         
         ax[i].axvspan(
@@ -62,13 +60,10 @@ def plot_compare_quiet_disturbed_for_drift(
             site, 
             start, 
             parameter = 'drift', 
-            cols = cols, 
-            window = window + 1
+            cols = cols
             )
         
-        # for col in qt.columns:
-        #     qt[col] = b.smooth2(qt[col], 10)
-        
+       
         qt = qt.apply(lambda s: b.smooth2(s, 10))
         
         ax[i].plot(
@@ -94,17 +89,45 @@ def plot_compare_quiet_disturbed_for_drift(
                 cols = cols, 
                 window = window
                 )
-        
+                
         idx = df.index.indexer_between_time(
-            '00:00', '20:00', include_end=False)
-
+            '00:00', '20:00', include_end = False
+            )
+        
         df.iloc[idx] = df.iloc[idx].apply(lambda s: b.smooth2(s, 5))
         
-        ax[i].plot(df.interpolate(), label = db_label, lw = 2)
+        df = df.loc[~((df[site] > 50) | (df[site] < -20))]
+        
+        # print(df)
+        
+        def smooth_sections(df):
+            
+            time1 = (df.index.day == 21) | (df.index.day == 19)
+           
+            time2 = (
+                (df.index > dt.datetime(2015, 12, 20, 6)) & 
+                (df.index < dt.datetime(2015, 12, 21, 0))
+                )
+            
+            time3 = (
+                (df.index > dt.datetime(2015, 12, 21, 6)) & 
+                (df.index < dt.datetime(2015, 12, 22, 0))
+                )
+            
+            for time in [time1, time2]:
+                df.loc[time]  = df.loc[time].interpolate(
+                    order = 2, 
+                    method = 'spline'
+                    ) 
+            
+        smooth_sections(df)
+        
+        
+        ax[i].plot(df, label = db_label, lw = 2)
     
         ax[i].set(
-            ylim = [-70, 70], 
-            yticks = np.arange(-60, 80, 20),
+            ylim = [-40, 70], 
+            yticks = np.arange(-40, 80, 20),
             xlim = [df.index[0], df.index[-1]]
             )
         
@@ -118,8 +141,7 @@ def plot_compare_quiet_disturbed_for_drift(
             transform = ax[i].transAxes
             )
         
-        # pl.plot_terminators(ax[i], df, site)
-        
+
         dates = (np.unique(df.index.date))
             
         for dn in dates:
@@ -137,19 +159,24 @@ def plot_compare_quiet_disturbed_for_drift(
     
 
     ax[0].legend(
-        bbox_to_anchor = (0.5, 1.4),
+        bbox_to_anchor = (0.5, 1.6),
         loc = 'upper center', 
         ncols = 2
         )
     
-    b.format_time_axes(
-        ax[-1], 
-        hour_locator = 12, 
-        translate = translate, 
-        pad = 85, 
-        format_date = '%d/%m/%y'
-        )
+    b.b.axes_hour_format(
+         ax[-1], 
+         hour_locator = 6, 
+         tz = "UTC"
+         )
     
+    ax[-1].set(xlabel = 'Universal time')
+    
+    b.adding_dates_on_the_top(
+            ax[0], 
+            start = '2015-12-19', 
+            end = '2015-12-23'
+            )
     return fig
 
 
@@ -157,12 +184,12 @@ def main():
     sites = ['SAA0K',  'FZA0M',  'BVJ03', 'CAJ2M', 'CGK21'] #
     fig = plot_compare_quiet_disturbed_for_drift(sites, translate = True)
     
-    FigureName = 'quiet_disturbance_time'
+    FigureName = 'vertical_drift_comparation_time'
     
-    # path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
+    path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
     
-    # fig.savefig(path_to_save + FigureName, dpi = 400)
+    fig.savefig(path_to_save + FigureName, dpi = 400)
     
 main()
 
