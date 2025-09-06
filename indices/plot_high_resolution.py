@@ -4,14 +4,14 @@ import datetime as dt
 import numpy as np
 import plotting as pl 
 
-def plot_SymH(ax, ds, ylim = [-200, 50]):
+def plot_SymH(ax, ds, ylim = [-300, 50]):
     
     ax.plot(ds['sym/h'])
    
     ax.set(
         xlim = [ds.index[0], ds.index[-1]], 
         ylim = [ylim[0], ylim[-1]],
-        yticks = np.arange(ylim[0], ylim[-1] - 30, 100),
+        yticks = np.arange(-250, ylim[-1], 100),
         ylabel = "SYM-H (nT)"
         )
     
@@ -19,10 +19,12 @@ def plot_SymH(ax, ds, ylim = [-200, 50]):
     
     return None 
 
-def plot_Aurora(ax, ds):
+def plot_auroral(ax, ds):
     ax.plot(ds['ae'])
     ax.set(
-        yticks = np.arange(0, 3000, 1000),
+        # 
+        yticks = np.arange(0, 2500, 500),
+        ylim = [0, 2200],
         ylabel = 'AE (nT)'
         )
     return None
@@ -32,7 +34,8 @@ def plot_solar_speed(ax, ds):
     ds = ds.loc[ds['speed'] < 600]
     ax.plot(ds['speed'])
     ax.set(
-        ylim = [300, 600],
+        ylim = [200, 600],
+        yticks = np.arange(200, 600, 100),
         ylabel = '$V_{sw}$ (km/s)'
         )
     return None
@@ -44,32 +47,7 @@ def plot_electric_field(ax, ds):
     ax.set(ylabel = 'Ey (mV/m)')
     return None 
 
-import digisonde as dg 
 
-
-def plot_hF(ax):
-
-    ds = dg.concat_quiet_and_disturb()
-    
-    ax.plot(ds['SAA0K'], lw = 2, label = 'storm-time')
-    
-    ax.errorbar(
-        ds.index,
-        ds['q_mean'], 
-        # yerr = ds['q_std'], 
-        capsize = 3, 
-        lw = 2, 
-        label = 'quiet', 
-        # alpha= 0.4
-        )
-    ax.legend(ncol = 2, loc = 'upper right')
-    ax.set(
-        ylim = [100, 500],
-        ylabel = 'h`F (km)', 
-        xlim = [ds.index[0], ds.index[-1]]
-        )
-    
-    return None
 
 def plot_high_resolution(
         ds, dn, 
@@ -79,42 +57,38 @@ def plot_high_resolution(
     fig, ax = plt.subplots(
         dpi = 300,
         figsize = (14, 14), 
-        nrows = 4, 
+        nrows = 5, 
         sharex = True
         )
     
     if translate:
-        name = 'Sudden storm commencement'
+        name = 'SSC'
     else:
         name = 'Ínicio subito de tempestade'
         
     
     plt.subplots_adjust(hspace = 0.05)
     
-    # plot_solar_speed(ax[0], ds)
+    plot_solar_speed(ax[0], ds)
     
-    # plot_SymH(ax[0], ds)
+    plot_SymH(ax[1], ds)
     
-    plot_electric_field(ax[0], ds)
+    pl.plot_magnetic_fields(ax[2], ds)
     
-    pl.plot_magnetic_fields(ax[1], ds)
+    plot_auroral(ax[3], ds)
     
-    plot_Aurora(ax[2], ds)
-    
-    plot_hF(ax[-1])
-    # pl.plot_kp(ax[4], dn, days = 2)
+    pl.plot_kp(ax[-1], dn, days = 2)
+
     
     
-    b.format_time_axes(
-        ax[-1],
-        hour_locator = 6, 
-        pad = 80, 
-        format_date = '%d/%m/%y', 
-        translate = translate
-        )
+    dates = (np.unique(ds.index.date))
+        
     
     
     for a in ax.flat:
+        
+        for dn in dates:
+            a.axvline(dn, lw = 1, linestyle = '--')
         
         start = dt.datetime(2015, 12, 20, 21, 0)
         
@@ -127,19 +101,20 @@ def plot_high_resolution(
              color = 'gray'
              )
         
-        # ssc = dt.datetime(2015, 12, 19, 16, 20)
+        ssc = dt.datetime(2015, 12, 19, 16, 20)
         
-        # a.axvline(
-        #     ssc, 
-        #     color = 'red', 
-        #     lw = 3, 
-        #     linestyle = '--'
-        #     )
-    
-    ax[-1].text(
-        0.07, 0.8, 
-        'São Luís', 
-        transform = ax[-1].transAxes
+        a.axvline(
+            ssc, 
+            color = 'red', 
+            lw = 3, 
+            linestyle = '--'
+            )
+    delta = dt.timedelta(hours = 1)
+    ax[0].text(
+        ssc + delta,250, 
+        name, 
+        color = 'red',
+        transform = ax[0].transData
         )
     
     b.plot_letters(
@@ -150,13 +125,26 @@ def plot_high_resolution(
         )
     
     fig.align_ylabels()
-        
+    
+    b.axes_hour_format(
+         ax[-1], 
+         hour_locator = 6, 
+         tz = "UTC"
+         )
+    
+    ax[-1].set(xlabel = 'Universal time')
+    
+    b.adding_dates_on_the_top(
+            ax[0], 
+            start = '2015-12-19', 
+            end = '2015-12-23'
+            )
     return fig 
 
 
 def main():
     
-    path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
+    path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
     infile = 'database/indices/omni_high/20151'
     df = b.load(infile)
@@ -172,10 +160,10 @@ def main():
     
     FigureName = dn.strftime('%Y%m%d_GeoIndices')
     
-    # fig.savefig(
-    #       path_to_save + FigureName,
-    #       dpi = 400
-    #       )
+    fig.savefig(
+          path_to_save + FigureName,
+          dpi = 400
+          )
     
     
 main()

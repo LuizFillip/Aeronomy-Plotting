@@ -10,23 +10,23 @@ def plot_kp(ax, ds, days = 2):
     if isinstance(ds, dt.datetime) :
         ds = indexes_in_range(ds, days = days)
         
-    ax1 = ax.twinx()
+    # ax1 = ax.twinx()
     
-    line, = ax1.plot(ds['f107'], lw = 2, color = 'red')
+    # line, = ax1.plot(ds['f107'], lw = 2, color = 'red')
     
-    b.change_axes_color(
-            ax1, 
-            color = line.get_color(),
-            axis = "y", 
-            position = "right"
-            )
+    # b.change_axes_color(
+    #         ax1, 
+    #         color = line.get_color(),
+    #         axis = "y", 
+    #         position = "right"
+    #         )
     
-    vmax = ds['f107'].max()
-    vmin = ds['f107'].min()
-    ax1.set(
-        ylim = [vmin - 5, vmax + 5],
-        ylabel = '$F10.7$ (sfu)'
-        )
+    # vmax = ds['f107'].max()
+    # vmin = ds['f107'].min()
+    # ax1.set(
+    #     ylim = [vmin - 5, vmax + 5],
+    #     ylabel = '$F10.7$ (sfu)'
+    #     )
     
     ds = ds.resample('3H').mean()
     ax.bar(
@@ -82,11 +82,13 @@ def plot_magnetic_fields(ax, ds, ylim = 30):
     ax1.plot(ds['bz'], color = '#0C5DA5',  label = '$B_z$')
     ax.set(
         ylim = [-ylim, ylim], 
+        yticks = np.arange(-30, 40, 15),
         ylabel = '$B_y$ (nT)'
         )
     
     ax1.set(
         ylabel = '$B_z$ (nT)',
+        yticks = np.arange(-30, 40, 15),
         ylim = [-ylim, ylim]
         )
     
