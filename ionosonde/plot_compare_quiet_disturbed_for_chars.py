@@ -126,8 +126,7 @@ def plot_compare_quiet_disturbed_for_chars(
                 site, 
                 start,
                 parameter,
-                cols = cols, 
-                window = window
+                cols = cols
                 )
         
 

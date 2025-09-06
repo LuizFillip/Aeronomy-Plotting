@@ -3,11 +3,28 @@ import datetime as dt
 import numpy as np 
 import digisonde as dg 
 import base as b 
-import plotting as pl
-
 
 b.sci_format(fontsize = 30)
 
+def smooth_sections(df):
+    
+    time1 = (df.index.day == 21) | (df.index.day == 19)
+   
+    time2 = (
+        (df.index > dt.datetime(2015, 12, 20, 6)) & 
+        (df.index < dt.datetime(2015, 12, 21, 0))
+        )
+    
+    time3 = (
+        (df.index > dt.datetime(2015, 12, 21, 6)) & 
+        (df.index < dt.datetime(2015, 12, 22, 0))
+        )
+    
+    for time in [time1, time2]:
+        df.loc[time]  = df.loc[time].interpolate(
+            order = 2, 
+            method = 'spline'
+            ) 
 def plot_compare_quiet_disturbed_for_drift(
         sites, 
         translate = False
@@ -35,7 +52,7 @@ def plot_compare_quiet_disturbed_for_drift(
     plt.subplots_adjust(hspace = 0.1)
     
     start = dt.datetime(2015, 12, 19)
-    # cols = list(range(3, 10, 1))
+   
     cols = [5, 6, 7]
  
     for i, site in enumerate(sites):
@@ -51,11 +68,7 @@ def plot_compare_quiet_disturbed_for_drift(
              color = 'gray'
              )
         
-        if site == 'BVJ03':
-            window = 3
-        else:
-            window = 2
-            
+           
         qt = dg.repeat_quiet_days(
             site, 
             start, 
@@ -86,8 +99,7 @@ def plot_compare_quiet_disturbed_for_drift(
         df = dg.join_iono_days(
                 site, 
                 start,
-                cols = cols, 
-                window = window
+                cols = cols
                 )
                 
         idx = df.index.indexer_between_time(
@@ -97,29 +109,7 @@ def plot_compare_quiet_disturbed_for_drift(
         df.iloc[idx] = df.iloc[idx].apply(lambda s: b.smooth2(s, 5))
         
         df = df.loc[~((df[site] > 50) | (df[site] < -20))]
-        
-        # print(df)
-        
-        def smooth_sections(df):
-            
-            time1 = (df.index.day == 21) | (df.index.day == 19)
-           
-            time2 = (
-                (df.index > dt.datetime(2015, 12, 20, 6)) & 
-                (df.index < dt.datetime(2015, 12, 21, 0))
-                )
-            
-            time3 = (
-                (df.index > dt.datetime(2015, 12, 21, 6)) & 
-                (df.index < dt.datetime(2015, 12, 22, 0))
-                )
-            
-            for time in [time1, time2]:
-                df.loc[time]  = df.loc[time].interpolate(
-                    order = 2, 
-                    method = 'spline'
-                    ) 
-            
+   
         smooth_sections(df)
         
         
@@ -164,7 +154,7 @@ def plot_compare_quiet_disturbed_for_drift(
         ncols = 2
         )
     
-    b.b.axes_hour_format(
+    b.axes_hour_format(
          ax[-1], 
          hour_locator = 6, 
          tz = "UTC"
@@ -189,7 +179,7 @@ def main():
     path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
     
-    fig.savefig(path_to_save + FigureName, dpi = 400)
+    # fig.savefig(path_to_save + FigureName, dpi = 400)
     
 main()
 
