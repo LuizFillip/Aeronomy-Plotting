@@ -8,162 +8,209 @@ import numpy as np
 
 PATH_FPI = 'database/FabryPerot/car/'
 
+b.sci_format(fontsize = 25)
 
 def fn(dn):
     fmt = dn.strftime('%Y%m%d')
     return f'minime01_car_{fmt}.cedar.003.txt'
 
 
-def get_time_avg(data):
-    
-    
-    out = []
-    for df in data:
-        try:
-            out.append(
-                fp.interpol_directions(
-                    df, parameter = 'vnu'))
-        except:
-            continue
-        
-    df = pd.concat(out).sort_index()
+def plot_sky_component(ax, dn, direction, p = 'vnu'):
 
-    df['time'] = df.index.to_series().apply(b.dn2float)
-    df['day'] = df.index.day
-    df = df.loc[~df.index.duplicated()]
-
-    out_dir = []
-    for col in ['north', 'south', 'east', 'west']:
-        
-        ds2 = pd.pivot_table(
-            df, 
-            columns = 'day', 
-            index = 'time', 
-            values = col)
-     
-        out_dir.append(ds2.mean(axis = 1).to_frame(col))
-        
-    return pd.concat(out_dir, axis = 1)
-
-
-
-
-def get_avg_coordinate(days,  winde = 300):
-    
-    data = []
-    for dn in days:
-        df = fp.FPI(PATH_FPI + fn(dn)).wind
-        
-        ds = df.loc[~(
-            (df['vnu'] > winde) | 
-            (df['vnu'] < -winde))
-            ]
-        data.append(ds)
-    
-    ds = get_time_avg(data)
-    
-    ds['mer'] = ds[['north', 'south']].mean(axis = 1)
-    ds['zon'] = ds[['east', 'west']].mean(axis = 1)
-    ds['dmer'] = ds[['north', 'south']].std(axis = 1)
-    ds['dzon'] = ds[['east', 'west']].std(axis = 1)
-    return ds
-
-def plot_sky_component(ax, dn, direction, parameter = 'vnu'):
-
-    wd = fp.FPI(PATH_FPI + fn(dn)).wind
+    wd = fp.FPI(PATH_FPI + fn(dn)).vnu
     
     ds = wd.loc[(wd["dir"] == direction)]
-    ds = ds.loc[:, [parameter, f'd{parameter}']].dropna()
+    ds = ds.loc[:, [p, f'd{p}']].dropna()
     ds.index = ds.index.to_series().apply(b.dn2float)
-    
+    ds.index = ds.index.where(ds.index >= 20, ds.index + 24)
+    ds.loc[ds.index > 30, 'vnu'] = ds['vnu'] + ds['dvnu']
+    # print(ds)
     ax.errorbar(
         ds.index, 
-        ds[parameter], 
-        yerr = ds[f'd{parameter}'], 
+        ds[p], 
+        yerr = ds[f'd{p}'], 
         capsize = 5,
         lw = 2,
         label = direction + ' (LOS)'
             )
     
-    ax.legend(ncol = 3, loc = 'upper center')
     
     ax.axhline(0, linestyle = '--')
     
     return None 
 
-def plot_quiet_variation(ax, ds, d = 'zon'):
+def plot_total_variation(ax, ds, d = 'zon'):
     
-    ax.errorbar(
-         ds.index, 
-         ds[d], 
-         yerr = ds['d' + d], 
-         capsize = 5,
-         lw = 2,
-         label = 'Quiet days',
-         color = 'gray'
-             )
+    ds = component_avg(dn)
+    
+    for i, coord in enumerate(['zon', 'mer']):
+        
+        ax[i].errorbar(
+            ds.index, 
+            ds[coord], 
+            yerr = ds[f'd{coord}'], 
+            capsize = 5,
+            lw = 2
+                )
+        
+    
      
     return None 
 
-def plot_quiet_disturbed_winds(date):
+def average_of_directions(dn):
     
-    days = c.undisturbed_days(date, threshold = 18).index 
+    wd = fp.FPI(PATH_FPI + fn(dn)).vnu
+    
+    out = []
+    for coord in ['north', 'south']:
+        
+        ds = wd.loc[(wd["dir"] == coord)]
+        ds = ds.loc[:, ['vnu', 'dvnu']].dropna()
+        
+        ds = fp.resample_new_index(ds, freq = '10min')
+        ds.index = ds.index.to_series().apply(b.dn2float)
+        ds.index = ds.index.where(ds.index >= 20, ds.index + 24)
+        
+        out.append(ds['vnu'])
+        
+    df = pd.concat(out, axis = 1).sort_index()
+    df['avg'] = df.mean(axis = 1)
+    df['std'] = df.std(axis = 1) / 2
+    return df
+
+def component_avg(dn):
+    
+    df = fp.FPI(PATH_FPI + fn(dn)).vnu
+    
+    df = fp.interpol_directions(
+            df, 
+            parameter = 'vnu',
+            wind_threshold = 400
+            )
+    
+    ds = pd.DataFrame()
+    
+    ds['mer'] = df[['north', 'south']].mean(axis = 1)
+    ds['zon'] = df[['east', 'west']].mean(axis = 1)
+    ds['dmer'] = df[['north', 'south']].std(axis = 1)
+    ds['dzon'] = df[['east', 'west']].std(axis = 1)
+    
+    ds.index = ds.index.to_series().apply(b.dn2float)
+    
+    ds.index = ds.index.where(ds.index >= 20, ds.index + 24)
+    return ds
+
+def plot_quiettime_wind(ax, p = 'mer'):
+    
+    dp = f'd{p}'
+    
+    qt =  c.quiettime_winds(coord = p)
+    
+    
+    ax.plot(
+        qt.index,
+        qt[p], 
+        color = 'purple', 
+        lw = 2, 
+        label = 'Quiet-time', 
+        marker = 's', 
+        fillstyle = 'none'
+        )
+    
+    
+    ax.fill_between(
+        qt.index, 
+        qt[p] - qt[dp], 
+        qt[p] + qt[dp], 
+        color = "purple", 
+        alpha = 0.3
+        )
+       
+
+def plot_quiet_disturbed_winds(dn):
+    
+    # days = c.undisturbed_days(date, threshold = 18).index 
     
     fig, ax = plt.subplots(
-        figsize = (14, 10),
+        figsize = (14, 5),
         dpi = 300,
-        nrows = 2,
+        # nrows = 2,
         sharex = True,
         sharey = True
         )
     
-    plt.subplots_adjust(hspace = 0.1)
+    df = average_of_directions(dn)
     
-    ds = get_avg_coordinate(days)
+    ax.plot(
+        df.index,
+        df['avg'], 
+        color = 'k', 
+        lw = 2, 
+        label = 'Storm-time', 
+        marker = 's', 
+        fillstyle = 'none'
+        )
+    p = 'avg'
+    dp = 'std'
     
-    plot_quiet_variation(ax[0], ds, d = 'zon')
-    plot_quiet_variation(ax[1], ds, d = 'mer')
+    ax.fill_between(
+        df.index, 
+        df[p] - df[dp], 
+        df[p] + df[dp], 
+        color = "gray", 
+        alpha = 0.3
+        )
     
-    for coord in ['east', 'west']:
-        plot_sky_component(ax[0], date, coord)
-        
-    for coord in ['north', 'south']:
-        plot_sky_component(ax[1], date, coord)
+    plot_quiettime_wind(ax)
     
+    ax.axhline(0, linestyle = '--')
    
-    ylim = [-200, 400]
-    step = 100
+    ylim = [-50, 150]
+    step = 50
     yticks = np.arange(ylim[0], ylim[-1] + step, step)
     
-    ax[1].set(
+    ax.set(
         ylabel = 'Meridional wind (m/s)', 
-        xlabel = 'Universal time'
-        )
-    
-    ax[0].set(
-        ylabel = 'Zonal wind (m/s)', 
+        xlabel = 'Universal time',
         ylim = ylim, 
         yticks = yticks,
-        xticks = np.arange(20, 33, 1)
+        xticks = np.arange(20, 33, 1),
+        title = 'São João do Cariri - FPI'
         )
     
-    b.plot_letters(ax, y = 0.85, x = 0.03)
+    from matplotlib.ticker import FuncFormatter
+    def wrap24(x, pos):
+        return '0' + str(int(x-24)) if x >= 24 else int(x)
+
+    ax.xaxis.set_major_formatter(FuncFormatter(wrap24))
+    
+    b.add_LT_axis(ax, offset_hours=-3, position = -0.25)
+    ax.legend(
+        ncol = 2,
+        loc = 'upper center'
+        )
+    
+    
+    # b.plot_letters(ax, y = 0.85, x = 0.03)
 
     return fig 
 
 
-b.config_labels()
 
 def main():
-    date = dt.date(2015, 12, 20)
+    date = dt.datetime(2015, 12, 20)
     
     fig = plot_quiet_disturbed_winds(date)
-        
-    FigureName = date.strftime('winds_%Y%m%d')
     
-    # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'paper2'),
-    #       dpi = 400
-    #       )
+    path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
+    
+    FigureName = 'meridional_winds'
+    
+    fig.savefig(
+          path_to_save + FigureName,
+          dpi = 400
+          )
 
-# main()
+main()
+
+

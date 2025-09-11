@@ -3,11 +3,13 @@ import FabryPerot as fp
 import base as b
 import numpy as np 
 
-b.config_labels()
+b.sci_format()
+
+
 def plot_directions(ax, path, parameter = "vnu"):
     
     if parameter == "vnu":
-        df = fp.FPI(path).wind
+        df = fp.FPI(path).vnu
         vmax = round(df['vnu'].max())
         ylim = [-100, vmax]
         yticks = np.arange(ylim[0], ylim[-1], 50)
@@ -84,7 +86,7 @@ def plot_nighttime_observation(
 # infile = 'FabryPerot/data/FPI/'
 infile = 'database/FabryPerot/car/minime01_car_20140102.cedar.005.txt'
 infile = 'database/FabryPerot/car/minime01_car_20151220.cedar.003.txt'
-
+infile = 'database/FabryPerot/car/minime01_car_20130822.cedar.002.txt'
 
 fig = plot_nighttime_observation(
     infile, parameter = 'vnu')
