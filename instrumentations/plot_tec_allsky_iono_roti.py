@@ -33,7 +33,8 @@ def plot_shades(ax1, n, index, y = 4):
     
     return None 
   
-def plot_imager(path_sky: str, ax, index) -> dt.datetime:
+def plot_imager(
+        path_sky: str, ax, index) -> dt.datetime:
     """Plota imagem All-Sky processada em um eixo."""
     
     image = im.DisplayASI(path_sky)
@@ -45,7 +46,8 @@ def plot_imager(path_sky: str, ax, index) -> dt.datetime:
     ax.set(title = title)
     return dn
 
-def plot_tecmaps_rows(gs2, target, index, col, vmax = 30):
+def plot_tecmaps_rows(
+        gs2, target, index, col, vmax = 30):
     
     ax_tec = plt.subplot(
         gs2[2, col], projection = ccrs.PlateCarree())
