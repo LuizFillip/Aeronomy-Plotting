@@ -4,7 +4,7 @@ import datetime as dt
 import plotting as pl
 import matplotlib.pyplot as plt
 
-b.sci_format(fontsize = 25)
+b.sci_format(fontsize = 20)
 
 
 def plot_multiple_tec_maps(
@@ -32,15 +32,15 @@ def plot_multiple_tec_maps(
         
         delta_day =  dt.timedelta(days = row)
         day = start + delta_day
-        
-        day_label = day.strftime('%d/%m/%y')
+        nxt = day.day + 1
+        day_label = day.strftime(f'%B, %d-{nxt}, %Y')
         
         l = b.chars()[row]
         
         axs[row, 0].text(
             -0.4, 1.17,
             f'({l}) {day_label}', 
-            fontsize = 30,
+            fontsize = 25,
             transform = axs[row, 0].transAxes
             )
         
@@ -63,18 +63,6 @@ def plot_multiple_tec_maps(
             
             x, y = pl.valleys_and_peaks(dn, desired_dx = 5 )
             
-            # if row != 2:
-            #     if hour
-            #     for lon in x:
-            #         delta = 3
-            #         if lon > -70:
-            #             pl.arrow(
-            #                 ax, 
-            #                 (lon + delta, -10), 
-            #                 (lon + delta, 10), 
-            #                  text = '')
-            
-            
             ax.set(title = dn.strftime(f' ({col + 1}) %Hh%M UT'))
             
             if not ((row == 2) and (col == 0)):
@@ -86,6 +74,18 @@ def plot_multiple_tec_maps(
                     )
                 
     
+    arrows = {
+        (0, 1): [(-49, -6)],
+        (0, 2): [(-52, -8), (-44, -8)], 
+        (0, 3): [(-50, -5), (-40, -6), (-60, -4)],
+        (2, 2): [(-60, -5), (-50, -5)],             
+        (2, 3): [(-63, -5), (-55, -5), (-45, -5)]  
+        
+    }
+    
+    pl.add_red_arrows_on_panels(
+        axs, arrows, 
+        crs=ccrs.PlateCarree(), dy=3, color="red")
     
 
                 
@@ -104,16 +104,15 @@ def plot_multiple_tec_maps(
 def main():
     
     start =  dt.datetime(2015, 12, 19, 22)
-    # start =  dt.datetime(2014, 2, 2, 22)
     fig = plot_multiple_tec_maps(start, vmax = 60, step = 10)
     
-    path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
+    path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
     FigureName = 'TECmaps_on_sunset'
     
-    # fig.savefig(
-    #       path_to_save + FigureName,
-    #       dpi = 400
-    #       )
+    fig.savefig(
+          path_to_save + FigureName,
+          dpi = 400
+          )
     
 # main()
