@@ -4,9 +4,55 @@ import base as b
 import datetime as dt
 import numpy as np
 
-b.config_labels()
+# b.config_labels()
 
 PATH_FPI = 'database/FabryPerot/'
+def plot_sky_component(ax, dn, direction, p = 'vnu'):
+
+    wd = fp.FPI(PATH_FPI + fp.fn(dn)).vnu
+    
+    ds = wd.loc[(wd["dir"] == direction)]
+    ds = ds.loc[:, [p, f'd{p}']].dropna()
+    ds.index = ds.index.to_series().apply(b.dn2float)
+    ds.index = ds.index.where(ds.index >= 20, ds.index + 24)
+    ds.loc[ds.index > 30, 'vnu'] = ds['vnu'] + ds['dvnu']
+    # print(ds)
+    ax.errorbar(
+        ds.index, 
+        ds[p], 
+        yerr = ds[f'd{p}'], 
+        capsize = 5,
+        lw = 2,
+        label = direction + ' (LOS)'
+            )
+    
+    
+    ax.axhline(0, linestyle = '--')
+    
+    return None 
+
+def component_avg(dn):
+    
+    df = fp.FPI(PATH_FPI + fn(dn)).vnu
+    
+    df = fp.interpol_directions(
+            df, 
+            parameter = 'vnu',
+            wind_threshold = 400
+            )
+    
+    ds = pd.DataFrame()
+    
+    ds['mer'] = df[['north', 'south']].mean(axis = 1)
+    ds['zon'] = df[['east', 'west']].mean(axis = 1)
+    ds['dmer'] = df[['north', 'south']].std(axis = 1)
+    ds['dzon'] = df[['east', 'west']].std(axis = 1)
+    
+    ds.index = ds.index.to_series().apply(b.dn2float)
+    
+    ds.index = ds.index.where(ds.index >= 20, ds.index + 24)
+    return ds
+
 
 def plot_total_component(ax, dn, parameter = 'VN1'):
     file = fp.dn_to_filename(dn, site = 'bfp', code = 7101)
