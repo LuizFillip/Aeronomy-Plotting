@@ -29,8 +29,7 @@ def plot_points_and_maximus_roti(
         translate = True
         ):
     
-    threshold  = pb.threshold(dn, factor = 4)['noise'].item()
-    threshold = round(threshold, 3)
+    
     threshold = 0.2
     
     if translate:
@@ -144,6 +143,7 @@ def main():
     dn = dt.datetime(2018, 6, 11, 21)
     dn = dt.datetime(2019, 12, 20, 21)
     dn = dt.datetime(2013, 1, 17, 21)
+    dn = dt.datetime(2015, 12, 20, 21)
     
     df = pb.concat_files(
         dn, 
@@ -171,12 +171,12 @@ def main():
     
     save_in = 'G:\\My Drive\\Papers\\Paper 2\\Midnight EPBs\\Eps\\img\\'
 
-    fig.savefig(save_in + FigureName, dpi = 300
-                )
+    # fig.savefig(save_in + FigureName, dpi = 300
+    #             )
     
     
 
     plt.show()
         
 
-# main()
+main()
