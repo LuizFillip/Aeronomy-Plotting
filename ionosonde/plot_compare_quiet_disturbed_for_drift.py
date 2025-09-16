@@ -6,7 +6,9 @@ import base as b
 
 b.sci_format(fontsize = 30)
 
-def smooth_sections(df):
+def smooth_sections(df, site):
+    
+    df = df.loc[~((df[site] > 50) | (df[site] < -20))]
     
     time1 = (df.index.day == 21) | (df.index.day == 19)
    
@@ -25,6 +27,25 @@ def smooth_sections(df):
             order = 2, 
             method = 'spline'
             ) 
+        
+    return df 
+
+def check_results(ax, site):
+    
+    ref = dt.datetime(2015, 12, 20, 21)
+    res = dg.summary_from_ref_time(ref, site, p = 'drift')
+    
+    print(res)
+    ax.scatter( res['time'], res['storm'])
+    
+    ref = dt.datetime(2015, 12, 21, 6)
+    res = dg.summary_from_ref_time(ref, site, p = 'drift')
+    
+    ax.scatter( res['time'], res['storm'])
+    
+    
+    
+    
 def plot_compare_quiet_disturbed_for_drift(
         sites, 
         translate = False
@@ -77,8 +98,8 @@ def plot_compare_quiet_disturbed_for_drift(
             )
         
        
-        qt = qt.apply(lambda s: b.smooth2(s, 10))
-        
+        qt = qt.apply(lambda s: b.smooth2(s, 5))
+        qt['svz'] =  b.smooth2(qt['svz'], 10)
         ax[i].plot(
             qt.index,
             qt['vz'], 
@@ -101,17 +122,21 @@ def plot_compare_quiet_disturbed_for_drift(
                 start,
                 cols = cols
                 )
-                
-        idx = df.index.indexer_between_time(
-            '00:00', '20:00', include_end = False
-            )
         
-        df.iloc[idx] = df.iloc[idx].apply(lambda s: b.smooth2(s, 5))
+        if site in ['SAA0K',  'FZA0M',  'BVJ03']:
+            idx = df.index.indexer_between_time(
+                '00:00', '20:00', include_end = False
+                )
+            
+            df.iloc[idx] = df.iloc[idx].apply(lambda s: b.smooth2(s, 5))
+        else:
+            df = df.apply(lambda s: b.smooth2(s, 5))
         
-        df = df.loc[~((df[site] > 50) | (df[site] < -20))]
+        
    
-        smooth_sections(df)
+        df = smooth_sections(df, site)
         
+        # check_results(ax[i], site)
         
         ax[i].plot(df, label = db_label, lw = 2)
     
@@ -179,7 +204,7 @@ def main():
     path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
     
-    # fig.savefig(path_to_save + FigureName, dpi = 400)
+    fig.savefig(path_to_save + FigureName, dpi = 400)
     
 main()
 

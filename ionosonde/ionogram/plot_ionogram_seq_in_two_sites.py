@@ -90,9 +90,9 @@ def plot_ionograms_on_multisites(times, sites):
 def main():
     sites = [ 'SAA0K', 'BVJ03', 'FZA0M'] #'CAJ2M', 'CGK21'
     
-    start = dt.datetime(2015, 12, 20, 20)
+    start = dt.datetime(2015, 12, 20, 21)
     
-    times = pd.date_range(start, freq = '2H', periods = 8)
+    times = pd.date_range(start, freq = '1H', periods = 8)
     
     fig = plot_ionograms_on_multisites(times, sites)
     
