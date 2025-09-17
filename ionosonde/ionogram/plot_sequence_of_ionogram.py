@@ -3,7 +3,10 @@ import digisonde as dg
 import plotting as pl 
 import pandas as pd 
 import datetime as dt
+import base as b 
+import numpy as np 
 
+b.sci_format(fontsize = 20)
 
         
 def fig_labels(
@@ -40,12 +43,11 @@ def plot_sequence_of_ionogram(times, site):
     fig, ax = plt.subplots(
          figsize = (16, 10), 
          dpi = 300, 
-         sharex = True,
          ncols = 4, 
-         nrows = 3
+         nrows = 5
          )
     
-    plt.subplots_adjust(wspace = 0.1, hspace = 0.2)
+    plt.subplots_adjust(wspace = 0, hspace = 0.3)
     
     
     for i, ax in enumerate(ax.flat):
@@ -53,35 +55,51 @@ def plot_sequence_of_ionogram(times, site):
         dn = times[i]
      
         
-        path_of_ionogram = dg.ionogram_path(dn, site, root = 'E:\\')
+        path_of_ionogram = dg.ionogram_path(
+            dn, site, root = 'E:\\')
+        
+        # pl.plot_single_ionogram(
+        #     path_of_ionogram, 
+        #     ax = ax, 
+        #     aspect = 'auto',
+        #     label = True,
+        #     ylabel_position = 'left',
+        #     title = False
+        #     )
         
         pl.plot_single_ionogram(
             path_of_ionogram, 
-            ax = ax, 
-            aspect = 'auto',
-            label = True,
-            ylabel_position = 'left',
-            title = False
+            ax, 
+            label = True, 
+            ylim = [100, 1200]
             )
-        time = dn.strftime('%Hh%M')
         
-        ax.set(
-            ylabel = '',
-               xlabel = '', 
-               title = time)
+        time = dn.strftime('%H:%M UT')
         
-        if ((i == 0) or (i == 4) or (i == 8)):
-            pass
+        ax.set(title = time)
+        
+        
+        if (i != 16):
+          
+            ax.set(
+                yticklabels = [], 
+                xticklabels = [], 
+                xlabel = '', 
+                ylabel = ''
+                )
         else:
-            ax.set(yticklabels = [])
+            ax.set(
+                xticks = np.arange(0, 16, 4),
+                ylabel = 'Altitude (km)',
+                xlabel = 'Frequency (MHz)'
+                )
+            
     
     
-    date = dn.strftime(' - %Y-%m-%d')
-    fig_labels(
-        fig, 
-        fontsize = 30, 
-        title = dg.code_name(site) + date
-        )
+    s = times[0]
+    site_name = dg.code_name(site)
+    name = s.strftime(f'%d %B, %Y - {site_name}')
+    fig.suptitle(name)
     
     return fig 
 
@@ -93,24 +111,27 @@ def main():
     # site = 'FZA0M'
     # site = 'CAJ2M'
     
-    dn = dt.datetime(2015, 12, 20, 21)
-
+    # for site in 
+    sites = ['SAA0K', 'FZA0M', 'BVJ03', 'CAJ2M', 'CGK21']
     
-    # delta= dt.timedelta(hours = 1)
-    times = pd.date_range(
-        dn, 
-        freq = '30min', 
-        periods = 12
-        )
+    for site in sites:
+        dn = dt.datetime(2015, 12, 21, 3)
     
-    fig = plot_sequence_of_ionogram(times, site)
-    
-    FigureName = dn.strftime(f'{site}_%Y%m%d')
-    
-    # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'paper2'),
-    #       dpi = 300
-    #       )
+        times = pd.date_range(
+            dn, 
+            freq = '20min', 
+            periods = 20
+            )
+        
+        fig = plot_sequence_of_ionogram(times, site)
+        
+        FigureName = dn.strftime(f'{site}_%Y%m%d')
+        
+        folder = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\ionograms\\'
+        fig.savefig(
+              folder + FigureName,
+              dpi = 300
+              )
 
     # 
 main()
