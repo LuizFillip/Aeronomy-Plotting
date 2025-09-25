@@ -174,7 +174,7 @@ def plot_compare_quiet_disturbed_for_drift(
     
 
     ax[0].legend(
-        bbox_to_anchor = (0.5, 1.6),
+        bbox_to_anchor = (0.5, 1.5),
         loc = 'upper center', 
         ncols = 2
         )
@@ -196,7 +196,7 @@ def plot_compare_quiet_disturbed_for_drift(
 
 
 def main():
-    sites = ['SAA0K',  'FZA0M',  'BVJ03', 'CAJ2M', 'CGK21'] #
+    sites = ['SAA0K',  'FZA0M',  'BVJ03' ] #, 'CAJ2M', 'CGK21'] #
     fig = plot_compare_quiet_disturbed_for_drift(sites, translate = True)
     
     FigureName = 'vertical_drift_comparation_time'
@@ -204,7 +204,7 @@ def main():
     path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
     
-    fig.savefig(path_to_save + FigureName, dpi = 400)
+    # fig.savefig(path_to_save + FigureName, dpi = 400)
     
 main()
 

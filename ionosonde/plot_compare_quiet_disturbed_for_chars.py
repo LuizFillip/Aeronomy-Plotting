@@ -190,7 +190,7 @@ def plot_compare_quiet_disturbed_for_chars(
 
 def main():
     
-    sites = [ 'SAA0K', 'FZA0M', 'BVJ03', 'CAJ2M', 'CGK21']
+    sites = [ 'SAA0K', 'FZA0M', 'BVJ03'  ]#, 'CAJ2M', 'CGK21']
     
     fig = plot_compare_quiet_disturbed_for_chars(sites,  parameter = 'hmF2')
     
@@ -199,6 +199,6 @@ def main():
     FigureName = 'hmF2_comparation_time'
   
 
-    fig.savefig(path_to_save + FigureName, dpi = 400)
+    # fig.savefig(path_to_save + FigureName, dpi = 400)
   
-main()
+# main()
