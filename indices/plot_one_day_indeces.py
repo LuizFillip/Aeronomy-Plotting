@@ -2,55 +2,16 @@ import matplotlib.pyplot as plt
 import base as b
 import datetime as dt
 import numpy as np
+import PlasmaBubbles as pb 
 
+
+b.sci_format(fontsize = 25)
 PATH = 'database/indices/omni_hourly.txt'
 
-def plot_kp(ax, ds, days = 2):
-    
-    if isinstance(ds, dt.datetime) :
-        ds = indexes_in_range(ds, days = days)
-        
-    # ax1 = ax.twinx()
-    
-    # line, = ax1.plot(ds['f107'], lw = 2, color = 'red')
-    
-    # b.change_axes_color(
-    #         ax1, 
-    #         color = line.get_color(),
-    #         axis = "y", 
-    #         position = "right"
-    #         )
-    
-    # vmax = ds['f107'].max()
-    # vmin = ds['f107'].min()
-    # ax1.set(
-    #     ylim = [vmin - 5, vmax + 5],
-    #     ylabel = '$F10.7$ (sfu)'
-    #     )
-    
-    ds = ds.resample('3H').mean()
-    ax.bar(
-        ds.index, 
-        ds['kp'], 
-        width = 0.09,
-        color = 'gray',
-        alpha = 0.5, 
-        edgecolor = 'k'
-        )
-    ax.set(
-        ylabel = 'Kp', 
-        ylim = [0, 12], 
-        yticks = np.arange(0, 12, 3)
-        )
-    
-    ax.axhline(3, lw = 2, color = 'k', linestyle = '--')
-    
-    return None 
-    
 
 def plot_dst(ax, ds, ylim = [-200, 100]):
     # print(ds.resample('1D').min()['dst'])
-    ax.plot(ds['dst'], lw = 2)
+    ax.plot(ds['sym/h'], lw = 2)
     
     ax.set(
         xlim = [ds.index[0], ds.index[-1]], 
@@ -134,7 +95,23 @@ def indexes_in_range(dn, days = 2):
     
     ds = b.load(PATH)
     return b.range_dates(ds, dn, days = days)
+
+def plot_epbs(ax, dn, sector = -50):
     
+    df = pb.concat_files(
+        dn, 
+        days = 2, 
+        root = 'E:\\', 
+        hours = 12, 
+        remove_noise = True
+        )
+    df = pb.filter_region(df, dn.year, sector)
+    
+    ax.plot(df['roti'])
+    
+    ax.set(ylim = [0, 2], ylabel = 'ROTI')
+
+
 def plot_one_day_indices(dn, days = 2):
     
     fig, ax = plt.subplots(
@@ -146,29 +123,38 @@ def plot_one_day_indices(dn, days = 2):
     
     plt.subplots_adjust(hspace = 0.05)
     
-    ds = indexes_in_range(dn, days = 4)
-   
+    infile = 'database/indices/omni_high/20151'
+    df = b.load(infile)
+
+    ds = b.sel_times(df, dn, hours = 12) 
     
+    ds =  ds.replace(9999.99, np.nan)
+       
     plot_magnetic_fields(ax[0], ds)
     plot_auroras(ax[1], ds)
-    plot_kp(ax[2], ds)
-    plot_dst(ax[3], ds)
-    
-    delta = dt.timedelta(hours = 3)
-    ax[-1].set( 
-       xlim = [ds.index[0] + delta, ds.index[-1] + delta], 
-       xlabel = 'Dias'
-       )
+    plot_dst(ax[2], ds)
+    plot_epbs(ax[-1], dn)
     
     month = b.monthToNum(dn.month, language = 'pt')
     year = dn.year
     ax[0].set(title = f'{month} de {year}')
     
-    b.format_days_axes(ax[-1])
+    b.format_time_axes(
+        ax[-1], hour_locator = 1, 
+        translate = False)
     
     delta = dt.timedelta(hours = 12)
     
     for a in ax.flat:
+        import plotting as pl 
+        pl.plot_references_lines(
+                a,
+                -50, 
+                dn, 
+                label_top = None,
+                translate = True
+                )
+        
         a.axvspan(
             dn, dn + delta, 
             ymin = 0, ymax = 1,
@@ -195,14 +181,14 @@ dn = dt.datetime(2017, 8, 30, 21)
 dn = dt.datetime(2014, 1, 2, 21)
 dn = dt.datetime(2013, 3, 17, 21)
 dn = dt.datetime(2022, 7, 24, 21)
-dn = dt.datetime(2015, 12, 20, 21)
+dn = dt.datetime(2015, 12, 20, 20)
 
 # dn = dt.datetime(2015, 12, 25, 21)
-dn = dt.datetime(2019, 5, 2, 21)
+# dn = dt.datetime(2019, 5, 2, 21)
 # dn = dt.datetime(2019, 12, 6, 21)
 
 def main():
-    days = 3
+    days = 1
 
     fig = plot_one_day_indices(dn, days = days)
     
@@ -214,6 +200,8 @@ def main():
     #       dpi = 300
     #       )
     
-# main()
+main()
+
+
 
 

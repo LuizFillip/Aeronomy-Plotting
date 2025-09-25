@@ -160,10 +160,10 @@ def main():
     
     FigureName = dn.strftime('%Y%m%d_GeoIndices')
     
-    fig.savefig(
-          path_to_save + FigureName,
-          dpi = 400
-          )
+    # fig.savefig(
+    #       path_to_save + FigureName,
+    #       dpi = 400
+    #       )
     
     
-main()
+# main()
