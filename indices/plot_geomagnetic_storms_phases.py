@@ -51,25 +51,3 @@ def plot_geomagnetic_storms_phases( df1):
     return fig 
 
 
-# dn = ds.index[1]
-df = b.load(PATH)
-
-dn = dt.datetime(2022, 1, 1)    
-end = dn + dt.timedelta(days = 120)
-
-# end = ds.loc[dn, 'end']
-# start = ds.loc[dn, 'start']
-    
-    
-df1 = b.sel_dates(
-      df, 
-      dn, 
-      end 
-      )
- 
-# ds = c.find_storms(df1)
-
-fig = plot_geomagnetic_storms_phases(df1)
-
-
-# df1 
