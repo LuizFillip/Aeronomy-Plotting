@@ -7,6 +7,14 @@ import base as b
 import core as c
 import GEO as gg 
 
+bad = ['2013-09-24', '2013-11-10', '2015-09-20', '2015-10-08', '2016-03-29',
+       '2017-09-24', '2018-02-14', '2018-11-23', '2019-02-24', '2019-10-17', 
+       '2019-10-24', '2019-12-13', '2021-03-26', '2021-10-18', '2022-03-07', 
+       '2022-04-02']
+
+dub = ['2013-09-18', '2016-12-11', '2018-10-21', '2019-10-29', 
+       '2021-03-23', '2022-09-19', '2022-09-20', '2022-12-28']
+
 
 def plot_roti_in_range(ax, dn):
 
@@ -69,7 +77,14 @@ def plot_indices_and_roti_longterm(dn):
         for line in st:
             
             a.axvline(line, color = 'red')
-
+    
+    devtime = (dusk - st[1]).total_seconds() / 3600
+    devtime = round(devtime, 2)
+    
+    ax[-1].text(
+        0, -0.35, f'Desviation: {devtime} hrs', 
+        transform = ax[-1].transAxes
+        )
     b.format_days_axes(ax[-1])
     
     b.plot_letters(
@@ -84,23 +99,32 @@ def plot_indices_and_roti_longterm(dn):
     fig.align_ylabels()
     
     return fig
+import pandas as pd 
 
-ds = c.suppression_events(c.epbs(), days = 2)
+df = c.suppression_events(c.epbs(), days = 2)
 
-dn = ds.index[0]
+df = df.loc[~(df.index.isin(pd.to_datetime(bad + dub)))]
+
+# dn = df.index[1]
+
+# fig = plot_indices_and_roti_longterm(dn)
 
 
-def save_img():
+def save_imgs(ds):
     from tqdm import tqdm 
     
     path = 'E:\\img\\'
     plt.ioff()
     
-    for dn in tqdm(ds.index):
-        
-        fig = plot_indices_and_roti_longterm(dn)
-        fig.savefig(path + dn.strftime('%Y%m%d'))
-        
+    for dn in tqdm(ds.index[30:]):
+        try:
+            fig = plot_indices_and_roti_longterm(dn)
+            fig.savefig(path + dn.strftime('%Y%m%d'))
+        except:
+            continue
     
     plt.clf()   
     plt.close()
+    
+    
+save_imgs(df)
