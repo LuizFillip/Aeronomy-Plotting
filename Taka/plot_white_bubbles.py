@@ -2,41 +2,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import base as b 
 import numpy as np 
-from matplotlib.ticker import MultipleLocator
+
 
 b.sci_format(fontsize = 25)
 
 
-def add_LT_axis(ax, offset_hours=-3, position=-0.18, fmt="%02d"):
-    """
-    Adiciona um eixo LT (hrs) abaixo do eixo x (UT) de `ax`.
 
-    - LT = (UT + offset_hours) % 24
-    - position < 0 coloca o eixo abaixo (ex.: -0.18)
-    - fmt controla o formato do rótulo (default: 2 dígitos)
-    """
-    # eixo secundário com transformação identidade
-    secax = ax.secondary_xaxis(position, functions=(lambda x: x, lambda x: x))
-    secax.set_xlabel("LT (hrs)")
-
-    
-    def _update(_=None):
-        ut_ticks = ax.get_xticks()
-        lt_vals = (ut_ticks + offset_hours) % 24
-        secax.set_xticks(ut_ticks)
-        # aqui usamos f-string com :02d para garantir 2 dígitos
-        secax.set_xticklabels([f"{int(v)%24:02d}" for v in lt_vals])
-
-    # atualiza agora e sempre que xlim mudar
-    _update()
-    ax.callbacks.connect('xlim_changed', _update)
-    
-    # major ticks de 1h
-    ax.xaxis.set_major_locator(MultipleLocator(1))
-    # minor ticks: 4 subdivisões por intervalo → 1/4 = 0.25
-    ax.xaxis.set_minor_locator(MultipleLocator(0.25))
-    
-    return secax
 
 def set_zonal_drift(infile):
     
@@ -71,7 +42,7 @@ def set_zonal_drift(infile):
     return df.astype(float)  
 
 def plot_zonal_drift():
-    infile = 'plotting/Taka/zonal_drift.txt'
+    infile = 'plotting/Taka/data/zonal_drift.txt'
     df = set_zonal_drift(infile)
     df = df.iloc[:-1, :]
     fig, ax = plt.subplots( 
@@ -109,7 +80,7 @@ def plot_zonal_drift():
     
     ax.axvline(27, color = 'k', linestyle = '--', lw = 3)
     
-    add_LT_axis(ax, offset_hours=-3, position=-0.18)
+    b.add_LT_axis(ax, offset_hours=-3, position=-0.18)
     
    
     return fig
@@ -117,7 +88,7 @@ def plot_zonal_drift():
 
 def plot_heights():
     
-    infile = 'plotting/Taka/iono_parameters.txt'
+    infile = 'plotting/Taka/data/iono_parameters.txt'
     df = set_zonal_drift(infile)
     
     fig, ax = plt.subplots( 
@@ -151,7 +122,7 @@ def plot_heights():
     
     ax.axvline(27, color = 'k', linestyle = '--', lw = 3)
     
-    add_LT_axis(ax, offset_hours=-3, position=-0.18)
+    b.add_LT_axis(ax, offset_hours=-3, position=-0.18)
     
     return fig 
 
@@ -164,4 +135,4 @@ def main():
     
     # fig.savefig('zonal_drift', dpi = 300)
     
-main()
+# main()

@@ -122,9 +122,6 @@ def plot_quiet_disturbed_winds(dn):
     step = 50
     yticks = np.arange(ylim[0], ylim[-1] + step, step)
     
-    
-    
-    
     ax.set(
         ylabel = 'Meridional wind (m/s)', 
         xlabel = 'Universal time',
@@ -163,14 +160,14 @@ def main():
     
     fig = plot_quiet_disturbed_winds(date)
     
-    # path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
+    path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
     FigureName = 'meridional_winds'
     
-    # fig.savefig(
-    #       path_to_save + FigureName,
-    #       dpi = 400
-    #       )
+    fig.savefig(
+          path_to_save + FigureName,
+          dpi = 400
+          )
 
 main()
 

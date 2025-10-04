@@ -17,19 +17,28 @@ def plot_shade_around_terminator(ax, dn, site):
             twilight_angle = 18
             )
     
-    ax.axvline(dusk, lw = 2, linestyle = '--')
-    
+    ax.axvline(dusk, lw = 2, linestyle = '--', 
+               )
     delta = dt.timedelta(minutes = 30)
     
+    ax.text(
+        dusk + delta, 1.6,
+        'Solar terminator'
+        , transform = ax.transData
+        )
+    
+    
     ax.axvspan(
-         dn - delta, 
-         dn + delta, 
+         dusk - delta, 
+         dusk + delta, 
          ymin = 0, 
          ymax = 1,
          alpha = 0.2, 
          color = 'red'
      )
-    return None 
+    
+    
+    return dusk
 
 def junk_smooth(ds):
     # ds = ds.resample('10min').mean()
@@ -48,15 +57,16 @@ def junk_smooth(ds):
 
 
 def get_results(ds, ref_dn, col = 'wind'):
-    
-    delta = dt.timedelta(hours = 2)
+    # ref_dn = dt.datetime(2015, 12, 20, 22, 0)
+    delta = dt.timedelta(minutes=30)
     
     sel = ds.loc[
         ((ds.index > ref_dn - delta) & 
-        (ds.index < ref_dn + delta))
+        (ds.index < ref_dn))
         ].copy()
     
     date = sel[col].idxmax()
+    print(date)
     value =  sel.loc[date][col]
     return pd.DataFrame({col: value}, index = [date])
 
@@ -116,14 +126,19 @@ def plot_winds_effects_on_gamma(site = 'FZA0M'):
         ax[i].axhline(0, lw = 0.5)
         
         dn = dt.datetime(2015, 12, 20, 21, 40)
+        dusk = plot_shade_around_terminator(ax[i], dn, site)
+        
         out1 = []
         for col in ['wind', 'no_wind']:
-            res = get_results(ds, dn, col)
+            res = get_results(ds, dusk, col)
             res.index = [labels[i]]
             out1.append(res)
     
         out.append(pd.concat(out1, axis=1))
-        plot_shade_around_terminator(ax[i], dn, site)
+        
+        
+        
+        
     
     b.format_time_axes(
             ax[-1], 
@@ -169,11 +184,11 @@ def main():
     path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
     
-    # fig.savefig(path_to_save + FigureName, dpi = 400)
+    fig.savefig(path_to_save + FigureName, dpi = 400)
 
 
 
-main()
+# main()
 
 # site = 'FZA0M'
 # rt.stormtime_gamma(site)

@@ -3,7 +3,7 @@ import base as b
 import matplotlib.pyplot as plt 
 import numpy as np 
 
-b.config_labels()
+b.sci_format()
 
 
 def get_min_max(df):
@@ -108,4 +108,8 @@ def main():
     #     dpi = 400
     #     )
     
-main()
+# main()
+
+df = c.seasonal_storm_events(normalize = False)
+
+df

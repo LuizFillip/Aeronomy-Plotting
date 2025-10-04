@@ -57,11 +57,15 @@ def remove_lines(ax, nrows, ncols):
             elif num == (ncols - 1):    
                 ax[num].spines['left'].set_visible(False)
                 ax[num].axes.yaxis.set_visible(False)
+                ax[num].set(yticks = [])
                 
             else:
                 ax[num].spines['left'].set_visible(False)
                 ax[num].spines['right'].set_visible(False)
                 ax[num].axes.yaxis.set_visible(False)
+                ax[num].set(yticks = [])
+    
+    return None 
                 
                 
                 
@@ -84,4 +88,4 @@ def main():
         remove_lines(ax, nrows = num[0], ncols = num[1])
         
         
-# main()
+main()

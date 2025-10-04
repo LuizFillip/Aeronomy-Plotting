@@ -6,12 +6,6 @@ import numpy as np
 
 b.sci_format(fontsize = 30)
 
-args = dict( 
-    s = 50, 
-    marker = '^',
-    color = 'k', 
-    transform = ccrs.PlateCarree()
-    )
 
 def place_ocean_labels(
     ax, stations, side="east", margin=1.0, min_dy=0.8,
@@ -32,7 +26,8 @@ def place_ocean_labels(
     crs : cartopy.crs ou None  passe PlateCarree() se estiver com Cartopy
     """
     line_kw = {"color": "k", "lw": 2} | (line_kw or {})
-    text_kw = {"fontsize": 12, "ha": "left", "va": "center"} | (text_kw or {})
+    text_kw = {"fontsize": 12, "ha": "left", "va": "center"
+               } | (text_kw or {})
 
     # limites do mapa (em graus) já definidos pelo set_extent / set_xlim,set_ylim
     x0, x1 = ax.get_xlim()
@@ -69,21 +64,15 @@ def place_ocean_labels(
     # Desenha textos e linhas
     for s, y_txt in zip(sts, placed_lats):
         lon, lat, name = s["lon"], s["lat"], s["name"]
-
-        # Texto
-        if crs is None:
-            ax.text(x_lab, y_txt, name, **text_kw)
-        else:
-            ax.text(x_lab, y_txt, name, transform=crs, **text_kw)
-
-        # Linha reta do ponto até o texto (horizontal até x_lab)
+        
+    
+        ax.text(x_lab, y_txt, name, transform=crs, **text_kw)
         xs = [lon, x_lab]
         ys = ([lat, y_txt] if abs(y_txt - lat) > 0
-              else [lat, lat] ) # pode ser inclinada
-        if crs is None:
-            ax.plot(xs, ys, **line_kw)
-        else:
-            ax.plot(xs, ys, transform=crs, **line_kw)
+              else [lat, lat] )
+        ax.plot(xs, ys, transform=crs, **line_kw)
+            
+    return None 
 
 
 def plot_sites(ax, year):
@@ -130,9 +119,17 @@ def plot_GNSS(ax, year, translate = False):
         label = 'Receptores GNSS'
     else:
         label = 'GNSS receivers'
-        
+    
+    args = dict( 
+        s = 50, 
+        marker = '^',
+        color = 'red', 
+        transform = ccrs.PlateCarree()
+        )
+
+
     sits, lon, lat = gg.arr_coords(year = 2021)
-    ax.scatter(lon, lat, **args, label = label)
+    ax.scatter(lon, lat, **args)
     
     # ax.annotate(
     #     'Receptores GNSS', xy=(lon[1], lat[1]), 
@@ -143,8 +140,8 @@ def plot_GNSS(ax, year, translate = False):
     #     )
     return None 
 
-lat_lims = dict(min = -30, max = 20, stp = 10)
-lon_lims = dict(min = -70, max = -30, stp = 10)
+lat_lims = dict(min = -30, max = 10, stp = 10)
+lon_lims = dict(min = -65, max = -30, stp = 10)
 
 def legend_dummy():
     
@@ -159,28 +156,27 @@ def legend_dummy():
     l2 = plt.scatter(
         [], [], color = 'green', marker = 'o', 
         **kwargs)
+    l3 = plt.scatter(
+        [], [], color = 'red', marker = '^', 
+        **kwargs)
 
-    labels = ["Ionosonde", "FPI"]
+    labels = ["Ionosonde", "FPI", 'GNSS receivers']
 
     plt.legend(
-        [l1, l2], 
+        [l1, l2, l3], 
         labels, 
-        ncol = 1, 
-        fontsize = 30,
+        ncol = 3, 
+        fontsize = 25,
         handlelength = 2,
-        # loc = 10, 
-        bbox_to_anchor = (0.45, 0.8),
-        # borderpad = 1.8,
-        handletextpad = 1, 
-        scatterpoints = 1
+        bbox_to_anchor = (1, 1.1),
+        labelspacing = 0,
+        columnspacing = 0.3 
+        # scatterpoints = 1
         )
+    
+    return None 
 
 def plot_regions_over_map(year = 2013):
-    
-    """
-    Plot only the regions (squares) over the map
-    
-    """
     
     fig, ax = plt.subplots(
         dpi = 300,
@@ -195,17 +191,17 @@ def plot_regions_over_map(year = 2013):
         grid = False, 
         lat_lims = lat_lims,
         lon_lims = lon_lims
-)
+        )
     stations = [
         {"name": "Boa Vista",           "lon": -60.7, "lat":  2.8},
         {"name": "São Luís",            "lon": -44.2, "lat": -2.6},
         {"name": "Fortaleza",           "lon": -38.5, "lat": -3.7},
-        {"name": "São João do Cariri",  "lon": -36.5, "lat": -7.4},
-        {"name": "Campo Grande",        "lon": -54.6, "lat": -20.4},
-        {"name": "Cachoeira Paulista",  "lon": -45.0, "lat": -22.7},
+        {"name": "São João \ndo Cariri",  "lon": -36.5, "lat": -7.4},
+       
     ]
 
-    # Plota os pontos (exemplo)
+    plot_GNSS(ax, year, translate = False)
+    
     for s in stations:
         if s['name'] == "São João do Cariri":
             marker = 'o'
@@ -231,14 +227,39 @@ def plot_regions_over_map(year = 2013):
             transform = ccrs.PlateCarree()
             )
 
-    # Rótulos do lado do Atlântico (leste), com linha
     place_ocean_labels(
         ax, stations,
-        side = "east", margin=1.5, min_dy=1.4,
+        side = "east", margin = 9, min_dy=1.6,
         line_kw = {"color":"0.2","lw":2},
         text_kw = {"fontsize":25},
         crs = ccrs.PlateCarree()
     )
+    
+    stations = [
+        {"name": "Campo Grande",        "lon": -54.6, "lat": -20.4},
+        {"name": "Cachoeira Paulista",  "lon": -45.0, "lat": -22.7},
+        ]
+    
+    place_ocean_labels(
+        ax, stations,
+        side = "east", margin = 14, min_dy=1.,
+        line_kw = {"color":"0.2","lw":2},
+        text_kw = {"fontsize":25},
+        crs = ccrs.PlateCarree()
+    )
+    
+    for s in stations:
+        
+        marker = 's'
+        color = "k"
+            
+        ax.plot(
+            s["lon"], s["lat"], 
+            marker, 
+            color = color, 
+            markersize = 15,
+            transform = ccrs.PlateCarree()
+            )
     legend_dummy()
     
     return fig
@@ -248,14 +269,9 @@ def main():
     
     FigureName = 'sites_locations'
     
-    # fig.savefig(
-    #     b.LATEX(FigureName, folder = 'maps'),
-    #     dpi = 400
-    #     )
-    
     save_in = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
 
     fig.savefig(save_in + FigureName, dpi = 300
                 )
     
-main()
+# main()

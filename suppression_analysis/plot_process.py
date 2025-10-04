@@ -3,7 +3,7 @@ import os
 import datetime as dt 
 import matplotlib.pyplot as plt 
 import plotting as pl 
-
+from tqdm import tqdm 
 
 df = c.geomagnetic_analysis()
 
@@ -19,10 +19,9 @@ path = 'E:\\img\\'
         
         
 def save_imgs(ds):
-    from tqdm import tqdm 
+    
     
     path = 'E:\\img\\'
-    plt.ioff()
     
     for dn in tqdm(ds.index):
         try:
@@ -37,9 +36,9 @@ def save_imgs(ds):
     
 path = 'E:\\img\\'
 
-import shutil
+plt.ioff()
 
-for dn in df.index:
+for dn in tqdm(df.index):
         
     file = dn.strftime('%Y%m%d.PNG')
     
@@ -47,9 +46,17 @@ for dn in df.index:
     
     try:
         if cate == 'quiet':
-            shutil.move(path + file, f'{path}quiet\\' + file)
+            path_to_save = f'{path}quiet\\' + file
+           
         else:
-            shutil.move(path + file, f'{path}storm\\' + file)
+            path_to_save = f'{path}storm\\' + file
+            
+        fig = pl.plot_roti_and_indices(dn)
+        fig.savefig(path_to_save)
+         
     except:
-        print(dn)
+        print('doesnt work', dn)
         continue
+
+plt.clf()   
+plt.close()

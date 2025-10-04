@@ -98,7 +98,6 @@ def plot_multiple_tec_maps(
             anchor = [0.3, 0.97, 0.4, 0.02] 
             )
     
-    # fig.suptitle(start.strftime('%B %d, %Y'), y = 1.02)
     return fig 
 
 def main():

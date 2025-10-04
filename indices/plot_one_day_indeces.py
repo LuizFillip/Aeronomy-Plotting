@@ -9,7 +9,7 @@ b.sci_format(fontsize = 25)
 PATH = 'database/indices/omni_hourly.txt'
 
 
-def plot_dst(ax, ds, ylim = [-200, 100]):
+def plot_dst(ax, ds, ylim = [-150, 50]):
 
     ax.plot(ds['sym'], lw = 2)
     
@@ -20,12 +20,12 @@ def plot_dst(ax, ds, ylim = [-200, 100]):
         ylabel = "Sym/H (nT)"
         )
     
-    ax.axhline(0, lw = 0.5, color = 'k', linestyle = '-')
+    ax.axhline(0, lw = 1, color = 'k', linestyle = '-')
     
     for limit in [-50, -150]:
         ax.axhline(
             limit, 
-            lw = 2, 
+            lw = 1, 
             color = 'k', 
             linestyle = '--'
             )
@@ -34,7 +34,7 @@ def plot_dst(ax, ds, ylim = [-200, 100]):
 
 def plot_magnetic_fields(ax, ds, ylim = 30):
     
-    ax.plot(ds['by'], label = '$B_y$' )
+    ax.plot(ds['electric'], label = '$B_y$' )
     
     ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
     
@@ -44,7 +44,7 @@ def plot_magnetic_fields(ax, ds, ylim = 30):
     ax.set(
         ylim = [-ylim, ylim], 
         yticks = np.arange(-30, 40, 15),
-        ylabel = '$B_y$ (nT)'
+        ylabel = '$Ey$ (mV/m)'
         )
     
     ax1.set(
@@ -169,7 +169,7 @@ def plot_one_day_indices(dn, days = 2):
         x = 0.03, 
         num2white = None
         )
-    
+    fig.align_ylabels()
     return fig 
 
 

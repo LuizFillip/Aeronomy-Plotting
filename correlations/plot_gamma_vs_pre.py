@@ -3,9 +3,6 @@ import matplotlib.pyplot as plt
 import base as b
 
 
-b.config_labels(fontsize = 30)
-
-
 def plot_labels(fig, fontsize = 30):
     
 

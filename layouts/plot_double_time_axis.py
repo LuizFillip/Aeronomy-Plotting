@@ -12,7 +12,8 @@ def midnight_points(times):
 
 def points_to_axes(ax1, points):
         
-    trans_points = [ax1.transData.transform((dates.date2num(date), 0)) 
+    trans_points = [ax1.transData.transform(
+        (dates.date2num(date), 0)) 
                     for date in points]
     
     return [ax1.transAxes.inverted().transform(trans_point) 
@@ -79,32 +80,3 @@ def main():
     ax.plot(times, x)
    
     #local_and_universal_axis(ax, times)
-    
-def main():
-    fig, ax = plt.subplots(
-        figsize = (8, 3), 
-        dpi = 300, constrained_layout=True)
-    
-    times = pd.date_range("2013-01-01", "2013-01-03", freq = "10min")
-    x = np.arange(len(times))**2
-    ax.plot(times, x)
-    
-    from settings import format_axis, secondary_axis
-            
-            
-    format_axis(
-            ax, 
-            day_locator = 3, 
-            hour_locator = 4,
-            tz = 'America/Fortaleza'
-            )
-    
-    ax1 = secondary_axis(ax)
-    
-    format_axis(
-            ax1, 
-            day_locator = 1, 
-            hour_locator = 4,
-            tz = 'UTC'
-            )
-    

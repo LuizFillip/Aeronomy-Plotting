@@ -11,9 +11,9 @@ import GEO as gg
 b.sci_format(fontsize = 20)
 
 
-def plot_roti_in_range(ax, dn):
+def plot_roti_in_range(ax, start, end):
 
-    ds = pb.longterm_raw_roti(dn, days = 2)
+    ds = pb.longterm_raw_roti(start, end)
     
     ax.scatter(
         ds.index, 
@@ -36,11 +36,12 @@ def plot_roti_in_range(ax, dn):
     
     return dns 
 
-
+def _devtime(end, start):
+    return (end - start).total_seconds() / 3600
 
 def plot_arrow_and_note(ax, start, end, y = -100):
     
-    devtime = (end - start).total_seconds() / 3600
+    devtime = _devtime(end, start)
     
     time = round(devtime, 2)
         
@@ -84,8 +85,10 @@ def plot_reference_lines(ax, dusk, start, end, dns):
             color = 'tomato'
             )
         
+        delta = dt.timedelta(hours = 2)
         a.axvspan(
-            dusk, dusk + dt.timedelta(hours = 2), 
+            dusk - delta, 
+            dusk + delta, 
             ymin = 0, 
             ymax = 1,
             alpha = 0.2, 
@@ -95,7 +98,7 @@ def plot_reference_lines(ax, dusk, start, end, dns):
         for dn in dns:
             a.axvline(dn, lw = 1, linestyle = '--')
                
-               
+    return None
 def plot_roti_and_indices(dn):
     
     dusk = gg.terminator( -50,  dn, 
@@ -113,20 +116,21 @@ def plot_roti_and_indices(dn):
 
 
     ds = c.high_omni(dn.year)
-    pl.plot_auroras(ax[0], ds)
-    pl.plot_magnetic_fields(ax[1], ds, ylim = 30)
-    pl.plot_dst(ax[2], ds)
-
-    dns = plot_roti_in_range(ax[3], dn)
     
     ds = b.range_dates(ds, dn, days = 3)
     st = c.find_storm_interval(ds['sym'])
+    estart, emiddle, eend = tuple(st)
     
-    start, middle, end = tuple(st)
-  
-    plot_arrow_and_note(ax[2], start, dusk)
+    start = dn - dt.timedelta(days = 1)
+    end = dn + dt.timedelta(days = 2)
     
-    plot_reference_lines(ax, dusk, start, end, dns)
+    pl.plot_auroras(ax[0], ds)
+    pl.plot_magnetic_fields(ax[1], ds, ylim = 30)
+    pl.plot_dst(ax[2], ds)
+    dns = plot_roti_in_range(ax[3], start, end)
+    
+    plot_arrow_and_note(ax[2], estart, dusk)
+    plot_reference_lines(ax, dusk, estart, eend, dns)
     
     b.axes_hour_format(
          ax[-1], 
@@ -138,7 +142,7 @@ def plot_roti_and_indices(dn):
     
     b.adding_dates_on_the_top(
            ax[0], 
-           start = dns[1], 
+           start = start - dt.timedelta(days = 1), 
            end = dns[-1], 
            fmt = '%d/%m'
            )
@@ -160,9 +164,9 @@ def plot_roti_and_indices(dn):
 
 
 
-# # dn = df.index[1]
-dn = dt.datetime(2022, 10, 3)
+# dn = dt.datetime(2022, 10, 3) # moderate
+# dn = dt.datetime(2018, 3, 13) # no storm 
+# # dn = dt.datetime(2022, 9, 5)
 
-# df = c.pippine_suppresion(season = False)
 
-fig = plot_roti_and_indices(dn)
+# fig = plot_roti_and_indices(dn)
