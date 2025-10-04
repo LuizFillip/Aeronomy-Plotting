@@ -6,7 +6,7 @@ import datetime as dt
 import plotting as pl 
 
 
-b.config_labels(fontsize = 30)
+b.sci_format(fontsize = 30)
 
 
 
@@ -153,7 +153,7 @@ def plot_epb_time_section(dn):
 
 def main():
     
-    dn = dt.datetime(2013, 12, 24, 21)
+    dn = dt.datetime(2015, 12, 20, 21)
     
     fig = plot_epb_time_section(dn)
     
