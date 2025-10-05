@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
 import core as c
 
-df = c.geomagnetic_analysis()
 
-df = c.count_events(df)
 
 def plot_count_events_by_symh(df):
     
@@ -61,4 +59,11 @@ def plot_count_events_by_symh(df):
     
     plt.tight_layout()
     plt.show()
+    return fig 
 
+
+df = c.geomagnetic_analysis()
+
+df = c.count_events(df)
+
+plot_count_events_by_symh(df)
