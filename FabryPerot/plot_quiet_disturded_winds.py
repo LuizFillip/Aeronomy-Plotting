@@ -34,8 +34,12 @@ def average_of_directions(dn):
     return df
 
 
-def plot_quiettime_wind(ax, p = 'mer'):
+def plot_quiettime_wind(ax, p = 'mer', translate = True):
     
+    if translate:
+        label = 'Quiet-time'
+    else:
+        label = 'Período calmo'
     dp = f'd{p}'
     
     qt =  c.quiettime_winds(coord = p)
@@ -45,7 +49,7 @@ def plot_quiettime_wind(ax, p = 'mer'):
         qt[p], 
         color = 'purple', 
         lw = 2, 
-        label = 'Quiet-time', 
+        label = label, 
         marker = 's', 
         fillstyle = 'none'
         )
@@ -76,7 +80,14 @@ def plot_TIEGCM(ax):
     
     return None 
 
-def plot_stormtime_wind(ax, dn):
+def plot_stormtime_wind(ax, dn, translate = True):
+    
+    if translate:
+        label = 'Storm-time'
+    else:
+        label = 'Período perturbado'
+        
+        
     df = average_of_directions(dn)
     
     ax.plot(
@@ -84,7 +95,7 @@ def plot_stormtime_wind(ax, dn):
         df['avg'], 
         color = 'k', 
         lw = 2, 
-        label = 'Storm-time', 
+        label = label, 
         marker = 's', 
         fillstyle = 'none'
         )
@@ -100,20 +111,28 @@ def plot_stormtime_wind(ax, dn):
         )
     return None 
 
-def plot_quiet_disturbed_winds(dn):
+def plot_quiet_disturbed_winds(dn, translate = True):
     
- 
+    if translate:
+        ylabel = 'Meridional wind (m/s)'
+        xlabel = 'Universal time'
+        instr = 'FPI'
+    else:
+        ylabel = 'Vento Meridional (m/s)'
+        xlabel = 'Hora Universal'
+        instr = 'IFP'
+        
+    
     fig, ax = plt.subplots(
         figsize = (14, 5),
         dpi = 300,
-        # nrows = 2,
+       
         sharex = True,
         sharey = True
         )
     
-    
-    plot_stormtime_wind(ax, dn)
-    plot_quiettime_wind(ax)
+    plot_stormtime_wind(ax, dn, translate)
+    plot_quiettime_wind(ax, translate = translate)
     plot_TIEGCM(ax)
     
     ax.axhline(0, linestyle = '--')
@@ -123,12 +142,12 @@ def plot_quiet_disturbed_winds(dn):
     yticks = np.arange(ylim[0], ylim[-1] + step, step)
     
     ax.set(
-        ylabel = 'Meridional wind (m/s)', 
-        xlabel = 'Universal time',
+        ylabel = ylabel, 
+        xlabel = xlabel,
         ylim = ylim, 
         yticks = yticks,
         xticks = np.arange(20, 33, 1),
-        title = 'São João do Cariri - FPI'
+        title = f'São João do Cariri - {instr}'
         )
     
     
@@ -141,15 +160,15 @@ def plot_quiet_disturbed_winds(dn):
 
     ax.xaxis.set_major_formatter(FuncFormatter(wrap24))
     
-    b.add_LT_axis(ax, offset_hours=-3, position = -0.25)
+    b.add_LT_axis(
+        ax, 
+        translate = translate
+        )
     
     ax.legend(
         ncol = 3,
         loc = 'upper center'
         )
-    
-   
-   
     
     return fig 
 
@@ -158,16 +177,16 @@ def plot_quiet_disturbed_winds(dn):
 def main():
     date = dt.datetime(2015, 12, 20)
     
-    fig = plot_quiet_disturbed_winds(date)
+    fig = plot_quiet_disturbed_winds(date, translate=False)
     
     path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
-    FigureName = 'meridional_winds'
+    FigureName = 'meridional_winds_pt'
     
     fig.savefig(
           path_to_save + FigureName,
           dpi = 400
           )
 
-main()
+# main()
 
