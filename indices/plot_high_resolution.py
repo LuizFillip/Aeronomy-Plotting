@@ -63,9 +63,10 @@ def plot_high_resolution(
     
     if translate:
         name = 'SSC'
+        xlabel = 'Universal time'
     else:
-        name = 'Ínicio subito de tempestade'
-        
+        name = 'IS'
+        xlabel = 'Hora universal'
     
     plt.subplots_adjust(hspace = 0.05)
     
@@ -132,7 +133,7 @@ def plot_high_resolution(
          tz = "UTC"
          )
     
-    ax[-1].set(xlabel = 'Universal time')
+    ax[-1].set(xlabel = xlabel)
     
     b.adding_dates_on_the_top(
             ax[0], 
@@ -158,7 +159,7 @@ def main():
 
     fig = plot_high_resolution(ds, dn, translate=True)
     
-    FigureName = dn.strftime('%Y%m%d_GeoIndices')
+    FigureName = dn.strftime('%Y%m%d_GeoIndices_pt')
     
     # fig.savefig(
     #       path_to_save + FigureName,
@@ -166,4 +167,4 @@ def main():
     #       )
     
     
-# main()
+main()
