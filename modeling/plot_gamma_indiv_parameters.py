@@ -8,8 +8,14 @@ import pandas as pd
 
 b.sci_format(fontsize = 30)
 
-def plot_shade_around_terminator(ax, dn, site):
+def plot_shade_around_terminator(ax, dn, site, translate = True):
     
+    if translate:
+        
+        label = 'Solar terminator'
+        
+    else:
+        label = 'Terminadouro solar'
     
     dusk = gg.dusk_from_site(
             dn, 
@@ -23,7 +29,7 @@ def plot_shade_around_terminator(ax, dn, site):
     
     ax.text(
         dusk + delta, 1.6,
-        'Solar terminator'
+        label
         , transform = ax.transData
         )
     
@@ -66,14 +72,22 @@ def get_results(ds, ref_dn, col = 'wind'):
         ].copy()
     
     date = sel[col].idxmax()
-    print(date)
+    # print(date)
     value =  sel.loc[date][col]
     return pd.DataFrame({col: value}, index = [date])
 
     
     
-def plot_winds_effects_on_gamma(site = 'FZA0M'):
+def plot_winds_effects_on_gamma(site = 'FZA0M', translate = True):
     
+    if translate:
+        b_label = '(b) Without meridional winds'
+        a_label = '(a) With meridional winds'
+        labels = ['Storm-time', 'Quiet-time']
+    else:
+        b_label = '(b) Sem ventos meridionais'
+        a_label = '(a) Com ventos meridionais'
+        labels = ['Periodo perturbado', 'Período calmo']
     fig, ax = plt.subplots(
         figsize = (16, 10), 
         dpi = 300, 
@@ -88,7 +102,7 @@ def plot_winds_effects_on_gamma(site = 'FZA0M'):
     storm =  b.sel_times(rt.stormtime_gamma(site), dn, hours = 24)
     quiet =  b.sel_times(rt.quiettime_gamma(site), dn, hours = 24)
     
-    labels = ['Storm-time', 'Quiet-time']
+    
     frames = [storm, quiet]
     lws = ['-', '--']
     colors = ['k', 'purple']
@@ -126,7 +140,7 @@ def plot_winds_effects_on_gamma(site = 'FZA0M'):
         ax[i].axhline(0, lw = 0.5)
         
         dn = dt.datetime(2015, 12, 20, 21, 40)
-        dusk = plot_shade_around_terminator(ax[i], dn, site)
+        dusk = plot_shade_around_terminator(ax[i], dn, site, translate = translate)
         
         out1 = []
         for col in ['wind', 'no_wind']:
@@ -144,12 +158,13 @@ def plot_winds_effects_on_gamma(site = 'FZA0M'):
             ax[-1], 
             hour_locator = 2, 
             tz = 'UTC',
-            translate = True, 
+            translate = translate, 
             pad = 85
             )
     
-    print(pd.concat(out))
-       
+    # print(pd.concat(out))
+    
+    
     ax[0].legend(
         ncol = 2, 
         loc = 'upper center', 
@@ -159,13 +174,13 @@ def plot_winds_effects_on_gamma(site = 'FZA0M'):
      
     ax[0].text(
         0.01, 0.85, 
-        '(a) With meridional winds', 
+        a_label, 
         transform = ax[0].transAxes
         )
     
     ax[1].text(
         0.01, 0.85, 
-        '(b) Without meridional winds', 
+        b_label, 
         transform = ax[1].transAxes
         )
     
@@ -175,10 +190,10 @@ def main():
     
     site = 'FZA0M'
     # site = 'SAA0K'
-    fig = plot_winds_effects_on_gamma(site)
+    fig = plot_winds_effects_on_gamma(site, translate=False)
     
     
-    FigureName = 'fortaleza_gamma'
+    FigureName = 'fortaleza_gamma_pt'
     
     
     path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
@@ -189,7 +204,4 @@ def main():
 
 
 # main()
-
-# site = 'FZA0M'
-# rt.stormtime_gamma(site)
 
