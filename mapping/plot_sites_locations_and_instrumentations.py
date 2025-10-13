@@ -235,18 +235,18 @@ def plot_regions_over_map(year = 2013):
         crs = ccrs.PlateCarree()
     )
     
-    stations = [
-        {"name": "Campo Grande",        "lon": -54.6, "lat": -20.4},
-        {"name": "Cachoeira Paulista",  "lon": -45.0, "lat": -22.7},
-        ]
+    # stations = [
+    #     {"name": "Campo Grande",        "lon": -54.6, "lat": -20.4},
+    #     {"name": "Cachoeira Paulista",  "lon": -45.0, "lat": -22.7},
+    #     ]
     
-    place_ocean_labels(
-        ax, stations,
-        side = "east", margin = 14, min_dy=1.,
-        line_kw = {"color":"0.2","lw":2},
-        text_kw = {"fontsize":25},
-        crs = ccrs.PlateCarree()
-    )
+    # place_ocean_labels(
+    #     ax, stations,
+    #     side = "east", margin = 14, min_dy=1.,
+    #     line_kw = {"color":"0.2","lw":2},
+    #     text_kw = {"fontsize":25},
+    #     crs = ccrs.PlateCarree()
+    # )
     
     for s in stations:
         
@@ -271,7 +271,7 @@ def main():
     
     save_in = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
 
-    fig.savefig(save_in + FigureName, dpi = 300
-                )
+    # fig.savefig(save_in + FigureName, dpi = 300
+    #             )
     
-# main()
+main()
