@@ -5,7 +5,7 @@
 /FluxTube/modelling/__pycache__/*
 /FluxTube/maps/__pycache__/*
 /FluxTube/profiles/__pycache__/*
-
+instrumentations/__pycache__/
 /correlations/__pycache__/*
 /time_heights/__pycache__/*
 /timeseries/__pycache__/*
@@ -23,6 +23,7 @@
 /indices/__pycache__/*
 /demo/__pycache__/*
 /TEC/__pycache__/*
+/suppression_analysis/__pycache__/*
 /TEC/data/*
 /ionosonde/ionogram/__pycache__/*
 /Taka/data/*
