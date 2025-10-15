@@ -8,7 +8,8 @@ b.sci_format(fontsize = 30)
 
 
 def place_ocean_labels(
-    ax, stations, side="east", margin=1.0, min_dy=0.8,
+    ax, stations, side="east",
+    margin=1.0, min_dy=0.8,
     line_kw=None, text_kw=None, crs=None
 ):
     """
@@ -202,8 +203,44 @@ def plot_regions_over_map(year = 2013):
 
     plot_GNSS(ax, year, translate = False)
     
+
+    place_ocean_labels(
+        ax, stations,
+        side = "east", margin = 9, min_dy=1.6,
+        line_kw = {"color":"0.2","lw":2},
+        text_kw = {"fontsize":25},
+        crs = ccrs.PlateCarree()
+    )
+    
+    # stations = [
+    #     {"name": "Campo Grande",        "lon": -54.6, "lat": -20.4},
+    #     {"name": "Cachoeira Paulista",  "lon": -45.0, "lat": -22.7},
+    #     ]
+    
+    # place_ocean_labels(
+    #     ax, stations,
+    #     side = "east", margin = 14, min_dy=1.,
+    #     line_kw = {"color":"0.2","lw":2},
+    #     text_kw = {"fontsize":25},
+    #     crs = ccrs.PlateCarree()
+    # )
+    
+    # for s in stations:
+        
+    #     marker = 's'
+    #     color = "k"
+            
+    #     ax.plot(
+    #         s["lon"], s["lat"], 
+    #         marker, 
+    #         color = color, 
+    #         markersize = 15,
+    #         transform = ccrs.PlateCarree()
+    #         )
+    legend_dummy()
+    
     for s in stations:
-        if s['name'] == "São João do Cariri":
+        if s['name'] == "São João \ndo Cariri":
             marker = 'o'
             color = 'green'
             
@@ -227,41 +264,6 @@ def plot_regions_over_map(year = 2013):
             transform = ccrs.PlateCarree()
             )
 
-    place_ocean_labels(
-        ax, stations,
-        side = "east", margin = 9, min_dy=1.6,
-        line_kw = {"color":"0.2","lw":2},
-        text_kw = {"fontsize":25},
-        crs = ccrs.PlateCarree()
-    )
-    
-    # stations = [
-    #     {"name": "Campo Grande",        "lon": -54.6, "lat": -20.4},
-    #     {"name": "Cachoeira Paulista",  "lon": -45.0, "lat": -22.7},
-    #     ]
-    
-    # place_ocean_labels(
-    #     ax, stations,
-    #     side = "east", margin = 14, min_dy=1.,
-    #     line_kw = {"color":"0.2","lw":2},
-    #     text_kw = {"fontsize":25},
-    #     crs = ccrs.PlateCarree()
-    # )
-    
-    for s in stations:
-        
-        marker = 's'
-        color = "k"
-            
-        ax.plot(
-            s["lon"], s["lat"], 
-            marker, 
-            color = color, 
-            markersize = 15,
-            transform = ccrs.PlateCarree()
-            )
-    legend_dummy()
-    
     return fig
 
 def main():
