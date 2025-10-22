@@ -21,16 +21,16 @@ def get_infos(ds, lon):
     else:
         return f'{Type} - {Drift}'
 
+b.sci_format(fontsize = 25)
 
 def plot_points_and_maximus_roti(
         df, dn, 
-        fontsize = 35, 
-        vmax = 4, 
-        translate = True
+        fontsize = 30, 
+        translate = True, 
+        
         ):
-    
-    
-    threshold = 0.2
+
+    threshold = 0.30
     
     if translate:
         occurrence = 'Occurrence'
@@ -44,7 +44,7 @@ def plot_points_and_maximus_roti(
         nrows = 4,
         sharex = True,
         sharey = True,
-        figsize = (16, 12)
+        figsize = (14, 10)
         )
     
     plt.subplots_adjust(hspace = 0.05)
@@ -131,51 +131,13 @@ def plot_points_and_maximus_roti(
 
 
 def main():
-  
-    dates = [dt.datetime(2015, 12, 20, 21), 
-             dt.datetime(2017, 9, 17, 21),
-             dt.datetime(2013, 1, 17, 21),
-             dt.datetime(2014, 2, 9, 21)]
-    
-    dn = dates[2]
-    dn = dt.datetime(2019, 12, 6, 21)
-    dn = dt.datetime(2018, 12, 12, 21)
-    dn = dt.datetime(2018, 6, 11, 21)
-    dn = dt.datetime(2019, 12, 20, 21)
-    dn = dt.datetime(2013, 1, 17, 21)
-    dn = dt.datetime(2015, 12, 20, 21)
-    
-    df = pb.concat_files(
-        dn, 
-        days = 2, 
-        root = 'E:\\', 
-        hours = 12, 
-        remove_noise = True
-        )
-    
-    
-    fig = plot_points_and_maximus_roti(
-            df, 
-            dn, 
-            fontsize = 35, 
-            translate = True
-            )
-    
-    FigureName = dn.strftime('%Y%m%d')
-    
-    
-    # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'ROTI'),
-    #       dpi = 400
-    #       )
-    
-    save_in = 'G:\\My Drive\\Papers\\Paper 2\\Midnight EPBs\\Eps\\img\\'
 
-    # fig.savefig(save_in + FigureName, dpi = 300
-    #             )
-    
-    
+    dn = dt.datetime(2022, 12, 4, 21)
 
+    df = pb.get_nighttime_roti(dn)
+    
+    plot_points_and_maximus_roti(df, dn)
+    
     plt.show()
         
 

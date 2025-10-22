@@ -220,7 +220,7 @@ def plot_roti_max(
 
 
 
-def plot_epb_time_feadtures(
+def plot_epb_time_features(
         ds,  
         col = '-50', 
         translate = False,
@@ -284,7 +284,7 @@ def main():
          hours = 11
          )
     
-    fig = plot_epb_time_feadtures(
+    fig = plot_epb_time_features(
         df,  col = '-50', translate=True)
     
     FigureName = dn.strftime('occurrence_%Y%m%d')
@@ -297,4 +297,4 @@ def main():
     # plt.show()
     
     
-main()
+# main()
