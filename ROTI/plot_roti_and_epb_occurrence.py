@@ -1,7 +1,7 @@
 import datetime as dt
 import base as b 
 import matplotlib.pyplot as plt
-import PlasmaBubbles as pb 
+import epbs as pb 
 import GEO as gg 
 
 

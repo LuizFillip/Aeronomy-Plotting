@@ -1,7 +1,7 @@
 import GEO as gg 
 import datetime as dt  
 import matplotlib.pyplot as plt 
-import PlasmaBubbles as pb 
+import epbs as pb 
 import plotting as pl
 import base as b  
 
@@ -25,7 +25,7 @@ b.sci_format(fontsize = 25)
 
 def plot_points_and_maximus_roti(
         df, dn, 
-        fontsize = 30, 
+        fontsize = 25, 
         translate = True, 
         
         ):
@@ -44,7 +44,7 @@ def plot_points_and_maximus_roti(
         nrows = 4,
         sharex = True,
         sharey = True,
-        figsize = (14, 10)
+        figsize = (12, 10)
         )
     
     plt.subplots_adjust(hspace = 0.05)
@@ -60,10 +60,7 @@ def plot_points_and_maximus_roti(
             df = df.copy()
             
         ds = pb.filter_region(df1, dn.year, sector)
-        
-        # if sector <= - 70:
-        #     ds = ds.loc[~(ds['roti']> 0.25)]
-            
+
         ds = pl.plot_roti_points(
                 ax[row], ds, 
                 threshold = threshold,
@@ -119,7 +116,7 @@ def plot_points_and_maximus_roti(
     
     pl.legend_max_points_roti(
             ax[0], 
-            fontsize = 32, 
+            fontsize = fontsize, 
             s = 80, 
             threshold = threshold,
             translate = translate,
@@ -133,7 +130,10 @@ def plot_points_and_maximus_roti(
 def main():
 
     dn = dt.datetime(2022, 12, 4, 21)
-
+    dn = dt.datetime(2022, 6, 13, 21)
+    dn = dt.datetime(2015, 4, 13, 21)
+    dn = dt.datetime(2023, 12, 11, 21)
+    
     df = pb.get_nighttime_roti(dn)
     
     plot_points_and_maximus_roti(df, dn)

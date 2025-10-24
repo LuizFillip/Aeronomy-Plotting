@@ -1,5 +1,5 @@
 import base as b
-import PlasmaBubbles as pb 
+import epbs as pb 
 import GEO as gg
 import numpy as np 
 import digisonde as dg 

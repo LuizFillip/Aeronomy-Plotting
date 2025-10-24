@@ -1,4 +1,4 @@
-import PlasmaBubbles as pb 
+import epbs as pb 
 import numpy as np  
 import base as b 
 import plotting as pl 
