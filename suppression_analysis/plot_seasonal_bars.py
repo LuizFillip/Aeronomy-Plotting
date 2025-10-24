@@ -1,24 +1,12 @@
 import matplotlib.pyplot as plt 
 import core as c
+import base as b
+
+b.sci_format(fontsize = 25)
 
 
-# count_events(df)
+def plot_seasonal_bars(ds):
 
-# df = df[['field', 'by', 'bz', 'speed', 'electric',
-#        'ae', 'sym', 'divtime', 'occ']]
-# ds = seasonal_average(df)
-
-# 
-
-# plt.scatter(ds.occ, ds.electric)
-
-def plot_seasonal_bars(df):
-
-    df['month'] = df.index.month 
-    
-    ds = df.groupby(['category', 'month']).size().unstack(fill_value=0)
-    ds = ds.T
-    # print(ds)
     colors = {
         'intense': '#8B0000',   # vermelho escuro
         'moderate': '#FF4500',  # laranja forte
@@ -27,16 +15,42 @@ def plot_seasonal_bars(df):
     }
     ds = ds.reindex(range(1, 13), fill_value = 0)
     
+    fig, ax = plt.subplots(dpi = 300, figsize = (12, 6))
     ds.plot(
         kind='bar',
         stacked=True,
-        figsize=(7, 4),
+        ax = ax,
         color=[colors[c] for c in ds.columns]
     )
+    
+    ax.set(
+        ylim = [0, 20],
+        xticklabels = b.month_names(language = 'en'),
+        ylabel = 'Number of cases', 
+        xlabel = 'Months',
+        title = 'Total of EPBs supressions by disturbance mode'
+        )
+    
+    plt.xticks(rotation = 0)
+    fig.align_ylabels()
+    
+    return fig
+    
 
-df = c.geomagnetic_analysis()
-
-
-ds = df[['divtime', 'category', 'phase']] 
-
-ds 
+def main():
+    
+    df = c.geomagnetic_analysis()
+    
+    df['month'] = df.index.month 
+    
+    ds = df.groupby(['category', 'month']).size().unstack(fill_value=0)
+    ds = ds.T[['intense', 'moderate', 'weak', 'quiet']]
+    
+    fig = plot_seasonal_bars(ds)
+    
+    path_to_save = 'G:\\Meu Drive\\Papers\\SuppressionAnalysis\\June-2024-latex-templates\\'
+    
+    FigureName = 'seasonal_bars_by_storm'
+    
+    
+    fig.savefig(path_to_save + FigureName, dpi = 300)

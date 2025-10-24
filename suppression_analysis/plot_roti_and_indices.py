@@ -24,11 +24,10 @@ def plot_roti_in_range(ax, start, end):
         )
     
     ax.set(
-        ylabel = 'ROTI',
+        ylabel = 'ROTI (TECU/min)',
         ylim = [0, 5], 
         yticks = np.arange(0, 6, 1),
-        xlim = [ds.index[0] + dt.timedelta(hours = 12), 
-                ds.index[-1]]
+        
         
         )
     
@@ -67,9 +66,7 @@ def plot_arrow_and_note(ax, start, end, y = -100):
     return None     
 
 def plot_reference_lines(ax, dusk, start, end, dns):
-    
-    for a in ax.flat:
-    
+    def reference_ln_one_axes(a, dusk, start, end, dns):
         a.axvline(
             dusk, 
             color = 'blue', 
@@ -86,6 +83,7 @@ def plot_reference_lines(ax, dusk, start, end, dns):
             )
         
         delta = dt.timedelta(hours = 2)
+        
         a.axvspan(
             dusk - delta, 
             dusk + delta, 
@@ -97,8 +95,33 @@ def plot_reference_lines(ax, dusk, start, end, dns):
         
         for dn in dns:
             a.axvline(dn, lw = 1, linestyle = '--')
-               
+           
+    try:
+        for a in ax.flat:
+            reference_ln_one_axes(a, dusk, start, end, dns)
+    except:
+        reference_ln_one_axes(ax, dusk, start, end, dns)
+        
+        
     return None
+
+def load_storm(dn):
+    ds = c.high_omni(dn.year)
+    
+    ds = b.range_dates(ds, dn, days = 4)
+    st = c.find_storm_interval(ds['sym'])
+    
+    return st, ds
+
+def set_time_limits(ds):
+    dates = np.unique(ds.index.date)
+    delta = dt.timedelta(days = 2)
+    start = dates[0] + delta   
+    end = dates[-1] 
+    return start, end
+    
+
+    
 def plot_roti_and_indices(dn):
     
     dusk = gg.terminator( -50,  dn, 
@@ -114,16 +137,14 @@ def plot_roti_and_indices(dn):
 
     plt.subplots_adjust(hspace = 0.1)
 
-
-    ds = c.high_omni(dn.year)
+  
+    st, ds = load_storm(dn)
     
-    ds = b.range_dates(ds, dn, days = 3)
-    st = c.find_storm_interval(ds['sym'])
+    start, end = set_time_limits(ds)
+    
     estart, emiddle, eend = tuple(st)
     
-    start = dn - dt.timedelta(days = 1)
-    end = dn + dt.timedelta(days = 2)
-    
+
     pl.plot_auroras(ax[0], ds)
     pl.plot_magnetic_fields(ax[1], ds, ylim = 30)
     pl.plot_dst(ax[2], ds)
@@ -138,12 +159,13 @@ def plot_roti_and_indices(dn):
          tz = "UTC"
          )
     
-    ax[-1].set(xlabel = 'Universal time')
-    
+    ax[-1].set(
+        xlabel = 'Universal time', 
+        xlim = [start, end]
+        )
+
     b.adding_dates_on_the_top(
            ax[0], 
-           start = start - dt.timedelta(days = 1), 
-           end = dns[-1], 
            fmt = '%d/%m'
            )
    
@@ -166,7 +188,7 @@ def plot_roti_and_indices(dn):
 
 # dn = dt.datetime(2022, 10, 3) # moderate
 # dn = dt.datetime(2018, 3, 13) # no storm 
-# # dn = dt.datetime(2022, 9, 5)
+dn = dt.datetime(2022, 12, 26)
+dn = dt.datetime(2023, 12, 11 )
 
-
-# fig = plot_roti_and_indices(dn)
+fig = plot_roti_and_indices(dn)

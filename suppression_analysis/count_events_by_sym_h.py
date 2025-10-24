@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import core as c
+import base as b
 
+b.sci_format(fontsize = 25)
 
 
 def plot_count_events_by_symh(df):
@@ -16,12 +18,12 @@ def plot_count_events_by_symh(df):
     # Ordenar as colunas conforme severidade
     df = df[['intense', 'moderate', 'weak', 'quiet']]
     
-    fig, ax = plt.subplots(figsize = (6, 6))
-    ax = df.plot(
+    fig, ax = plt.subplots(dpi = 300, figsize = (12, 6))
+    df.plot(
         kind='bar',
         stacked=True,
-        figsize=(7, 4),
-        color=[colors[c] for c in df.columns]
+        color=[colors[c] for c in df.columns], 
+        ax = ax
     )
     
     # Adicionar rótulos no centro de cada bloco
@@ -30,29 +32,35 @@ def plot_count_events_by_symh(df):
         for col in df.columns:
             value = df.loc[idx, col]
             if value > 0:
-                ax.text(i, y_offset + value / 2, f"{int(value)}",
-                        ha='center', va='center', color='white', fontsize=10, weight='bold')
+                ax.text(i, y_offset + value / 2, 
+                        f"{int(value)}",
+                        ha='center', va='center', color='k', 
+                        fontsize=10, weight='bold'
+                        )
             y_offset += value
     
-    # Personalização dos eixos e título
-    ax.set_ylabel("Number of occurrences", fontsize=11)
-    ax.set_xlabel("Phase", fontsize=11)
-    ax.set_title("EPB occurrences by phase and geomagnetic category", fontsize=13, pad=12)
-    
-    # Legenda com base em condições do SYM
+ 
+    ax.set(
+        xlabel = "Phase", 
+        ylabel = "Number of occurrences", 
+        title = "EPB occurrences by phase and geomagnetic category"
+        )
+
+
     legend_labels = {
-        'quiet': 'SYM-H > -30 nT',
-        'weak': '-50 < SYM-H ≤ -30 nT',
-        'moderate': '-100 < SYM-H ≤ -50 nT',
-        'intense': 'SYM-H ≤ -100 nT'
+        'quiet': 'SYM-H $>$ -30 nT',
+        'weak': '-50 $<$ SYM-H $\leq$ -30 nT',
+        'moderate': '-100 $<$ SYM-H $\leq$ -50 nT',
+        'intense': 'SYM-H $\leq$ -100 nT'
     }
     
     handles, labels = ax.get_legend_handles_labels()
     ax.legend(
         handles, [legend_labels[l] for l in labels],
-        title="Geomagnetic Condition (SYM-H)",
-        bbox_to_anchor=(1.05, 1), loc='upper left',
-        fontsize=9, title_fontsize=10
+        title = "Geomagnetic Condition (SYM-H)",
+        loc = 'upper left',
+        fontsize = 20,
+        title_fontsize = 20
     )
     
     ax.set_xticklabels(df.index, rotation=0, ha='center')
@@ -66,4 +74,4 @@ df = c.geomagnetic_analysis()
 
 df = c.count_events(df)
 
-plot_count_events_by_symh(df)
+fig = plot_count_events_by_symh(df)
