@@ -1,12 +1,9 @@
 import core as c 
-import os 
+import base as b
 import datetime as dt 
 import matplotlib.pyplot as plt 
 import plotting as pl 
 from tqdm import tqdm 
-
-df = c.geomagnetic_analysis()
-
 
 path = 'E:\\img\\'
 
@@ -15,48 +12,48 @@ path = 'E:\\img\\'
 #     dn = dt.datetime.strptime(file, fmt)
 #     if dn not in df.index:
 #         print(dn)
+
+df = b.load('core/src/geomag/data/stormsphase')
+
+
+# fig = plot_roti_and_indices(dn)
+
+df = c.geomagnetic_analysis(df)
+
         
-        
-        
-def save_imgs(ds):
+path = 'E:\\img\\'
+
+     
+def save_imgs(ds, path_to_save):
     
-    
-    path = 'E:\\img\\'
-    
+    plt.ioff()
+
     for dn in tqdm(ds.index):
+            
+        file = dn.strftime('%Y%m%d.PNG')
+        
         try:
             fig = pl.plot_roti_and_indices(dn)
-            fig.savefig(path + dn.strftime('%Y%m%d'))
+            fig.savefig(path_to_save + file)
         except:
+            print(dn)
             continue
-    
+        
     plt.clf()   
     plt.close()
     
     
-path = 'E:\\img\\'
+def main():
 
-plt.ioff()
-
-for dn in tqdm(df.index):
+    # for cat in df['category'].unique():
+    
+    cat = 'intense'
         
-    file = dn.strftime('%Y%m%d.PNG')
+    ds = df.loc[df['category'] == cat]
     
-    cate = df.loc[dn, 'category']
+    path_to_save = f'{path}{cat}\\'
     
-    try:
-        if cate == 'quiet':
-            path_to_save = f'{path}quiet\\' + file
-           
-        else:
-            path_to_save = f'{path}storm\\' + file
-            
-        fig = pl.plot_roti_and_indices(dn)
-        fig.savefig(path_to_save)
-         
-    except:
-        print('doesnt work', dn)
-        continue
-
-plt.clf()   
-plt.close()
+    b.make_dir(path_to_save)
+    
+    save_imgs(ds, path_to_save)
+        

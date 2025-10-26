@@ -201,6 +201,3 @@ def main():
 
 # main()
 
-# df = b.load('plotting/dialy_timeseries/data/201503')
-
-# df

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import plotting as pl 
 import datetime as dt 
-import PlasmaBubbles as pb 
+import epbs as pb 
 import base as b 
 import core as c
 import GEO as gg 
@@ -65,41 +65,42 @@ def plot_arrow_and_note(ax, start, end, y = -100):
     
     return None     
 
-def plot_reference_lines(ax, dusk, start, end, dns):
-    def reference_ln_one_axes(a, dusk, start, end, dns):
-        a.axvline(
-            dusk, 
-            color = 'blue', 
-            lw = 2, 
-            linestyle = '--'
-            )
+def reference_ln_one_axes(a, dusk, start, end, dns):
+    a.axvline(
+        dusk, 
+        color = 'blue', 
+        lw = 2, 
+        linestyle = '--'
+        )
+
+    a.axvspan(
+        start, end, 
+        ymin = 0, 
+        ymax = 1,
+        alpha = 0.2, 
+        color = 'tomato'
+        )
     
-        a.axvspan(
-            start, end, 
-            ymin = 0, 
-            ymax = 1,
-            alpha = 0.2, 
-            color = 'tomato'
-            )
-        
-        delta = dt.timedelta(hours = 2)
-        
-        a.axvspan(
-            dusk - delta, 
-            dusk + delta, 
-            ymin = 0, 
-            ymax = 1,
-            alpha = 0.2, 
-            color = 'blue'
-            )
-        
-        for dn in dns:
-            a.axvline(dn, lw = 1, linestyle = '--')
-           
-    try:
+    delta = dt.timedelta(hours = 2)
+    
+    a.axvspan(
+        dusk - delta, 
+        dusk + delta, 
+        ymin = 0, 
+        ymax = 1,
+        alpha = 0.2, 
+        color = 'blue'
+        )
+    
+    for dn in dns:
+        a.axvline(dn, lw = 1, linestyle = '--')
+def plot_reference_lines(ax, dusk, start, end, dns):
+
+   
+    if len(ax) > 1:
         for a in ax.flat:
             reference_ln_one_axes(a, dusk, start, end, dns)
-    except:
+    else:
         reference_ln_one_axes(ax, dusk, start, end, dns)
         
         
@@ -120,7 +121,25 @@ def set_time_limits(ds):
     end = dates[-1] 
     return start, end
     
+ 
+def set_axes_time(ax, start, end):
 
+    b.axes_hour_format(
+         ax[-1], 
+         hour_locator = 6, 
+         tz = "UTC"
+         )
+    
+    ax[-1].set(
+        xlabel = 'Universal time', 
+        xlim = [start, end]
+        )
+
+    b.adding_dates_on_the_top(
+           ax[0], 
+           fmt = '%d/%m'
+           )
+  
     
 def plot_roti_and_indices(dn):
     
@@ -144,7 +163,6 @@ def plot_roti_and_indices(dn):
     
     estart, emiddle, eend = tuple(st)
     
-
     pl.plot_auroras(ax[0], ds)
     pl.plot_magnetic_fields(ax[1], ds, ylim = 30)
     pl.plot_dst(ax[2], ds)
@@ -153,27 +171,13 @@ def plot_roti_and_indices(dn):
     plot_arrow_and_note(ax[2], estart, dusk)
     plot_reference_lines(ax, dusk, estart, eend, dns)
     
-    b.axes_hour_format(
-         ax[-1], 
-         hour_locator = 6, 
-         tz = "UTC"
-         )
-    
-    ax[-1].set(
-        xlabel = 'Universal time', 
-        xlim = [start, end]
-        )
-
-    b.adding_dates_on_the_top(
-           ax[0], 
-           fmt = '%d/%m'
-           )
-   
+    set_axes_time(ax, start, end)
     
     b.plot_letters(
         ax, 
         y = 0.8, 
         x = 0.03, 
+        fontsize = 25,
         num2white = None
         )
     
@@ -191,4 +195,14 @@ def plot_roti_and_indices(dn):
 dn = dt.datetime(2022, 12, 26)
 dn = dt.datetime(2023, 12, 11 )
 
-fig = plot_roti_and_indices(dn)
+
+df = b.load('core/src/geomag/data/stormsphase')
+
+dn = df.index[0]
+
+# fig = plot_roti_and_indices(dn)
+
+df = c.geomagnetic_analysis(df)
+
+
+# df.loc[df['category'] == 'intense']

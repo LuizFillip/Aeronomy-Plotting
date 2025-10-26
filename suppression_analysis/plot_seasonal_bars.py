@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt 
 import core as c
 import base as b
+import plotting as pl 
 
 b.sci_format(fontsize = 25)
 
@@ -24,14 +25,16 @@ def plot_seasonal_bars(ds):
     )
     
     ax.set(
-        ylim = [0, 20],
+        ylim = [0, 30],
         xticklabels = b.month_names(language = 'en'),
         ylabel = 'Number of cases', 
         xlabel = 'Months',
-        title = 'Total of EPBs supressions by disturbance mode'
+        title = 'Total of EPBs supressions by SYM-H'
         )
     
     plt.xticks(rotation = 0)
+    
+    pl.legend_for_sym_h(ax, quiet = True)
     fig.align_ylabels()
     
     return fig
@@ -39,7 +42,9 @@ def plot_seasonal_bars(ds):
 
 def main():
     
-    df = c.geomagnetic_analysis()
+    df = b.load('core/src/geomag/data/stormsphase')
+
+    df = c.geomagnetic_analysis(df)
     
     df['month'] = df.index.month 
     
@@ -53,4 +58,6 @@ def main():
     FigureName = 'seasonal_bars_by_storm'
     
     
-    fig.savefig(path_to_save + FigureName, dpi = 300)
+    # fig.savefig(path_to_save + FigureName, dpi = 300)
+    
+# main()
