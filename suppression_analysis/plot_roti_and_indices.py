@@ -139,6 +139,14 @@ def set_axes_time(ax, start, end):
            ax[0], 
            fmt = '%d/%m'
            )
+    
+    b.plot_letters(
+        ax, 
+        y = 0.8, 
+        x = 0.03, 
+        fontsize = 25,
+        num2white = None
+        )
 
 def plot_kp(ax, dn):
     
@@ -147,12 +155,14 @@ def plot_kp(ax, dn):
     ax.bar(
         ds.index, 
         ds['kp'] / 10, 
-        width = 10, color = 'gray'
+        width = 0.1,
+        color = 'gray', 
+        alpha = 0.5
         )
     ax.set(
         ylabel = 'Kp', 
-        ylim = [0, 9], 
-        yticks = np.arange(0, 9, 2)
+        ylim = [0, 12], 
+        yticks = np.arange(0, 12, 2)
         )
     
     ax.axhline(3, lw = 2, color = 'r')
@@ -167,7 +177,7 @@ def plot_roti_and_indices(dn):
     fig, ax = plt.subplots(
         dpi = 300,
         figsize = (12, 10), 
-        nrows = 5, 
+        nrows = 4, 
         sharex = True
         )
 
@@ -183,7 +193,7 @@ def plot_roti_and_indices(dn):
     pl.plot_auroras(ax[0], ds)
     pl.plot_magnetic_fields(ax[1], ds, ylim = 30)
     pl.plot_dst(ax[2], ds)
-    plot_kp(ax[-1], dn)
+    plot_kp(ax[2].twinx(), dn)
     
     dns = plot_roti_in_range(ax[3], start, end)
     
@@ -191,14 +201,6 @@ def plot_roti_and_indices(dn):
     plot_reference_lines(ax, dusk, estart, eend, dns)
     
     set_axes_time(ax, start, end)
-    
-    b.plot_letters(
-        ax, 
-        y = 0.8, 
-        x = 0.03, 
-        fontsize = 25,
-        num2white = None
-        )
     
     ax[0].set(title = dn.strftime('%B, %Y'))
     
@@ -208,21 +210,21 @@ def plot_roti_and_indices(dn):
 
 
 
-
-# dn = dt.datetime(2022, 10, 3) # moderate
-# dn = dt.datetime(2018, 3, 13) # no storm 
-dn = dt.datetime(2022, 12, 26)
-dn = dt.datetime(2023, 12, 11 )
-
-
-df = b.load('core/src/geomag/data/stormsphase')
-
-dn = df.index[0]
-
-fig = plot_roti_and_indices(dn)
-
-# df = c.geomagnetic_analysis(df)
-
-
-# # df.loc[df['category'] == 'intense']
+def main():
+    # dn = dt.datetime(2022, 10, 3) # moderate
+    # dn = dt.datetime(2018, 3, 13) # no storm 
+    dn = dt.datetime(2022, 12, 26)
+    dn = dt.datetime(2023, 12, 11 )
+    
+    
+    df = b.load('core/src/geomag/data/stormsphase')
+    
+    dn = df.index[0]
+    
+    fig = plot_roti_and_indices(dn)
+    
+    # df = c.geomagnetic_analysis(df)
+    
+    
+    # # df.loc[df['category'] == 'intense']
 

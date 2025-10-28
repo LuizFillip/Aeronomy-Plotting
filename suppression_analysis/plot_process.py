@@ -28,7 +28,7 @@ def save_imgs(ds, path_to_save):
     
     plt.ioff()
 
-    for dn in tqdm(ds.index):
+    for dn in tqdm(ds.index, 'save_imgs'):
             
         file = dn.strftime('%Y%m%d.PNG')
         
@@ -45,15 +45,14 @@ def save_imgs(ds, path_to_save):
     
 def main():
 
-    # for cat in df['category'].unique():
+    for cat in df['category'].unique():
     
-    cat = 'intense'
+        ds = df.loc[df['category'] == cat]
         
-    ds = df.loc[df['category'] == cat]
-    
-    path_to_save = f'{path}{cat}\\'
-    
-    b.make_dir(path_to_save)
-    
-    save_imgs(ds, path_to_save)
+        path_to_save = f'{path}{cat}\\'
         
+        b.make_dir(path_to_save)
+        
+        save_imgs(ds, path_to_save)
+        
+main()
