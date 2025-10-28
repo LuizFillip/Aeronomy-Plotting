@@ -35,11 +35,14 @@ cols = ['occ', 'bz', 'speed', 'ae', 'sym']
 df = df[cols]
 
 # Substitua por sua função que agrega (por exemplo, soma mensal)
-df2 = get_sum(df)  # Ex: df.resample('M').sum()
+df2 = get_sum(df)  
 
-def plot_cross_all_parameters():
+def plot_cross_all_parameters(df2, cols):
     n = len(cols)
-    fig, axes = plt.subplots(nrows=n, ncols=n, figsize=(18, 18), dpi=300)
+    fig, axes = plt.subplots(
+        nrows = n, ncols=n, 
+        figsize=(14, 14), 
+        dpi=300)
     
     for i, x in enumerate(cols):
         for j, y in enumerate(cols):
@@ -60,7 +63,7 @@ def plot_cross_all_parameters():
             # Adicionar coeficiente de correlação
             if i != j:
                 corr = df2[[x, y]].corr().iloc[0, 1]
-                ax.set_title(f"r={corr:.2f}", fontsize=20)
+                ax.set_title(f"r={corr:.2f}", fontsize = 20)
     
     plt.tight_layout()
     plt.show()

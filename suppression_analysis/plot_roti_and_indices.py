@@ -139,8 +139,25 @@ def set_axes_time(ax, start, end):
            ax[0], 
            fmt = '%d/%m'
            )
-  
+
+def plot_kp(ax, dn):
     
+    ds = b.range_dates( c.low_omni(), dn, days = 4)
+    ds = ds.resample('3H').mean() 
+    ax.bar(
+        ds.index, 
+        ds['kp'] / 10, 
+        width = 10, color = 'gray'
+        )
+    ax.set(
+        ylabel = 'Kp', 
+        ylim = [0, 9], 
+        yticks = np.arange(0, 9, 2)
+        )
+    
+    ax.axhline(3, lw = 2, color = 'r')
+    return None 
+
 def plot_roti_and_indices(dn):
     
     dusk = gg.terminator( -50,  dn, 
@@ -150,7 +167,7 @@ def plot_roti_and_indices(dn):
     fig, ax = plt.subplots(
         dpi = 300,
         figsize = (12, 10), 
-        nrows = 4, 
+        nrows = 5, 
         sharex = True
         )
 
@@ -166,6 +183,8 @@ def plot_roti_and_indices(dn):
     pl.plot_auroras(ax[0], ds)
     pl.plot_magnetic_fields(ax[1], ds, ylim = 30)
     pl.plot_dst(ax[2], ds)
+    plot_kp(ax[-1], dn)
+    
     dns = plot_roti_in_range(ax[3], start, end)
     
     plot_arrow_and_note(ax[2], estart, dusk)
@@ -200,9 +219,10 @@ df = b.load('core/src/geomag/data/stormsphase')
 
 dn = df.index[0]
 
-# fig = plot_roti_and_indices(dn)
+fig = plot_roti_and_indices(dn)
 
-df = c.geomagnetic_analysis(df)
+# df = c.geomagnetic_analysis(df)
 
 
-# df.loc[df['category'] == 'intense']
+# # df.loc[df['category'] == 'intense']
+
