@@ -47,7 +47,9 @@ def plot_electric_field(ax, ds):
     ax.set(ylabel = 'Ey (mV/m)')
     return None 
 
-
+def plot_kp(ax, ds):
+    
+    ax.bar(ds.index, ds['kp'])
 
 def plot_high_resolution(
         ds, dn, 
@@ -57,7 +59,7 @@ def plot_high_resolution(
     fig, ax = plt.subplots(
         dpi = 300,
         figsize = (14, 14), 
-        nrows = 5, 
+        nrows = 4, 
         sharex = True
         )
     
@@ -78,7 +80,7 @@ def plot_high_resolution(
     
     plot_auroral(ax[3], ds)
     
-    pl.plot_kp(ax[-1], dn, days = 2)
+    # plot_kp(ax[-1], ds)
 
     
     
@@ -149,6 +151,7 @@ def main():
     
     infile = 'database/indices/omni_high/20151'
     df = b.load(infile)
+    
 
     df = df.loc[df['by'] < 1000]
 
@@ -157,14 +160,14 @@ def main():
     ds = b.range_dates(df, dn, days = 2)
 
 
-    fig = plot_high_resolution(ds, dn, translate=True)
+    fig = plot_high_resolution(ds, dn, translate= False)
     
     FigureName = dn.strftime('%Y%m%d_GeoIndices_pt')
     
-    # fig.savefig(
-    #       path_to_save + FigureName,
-    #       dpi = 400
-    #       )
+    fig.savefig(
+          path_to_save + FigureName,
+          dpi = 400
+          )
     
     
-main()
+# main()

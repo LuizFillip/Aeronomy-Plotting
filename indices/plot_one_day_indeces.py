@@ -2,16 +2,16 @@ import matplotlib.pyplot as plt
 import base as b
 import datetime as dt
 import numpy as np
-import PlasmaBubbles as pb 
+import epbs as pb 
 import plotting as pl
 
 b.sci_format(fontsize = 25)
 PATH = 'database/indices/omni_hourly.txt'
 
 
-def plot_dst(ax, ds, ylim = [-150, 50]):
+def plot_dst(ax, ds, ylim = [-150, 50], color = 'k'):
 
-    ax.plot(ds['sym'], lw = 2)
+    ax.plot(ds['sym'], lw = 2, color = color)
     
     ax.set(
         xlim = [ds.index[0], ds.index[-1]], 
@@ -34,7 +34,7 @@ def plot_dst(ax, ds, ylim = [-150, 50]):
 
 def plot_magnetic_fields(ax, ds, ylim = 30):
     
-    ax.plot(ds['electric'], label = '$B_y$' )
+    ax.plot(ds['by'], label = '$B_y$' )
     
     ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
     
@@ -44,7 +44,7 @@ def plot_magnetic_fields(ax, ds, ylim = 30):
     ax.set(
         ylim = [-ylim, ylim], 
         yticks = np.arange(-30, 40, 15),
-        ylabel = '$Ey$ (mV/m)'
+        ylabel = '$B_y$ (nT)' #'$Ey$ (mV/m)'
         )
     
     ax1.set(
@@ -126,7 +126,7 @@ def plot_one_day_indices(dn, days = 2):
     plot_magnetic_fields(ax[0], ds)
     plot_auroras(ax[1], ds)
     plot_dst(ax[2], ds)
-    plot_epbs(ax[-1], dn)
+    # plot_epbs(ax[-1], dn)
     
     b.format_time_axes(
         ax[-1], 
