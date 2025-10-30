@@ -49,6 +49,7 @@ def main():
     df['month'] = df.index.month 
     
     ds = df.groupby(['category', 'month']).size().unstack(fill_value=0)
+    
     ds = ds.T[['intense', 'moderate', 'weak', 'quiet']]
     
     fig = plot_seasonal_bars(ds)

@@ -94,9 +94,11 @@ def reference_ln_one_axes(a, dusk, start, end, dns):
     
     for dn in dns:
         a.axvline(dn, lw = 1, linestyle = '--')
-def plot_reference_lines(ax, dusk, start, end, dns):
+        
+    return None 
 
-   
+def plot_reference_lines(ax, dusk, start, end, dns):
+  
     if len(ax) > 1:
         for a in ax.flat:
             reference_ln_one_axes(a, dusk, start, end, dns)
