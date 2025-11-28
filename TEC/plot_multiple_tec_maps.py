@@ -3,6 +3,7 @@ import cartopy.crs as ccrs
 import datetime as dt
 import plotting as pl
 import matplotlib.pyplot as plt
+from deep_translator import GoogleTranslator
 
 b.sci_format(fontsize = 20)
 
@@ -11,9 +12,17 @@ def plot_multiple_tec_maps(
         start, 
         vmax = 50, 
         step = 10,
-        root = 'E:\\'
+        root = 'E:\\', 
+        translate = True
         ):
 
+    if translate:
+        hr = 'UT'
+        cbar = r'TEC ($10^{16} / m^2$)'
+    else:
+        hr = 'HU'
+        cbar = r'CET ($10^{16} / m^2$)' 
+        
     fig, axs = plt.subplots(
          figsize = (16, 14), 
          dpi = 300, 
@@ -35,6 +44,12 @@ def plot_multiple_tec_maps(
         nxt = day.day + 1
         day_label = day.strftime(f'%B, %d-{nxt}, %Y')
         
+        if not translate:
+            day_label = GoogleTranslator(
+                source = 'en', 
+                target = 'pt'
+                ).translate(day_label)
+            
         l = b.chars()[row]
         
         axs[row, 0].text(
@@ -63,7 +78,7 @@ def plot_multiple_tec_maps(
             
             x, y = pl.valleys_and_peaks(dn, desired_dx = 5 )
             
-            ax.set(title = dn.strftime(f' ({col + 1}) %Hh%M UT'))
+            ax.set(title = dn.strftime(f' ({col + 1}) %Hh%M {hr}'))
             
             if not ((row == 2) and (col == 0)):
                 ax.set(
@@ -84,8 +99,11 @@ def plot_multiple_tec_maps(
     }
     
     pl.add_red_arrows_on_panels(
-        axs, arrows, 
-        crs=ccrs.PlateCarree(), dy=3, color="red")
+        axs, 
+        arrows, 
+        crs = ccrs.PlateCarree(), dy=3, 
+        color = "red"
+        )
     
 
                 
@@ -95,7 +113,8 @@ def plot_multiple_tec_maps(
             vmax = vmax, 
             step = step,
             orientation = 'horizontal',
-            anchor = [0.3, 0.97, 0.4, 0.02] 
+            anchor = [0.3, 0.97, 0.4, 0.02], 
+            label = cbar
             )
     
     return fig 
@@ -103,15 +122,20 @@ def plot_multiple_tec_maps(
 def main():
     
     start =  dt.datetime(2015, 12, 19, 22)
-    fig = plot_multiple_tec_maps(start, vmax = 60, step = 10)
+    fig = plot_multiple_tec_maps(
+        start, 
+        vmax = 60, 
+        step = 10, 
+        translate = False)
     
     path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
-    FigureName = 'TECmaps_on_sunset'
+    FigureName = 'TECmaps_on_sunset_pt'
     
     fig.savefig(
           path_to_save + FigureName,
           dpi = 400
           )
     
-# main()
+main()
+

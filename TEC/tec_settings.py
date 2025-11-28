@@ -36,65 +36,88 @@ def load_from_dn(dn, root = 'E:\\'):
     return load_tec(path, values = False) 
 
 
-day = 20
+def stack_tec(dn):
+    root = 'E:\\'
+    dn_min = b.closest_datetime(
+        b.tec_dates(dn, root = root), dn)
+    
+    infile = b.get_path(dn_min, root = root)
+    
+    df = load_tec(infile, values = False)
+    
+    return (
+        df.stack()                  # converte grade 2D → série (lat, lon)
+          .reset_index()            # vira dataframe
+          .rename(columns={
+              'level_0': 'lat',
+              'level_1': 'lon',
+              0: 'tec'
+          })
+    )
 
-lon = -50
+def convert_to_mag(df, time, alt_km=350):
+    import apexpy
+    mlat = []
+    mlon = []
+    tec  = []
+    
 
-def make_keo(day, lon):
-    
-    times = pd.date_range(
-         f'2015-12-{day} 21:00',
-         f'2015-12-{day + 1} 08:00', 
-         freq = '10min'
-         )
+    for row in df.itertuples(index=True):
+        lat = row.lat
+        lon = row.lon
+        tec_value = row.tec      # sua coluna TEC
 
-    out = []
-    for dn in times:
-    
-    
-        ds = load_from_dn(dn, root = 'E:\\')
-        
-        out.append(ds.loc[:, ds.columns == lon])
-        
-    df = pd.concat(out, axis = 1)
-    
-    df.columns = times
-    
-    return df 
+        apex = apexpy.Apex(date=2015)
+        a, b = apex.convert(lat, lon, 
+                            'geo', 'qd', height = 300)
+        mlat.append(a)
+        mlon.append(b)
+        tec.append(tec_value)
 
-def plot_keogram_tec():
+    return pd.DataFrame({
+        "mlat": mlat,
+        "mlon": mlon,
+        "tec": tec
+    })
+
+def mean_by_bins(df):
+    lat_bins = np.arange(df.mlat.min(), df.mlat.max() + 0.5, 0.5)
+    lon_bins = np.arange(df.mlon.min(), df.mlon.max() + 0.5, 0.5)
     
-    fig, ax = plt.subplots(
-        figsize = (16, 12), 
-        nrows = 3
-        )
+    df["lat_bin"] = pd.cut(
+        df.mlat, bins=lat_bins, labels=lat_bins[:-1])
     
-    for i, day in enumerate([19, 20, 21]):
-        
-        
-        df = make_keo(day, lon)
-        
-        ax[i].contourf(
-            df.columns, 
-            df.index, 
-            df.values, 
-            20, 
-            cmap = 'jet'
-            ) 
-        
-        ax[i].set(
-            ylabel = 'Latitude (°)',
-            ylim = [-40, 0], 
-                  )
-        ax[i].text(
-            0.01, 0.85, 
-            f'{day} - {day + 1} December 2015', 
-            transform = ax[i].transAxes, 
-            fontsize = 30
-            )
-        b.axes_hour_format(
-                ax[i], 
-                hour_locator = 1)
-        
-        if i == 2:
-            ax[i].set(xlabel = 'Universal time')
+    df["lon_bin"] = pd.cut(
+        df.mlon, bins=lon_bins, labels=lon_bins[:-1])
+    
+    return (
+        df.groupby(["lat_bin", "lon_bin"])["tec"]
+          .mean()
+          .reset_index()
+          .rename(columns={"lat_bin": "mlat", "lon_bin": "mlon"})
+    ).dropna().astype(float).round(2)
+
+import matplotlib.pyplot as plt 
+
+
+dn = dt.datetime(2015, 12, 19, 22)
+
+df = stack_tec(dn)
+df = convert_to_mag(df, dn, alt_km=350)
+
+
+
+ds = mean_by_bins(df)
+
+df1 = ds.pivot(index="mlat", columns="mlon", values="tec") 
+plt.contourf(
+    df1.columns, 
+    df1.index, 
+    df1.values, 
+    30, 
+    cmap = 'jet'
+    )
+
+ss = ds.loc[ds.mlon == 15.98]
+
+# plt.plot(ss.mlat, ss.tec)
