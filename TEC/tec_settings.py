@@ -81,8 +81,11 @@ def convert_to_mag(df, time, alt_km=350):
     })
 
 def mean_by_bins(df):
-    lat_bins = np.arange(df.mlat.min(), df.mlat.max() + 0.5, 0.5)
-    lon_bins = np.arange(df.mlon.min(), df.mlon.max() + 0.5, 0.5)
+    lat_bins = np.arange(
+        df.mlat.min(), 
+                         df.mlat.max() + 0.5, 0.5)
+    lon_bins = np.arange(df.mlon.min(), 
+                         df.mlon.max() + 0.5, 0.5)
     
     df["lat_bin"] = pd.cut(
         df.mlat, bins=lat_bins, labels=lat_bins[:-1])
@@ -100,24 +103,68 @@ def mean_by_bins(df):
 import matplotlib.pyplot as plt 
 
 
-dn = dt.datetime(2015, 12, 19, 22)
+def load_madrigal(dn):
+    fn = dn.strftime('gps%y%m%dg.002.hdf5.txt')
+    df = b.load(fn)
+    
+    df = df.rename(columns = {'TEC': 'tec'})
+    
+    df = df.loc[
+        (df.lon > -90) & (df.lon < -30) &
+        (df.lat > -50) & (df.lat < 50) 
+        ]
+    
+    df = convert_to_mag(df, dn, alt_km=350)
 
-df = stack_tec(dn)
-df = convert_to_mag(df, dn, alt_km=350)
+    return mean_by_bins(df)
+    
+    
+
+def sel_lon(ds, lon = 20, delta = 2):
+    ss = ds.loc[(ds.mlon > lon) & 
+                (ds.mlon < lon + delta)]
+
+    return ss[['mlat', 'tec']]
+
+def interpolate(df, vmin = -40, vmax = 56, step = 0.5):
+    df = df.sort_values('mlat')
+    df = df.groupby('mlat', as_index=False).mean()   
+    
+    mlat_new = np.arange(vmin, vmax, step)
+    
+    tec_interp = np.interp(mlat_new, df['mlat'], df['tec'])
+    data = {
+        'mlat': mlat_new,'tec': tec_interp
+    }
+    return pd.DataFrame(data).set_index('mlat')
+
+def run_in_days():
+    out = []
+    for day in [13, 18, 29]:
+        dn = dt.datetime(2015, 12, day, 22)
+      
+        out.append(
+            interpolate(
+                sel_lon(
+                    load_madrigal(dn)
+                    )
+                )
+            )
+        
+    return pd.concat(out, axis = 1)
+    
+df = run_in_days() 
+# dn = dt.datetime(2015, 12, 20, 22)
+# ds = load_madrigal(dn)
+# df = sel_lon(ds, lon = 20, delta = 2) #.to_frame(day)
 
 
+# interp(df)
 
-ds = mean_by_bins(df)
+dn = dt.datetime(2015, 12, 20, 22)
 
-df1 = ds.pivot(index="mlat", columns="mlon", values="tec") 
-plt.contourf(
-    df1.columns, 
-    df1.index, 
-    df1.values, 
-    30, 
-    cmap = 'jet'
-    )
+# 
+ds = sel_lon(load_madrigal(dn)).set_index('mlat')
 
-ss = ds.loc[ds.mlon == 15.98]
-
-# plt.plot(ss.mlat, ss.tec)
+ds['tec'].plot()
+df.mean(axis = 1).plot()
