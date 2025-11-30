@@ -3,6 +3,7 @@ import numpy as np
 import datetime as dt 
 import base as b 
 import matplotlib.pyplot as plt 
+import apexpy
 
 def load_tec(infile, values = True):
 
@@ -22,12 +23,6 @@ def load_tec(infile, values = True):
     else:
         return df
 
-# sel = df.loc[
-#      ((df.index > -10) & (df.index < 10)), 
-#      (df.columns > -50) & (df.columns < -40)
-#        ]
-
-# return np.nanmean(sel.values)
 
 def load_from_dn(dn, root = 'E:\\'):
     
@@ -36,8 +31,8 @@ def load_from_dn(dn, root = 'E:\\'):
     return load_tec(path, values = False) 
 
 
-def stack_tec(dn):
-    root = 'E:\\'
+def stack_tec(dn,  root = 'E:\\'):
+   
     dn_min = b.closest_datetime(
         b.tec_dates(dn, root = root), dn)
     
@@ -46,7 +41,7 @@ def stack_tec(dn):
     df = load_tec(infile, values = False)
     
     return (
-        df.stack()                  # converte grade 2D → série (lat, lon)
+        df.stack()                  
           .reset_index()            # vira dataframe
           .rename(columns={
               'level_0': 'lat',
@@ -56,29 +51,28 @@ def stack_tec(dn):
     )
 
 def convert_to_mag(df, time, alt_km=350):
-    import apexpy
-    mlat = []
-    mlon = []
-    tec  = []
+   
+
+    data = {
+        "mlat": [],
+        "mlon": [],
+        "tec": []
+    }
+
+    for row in df.itertuples(index = True):
+      
+        apex = apexpy.Apex(date = time.year)
+        mlat, mlon = apex.convert(
+            row.lat, row.lon, 
+            'geo', 'qd', height = alt_km
+            )
+        
+        data['mlat'].append(mlat)
+        data['mlon'].append(mlon)
+        data['tec'].append(row.tec )
+      
     
-
-    for row in df.itertuples(index=True):
-        lat = row.lat
-        lon = row.lon
-        tec_value = row.tec      # sua coluna TEC
-
-        apex = apexpy.Apex(date=2015)
-        a, b = apex.convert(lat, lon, 
-                            'geo', 'qd', height = 300)
-        mlat.append(a)
-        mlon.append(b)
-        tec.append(tec_value)
-
-    return pd.DataFrame({
-        "mlat": mlat,
-        "mlon": mlon,
-        "tec": tec
-    })
+    return pd.DataFrame(data)
 
 def mean_by_bins(df):
     lat_bins = np.arange(
@@ -100,7 +94,6 @@ def mean_by_bins(df):
           .rename(columns={"lat_bin": "mlat", "lon_bin": "mlon"})
     ).dropna().astype(float).round(2)
 
-import matplotlib.pyplot as plt 
 
 
 def load_madrigal(dn):
@@ -114,7 +107,7 @@ def load_madrigal(dn):
         (df.lat > -50) & (df.lat < 50) 
         ]
     
-    df = convert_to_mag(df, dn, alt_km=350)
+    df = convert_to_mag(df, dn)
 
     return mean_by_bins(df)
     
@@ -138,15 +131,17 @@ def interpolate(df, vmin = -40, vmax = 56, step = 0.5):
     }
     return pd.DataFrame(data).set_index('mlat')
 
-def run_in_days():
+def run_in_days(lon = 20, delta = 2):
     out = []
-    for day in [13, 18, 29]:
+    days = [13, 18, 29]
+    for day in days:
         dn = dt.datetime(2015, 12, day, 22)
       
         out.append(
             interpolate(
                 sel_lon(
-                    load_madrigal(dn)
+                    load_madrigal(dn), 
+                    lon = 20, delta = 2
                     )
                 )
             )
@@ -164,7 +159,13 @@ df = run_in_days()
 dn = dt.datetime(2015, 12, 20, 22)
 
 # 
-ds = sel_lon(load_madrigal(dn)).set_index('mlat')
+ds = sel_lon(load_madrigal(dn), , lon = 20, delta = 2).set_index('mlat')
 
-ds['tec'].plot()
-df.mean(axis = 1).plot()
+#%%%
+
+fig, ax = plt.subplots()
+
+ax.plot(ds['tec'])
+ax.plot(df.mean(axis = 1))
+
+ax.set(xlim = [-30, 30])
