@@ -46,11 +46,26 @@ def plot_electric_field(ax, ds):
     ax.plot(ds['electric'])
     ax.set(ylabel = 'Ey (mV/m)')
     return None 
-
-def plot_kp(ax, ds):
+ 
     
-    ax.bar(ds.index, ds['kp'])
-
+def plot_electrojet(ax):
+    
+    import magnet as mg 
+    
+    df = mg.electrojet(c1 = 'slz', c2 = 'eus')
+    
+    ax.plot(df, lw = 2, label = ['Storm-time', 'Quiet-Time'])
+    
+    ax.set(ylabel = '$\Delta H_{EEJ}$ (nT)', 
+           yticks = np.arange(-100, 200, 50), 
+           ylim = [-100, 180]
+           )
+    ax.axhline(0, linestyle = ':')
+    ax.legend(ncol = 2, loc = 'upper right')
+    
+    return None 
+    
+    
 def plot_high_resolution(
         ds, dn, 
         translate = False
@@ -59,7 +74,7 @@ def plot_high_resolution(
     fig, ax = plt.subplots(
         dpi = 300,
         figsize = (14, 14), 
-        nrows = 4, 
+        nrows = 5, 
         sharex = True
         )
     
@@ -80,7 +95,7 @@ def plot_high_resolution(
     
     plot_auroral(ax[3], ds)
     
-    # plot_kp(ax[-1], ds)
+    plot_electrojet(ax[-1])
 
     
     
@@ -139,8 +154,8 @@ def plot_high_resolution(
     
     b.adding_dates_on_the_top(
             ax[0], 
-            start = '2015-12-19', 
-            end = '2015-12-23'
+            # start = '2015-12-19', 
+            # end = '2015-12-23'
             )
     return fig 
 
@@ -158,11 +173,14 @@ def main():
     dn = dt.datetime(2015, 12, 21)
 
     ds = b.range_dates(df, dn, days = 2)
-
-
-    fig = plot_high_resolution(ds, dn, translate= False)
+    translate = True
+    fig = plot_high_resolution(ds, dn, translate= True)
     
-    FigureName = dn.strftime('%Y%m%d_GeoIndices_pt')
+    if translate:
+        t= 'en'
+    else:
+        t = 'pt'
+    FigureName = dn.strftime(f'%Y%m%d_GeoIndices_{t}')
     
     fig.savefig(
           path_to_save + FigureName,
@@ -170,4 +188,4 @@ def main():
           )
     
     
-# main()
+main()
