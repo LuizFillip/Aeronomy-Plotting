@@ -4,9 +4,35 @@ import datetime as dt
 import numpy as np
 import plotting as pl 
 
+def plot_kp_hourly(ax1, ds):
+    PATH_INDEX =  'database/indices/omni_hourly.txt'
+
+    df = b.load(PATH_INDEX)
+    df = df.loc[
+        (df.index > ds.index[0]) &
+        (df.index < ds.index[-1])
+        ]
+    
+    ax1.axhline(9, lw = 1, linestyle = ':')
+    ax1.bar(
+        df.index, df['kp'], 
+        width = 0.04, 
+        alpha = 0.6, 
+        color = 'gray', 
+        edgecolor = 'k'
+        )
+    
+    ax1.set(
+        ylabel = 'Kp', 
+        yticks = np.arange(0, 12, 3),
+        ylim = [0, 18],
+        )
+    
+    return None 
+      
 def plot_SymH(ax, ds, ylim = [-300, 50]):
     
-    ax.plot(ds['sym/h'])
+    ax.plot(ds['sym/h'], lw = 2)
    
     ax.set(
         xlim = [ds.index[0], ds.index[-1]], 
@@ -17,10 +43,14 @@ def plot_SymH(ax, ds, ylim = [-300, 50]):
     
     ax.axhline(0, lw = 0.5, color = 'k', linestyle = '-')
     
+    ax1 = ax.twinx()
+ 
+    plot_kp_hourly(ax1, ds)
+    
     return None 
 
 def plot_auroral(ax, ds):
-    ax.plot(ds['ae'])
+    ax.plot(ds['ae'], lw = 2)
     ax.set(
         # 
         yticks = np.arange(0, 2500, 500),
@@ -32,7 +62,7 @@ def plot_auroral(ax, ds):
 
 def plot_solar_speed(ax, ds):
     ds = ds.loc[ds['speed'] < 600]
-    ax.plot(ds['speed'])
+    ax.plot(ds['speed'], lw = 2)
     ax.set(
         ylim = [200, 600],
         yticks = np.arange(200, 600, 100),
@@ -54,14 +84,15 @@ def plot_electrojet(ax):
     
     df = mg.electrojet(c1 = 'slz', c2 = 'eus')
     
-    ax.plot(df, lw = 2, label = ['Storm-time', 'Quiet-Time'])
+    ax.plot(df, lw = 2, label = ['Storm-time', 'Quiet-time'])
     
     ax.set(ylabel = '$\Delta H_{EEJ}$ (nT)', 
            yticks = np.arange(-100, 200, 50), 
            ylim = [-100, 180]
            )
     ax.axhline(0, linestyle = ':')
-    ax.legend(ncol = 2, loc = 'upper right')
+    
+    ax.legend(ncol = 1, loc = 'upper right')
     
     return None 
     
@@ -97,7 +128,6 @@ def plot_high_resolution(
     
     plot_electrojet(ax[-1])
 
-    
     
     dates = (np.unique(ds.index.date))
         
@@ -187,5 +217,5 @@ def main():
           dpi = 400
           )
     
-    
+    # 
 main()

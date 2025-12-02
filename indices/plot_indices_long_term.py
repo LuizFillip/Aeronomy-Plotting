@@ -6,7 +6,6 @@ import GEO as gg
 
 PATH_INDEX =  'database/indices/omni_pro2.txt'
 
-
 def plot_dst(ax, dst, limit = -100 ):
     
     ax.plot(dst)

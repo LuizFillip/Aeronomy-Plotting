@@ -34,13 +34,14 @@ def plot_dst(ax, ds, ylim = [-150, 50], color = 'k'):
 
 def plot_magnetic_fields(ax, ds, ylim = 30):
     
-    ax.plot(ds['by'], label = '$B_y$' )
+    ax.plot(ds['by'], label = '$B_y$', lw = 2)
     
     ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
     
     ax1 = ax.twinx()
     
-    ax1.plot(ds['bz'], color = '#0C5DA5',  label = '$B_z$')
+    ax1.plot(ds['bz'], color = '#0C5DA5',  label = '$B_z$', 
+             lw = 2)
     ax.set(
         ylim = [-ylim, ylim], 
         yticks = np.arange(-30, 40, 15),
@@ -50,7 +51,7 @@ def plot_magnetic_fields(ax, ds, ylim = 30):
     ax1.set(
         ylabel = '$B_z$ (nT)',
         yticks = np.arange(-30, 40, 15),
-        ylim = [-ylim, ylim]
+        ylim = [-ylim - 5, ylim + 5]
         )
     
     b.change_axes_color(
@@ -66,7 +67,7 @@ def plot_magnetic_fields(ax, ds, ylim = 30):
     
 def plot_auroras(ax, ds):
     
-    ax.plot(ds['ae'], label = 'AE')
+    ax.plot(ds['ae'], label = 'AE', lw = 2)
     
     ax.set(
         yticks = np.arange(0, 3000, 1000),
@@ -104,7 +105,8 @@ def plot_epbs(ax, dn, sector = -50):
     ax.plot(df['roti'])
     
     ax.set(ylim = [0, 2], ylabel = 'ROTI')
-
+    
+    return None 
 
 def plot_one_day_indices(dn, days = 2):
     '''
