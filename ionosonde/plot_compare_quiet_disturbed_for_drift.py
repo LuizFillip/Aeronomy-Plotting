@@ -35,7 +35,7 @@ def check_results(ax, site):
     ref = dt.datetime(2015, 12, 20, 21)
     res = dg.summary_from_ref_time(ref, site, p = 'drift')
     
-    print(res)
+    # print(res)
     ax.scatter( res['time'], res['storm'])
     
     ref = dt.datetime(2015, 12, 21, 6)
@@ -55,17 +55,18 @@ def plot_compare_quiet_disturbed_for_drift(
         ylabel = 'Vertical drift (m/s)'
         qt_label = 'Quiet-time'
         db_label = 'Storm-time'
+        xlabel = 'Universal time'
     else:
         ylabel = 'Velocidade de deriva vertical (m/s)'
         qt_label = 'Período calmo'
         db_label = 'Período perturbado'
+        xlabel = 'Hora universal'
     
-    
-    
+    num = len(sites)
     fig, ax = plt.subplots(
         dpi = 300, 
-        nrows = len(sites),
-        figsize = (16, 18), 
+        nrows = num,
+        figsize = (16, 4*num), 
         sharex = True, 
         sharey = True
         )
@@ -105,7 +106,7 @@ def plot_compare_quiet_disturbed_for_drift(
             qt['vz'], 
             color = 'purple', 
             lw = 2, 
-            label = 'Quiet-time'
+            label = qt_label
             )
         
         ax[i].fill_between(
@@ -166,7 +167,7 @@ def plot_compare_quiet_disturbed_for_drift(
         ax[i].axhline(40, linestyle = ':')
         
     fig.text(
-        0.03, 0.4, 
+        0.03, 0.25, 
         ylabel, 
         fontsize = 35, 
         rotation = 'vertical'
@@ -185,7 +186,7 @@ def plot_compare_quiet_disturbed_for_drift(
          tz = "UTC"
          )
     
-    ax[-1].set(xlabel = 'Universal time')
+    ax[-1].set(xlabel = xlabel)
     
     b.adding_dates_on_the_top(
             ax[0], 
@@ -197,14 +198,14 @@ def plot_compare_quiet_disturbed_for_drift(
 
 def main():
     sites = ['SAA0K',  'FZA0M',  'BVJ03' ] #, 'CAJ2M', 'CGK21'] #
-    fig = plot_compare_quiet_disturbed_for_drift(sites, translate = True)
+    fig = plot_compare_quiet_disturbed_for_drift(sites, translate = False)
     
-    FigureName = 'vertical_drift_comparation_time'
+    FigureName = 'vertical_drift_3sites'
     
     path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
     
-    # fig.savefig(path_to_save + FigureName, dpi = 400)
+    fig.savefig(path_to_save + FigureName, dpi = 400)
     
-main()
+# main()
 
