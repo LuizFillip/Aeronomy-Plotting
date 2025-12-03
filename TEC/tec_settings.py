@@ -77,15 +77,21 @@ def convert_to_mag(df, time, alt_km=350):
 def mean_by_bins(df):
     lat_bins = np.arange(
         df.mlat.min(), 
-                         df.mlat.max() + 0.5, 0.5)
-    lon_bins = np.arange(df.mlon.min(), 
-                         df.mlon.max() + 0.5, 0.5)
+        df.mlat.max() + 0.5, 0.5
+        )
+    lon_bins = np.arange(
+        df.mlon.min(), 
+        df.mlon.max() + 0.5, 0.5
+        )
     
     df["lat_bin"] = pd.cut(
-        df.mlat, bins=lat_bins, labels=lat_bins[:-1])
+        df.mlat, bins=lat_bins, 
+        labels = lat_bins[:-1])
     
     df["lon_bin"] = pd.cut(
-        df.mlon, bins=lon_bins, labels=lon_bins[:-1])
+        df.mlon, bins=lon_bins, 
+        labels = lon_bins[:-1]
+        )
     
     return (
         df.groupby(["lat_bin", "lon_bin"])["tec"]
@@ -114,8 +120,7 @@ def load_madrigal(dn):
     
 
 def sel_lon(ds, lon = 20, delta = 2):
-    ss = ds.loc[(ds.mlon > lon) & 
-                (ds.mlon < lon + delta)]
+    ss = ds.loc[(ds.mlon > lon) & (ds.mlon < lon + delta)]
 
     return ss[['mlat', 'tec']]
 
@@ -141,31 +146,78 @@ def run_in_days(lon = 20, delta = 2):
             interpolate(
                 sel_lon(
                     load_madrigal(dn), 
-                    lon = 20, delta = 2
+                    lon = lon, 
+                    delta = delta
                     )
-                )
+                ).rename(columns = {'tec': day})
             )
         
     return pd.concat(out, axis = 1)
-    
-df = run_in_days() 
-# dn = dt.datetime(2015, 12, 20, 22)
-# ds = load_madrigal(dn)
-# df = sel_lon(ds, lon = 20, delta = 2) #.to_frame(day)
 
-
-# interp(df)
+lon = 20
+df = run_in_days(lon = lon) 
 
 dn = dt.datetime(2015, 12, 20, 22)
 
-# 
-ds = sel_lon(load_madrigal(dn), , lon = 20, delta = 2).set_index('mlat')
+ds = sel_lon(load_madrigal(dn), lon = lon).set_index('mlat')
+
+
+
+
 
 #%%%
 
-fig, ax = plt.subplots()
+def plot_magnetic_tec(df, ds):
+    fig, ax = plt.subplots(
+        dpi = 300, 
+        figsize = (12, 6)
+        )
+    
+    ax.plot(ds['tec'], lw = 2, label = 'Storm-time')
+    
+    avg = df.mean(axis = 1)
+    std = df.std(axis = 1)
+    
+    ax.plot(avg, lw = 2, color = 'purple', label = 'Quiet-time')
+    ax.fill_between(
+        avg.index, 
+        avg - std, 
+        avg + std, 
+        color = "purple", 
+        alpha = 0.3
+        )
+    
+    ax.set(
+           xlabel = 'Magnetic latitude (°)',
+           ylabel = 'TEC (TECU)',
+           xlim = [-30, 30], 
+           ylim = [0, 100],
+           xticks = np.arange(-30, 30, 5)
+           )
+    
+    ax.legend(loc = 'upper center', 
+              ncol = 2)
+    
+    ax.axvline(0, linestyle = ':')
+    
+   
 
-ax.plot(ds['tec'])
-ax.plot(df.mean(axis = 1))
+fig =  plot_magnetic_tec(df, ds)
 
-ax.set(xlim = [-30, 30])
+
+def main():
+    
+    FigureName = 'latitude_tec_profile'
+    
+    path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
+    
+    
+    fig.savefig(path_to_save + FigureName, dpi = 400)
+# import apexpy 
+
+# apex = apexpy.Apex(date = 2015)
+
+# apex.convert(
+#     -2, -50, 
+#     'geo', 'qd', height = 350
+#     )
