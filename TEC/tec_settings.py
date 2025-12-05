@@ -163,11 +163,8 @@ ds = sel_lon(load_madrigal(dn), lon = lon).set_index('mlat')
 
 
 
-
-
-#%%%
-
 def plot_magnetic_tec(df, ds):
+    b.sci_format(fontsize = 25)
     fig, ax = plt.subplots(
         dpi = 300, 
         figsize = (12, 6)
@@ -199,6 +196,8 @@ def plot_magnetic_tec(df, ds):
               ncol = 2)
     
     ax.axvline(0, linestyle = ':')
+    
+    return fig 
     
    
 
