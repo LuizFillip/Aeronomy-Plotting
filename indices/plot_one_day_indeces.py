@@ -39,8 +39,9 @@ def plot_magnetic_fields(ax, ds, ylim = 30):
     ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
     
     ax1 = ax.twinx()
-    
-    ax1.plot(ds['bz'], color = '#0C5DA5',  label = '$B_z$', 
+    #'#0C5DA5'
+    ax_co = 'purple'
+    ax1.plot(ds['bz'], color = ax_co,  label = '$B_z$', 
              lw = 2)
     ax.set(
         ylim = [-ylim, ylim], 
@@ -56,7 +57,7 @@ def plot_magnetic_fields(ax, ds, ylim = 30):
     
     b.change_axes_color(
             ax1, 
-            color = '#0C5DA5',
+            color = ax_co,
             axis = "y", 
             position = "right"
             )

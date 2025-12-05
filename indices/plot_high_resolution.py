@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import datetime as dt
 import numpy as np
 import plotting as pl 
+import magnet as mg
 
 def plot_kp_hourly(ax1, ds):
     PATH_INDEX =  'database/indices/omni_hourly.txt'
@@ -80,12 +81,17 @@ def plot_electric_field(ax, ds):
     
 def plot_electrojet(ax):
     
-    import magnet as mg 
+     
     
     df = mg.electrojet(c1 = 'slz', c2 = 'eus')
     
-    ax.plot(df, lw = 2, label = ['Storm-time', 'Quiet-time'])
-    
+    ax.plot(
+        df.iloc[:, 0], color = 'k', 
+        lw = 2, label = 'Storm-time')
+    ax.plot(
+        df.iloc[:, 1], color = 'purple',
+        lw = 2, label = 'Quiet-time'
+        )
     ax.set(ylabel = '$\Delta H_{EEJ}$ (nT)', 
            yticks = np.arange(-100, 200, 50), 
            ylim = [-100, 180]
@@ -197,14 +203,15 @@ def main():
     infile = 'database/indices/omni_high/20151'
     df = b.load(infile)
     
-
     df = df.loc[df['by'] < 1000]
 
     dn = dt.datetime(2015, 12, 21)
 
     ds = b.range_dates(df, dn, days = 2)
+    
     translate = True
-    fig = plot_high_resolution(ds, dn, translate= True)
+    
+    fig = plot_high_resolution(ds, dn, translate)
     
     if translate:
         t= 'en'
@@ -212,10 +219,10 @@ def main():
         t = 'pt'
     FigureName = dn.strftime(f'%Y%m%d_GeoIndices_{t}')
     
-    fig.savefig(
-          path_to_save + FigureName,
-          dpi = 400
-          )
+    # fig.savefig(
+    #       path_to_save + FigureName,
+    #       dpi = 400
+    #       )
     
     # 
 main()
