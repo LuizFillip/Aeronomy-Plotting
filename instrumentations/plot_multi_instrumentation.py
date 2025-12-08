@@ -1,23 +1,13 @@
 import os
 import datetime as dt
-
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from skimage import io
-
 import digisonde as dg
 import imager as im
 import base as b
-import PlasmaBubbles as pb
+import epbs as pb
 import plotting as pl
-
-# Configurações globais de 
-
-# def get_datetime_from_file(filename: str) -> dt.datetime:
-#     """Extrai datetime de nome de arquivo de imagem All-Sky."""
-#     date = im.fn2dn(filename).date()
-#     time = dt.time(20, 0)
-#     return dt.datetime.combine(date, time)
 
 
 def folder_date(date: dt.datetime) -> str:
@@ -199,6 +189,6 @@ def main():
     
 # main()
 
-figure_1  = plot_multi_instrumentation(with_epbs) 
+# figure_1  = plot_multi_instrumentation(with_epbs) 
 
 

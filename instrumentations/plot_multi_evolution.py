@@ -1,5 +1,5 @@
 import base as b
-import PlasmaBubbles as pb
+import epbs as pb
 import plotting as pl 
 import datetime as dt
 import imager as im 
