@@ -18,7 +18,7 @@ def plot_multiple_tec_maps(
 
     if translate:
         hr = 'UT'
-        cbar = r'TEC ($10^{16} / m^2$)'
+        cbar = r'TEC (TECU)' #($10^{16} / m^2$)
     else:
         hr = 'HU'
         cbar = r'CET ($10^{16} / m^2$)' 
@@ -42,7 +42,7 @@ def plot_multiple_tec_maps(
         delta_day =  dt.timedelta(days = row)
         day = start + delta_day
         nxt = day.day + 1
-        day_label = day.strftime(f'%B, %d-{nxt}, %Y')
+        day_label = day.strftime(f'%d-{nxt} %B %Y')
         
         if not translate:
             day_label = GoogleTranslator(
@@ -78,7 +78,7 @@ def plot_multiple_tec_maps(
             
             x, y = pl.valleys_and_peaks(dn, desired_dx = 5 )
             
-            ax.set(title = dn.strftime(f' ({col + 1}) %Hh%M {hr}'))
+            ax.set(title = dn.strftime(f' ({col + 1}) %H:%M {hr}'))
             
             if not ((row == 2) and (col == 0)):
                 ax.set(
@@ -121,21 +121,29 @@ def plot_multiple_tec_maps(
 
 def main():
     
+    translate = True
+    
     start =  dt.datetime(2015, 12, 19, 22)
     fig = plot_multiple_tec_maps(
         start, 
         vmax = 60, 
         step = 10, 
-        translate = False)
+        translate = translate
+        )
     
     path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
-    FigureName = 'TECmaps_on_sunset_pt'
+    if translate:
+        lr = 'en'
+    else:
+        lr = 'pt'
+        
+    FigureName = f'TECmaps_on_sunset_{lr}'
     
-    # fig.savefig(
-    #       path_to_save + FigureName,
-    #       dpi = 400
-    #       )
+    fig.savefig(
+          path_to_save + FigureName,
+          dpi = 400
+          )
     
-main()
+# main()
 

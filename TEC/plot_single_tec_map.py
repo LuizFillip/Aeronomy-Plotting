@@ -130,5 +130,5 @@ def plot_tec_map(
     
     ax.scatter(lon, lat, c = 'k', s = 5)
     
-    return fig
+    # return fig
         
