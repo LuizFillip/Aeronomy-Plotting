@@ -159,10 +159,12 @@ def plot_one_day_alltimes():
     return fig 
 
 
-figs = [plot_alldays_one_time(), 
-        plot_one_day_alltimes()]
+def main():
 
-names = ['alldays', 'alltimes']
-for i, fig in enumerate(figs):
+    figs = [plot_alldays_one_time(), 
+            plot_one_day_alltimes()]
     
-    fig.savefig(names[i], dpi = 400)
+    names = ['alldays', 'alltimes']
+    for i, fig in enumerate(figs):
+        
+        fig.savefig(names[i], dpi = 400)
