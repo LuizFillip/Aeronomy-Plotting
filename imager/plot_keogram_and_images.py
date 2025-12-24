@@ -123,6 +123,8 @@ def main():
     FigureName = f'keogram_images_{site.lower()}_20220724'
     
         
-    fig.savefig(
-        b.LATEX(FigureName, 'paper2'),
-        dpi = 400)
+    # fig.savefig(
+    #     b.LATEX(FigureName, 'paper2'),
+    #     dpi = 400)
+    
+main()

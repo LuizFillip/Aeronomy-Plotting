@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import base as b
 import datetime as dt 
 
-b.config_labels()
+b.sci_format()
 
 def velocity(time, distance):
     delta_d = (distance[-1] - distance[0]) 
@@ -102,9 +102,9 @@ def plot_keogram(
 
 
 
-dn = dt.datetime(2024, 9, 24, 23)
+dn = dt.datetime(2024, 9, 24, 22)
 
-infile = im.path_asi(dn, site = 'BJL', root = 'E:\\images\\')
+infile = im.make_path(dn, site = 'BJL', root = 'E:\\images\\')
 
 area_factor = 4
 
