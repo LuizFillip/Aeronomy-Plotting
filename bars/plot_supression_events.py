@@ -108,8 +108,3 @@ def main():
     #     dpi = 400
     #     )
     
-# main()
-
-df = c.seasonal_storm_events(normalize = False)
-
-df

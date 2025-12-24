@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import base as b 
-import PlasmaBubbles as pb 
+import epbs as pb 
 import numpy as np 
 
 b.sci_format()
@@ -35,8 +35,9 @@ def plot_seasonal_occurrence(
         ):
     
     time = 'month'
+    infile = 'database/epbs/events_class2' #'events_5'
     p = pb.BubblesPipe(
-        'events_5', 
+        infile, 
         drop_lim = 0.3, 
         storm = 'quiet'
         )
@@ -152,5 +153,10 @@ def main():
     
     
    
-main()
+# main()
+
+
+# infile = 'database/epbs/events_class2'
+
+# b.
 

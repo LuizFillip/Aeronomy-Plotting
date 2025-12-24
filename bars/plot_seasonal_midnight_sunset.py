@@ -2,8 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import base as b 
 import core as c
-import PlasmaBubbles as pb 
+import epbs as pb 
 
+b.sci_format(fontsize = 25)
 
 def plot_annually_both_and_indexes(
         df, 
@@ -33,58 +34,60 @@ def plot_annually_both_and_indexes(
     fig, ax = plt.subplots(
         dpi = 300, 
         nrows = 2,
-        sharex = True,
+        sharey = True,
         figsize = (16, 12)
         )
     
-    plt.subplots_adjust(hspace = 0.3)
+    plt.subplots_adjust(hspace = 0.2)
     
-    vmax = [350, 150]
-    for i, typing in enumerate(['sunset', 'midnight']):
-      
-        ds = pb.sel_typing(df, typing = typing)
-        
-        if xlabel == 'years':
-            df1 = c.count_occurences(ds).year
-            
-        else:
-            df1 = c.count_occurences(ds).month
-           
-        
-        df1.plot(
+    ds = pb.sel_typing(df, typing = 'midnight')
+    
+    datas = [c.count_occurences(ds).month, 
+             c.count_occurences(ds).year]
+   
+    for i, df in enumerate(datas):
+        # print(df)
+        df.iloc[:, :3].plot(
             kind = 'bar', 
             ax = ax[i], 
             legend = False
             )
         
         t = [f'{sector} {i} ({vl})' for i, vl in 
-             enumerate(df1.sum().values, start = 1)]
+             enumerate(df.sum().values, start = 1)]
         
-        ax[i].legend(
-            t,
-            ncol = 5, 
-            title = names[i] + ' EPBs',
-            bbox_to_anchor = (.5, 1.3), 
-            loc = "upper center", 
-            columnspacing = 0.6
-            )
         
         ax[i].set(
             ylabel = ylabel,
-            xlabel = xlabel.capitalize(),
-            ylim = [0, vmax[i]],
-            xticklabels = b.month_names(
-                sort = True, language = 'en'),
+            xlabel = 'Years',
+            # ylim = [0, vmax[i]],
+            
             )
         
+        ax[i].tick_params(axis='x', labelrotation=0)
+        
+    ax[0].set(
+        xticklabels = b.month_names(
+            sort = True, language = 'en'),
+        xlabel = xlabel.capitalize()
+        )
     
-    plt.xticks(rotation = 0)
+    ax[0].legend(
+        t,
+        ncol = 5, 
+        # title = names[i] + ' EPBs',
+        bbox_to_anchor = (.5, 1.3), 
+        loc = "upper center", 
+        columnspacing = 0.6
+        )
+    
+        
 
     return fig
 
 
 
-df = b.load('events_5')
+df = b.load('database/epbs/events_class2')
 
 fig = plot_annually_both_and_indexes(
         df,  
@@ -92,3 +95,4 @@ fig = plot_annually_both_and_indexes(
         )
 
 
+# df 

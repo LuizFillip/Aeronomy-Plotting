@@ -6,9 +6,9 @@ import numpy as np
 # from matplotlib.ticker import AutoMinorLocator
 # import plotting as pl 
 # import datetime as dt 
-import PlasmaBubbles as pb 
+import epbs as pb 
 
-b.config_labels(fontsize = 25)
+b.sci_format(fontsize = 25)
 
 def plot_EPBs(ax, df, col = -50, translate = True):
     
@@ -54,8 +54,8 @@ def plot_seasonal_and_annual_multi_sector():
          )
     
     plt.subplots_adjust(hspace = 0.1)
-    
-    ds = b.load('events_class2')
+    infile = 'database/epbs/events_class2'
+    ds = b.load(infile)
     
     
     df = pb.sel_typing(

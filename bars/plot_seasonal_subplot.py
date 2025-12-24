@@ -2,7 +2,7 @@ import core as c
 
 import matplotlib.pyplot as plt
 import base as b 
-import PlasmaBubbles as pb 
+import epbs as pb 
 import numpy as np 
 
 b.sci_format()
@@ -177,5 +177,5 @@ def main():
     
     
    
-# main()
+main()
 
