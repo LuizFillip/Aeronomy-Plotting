@@ -3,40 +3,6 @@ import core as c
 import pandas as pd 
 import matplotlib.pyplot as plt 
 
-df = b.load('core/src/geomag/data/stormsphase')
-
-df = c.geomagnetic_analysis(df)
-
-df = df.loc[df.sym > -30]
-
-def get_sum(df):
-
-    # Define a função de agregação: 'occ' com soma, o resto com média
-    agg_funcs = {col: 'sum' for col in df.columns if col != 'occ'}
-    agg_funcs['occ'] = 'sum'
-    
-    # Agrupa por mês e aplica agregações
-    return df.groupby(df.index.month).agg('sum')
-
-def get_avg(df):
-    
-    agg_funcs = {col: 'mean' for col in df.columns if col != 'occ'}
-    agg_funcs['occ'] = 'sum'
-    
-    return df.groupby(df.index.month).agg(agg_funcs)
-
-# df1 = get_avg(df)
-
- 
-df['occ'] = 1
-
-
-cols = ['occ', 'bz', 'speed', 'ae', 'sym']
-df = df[cols]
-
-# Substitua por sua função que agrega (por exemplo, soma mensal)
-df2 = get_sum(df)  
-
 def plot_cross_all_parameters(df2, cols):
     n = len(cols)
     fig, axes = plt.subplots(
@@ -67,3 +33,71 @@ def plot_cross_all_parameters(df2, cols):
     
     plt.tight_layout()
     plt.show()
+
+# df['divtime'].plot(kind = 'hist')
+
+def get_sum(df):
+
+    # Define a função de agregação: 'occ' com soma, o resto com média
+    agg_funcs = {col: 'sum' for col in df.columns if col != 'occ'}
+    agg_funcs['occ'] = 'sum'
+    
+    # Agrupa por mês e aplica agregações
+    return df.groupby(df.index.month).agg('sum')
+
+def get_avg(df):
+    
+    agg_funcs = {col: 'mean' for col in df.columns if col != 'occ'}
+    agg_funcs['occ'] = 'sum'
+    
+    return df.groupby(df.index.month).agg(agg_funcs)
+
+# df1 = get_avg(df)
+
+b.sci_format(fontsize = 25)
+
+df = c.events_in_storm()
+
+def plot_multi_correlation(df):
+    df['occ'] = 1
+    
+    cols = ['occ', 'bz', 'speed', 'ae',
+            'sym', 'f10.7', 'by']
+    df = df[cols]
+    
+    df2 = get_avg(df)  
+    
+    fig, ax = plt.subplots(
+        ncols = 3, 
+        nrows = 2,
+        figsize = (14, 10),
+        sharey= True,
+        dpi = 300
+        )
+    
+    plt.subplots_adjust(
+        wspace = 0.1,
+        hspace = 0.3
+        )
+    
+    for i, ax in enumerate(ax.flat):
+        y = 'occ'
+        x = cols[1:][i]
+        ax.scatter( df2[x], df2[y], color = 'k', s = 100)
+        corr = df2[[x, y]].corr().iloc[0, 1]
+        
+        ax.text(
+            0.05, 0.85, f"r={corr:.2f}", 
+            transform = ax.transAxes, 
+            fontsize = 25
+            )
+        
+        ax.set(xlabel = x)
+        
+        if  i == 0 or i == 3:
+            
+            ax.set(ylabel = 'Number of cases', ylim = [0, 15])
+            
+
+df 
+            

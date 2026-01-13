@@ -50,15 +50,17 @@ def main():
     
     ds = df.groupby(['category', 'month']).size().unstack(fill_value=0)
     
+    # print(df[['kp', 'category', 'sym']])
     ds = ds.T[['intense', 'moderate', 'weak', 'quiet']]
     
     fig = plot_seasonal_bars(ds)
     
-    path_to_save = 'G:\\Meu Drive\\Papers\\SuppressionAnalysis\\June-2024-latex-templates\\'
+    path_to_save = 'G:\\Meu Drive\\Papers\\Suppression_stastistical\\June-2024-latex-templates\\'
     
     FigureName = 'seasonal_bars_by_storm'
     
     
     # fig.savefig(path_to_save + FigureName, dpi = 300)
     
-# main()
+main()
+
