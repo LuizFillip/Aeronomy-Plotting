@@ -58,9 +58,9 @@ def plot_single_case(ax, dn, days = 4):
        
     estart, emiddle, eend = tuple(st)
     
-    pl.plot_reference_lines(ax, dusk, estart, eend, dns)
+    # pl.plot_reference_lines(ax, dusk, estart, eend, dns)
     
-    pl.plot_arrow_and_note(ax, estart, eend, y = -100)
+    # pl.plot_arrow_and_note(ax, estart, eend, y = -100)
     
     set_axis(ax)
     
@@ -113,6 +113,12 @@ def main():
         dt.datetime(2022, 10, 3)
         ]
     
+    df = b.load('core/src/geomag/data/stormsphase')
+
+    df = c.geomagnetic_analysis(df)
+
+    dates = df.loc[df.category == 'quiet'].index[:5]
+    
     fig = plot_multi_examples_of_suppression(dates)
     
     path_to_save = 'G:\\Meu Drive\\Papers\\SuppressionAnalysis\\June-2024-latex-templates\\'
@@ -120,6 +126,6 @@ def main():
     FigureName = 'multi_examples_of_epbs_suppression'
     
     
-    fig.savefig(path_to_save + FigureName, dpi = 300)
+    # fig.savefig(path_to_save + FigureName, dpi = 300)
     
-# main()
+main()

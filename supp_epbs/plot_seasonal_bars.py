@@ -42,9 +42,10 @@ def plot_seasonal_bars(ds):
 
 def main():
     
-    df = b.load('core/src/geomag/data/stormsphase')
+    df = b.load('core/src/geomag/data/stormsphase2')
 
     df = c.geomagnetic_analysis(df)
+    print(df)
     
     df['month'] = df.index.month 
     
@@ -62,5 +63,4 @@ def main():
     
     # fig.savefig(path_to_save + FigureName, dpi = 300)
     
-main()
-
+# main()

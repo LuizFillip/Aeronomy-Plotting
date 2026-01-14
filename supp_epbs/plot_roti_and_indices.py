@@ -99,10 +99,10 @@ def reference_ln_one_axes(a, dusk, start, end, dns):
 
 def plot_reference_lines(ax, dusk, start, end, dns):
   
-    if len(ax) > 1:
+    try:
         for a in ax.flat:
             reference_ln_one_axes(a, dusk, start, end, dns)
-    else:
+    except:
         reference_ln_one_axes(ax, dusk, start, end, dns)
         
         
@@ -225,8 +225,13 @@ def main():
     
     fig = plot_roti_and_indices(dn)
     
-    # df = c.geomagnetic_analysis(df)
+    
     
     
     # # df.loc[df['category'] == 'intense']
 
+df = b.load('core/src/geomag/data/stormsphase')
+
+df = c.geomagnetic_analysis(df)
+
+df.loc[df.category == 'quiet'].index 
