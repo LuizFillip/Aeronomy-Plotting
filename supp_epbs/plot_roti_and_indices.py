@@ -154,6 +154,7 @@ def plot_kp(ax, dn):
     
     ds = b.range_dates( c.low_omni(), dn, days = 4)
     ds = ds.resample('3H').mean() 
+    
     ax.bar(
         ds.index, 
         ds['kp'] / 10, 
@@ -190,6 +191,8 @@ def plot_roti_and_indices(dn):
     
     start, end = set_time_limits(ds)
     
+    print(ds.min())
+    
     estart, emiddle, eend = tuple(st)
     
     pl.plot_auroras(ax[0], ds)
@@ -217,7 +220,10 @@ def main():
     # dn = dt.datetime(2018, 3, 13) # no storm 
     dn = dt.datetime(2022, 12, 26)
     dn = dt.datetime(2023, 12, 11 )
+    '''
+    Plot de exemplificação da metolodogia do artigo
     
+    '''
     
     df = b.load('core/src/geomag/data/stormsphase')
     
@@ -225,13 +231,11 @@ def main():
     
     fig = plot_roti_and_indices(dn)
     
+    # pl.savefig(fig, 'Indices_and_example_of_suppression')
     
     
-    
-    # # df.loc[df['category'] == 'intense']
+    return fig 
 
 df = b.load('core/src/geomag/data/stormsphase')
 
 df = c.geomagnetic_analysis(df)
-
-df.loc[df.category == 'quiet'].index 

@@ -58,9 +58,9 @@ def plot_single_case(ax, dn, days = 4):
        
     estart, emiddle, eend = tuple(st)
     
-    # pl.plot_reference_lines(ax, dusk, estart, eend, dns)
+    pl.plot_reference_lines(ax, dusk, estart, eend, dns)
     
-    # pl.plot_arrow_and_note(ax, estart, eend, y = -100)
+    pl.plot_arrow_and_note(ax, estart, eend, y = -100)
     
     set_axis(ax)
     
@@ -117,7 +117,7 @@ def main():
 
     df = c.geomagnetic_analysis(df)
 
-    dates = df.loc[df.category == 'quiet'].index[:5]
+    dates = df.loc[df.category == 'quiet'].index[20:25]
     
     fig = plot_multi_examples_of_suppression(dates)
     

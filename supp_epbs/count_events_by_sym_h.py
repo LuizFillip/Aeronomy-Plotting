@@ -5,7 +5,8 @@ import base as b
 b.sci_format(fontsize = 25)
 
 
-def legend_for_sym_h(ax, quiet = False):
+def legend_for_sym_h(ax, quiet = False, 
+                     ncol = 1):
     
     legend_labels = {
         'weak': '-50 $<$ SYM-H $\leq$ -30 nT',
@@ -14,18 +15,19 @@ def legend_for_sym_h(ax, quiet = False):
     }
     
     if quiet:
-        
         legend_labels['quiet'] = 'SYM-H $>$ -30 nT'
     
     handles, labels = ax.get_legend_handles_labels()
     
     ax.legend(
         handles, [legend_labels[l] for l in labels],
-        # title = "Geomagnetic Condition (SYM-H)",
         loc = 'upper right',
         fontsize = 20,
-        title_fontsize = 20
+        title_fontsize = 20, 
+        ncol = ncol
     )
+    
+    return None 
 
 def plot_count_events_by_symh(df):
     

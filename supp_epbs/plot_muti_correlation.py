@@ -3,6 +3,9 @@ import core as c
 import pandas as pd 
 import matplotlib.pyplot as plt 
 
+
+b.sci_format(fontsize = 25)
+
 def plot_cross_all_parameters(df2, cols):
     n = len(cols)
     fig, axes = plt.subplots(
@@ -54,7 +57,6 @@ def get_avg(df):
 
 # df1 = get_avg(df)
 
-b.sci_format(fontsize = 25)
 
 df = c.events_in_storm()
 
@@ -98,6 +100,8 @@ def plot_multi_correlation(df):
             
             ax.set(ylabel = 'Number of cases', ylim = [0, 15])
             
+    return fig 
+
 
 df 
             
