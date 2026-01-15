@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import plotting as pl 
 import datetime as dt 
-import epbs as pb 
 import base as b 
 import core as c
 import GEO as gg 
@@ -11,34 +10,11 @@ import GEO as gg
 b.sci_format(fontsize = 20)
 
 
-def plot_roti_in_range(ax, start, end):
-
-    ds = pb.longterm_raw_roti(start, end)
-    
-    ax.scatter(
-        ds.index, 
-        ds['roti'], 
-        c = 'k', 
-        s = 5, 
-        alpha = 0.6
-        )
-    
-    ax.set(
-        ylabel = 'ROTI (TECU/min)',
-        ylim = [0, 5], 
-        yticks = np.arange(0, 6, 1),
-        
-        
-        )
-    
-    dns = np.unique(ds.index.date)
-    
-    return dns 
 
 def _devtime(end, start):
     return (end - start).total_seconds() / 3600
 
-def plot_arrow_and_note(ax, start, end, y = -100):
+def stormtime_spanning(ax, start, end, y = -100):
     
     devtime = _devtime(end, start)
     
@@ -65,25 +41,18 @@ def plot_arrow_and_note(ax, start, end, y = -100):
     
     return None     
 
-def reference_ln_one_axes(a, dusk, start, end, dns):
-    a.axvline(
+def evening_interval(ax, dusk):
+    
+    ax.axvline(
         dusk, 
         color = 'blue', 
         lw = 2, 
         linestyle = '--'
         )
-
-    a.axvspan(
-        start, end, 
-        ymin = 0, 
-        ymax = 1,
-        alpha = 0.2, 
-        color = 'tomato'
-        )
     
     delta = dt.timedelta(hours = 2)
     
-    a.axvspan(
+    ax.axvspan(
         dusk - delta, 
         dusk + delta, 
         ymin = 0, 
@@ -92,23 +61,33 @@ def reference_ln_one_axes(a, dusk, start, end, dns):
         color = 'blue'
         )
     
-    for dn in dns:
-        a.axvline(dn, lw = 1, linestyle = '--')
-        
     return None 
+ 
+    
 
-def plot_reference_lines(ax, dusk, start, end, dns):
+
+def plot_reference_lines(ax, dusk, dns, start = None, end = None):
   
-    try:
-        for a in ax.flat:
-            reference_ln_one_axes(a, dusk, start, end, dns)
-    except:
-        reference_ln_one_axes(ax, dusk, start, end, dns)
+    
+    for a in ax.flat:
+        if start is not None:
+            a.axvspan(
+                start, end, 
+                ymin = 0, 
+                ymax = 1,
+                alpha = 0.2, 
+                color = 'tomato'
+                )
         
+        evening_interval(a, dusk)
+        
+        for dn in dns:
+            a.axvline(dn, lw = 1, linestyle = '--')
+
         
     return None
 
-def load_storm(dn):
+def filter_stormtime(dn):
     ds = c.high_omni(dn.year)
     
     ds = b.range_dates(ds, dn, days = 4)
@@ -149,10 +128,12 @@ def set_axes_time(ax, start, end):
         fontsize = 25,
         num2white = None
         )
-
-def plot_kp(ax, dn):
     
-    ds = b.range_dates( c.low_omni(), dn, days = 4)
+    return None 
+
+def plot_kp_by_range(ax, dn):
+    
+    ds = b.range_dates(c.low_omni(), dn, days = 4)
     ds = ds.resample('3H').mean() 
     
     ax.bar(
@@ -171,7 +152,7 @@ def plot_kp(ax, dn):
     ax.axhline(3, lw = 2, color = 'r')
     return None 
 
-def plot_roti_and_indices(dn):
+def plot_roti_and_indices(dn, ):
     
     dusk = gg.terminator( -50,  dn, 
         float_fmt = False
@@ -180,30 +161,32 @@ def plot_roti_and_indices(dn):
     fig, ax = plt.subplots(
         dpi = 300,
         figsize = (12, 10), 
-        nrows = 4, 
+        nrows = 5, 
         sharex = True
         )
 
     plt.subplots_adjust(hspace = 0.1)
 
   
-    st, ds = load_storm(dn)
+    st, ds = filter_stormtime(dn)
+    
+    dns = np.unique(ds.index.date)
     
     start, end = set_time_limits(ds)
     
-    print(ds.min())
+    # geomagnetic storm intervals 
+    gs_start, gs_middle, gs_end = tuple(st)
     
-    estart, emiddle, eend = tuple(st)
+    pl.plot_solar_speed(ax[0], ds)
+    pl.plot_auroras(ax[1], ds)
+    pl.plot_magnetic_fields(ax[2], ds, ylim = 30)
+    pl.plot_dst(ax[3], ds)
+    pl.plot_kp_by_range(ax[3].twinx(), dn)
+    pl.plot_roti_in_range(ax[-1], start, end)
     
-    pl.plot_auroras(ax[0], ds)
-    pl.plot_magnetic_fields(ax[1], ds, ylim = 30)
-    pl.plot_dst(ax[2], ds)
-    plot_kp(ax[2].twinx(), dn)
-    
-    dns = plot_roti_in_range(ax[3], start, end)
-    
-    plot_arrow_and_note(ax[2], estart, dusk)
-    plot_reference_lines(ax, dusk, estart, eend, dns)
+    # stormtime_spanning(ax[3], gs_start, dusk)
+ 
+    plot_reference_lines(ax, dusk, dns)
     
     set_axes_time(ax, start, end)
     
@@ -219,7 +202,7 @@ def main():
     # dn = dt.datetime(2022, 10, 3) # moderate
     # dn = dt.datetime(2018, 3, 13) # no storm 
     dn = dt.datetime(2022, 12, 26)
-    dn = dt.datetime(2023, 12, 11 )
+    dn = dt.datetime(2023, 12, 11)
     '''
     Plot de exemplificação da metolodogia do artigo
     
@@ -229,13 +212,21 @@ def main():
     
     dn = df.index[0]
     
-    fig = plot_roti_and_indices(dn)
+    dn = dt.datetime(2013, 3, 26)
+    
+    plot_roti_and_indices(dn)
     
     # pl.savefig(fig, 'Indices_and_example_of_suppression')
     
-    
-    return fig 
+    plt.show()
+    return
 
 df = b.load('core/src/geomag/data/stormsphase')
 
 df = c.geomagnetic_analysis(df)
+
+
+# df.loc[df['category'] == 'quiet']
+
+main()
+
