@@ -17,7 +17,7 @@ def plot_dst(ax, ds, ylim = [-150, 50], color = 'k'):
         xlim = [ds.index[0], ds.index[-1]], 
         ylim = [ylim[0] - 30, ylim[-1]],
         yticks = np.arange(ylim[0], ylim[-1] - 30, 50),
-        ylabel = "Sym/H (nT)"
+        ylabel = "SYM-H (nT)"
         )
     
     ax.axhline(0, lw = 1, color = 'k', linestyle = '-')
@@ -32,35 +32,53 @@ def plot_dst(ax, ds, ylim = [-150, 50], color = 'k'):
     return None 
         
 
-def plot_magnetic_fields(ax, ds, ylim = 30):
+def plot_magnetic_fields(
+        ax, 
+        ds, 
+        ylim = 30, 
+        by = False, 
+        ax_co = 'purple'
+        ):
     
-    ax.plot(ds['by'], label = '$B_y$', lw = 2)
+    ax.plot(
+        ds['bz'], 
+        label = '$B_z$', 
+        lw = 2
+        )
     
-    ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
-    
-    ax1 = ax.twinx()
-    #'#0C5DA5'
-    ax_co = 'purple'
-    ax1.plot(ds['bz'], color = ax_co,  label = '$B_z$', 
-             lw = 2)
     ax.set(
         ylim = [-ylim, ylim], 
         yticks = np.arange(-30, 40, 15),
         ylabel = '$B_y$ (nT)' #'$Ey$ (mV/m)'
         )
     
-    ax1.set(
+    ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
+    
+    if by:
+        ax1 = ax.twinx()
+        
+        ax1.plot(
+            ds['by'], 
+            color = ax_co, 
+            label = '$B_y$', 
+            lw = 2
+            )
+        
+        b.change_axes_color(
+                ax1, 
+                color = ax_co,
+                axis = "y", 
+                position = "right"
+                )
+         
+        
+    ax.set(
         ylabel = '$B_z$ (nT)',
         yticks = np.arange(-30, 40, 15),
         ylim = [-ylim - 5, ylim + 5]
         )
     
-    b.change_axes_color(
-            ax1, 
-            color = ax_co,
-            axis = "y", 
-            position = "right"
-            )
+   
     
     return None 
 
