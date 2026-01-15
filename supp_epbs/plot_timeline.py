@@ -146,7 +146,7 @@ def plot_longterm_occurrences():
 
     fig = plt.figure(figsize=(14, 12))
     gs = gridspec.GridSpec(3, 1, height_ratios=[1, 1, 1])
-    plt.subplots_adjust(hspace=0.1)
+    plt.subplots_adjust(hspace = 0.1)
     ax1 = fig.add_subplot(gs[0])
     ax2 = fig.add_subplot(gs[1])
     ax3 = fig.add_subplot(gs[2], sharex=ax2)
@@ -161,10 +161,12 @@ def plot_longterm_occurrences():
     plot_bars_stacked(ax1)
     
     fig.align_ylabels()
+    
+    return fig 
 
 
 
-plot_longterm_occurrences()
+fig = plot_longterm_occurrences()
 
 
 # df = setdata()
