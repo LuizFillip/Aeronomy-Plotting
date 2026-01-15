@@ -101,7 +101,4 @@ def plot_multi_correlation(df):
             ax.set(ylabel = 'Number of cases', ylim = [0, 15])
             
     return fig 
-
-
-df 
             

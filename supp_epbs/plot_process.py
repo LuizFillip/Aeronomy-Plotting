@@ -4,14 +4,20 @@ import matplotlib.pyplot as plt
 import plotting as pl 
 from tqdm import tqdm 
 
-path = 'E:\\img\\'
+path = 'F:\\img\\quiet\\'
 
 df = b.load('core/src/geomag/data/stormsphase')
 
 df = c.geomagnetic_analysis(df)
 
+
+
      
 def save_imgs(ds, path_to_save, cat):
+    
+    '''
+    Save os plots com base na categoria de evento
+    '''
     
     plt.ioff()
 
@@ -19,12 +25,12 @@ def save_imgs(ds, path_to_save, cat):
             
         file = dn.strftime('%Y%m%d.PNG')
         
-        try:
-            fig = pl.plot_roti_and_indices(dn)
-            fig.savefig(path_to_save + file)
-        except:
-            print(dn)
-            continue
+    # try:
+        fig = pl.plot_roti_and_indices(dn)
+        fig.savefig(path_to_save + file)
+        # except:
+        #     print(dn)
+        #     continue
         
     plt.clf()   
     plt.close()
@@ -32,14 +38,15 @@ def save_imgs(ds, path_to_save, cat):
     
 def main():
 
-    for cat in df['category'].unique():
+    # for cat in df['category'].unique():
+    cat = 'quiet'
     
-        ds = df.loc[df['category'] == cat]
-        
-        path_to_save = f'{path}{cat}\\'
-        
-        b.make_dir(path_to_save)
-        
-        save_imgs(ds, path_to_save, cat)
+    ds = df.loc[df['category'] == cat]
+    
+    path_to_save = f'{path}{cat}\\'
+    
+    b.make_dir(path_to_save)
+    
+    save_imgs(ds, path_to_save, cat)
         
 main()
