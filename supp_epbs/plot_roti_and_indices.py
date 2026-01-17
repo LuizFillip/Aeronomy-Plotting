@@ -41,7 +41,7 @@ def stormtime_spanning(ax, start, end, y = -100):
     
     return None     
 
-def evening_interval(ax, dusk):
+def evening_interval(ax, dusk, double_sup = False):
     
     ax.axvline(
         dusk, 
@@ -61,16 +61,39 @@ def evening_interval(ax, dusk):
         color = 'blue'
         )
     
+    if double_sup:
+        delta1 = dt.timedelta(days = 1)
+        dd = dusk + delta1
+        ax.axvline(
+            dd, 
+            color = 'blue', 
+            lw = 2, 
+            linestyle = '--'
+            )
+        ax.axvspan(
+            dd - delta, 
+            dd + delta, 
+            ymin = 0, 
+            ymax = 1,
+            alpha = 0.2, 
+            color = 'blue'
+            )
+    
     return None 
  
     
 
 
-def plot_reference_lines(ax, dusk, dns, start = None, end = None):
+def plot_reference_lines(
+        ax, dusk, dns,
+        start = None, 
+        end = None, 
+        storm_span = True,  
+        double_sup = True         
+        ):
   
-    
     for a in ax.flat:
-        if start is not None:
+        if storm_span:
             a.axvspan(
                 start, end, 
                 ymin = 0, 
@@ -79,8 +102,10 @@ def plot_reference_lines(ax, dusk, dns, start = None, end = None):
                 color = 'tomato'
                 )
         
-        evening_interval(a, dusk)
+        evening_interval(a, dusk, double_sup = double_sup)
+       
         
+            
         for dn in dns:
             a.axvline(dn, lw = 1, linestyle = '--')
 
@@ -131,28 +156,8 @@ def set_axes_time(ax, start, end):
     
     return None 
 
-def plot_kp_by_range(ax, dn):
-    
-    ds = b.range_dates(c.low_omni(), dn, days = 4)
-    ds = ds.resample('3H').mean() 
-    
-    ax.bar(
-        ds.index, 
-        ds['kp'] / 10, 
-        width = 0.1,
-        color = 'gray', 
-        alpha = 0.5
-        )
-    ax.set(
-        ylabel = 'Kp', 
-        ylim = [0, 12], 
-        yticks = np.arange(0, 12, 2)
-        )
-    
-    ax.axhline(3, lw = 2, color = 'r')
-    return None 
 
-def plot_roti_and_indices(dn, ):
+def plot_roti_and_indices(dn, storm_span = True):
     
     dusk = gg.terminator( -50,  dn, 
         float_fmt = False
@@ -167,11 +172,10 @@ def plot_roti_and_indices(dn, ):
 
     plt.subplots_adjust(hspace = 0.1)
 
-  
     st, ds = filter_stormtime(dn)
-    
     dns = np.unique(ds.index.date)
     
+    #days intervals (for limits)
     start, end = set_time_limits(ds)
     
     # geomagnetic storm intervals 
@@ -182,11 +186,18 @@ def plot_roti_and_indices(dn, ):
     pl.plot_magnetic_fields(ax[2], ds, ylim = 30)
     pl.plot_dst(ax[3], ds)
     pl.plot_kp_by_range(ax[3].twinx(), dn)
-    pl.plot_roti_in_range(ax[-1], start, end)
+    pl.plot_roti_in_range(ax[-1], start, end, 
+                          root = 'D:\\')
+     
+    if storm_span:
+        stormtime_spanning(ax[3], gs_start, dusk)
     
-    # stormtime_spanning(ax[3], gs_start, dusk)
- 
-    plot_reference_lines(ax, dusk, dns)
+    plot_reference_lines(
+        ax, dusk, dns, 
+        gs_start, gs_end, 
+        storm_span = storm_span,  
+        double_sup = False
+        )
     
     set_axes_time(ax, start, end)
     
@@ -204,29 +215,21 @@ def main():
     dn = dt.datetime(2022, 12, 26)
     dn = dt.datetime(2023, 12, 11)
     '''
-    Plot de exemplificação da metolodogia do artigo
+    Plot de exemplificação dos parametros do meio interplanetário
+    e magnéticos para colocar na seção de metolodogia
     
     '''
     
-    df = b.load('core/src/geomag/data/stormsphase')
+    dn = dt.datetime(2013, 1, 26)
+    dn = dt.datetime(2015, 3, 17)
     
-    dn = df.index[0]
-    
-    dn = dt.datetime(2013, 3, 26)
-    
-    plot_roti_and_indices(dn)
+    fig = plot_roti_and_indices(dn)
     
     # pl.savefig(fig, 'Indices_and_example_of_suppression')
     
     plt.show()
     return
 
-df = b.load('core/src/geomag/data/stormsphase')
 
-df = c.geomagnetic_analysis(df)
-
-
-# df.loc[df['category'] == 'quiet']
-
-main()
+# main()
 

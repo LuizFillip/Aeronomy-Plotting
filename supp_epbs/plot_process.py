@@ -6,14 +6,15 @@ from tqdm import tqdm
 
 path = 'F:\\img\\quiet\\'
 
-df = b.load('core/src/geomag/data/stormsphase')
+df = b.load('core/src/geomag/data/4hours_low_res')
 
-df = c.geomagnetic_analysis(df)
+df = c.storms_category(df, col = 'dst_min')
 
+df = c.weak_atypical(df, col = 'kp_max')
 
-
+ds = df.loc[df['category'] == 'vague']
      
-def save_imgs(ds, path_to_save, cat):
+def save_imgs(ds, path_to_save):
     
     '''
     Save os plots com base na categoria de evento
@@ -21,7 +22,7 @@ def save_imgs(ds, path_to_save, cat):
     
     plt.ioff()
 
-    for dn in tqdm(ds.index, cat):
+    for dn in tqdm(ds.index):
             
         file = dn.strftime('%Y%m%d.PNG')
         
@@ -49,4 +50,9 @@ def main():
     
     save_imgs(ds, path_to_save, cat)
         
-main()
+# main()
+
+path_to_save = 'D:\\img\\vague\\'
+save_imgs(ds, path_to_save)
+
+

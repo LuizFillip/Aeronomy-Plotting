@@ -1,33 +1,11 @@
 import matplotlib.pyplot as plt
 import core as c
 import base as b
+import plotting as pl 
 
 b.sci_format(fontsize = 25)
 
 
-def legend_for_sym_h(ax, quiet = False, 
-                     ncol = 1):
-    
-    legend_labels = {
-        'weak': '-50 $<$ SYM-H $\leq$ -30 nT',
-        'moderate': '-100 $<$ SYM-H $\leq$ -50 nT',
-        'intense': 'SYM-H $\leq$ -100 nT'
-    }
-    
-    if quiet:
-        legend_labels['quiet'] = 'SYM-H $>$ -30 nT'
-    
-    handles, labels = ax.get_legend_handles_labels()
-    
-    ax.legend(
-        handles, [legend_labels[l] for l in labels],
-        loc = 'upper right',
-        fontsize = 20,
-        title_fontsize = 20, 
-        ncol = ncol
-    )
-    
-    return None 
 
 def plot_count_events_by_symh(df):
     
@@ -69,7 +47,7 @@ def plot_count_events_by_symh(df):
         title = "Storm-time events"
         )
 
-    legend_for_sym_h(ax)
+    pl.legend_for_sym_h(ax)
       
     ax.set_xticklabels(
         df.index,

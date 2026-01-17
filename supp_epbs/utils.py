@@ -4,6 +4,8 @@ def savefig(fig, FigureName):
     
     fig.savefig(path_to_save + FigureName, dpi = 300)
     
+    return None 
+    
     
 def legend_for_sym_h(
         ax, 

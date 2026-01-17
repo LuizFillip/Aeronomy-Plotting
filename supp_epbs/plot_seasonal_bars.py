@@ -28,13 +28,18 @@ def plot_seasonal_bars(ds):
         ylim = [0, 30],
         xticklabels = b.month_names(language = 'en'),
         ylabel = 'Number of cases', 
-        xlabel = 'Months',
-        title = 'Total of EPBs supressions by SYM-H'
+        xlabel = 'Months'
         )
     
     plt.xticks(rotation = 0)
     
-    pl.legend_for_sym_h(ax, quiet = True)
+    pl.legend_for_sym_h(
+        ax, 
+        quiet = True, 
+        ncol = 2, 
+        loc = 'upper center'       
+        )
+    
     fig.align_ylabels()
     
     return fig
@@ -42,17 +47,16 @@ def plot_seasonal_bars(ds):
 
 def main():
     
-    df = b.load('core/src/geomag/data/stormsphase2')
-
-    df = c.geomagnetic_analysis(df)
-    print(df)
-    
-    df['month'] = df.index.month 
-    
-    ds = df.groupby(['category', 'month']).size().unstack(fill_value=0)
-    
-    # print(df[['kp', 'category', 'sym']])
-    ds = ds.T[['intense', 'moderate', 'weak', 'quiet']]
+    def set_data():
+        df = c.category_and_low_indices()
+        
+        df['month'] = df.index.month 
+        
+        ds = df.groupby(['category', 'month']).size().unstack(fill_value = 0)
+        
+        return ds.T[['intense', 'moderate', 'weak', 'quiet']]
+        
+    ds = set_data()
     
     fig = plot_seasonal_bars(ds)
     
@@ -61,6 +65,6 @@ def main():
     FigureName = 'seasonal_bars_by_storm'
     
     
-    # fig.savefig(path_to_save + FigureName, dpi = 300)
+    fig.savefig(path_to_save + FigureName, dpi = 300)
     
 # main()

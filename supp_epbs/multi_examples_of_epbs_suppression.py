@@ -44,7 +44,14 @@ def set_axis(ax):
 
 
 
-def plot_single_case(ax, dn, days = 4):
+def plot_single_case(
+        ax, 
+        dn, 
+        days = 4, 
+        double_sup = True, 
+        root = 'D:\\'
+        ):
+    
     dusk = gg.terminator(-50, dn, float_fmt = False)
     
     dates, st =  plot_sym_h(ax, dn, days = days)
@@ -54,20 +61,35 @@ def plot_single_case(ax, dn, days = 4):
     
     end = dates[-1] 
     
-    dns = pl.plot_roti_in_range(ax, start, end)
+    ds = pl.plot_roti_in_range(
+        ax, start, end, root = root)
        
-    estart, emiddle, eend = tuple(st)
+    gs_start, gs_middle, gs_end = tuple(st)
     
-    pl.plot_reference_lines(ax, dusk, estart, eend, dns)
+    # pl.plot_reference_lines(ax, dusk, estart, eend, dns)
     
-    pl.plot_arrow_and_note(ax, estart, eend, y = -100)
+    pl.stormtime_spanning(ax, gs_start, gs_end)
     
     set_axis(ax)
     
     ax.set(
-        # ylabel = '',
         xlim = [start, end]
         )
+    
+    dns = np.unique(ds.index.date)
+    
+    ax.axvspan(
+        gs_start, gs_end, 
+        ymin = 0, 
+        ymax = 1,
+        alpha = 0.2, 
+        color = 'tomato'
+        )
+
+    pl.evening_interval(ax, dusk, double_sup)
+    
+    for dn in dns:
+        ax.axvline(dn, lw = 1, linestyle = '--')
     
     return None 
     
@@ -84,7 +106,16 @@ def plot_multi_examples_of_suppression(dates):
     
     for i, dn in enumerate(dates):
         
-        plot_single_case(ax[i], dn)
+        # if i == 1 or i == 3:
+        #     double_sup = True
+        # else:
+        double_sup = False
+        
+        plot_single_case(
+            ax[i], 
+            dn, 
+            double_sup = double_sup
+            )
         
         if i < nrows - 1:
             ax[i].set(xticklabels = [])
@@ -105,27 +136,26 @@ def plot_multi_examples_of_suppression(dates):
 
 def main():
     
-    dates = [ 
+    distr = [ 
         dt.datetime(2013, 3, 17),
-        dt.datetime(2014, 9, 9),
-        dt.datetime(2017, 3, 1),
+        dt.datetime(2015, 3, 17),
         dt.datetime(2016, 3, 14),
+        dt.datetime(2017, 3, 1),
         dt.datetime(2022, 10, 3)
         ]
     
-    df = b.load('core/src/geomag/data/stormsphase')
+    quiets = [
+        dt.datetime(2014, 9, 9),
+        dt.datetime(2016, 9, 22),
+        dt.datetime(2017, 1, 23),
+        dt.datetime(2019, 3, 13),
+        dt.datetime(2022, 9, 10)
+        ]
 
-    df = c.geomagnetic_analysis(df)
+    
+    fig = plot_multi_examples_of_suppression(quiets)
+    
 
-    dates = df.loc[df.category == 'quiet'].index[20:25]
-    
-    fig = plot_multi_examples_of_suppression(dates)
-    
-    path_to_save = 'G:\\Meu Drive\\Papers\\SuppressionAnalysis\\June-2024-latex-templates\\'
-    
-    FigureName = 'multi_examples_of_epbs_suppression'
-    
-    
-    # fig.savefig(path_to_save + FigureName, dpi = 300)
+    # pl.savefig(fig, 'multi_examples_quiettime')
     
 # main()
