@@ -44,7 +44,7 @@ def setdata():
     
     return ds  
 
-def plot_bars_stacked(ax):
+def plot_suppression_events(ax):
     
     df = setdata()
 
@@ -79,7 +79,10 @@ def plot_bars_stacked(ax):
     plt.xticks(rotation = 0)
     
     pl.legend_for_sym_h(
-        ax, quiet = True, ncol = 2, loc = 'upper center'
+        ax, 
+        quiet = True, 
+        ncol = 2, 
+        loc = 'upper center'
         )
     
     return None 
@@ -135,17 +138,57 @@ def plot_contour_roti(ax):
 
     return None 
 
-
-def plot_indices(ax):
-    ds = c.low_omni()
-    ax1 = ax.twinx()
-    ax1.plot(ds['f10.7'], lw = 2)
+def plot_f107(ax):
     
-    ax1.set(
+    df = c.low_omni()
+   
+    ax.plot(df['f10.7'], lw = 1)
+    
+    ax.set(
         ylabel = 'F10.7 (Sfu)', 
-        xlabel = 'Years', 
-        ylim = [0, 400]
+        ylim = [50, 350]
         )
+    
+
+    dates = [
+        (2013, 2014, 'red', 'Maximum', 160),
+        (2015, 2017, 'orange', 'Descending', 300),
+        (2018, 2020, 'blue', 'Minimum', 350),
+        (2021, 2022, 'magenta', 'Ascending', 120),
+        (2023, 2023, 'red', 'Max.', 60)
+        
+        ]
+    
+    for dn in dates:
+        stt = dt.datetime(dn[0], 1, 1)
+        end = dt.datetime(dn[1], 12, 31)
+        color = dn[2]
+        name = dn[3]
+        ax.axvspan(
+            stt, 
+            end, 
+            ymin = 0, 
+            ymax = 1,
+            alpha = 0.3, 
+            color =  color
+            )
+        
+        delta = dt.timedelta(days = dn[4])
+       
+        ax.text(
+            stt  + delta, 
+            250, name, 
+            transform = ax.transData
+            )
+    
+    df = df.resample('2M').mean()
+
+    ax.plot(df['f10.7'], lw = 2, color = 'red')
+   
+    return None 
+
+
+def plot_storms_categories(ax):
     
     df = b.load('core/src/geomag/data/storms')
     
@@ -184,33 +227,37 @@ def plot_indices(ax):
 def plot_longterm_occurrences():
     
     fig = plt.figure(
-        figsize = (14, 12),
+        figsize = (16, 14),
         dpi = 300
         )
-    gs = gridspec.GridSpec(3, 1, height_ratios=[1, 1, 1])
+    gs = gridspec.GridSpec(4, 1, height_ratios=[1, 1, 1, 1])
     plt.subplots_adjust(hspace = 0.1)
+    
     ax1 = fig.add_subplot(gs[0])
-    ax2 = fig.add_subplot(gs[1])
-    ax3 = fig.add_subplot(gs[2], sharex = ax1)
+    ax2 = fig.add_subplot(gs[1], sharex = ax1)
+    ax3 = fig.add_subplot(gs[2])
+    ax4 = fig.add_subplot(gs[3], sharex = ax1)
     
     ax1.tick_params(labelbottom=False)
     ax2.tick_params(labelbottom=False)
-
-    plot_contour_roti(ax1)
-    plot_bars_stacked(ax2)
-    plot_indices(ax3)
+    ax3.tick_params(labelbottom=False)
+    
+    plot_f107(ax1)
+    plot_contour_roti(ax2)
+    plot_suppression_events(ax3)
+    plot_storms_categories(ax4)
     
     fig.align_ylabels()
     
-    axs = [ax1, ax2, ax3]
+    axs = [ax1, ax2, ax3, ax4]
     
     b.plot_letters(
             axs, 
             x = 0.02, 
-            y = 0.85, 
+            y = 0.8, 
             offset = 0, 
             fontsize = 30,
-            num2white = 0
+            num2white = 1
             )
 
     return fig 
@@ -222,5 +269,15 @@ def main():
     
     pl.savefig(fig, 'long_term_counts')
     
-# main()
+main()
+
+
+# fig, ax = plt.subplots(
+#     figsize = (15, 8)
+#     )
+
+# # plot_f107(ax)
     
+# df = c.low_omni()
+
+#

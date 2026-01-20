@@ -11,17 +11,17 @@ def legend_for_sym_h(
         ax, 
         quiet = False, 
         loc = 'upper right',
-        ncol = 1
+        ncol = 1, par = 'Dst'
         ):
     
     legend_labels = {
-        'weak': '-50 $<$ SYM-H $\leq$ -30 nT',
-        'moderate': '-100 $<$ SYM-H $\leq$ -50 nT',
-        'intense': 'SYM-H $\leq$ -100 nT'
+        'weak': '-50 $<$ Dst $\leq$ -30 nT',
+        'moderate': '-100 $<$ Dst $\leq$ -50 nT',
+        'intense': 'Dst $\leq$ -100 nT'
     }
     
     if quiet:
-        legend_labels['quiet'] = 'SYM-H $>$ -30 nT'
+        legend_labels['quiet'] = 'Dst $>$ -30 nT'
     
     handles, labels = ax.get_legend_handles_labels()
     

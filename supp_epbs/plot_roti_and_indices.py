@@ -73,7 +73,8 @@ def plot_reference_lines(
                 color = 'tomato'
                 )
         
-        evening_interval(a, dusk, double_sup = double_sup)
+        evening_interval(
+            a, dusk, double_sup = double_sup)
        
         
             
