@@ -5,9 +5,30 @@ import core as c
 import base as b 
 import pandas as pd 
 import matplotlib.gridspec as gridspec
+import datetime as dt 
 
 b.sci_format(fontsize = 25)
 
+colors = {
+    'intense': '#8B0000',   # vermelho escuro
+    'moderate': '#FF4500',  # laranja forte
+    'weak': '#FFD700',      # dourado
+    'quiet': '#32CD32'      # verde
+}
+
+# colors = {
+#     'intense': "#FF0000",   # vermelho (máximo)
+#     'moderate':'#32CD32' ,  # verde-amarelado
+#     'weak': "#00BFFF",  # azul-ciano
+#     'quiet': "#6A00FF",  # violeta (mínimo)
+#     }
+
+# colors = {
+#     'intense': '#8B0000',   # vermelho escuro
+#     'moderate': '#FF4500',  # laranja forte
+#     'weak': "#6A00FF",      # dourado
+#     'quiet': '#32CD32'      # verde
+# }
 
 
 def setdata():
@@ -27,14 +48,6 @@ def plot_bars_stacked(ax):
     
     df = setdata()
 
-    colors = {
-        'intense': '#8B0000',   # vermelho escuro
-        'moderate': '#FF4500',  # laranja forte
-        'weak': '#FFD700',      # dourado
-        'quiet': '#32CD32'      # verde
-    }
-    
- 
     bottom = np.zeros(len(df))
     for i,  (label, color) in enumerate(colors.items()):
         col = df.columns[i]
@@ -60,7 +73,7 @@ def plot_bars_stacked(ax):
         
     ax.set(
         ylim = [0, 30], 
-        ylabel = 'Number of cases'
+        ylabel = 'Suppression cases'
         )
     
     plt.xticks(rotation = 0)
@@ -78,24 +91,28 @@ def plot_contour_roti(ax):
    
     ds = df.pivot(
         index = 'time', 
-         columns = 'date', 
-         values = '-50'
-         ) 
-      
+        columns = 'date', 
+        values = '-50'
+        ) 
+    values =  ds.values
+    vmax = 5
+    values = np.where(values > vmax, vmax, values)
+    
     img = ax.contourf(
         ds.columns, 
         ds.index, 
-        ds.values,
-        levels = np.arange(0, 3.5, 0.2), 
+        values,
+        levels = np.arange(0,  vmax, 0.2), 
         cmap = 'rainbow'
         )
     
     ax.set(
+        yticks = np.arange(20, 36, 4),
         ylabel = 'Universal Time', 
         xlim = [df['date'].min(), df['date'].max()]
         )
     
-    ticks = np.arange(0, 3.5, 0.5)
+    ticks = np.arange(0, vmax + 2, 1)
     
     cax = ax.inset_axes([1.05, 0., 0.03, 1])
 
@@ -103,7 +120,7 @@ def plot_contour_roti(ax):
         img, 
         cax = cax,
         ticks = ticks, 
-        location='right'
+        location = 'right'
         )
      
     cb.set_label('ROTI (TECU/min)')
@@ -117,15 +134,51 @@ def plot_contour_roti(ax):
     
 
     return None 
+
+
 def plot_indices(ax):
     ds = c.low_omni()
-  
-    ax.plot(ds['f10.7'])
+    ax1 = ax.twinx()
+    ax1.plot(ds['f10.7'], lw = 2)
     
-    ax.set(
+    ax1.set(
         ylabel = 'F10.7 (Sfu)', 
+        xlabel = 'Years', 
+        ylim = [0, 400]
+        )
+    
+    df = b.load('core/src/geomag/data/storms')
+    
+    df = c.storms_category(df, col = 'sym')
+    
+    df = df.groupby(
+        [pd.Grouper(freq='3M'), 'category']
+        ).size().unstack(fill_value=0)
+    
+    bottom = np.zeros(len(df))
+    for i,  (label, color) in enumerate(colors.items()):
+        
+        if label == 'quiet':
+            break
+        col = df.columns[i]
+        
+        ax.bar(
+            df.index, df[col],
+            bottom = bottom,
+            color = color, 
+            label = label, 
+            width =  35
+            )
+        
+        bottom += df[col].values
+        
+    delta = dt.timedelta(days = 30)
+    ax.set(
+        ylim = [0, 20],
+        ylabel = 'Storms cases',
         xlabel = 'Years'
         )
+    
     return None 
     
 def plot_longterm_occurrences():
@@ -138,16 +191,14 @@ def plot_longterm_occurrences():
     plt.subplots_adjust(hspace = 0.1)
     ax1 = fig.add_subplot(gs[0])
     ax2 = fig.add_subplot(gs[1])
-    ax3 = fig.add_subplot(gs[2], sharex=ax2)
+    ax3 = fig.add_subplot(gs[2], sharex = ax1)
     
     ax1.tick_params(labelbottom=False)
     ax2.tick_params(labelbottom=False)
-    
+
+    plot_contour_roti(ax1)
+    plot_bars_stacked(ax2)
     plot_indices(ax3)
-    
-    plot_contour_roti(ax2)
-       
-    plot_bars_stacked(ax1)
     
     fig.align_ylabels()
     
@@ -159,7 +210,7 @@ def plot_longterm_occurrences():
             y = 0.85, 
             offset = 0, 
             fontsize = 30,
-            num2white = None
+            num2white = 0
             )
 
     return fig 

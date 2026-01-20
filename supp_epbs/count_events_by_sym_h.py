@@ -60,9 +60,8 @@ def plot_count_events_by_symh(df):
     return fig 
 
 
-def main():
+def main(df):
 
-    df = b.load('core/src/geomag/data/stormsphase')
 
     df = c.geomagnetic_analysis(df)
     
@@ -79,3 +78,13 @@ def main():
     
     
 # main()
+
+df = b.load('core/src/geomag/data/stormsphase')
+
+df_source = b.load('core/src/geomag/data/4hours_low_res')
+
+for col in df_source.columns:
+    df[col] = df.index.map(df_source[col])
+    
+    
+df = df.iloc[:, 3:] 

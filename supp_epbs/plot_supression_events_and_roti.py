@@ -199,5 +199,5 @@ def main():
     #       dpi = 400
     #       )
 
-# main()
+main()
 

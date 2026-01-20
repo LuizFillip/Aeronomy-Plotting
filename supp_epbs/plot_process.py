@@ -36,6 +36,8 @@ def save_imgs(ds, path_to_save):
     plt.clf()   
     plt.close()
     
+    return None 
+    
     
 def main():
 

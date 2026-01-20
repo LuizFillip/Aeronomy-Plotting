@@ -11,35 +11,6 @@ b.sci_format(fontsize = 20)
 
 
 
-def _devtime(end, start):
-    return (end - start).total_seconds() / 3600
-
-def stormtime_spanning(ax, start, end, y = -100):
-    
-    devtime = _devtime(end, start)
-    
-    time = round(devtime, 2)
-        
-    middle = end + (start - end) / 2
-      
-    ax.annotate(
-        '', 
-        xy = (start, y), 
-        xytext = (end, y), 
-        arrowprops = dict(arrowstyle='<->')
-        )
-    time = round(time, 2)
-    
-    ax.annotate(
-        f'{time} hrs',
-        xy = (middle, y + 5), 
-        xycoords = 'data',
-        fontsize = 20.0,
-        textcoords = 'data', 
-        ha = 'center'
-        )
-    
-    return None     
 
 def evening_interval(ax, dusk, double_sup = False):
     
@@ -112,13 +83,7 @@ def plot_reference_lines(
         
     return None
 
-def filter_stormtime(dn):
-    ds = c.high_omni(dn.year)
-    
-    ds = b.range_dates(ds, dn, days = 4)
-    st = c.find_storm_interval(ds['sym'])
-    
-    return st, ds
+
 
 def set_time_limits(ds):
     dates = np.unique(ds.index.date)
@@ -172,7 +137,7 @@ def plot_roti_and_indices(dn, storm_span = True):
 
     plt.subplots_adjust(hspace = 0.1)
 
-    st, ds = filter_stormtime(dn)
+    st, ds = c.filter_stormtime(dn)
     dns = np.unique(ds.index.date)
     
     #days intervals (for limits)
@@ -186,11 +151,12 @@ def plot_roti_and_indices(dn, storm_span = True):
     pl.plot_magnetic_fields(ax[2], ds, ylim = 30)
     pl.plot_dst(ax[3], ds)
     pl.plot_kp_by_range(ax[3].twinx(), dn)
-    pl.plot_roti_in_range(ax[-1], start, end, 
+    pl.plot_roti_in_range(
+        ax[-1], start, end, 
                           root = 'D:\\')
      
     if storm_span:
-        stormtime_spanning(ax[3], gs_start, dusk)
+        c.stormtime_spanning(ax[3], gs_start, dusk)
     
     plot_reference_lines(
         ax, dusk, dns, 
