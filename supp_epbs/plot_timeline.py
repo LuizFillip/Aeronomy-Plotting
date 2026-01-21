@@ -190,14 +190,8 @@ def plot_f107(ax):
 
 def plot_storms_categories(ax):
     
-    df = b.load('core/src/geomag/data/storms')
-    
-    df = c.storms_category(df, col = 'sym')
-    
-    df = df.groupby(
-        [pd.Grouper(freq='3M'), 'category']
-        ).size().unstack(fill_value=0)
-    
+    df = c.load_storms()
+
     bottom = np.zeros(len(df))
     for i,  (label, color) in enumerate(colors.items()):
         
@@ -269,16 +263,5 @@ def main():
     
     pl.savefig(fig, 'long_term_counts')
     
-main()
+# main()
 
-
-# fig, ax = plt.subplots(
-#     figsize = (15, 8)
-
-#     )
-
-# # plot_f107(ax)
-    
-# df = c.low_omni()
-
-#

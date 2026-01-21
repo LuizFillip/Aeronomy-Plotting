@@ -9,9 +9,6 @@ import GEO as gg
 
 b.sci_format(fontsize = 20)
 
-
-
-
 def evening_interval(ax, dusk, double_sup = False):
     
     ax.axvline(
@@ -123,7 +120,13 @@ def set_axes_time(ax, start, end):
     return None 
 
 
-def plot_roti_and_indices(dn, storm_span = True):
+def plot_roti_and_indices(
+        dn, 
+        storm_span = True, 
+        double_sup = False,
+        root = 'D:\\', 
+        clear = None 
+        ):
     
     dusk = gg.terminator( -50,  dn, 
         float_fmt = False
@@ -138,15 +141,12 @@ def plot_roti_and_indices(dn, storm_span = True):
 
     plt.subplots_adjust(hspace = 0.1)
 
-    st, ds = c.filter_stormtime(dn)
+    ds, st = c.set_stormtime(dn, before = 4, after = 4)
     dns = np.unique(ds.index.date)
     
     #days intervals (for limits)
     start, end = set_time_limits(ds)
-    
-    # geomagnetic storm intervals 
-    gs_start, gs_middle, gs_end = tuple(st)
-    
+
     pl.plot_solar_speed(ax[0], ds)
     pl.plot_auroras(ax[1], ds)
     pl.plot_magnetic_fields(ax[2], ds, ylim = 30)
@@ -154,16 +154,18 @@ def plot_roti_and_indices(dn, storm_span = True):
     pl.plot_kp_by_range(ax[3].twinx(), dn)
     pl.plot_roti_in_range(
         ax[-1], start, end, 
-                          root = 'D:\\')
+        root = root, 
+        clear = clear)
      
     if storm_span:
-        c.stormtime_spanning(ax[3], gs_start, dusk)
+        pl.stormtime_spanning(
+            ax[3], st['start'], dusk)
     
     plot_reference_lines(
         ax, dusk, dns, 
-        gs_start, gs_end, 
+        st['start'], st['end'], 
         storm_span = storm_span,  
-        double_sup = False
+        double_sup = double_sup
         )
     
     set_axes_time(ax, start, end)
@@ -189,8 +191,9 @@ def main():
     
     dn = dt.datetime(2013, 1, 26)
     dn = dt.datetime(2015, 3, 17)
-    
-    fig = plot_roti_and_indices(dn)
+    dn = dt.datetime(2014, 9, 24)
+    clear = dn + dt.timedelta(hours = 22)
+    fig = plot_roti_and_indices(dn, clear)
     
     # pl.savefig(fig, 'Indices_and_example_of_suppression')
     
@@ -198,5 +201,5 @@ def main():
     return
 
 
-# main()
+main()
 
