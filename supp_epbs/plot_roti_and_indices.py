@@ -141,7 +141,8 @@ def plot_roti_and_indices(
 
     plt.subplots_adjust(hspace = 0.1)
 
-    ds, st = c.set_stormtime(dn, before = 4, after = 4)
+    ds, st = c.set_stormtime(
+        dn, before = 4, after = 4)
     dns = np.unique(ds.index.date)
     
     #days intervals (for limits)
@@ -168,6 +169,12 @@ def plot_roti_and_indices(
         double_sup = double_sup
         )
     
+    for a in ax.flat:
+        a.axvline(
+            st['main'],
+            lw = 2, 
+            color = 'purple')
+    
     set_axes_time(ax, start, end)
     
     ax[0].set(title = dn.strftime('%B, %Y'))
@@ -189,9 +196,11 @@ def main():
     
     '''
     
-    dn = dt.datetime(2013, 1, 26)
+    dn = dt.datetime(2013, 1, 26) #Paper example
     dn = dt.datetime(2015, 3, 17)
     dn = dt.datetime(2014, 9, 24)
+    dn = dt.datetime(2016, 9, 18)
+    dn = dt.datetime(2023, 4, 9)
     clear = dn + dt.timedelta(hours = 22)
     fig = plot_roti_and_indices(dn, clear)
     
@@ -201,5 +210,5 @@ def main():
     return
 
 
-main()
+# main()
 

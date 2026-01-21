@@ -7,10 +7,10 @@ import GEO as gg
 import numpy as np 
 
 
-def plot_sym_h(ax, dn, days = 3):
+def plot_sym_h(ax, dn, before = 4, after = 4):
     
     ds = c.high_omni(dn.year)
-    ds = b.range_dates(ds, dn, days = days)
+    ds = b.range_dates(ds, dn, before, after)
     st = c.find_storm_interval(ds['sym'])
    
     ax1 = ax.twinx()
@@ -93,6 +93,17 @@ def plot_single_case(
     
     return None 
     
+def check_double_sup(dn):
+    delta = dt.timedelta(days = 1)
+    df = c.category_and_low_indices()
+    
+    next_day = dn + delta
+    if next_day in df.index:
+        return True
+    else:
+        return False
+            
+      
     
 def plot_multi_examples_of_suppression(dates):
     nrows = len(dates)
@@ -106,15 +117,10 @@ def plot_multi_examples_of_suppression(dates):
     
     for i, dn in enumerate(dates):
         
-        # if i == 1 or i == 3:
-        #     double_sup = True
-        # else:
-        double_sup = False
-        
         plot_single_case(
             ax[i], 
             dn, 
-            double_sup = double_sup
+            double_sup = check_double_sup(dn)
             )
         
         if i < nrows - 1:
@@ -135,8 +141,8 @@ def plot_multi_examples_of_suppression(dates):
     return fig
 
 def main():
-    
-    distr = [ 
+    #disturbed
+    dates = [ 
         dt.datetime(2013, 3, 17),
         dt.datetime(2015, 3, 17),
         dt.datetime(2016, 3, 14),
@@ -144,18 +150,23 @@ def main():
         dt.datetime(2022, 10, 3)
         ]
     
-    quiets = [
-        dt.datetime(2014, 9, 9),
-        dt.datetime(2016, 9, 22),
-        dt.datetime(2017, 1, 23),
-        dt.datetime(2019, 3, 13),
-        dt.datetime(2022, 9, 10)
-        ]
+    #quiets
+    # dates = [
+    #     dt.datetime(2014, 9, 9),
+    #     dt.datetime(2016, 9, 22),
+    #     dt.datetime(2017, 1, 23),
+    #     dt.datetime(2019, 3, 13),
+    #     dt.datetime(2022, 9, 10)
+    #     ]
 
     
-    fig = plot_multi_examples_of_suppression(quiets)
+    fig = plot_multi_examples_of_suppression(dates)
     
 
     # pl.savefig(fig, 'multi_examples_quiettime')
     
 # main()
+
+dn =  dt.datetime(2015, 3, 17)
+# dn = dt.datetime(2013, 3, 17)
+
