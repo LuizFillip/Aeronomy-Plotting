@@ -50,23 +50,22 @@ def plot_SymH(ax, ds, ylim = [-300, 50]):
     
     return None 
 
-def plot_auroral(ax, ds):
-    ax.plot(ds['ae'], lw = 2)
+def plot_auroral(ax, ds, vmax = 3000):
+    ax.plot(ds['ae'], lw = 1.5)
     ax.set(
-        # 
-        yticks = np.arange(0, 2500, 500),
-        ylim = [0, 2200],
+        ylim = [0, vmax],
+        yticks = np.arange(0, vmax + 500, 500),
         ylabel = 'AE (nT)'
         )
     return None
 
 
-def plot_solar_speed(ax, ds):
+def plot_solar_speed(ax, ds, vmax = 800):
     ds = ds.loc[ds['speed'] < 600]
-    ax.plot(ds['speed'], lw = 2)
+    ax.plot(ds['speed'], lw = 1.5)
     ax.set(
-        ylim = [200, 600],
-        yticks = np.arange(200, 600, 100),
+        ylim = [200, vmax],
+        yticks = np.arange(200, vmax + 100, 100),
         ylabel = '$V_{sw}$ (km/s)'
         )
     return None
@@ -79,29 +78,7 @@ def plot_electric_field(ax, ds):
     return None 
  
     
-def plot_electrojet(ax):
-    
-     
-    
-    df = mg.electrojet(c1 = 'slz', c2 = 'eus')
-    
-    ax.plot(
-        df.iloc[:, 0], color = 'k', 
-        lw = 2, label = 'Storm-time')
-    ax.plot(
-        df.iloc[:, 1], color = 'purple',
-        lw = 2, label = 'Quiet-time'
-        )
-    ax.set(ylabel = '$\Delta H_{EEJ}$ (nT)', 
-           yticks = np.arange(-100, 200, 50), 
-           ylim = [-100, 180]
-           )
-    ax.axhline(0, linestyle = ':')
-    
-    ax.legend(ncol = 1, loc = 'upper right')
-    
-    return None 
-    
+
     
 def plot_high_resolution(
         ds, dn, 
@@ -132,7 +109,7 @@ def plot_high_resolution(
     
     plot_auroral(ax[3], ds)
     
-    plot_electrojet(ax[-1])
+    pl.plot_electrojet(ax[-1])
 
     
     dates = (np.unique(ds.index.date))

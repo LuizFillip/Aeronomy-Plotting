@@ -3,9 +3,13 @@ import core as c
 import numpy as np 
 
 
-def plot_kp_by_range(ax, dn):
+def plot_kp_by_range(ax, dn, before = 4, forward = 4):
     
-    ds = b.range_dates(c.low_omni(), dn, days = 4)
+    ds = b.range_dates(
+        c.low_omni(), dn, 
+        b = before, 
+        f = forward
+        )
     ds = ds.resample('3H').mean() 
     
     ax.bar(

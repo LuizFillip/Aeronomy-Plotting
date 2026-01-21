@@ -3,8 +3,11 @@ import base as b
 import datetime as dt
 import numpy as np
 import GEO as gg
+import core as c 
 
 PATH_INDEX =  'database/indices/omni_pro2.txt'
+
+b.sci_format()
 
 def plot_dst(ax, dst, limit = -100 ):
     
@@ -22,62 +25,21 @@ def plot_dst(ax, dst, limit = -100 ):
 
     return None
 
-def plot_f107(
-        ax, 
-        mean = None, 
-        float_index = True, 
-        color = 'k'
-        ):
+
+def plot_kp(ax, df):
     
+    args = dict(alpha = 0.3, )
     
-    df = b.load(PATH_INDEX)
-        
-    df["f107a"] = df["f107"].rolling(
-        window = 5).mean(center = True)
-    
-    if float_index:
-        df.index = df.index.map(gg.year_fraction)
-        
-    ax.plot(df['f107'], color = color)
-    
-    if mean is not None:
-        ax.plot(
-            df['f107a'], 
-            lw = 3, 
-            color = 'cornflowerblue'
-            )
-        
-    ax.set(
-        ylabel = '$F10,7$ (sfu)', 
-        ylim = [50, 300],
-        yticks = np.arange(50, 350, 100)
-        )   
-    return None
-        
-        
-def plot_kp(ax, df, mean = 30):
-    
-    args = dict(alpha = 0.3)
-    
-    ax.bar(df.index, df['kp'], **args)
-    
-    # ax1 = ax.twinx()
-    
-    # f107 = df['f107'].resample('1M').mean()
-    
-    # ax1.plot(f107, color = 'red')
-    if mean is not None:
-        mean = df['kp'].resample(f'{mean}D').mean()
-        
-        ax.bar(mean.index, mean, 
-               color = 'k', 
-               width = 10, 
-               label = f'{mean} days average'
-               )
-    
+    ax.bar(
+        df.index, 
+        df['kp'] / 10, 
+        width = 0.1, 
+        **args
+        )
+     
     ax.set(
         ylabel = 'Kp', 
-        ylim = [0, 9], 
+        ylim = [0, 10], 
         yticks = np.arange(0, 9, 2)
         )
     
@@ -85,57 +47,32 @@ def plot_kp(ax, df, mean = 30):
  
     return None
 
-def plot_magnetic_fields(ax, ds):
-    
-    ax.plot(ds[['by', 'bz']], label = ['by', 'bz'] )
-    
-    ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
-    
-    ax.set(
-        ylim = [-10, 30], 
-        ylabel = '$B_y/B_z$ (nT)'
-        )
-    
-    ax.legend(
-        loc = 'upper right', 
-        ncol = 2
-        )
-    
-    return None 
 
-
-def plot_long_term(s_year, e_year):
+def plot_long_term(start, end):
     
     fig, ax = plt.subplots(
         dpi = 300,
-        figsize = (16, 12), 
-        nrows = 3, 
+        figsize = (12, 6), 
+        nrows = 2, 
         sharex = True
         )
     
     plt.subplots_adjust(hspace = 0.05)
     
-    df = b.load(PATH_INDEX)
-        
-    df["f107a"] = df["f107"].rolling(
-        window = 5).mean(center = True)
+    df = c.low_omni()
     
-    df = b.sel_dates(
-        df, 
-        dt.datetime(2023, 1, 1), 
-        dt.datetime(2023, 12, 31)
-        )
+    df = b.sel_dates(df, start, end)
     
         
-    plot_kp(ax[2], df, mean = None)
-    plot_dst(ax[1], df['dst'])
-    plot_magnetic_fields(ax[0], df)
+    plot_kp(ax[1], df)
+    plot_dst(ax[0], df['dst']) 
     ax[-1].set(xlim= [df.index[0], df.index[-1]])
     
-    b.format_month_axes(ax[-1], translate = False)
+    b.format_days_axes(ax[-1])
   
-    b.plot_letters(ax, y = 0.83, x = 0.02, fontsize = 40)
+    b.plot_letters(ax, y = 0.83, x = 0.02, fontsize = 25)
         
+    fig.align_ylabels()
     return fig
     
 
@@ -149,6 +86,3 @@ def main():
         dpi = 400
         )
 
-# df = b.load(PATH_INDEX)
-
-# df

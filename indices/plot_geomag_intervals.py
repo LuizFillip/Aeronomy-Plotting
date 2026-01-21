@@ -6,6 +6,23 @@ import core as c
 
 b.sci_format(fontsize = 25)
 
+def save_figs(df):
+    from tqdm import tqdm 
+    plt.ioff()
+    
+    path_to_save = 'D:\\img\\storms\\'
+    
+    for dn, row in tqdm(df.iterrows()):
+        
+        ds, st = set_data(dn)
+        
+        fig = plot_storm_intervals(ds, st, dn, row)
+        file = dn.strftime('%Y%m%d.PNG')
+        
+        fig.savefig(path_to_save + file)
+        
+    plt.clf()   
+    plt.close()
 
 def _devtime(end, start):
     return (end - start).total_seconds() / 3600
@@ -44,7 +61,11 @@ def reference_sym_hlines(ax):
     ax.axhline(0, linestyle = ':')
     
     for ref_line in [0, -30, -50, -100]:
-        ax.axhline(ref_line, linestyle = '--')
+        ax.axhline(
+            ref_line, 
+            linestyle = '-', 
+            color = 'red'
+            )
         
     return None 
         
@@ -66,29 +87,45 @@ def set_xaxis(ax, ds):
            ax, 
            fmt = '%d/%m'
            )
+    
+    import pandas as pd
+    import numpy as np
+    
+    dns = pd.to_datetime(np.unique(ds.index.date))
+    for dn in dns:
+        ax.axvline(dn, lw = 1, linestyle = '--')
+
     return None 
 
   
-def plot_storm_intervals(ds, st, dn):
+def plot_storm_intervals(ds, st, dn, row):
      
     fig, ax = plt.subplots(
-        dpi = 200, 
+        dpi = 300, 
         figsize = (12, 8)
         )
     
     ax.plot(ds['sym'])
 
-    ax.set(
-        ylim = [-150, 50],
-        ylabel = 'SYM-H (nT)',
-        title = dn.strftime('%B, %Y')
+    dusk = gg.terminator(
+        -50, 
+        dn, 
+        float_fmt = False
         )
     
-    dusk = gg.terminator(-50, dn, float_fmt = False)
+    ax.axvline(
+        dusk, 
+        linestyle = '--', 
+        color = 'b', 
+        lw = 3
+        )
     
-    ax.axvline(dusk, linestyle = '--', color = 'b', lw = 3)
-    
-    stormtime_spanning(ax, st['start'], dusk, y = 10)
+    stormtime_spanning(
+        ax, 
+        st['start'], 
+        dusk, 
+        y = 10
+        )
     
     ax.axvspan(
         st['start'], 
@@ -103,7 +140,7 @@ def plot_storm_intervals(ds, st, dn):
     reference_sym_hlines(ax)
     
     s = ds['sym'] 
-    vmin = s.min()
+    vmin = round(s.min())
     
     time = s.idxmin(skipna = True)
     ax.scatter(time, vmin, s = 140, marker = '^')
@@ -111,7 +148,7 @@ def plot_storm_intervals(ds, st, dn):
     xe = time + delta
  
     ax.annotate(
-        f'{round(vmin)} nT',
+        f'{vmin} nT',
         xy = (time, vmin) , 
         xycoords = 'data',
         fontsize = 30.0,
@@ -121,16 +158,45 @@ def plot_storm_intervals(ds, st, dn):
         ha = 'center'
         )
     
+    ax.set(
+        ylim = [vmin - 50, 50],
+        ylabel = 'SYM-H (nT)',
+        title = dn.strftime('%B, %Y - ') + row
+        )
+    
     return fig
     
-dn = dt.datetime(2013, 3, 17)
 
-df = c.high_omni(dn.year)
+def set_data(dn, backward = 2, forward = 6):
+    df = c.high_omni(dn.year)
+    
+    df = b.range_dates(
+        df, 
+        dn, 
+        b = backward, 
+        f = forward
+        )
+    
+    st = c.find_storm_interval(df['sym'])
+    
+    return df, st
 
-df = b.range_dates(df, dn, b = 2, f = 6)
+def main():
+    dn = dt.datetime(2013, 3, 17)
+    dn = dt.datetime(2016, 10, 2)
+    dn = dt.datetime(2016, 11, 13)
+    dn = dt.datetime(2017,  1, 7)
+    dn = dt.datetime(2017,  1, 23)
+    dn = dt.datetime(2017,  3, 6)
+    dn = dt.datetime(2017,  9, 24)
+    dn = dt.datetime(2018,  1, 4)
+    
+    ds = c.category_and_low_indices()
+    
+    df, st = set_data(dn, before = 8, after = 2)
+    
+    row =  ds.loc[dn].category
+    
+    fig = plot_storm_intervals(df, st, dn, row)
 
-st = c.find_storm_interval(df['sym'])
 
-fig = plot_storm_intervals(df, st, dn)
-
-# st['start']
