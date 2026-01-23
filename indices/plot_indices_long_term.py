@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
-import base as b
-import datetime as dt
-import numpy as np
-import GEO as gg
+import base as b 
+import numpy as np 
 import core as c 
 
 PATH_INDEX =  'database/indices/omni_pro2.txt'

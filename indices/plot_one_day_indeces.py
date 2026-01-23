@@ -83,20 +83,6 @@ def plot_magnetic_fields(
     return None 
 
 
-    
-def plot_auroras(ax, ds):
-    
-    ax.plot(ds['ae'], label = 'AE', lw = 2)
-    
-    ax.set(
-        yticks = np.arange(0, 3000, 1000),
-        ylim = [0, 2000], 
-        ylabel = 'AE (nT)'
-        )
-
-    
-    return None 
-
 def load_indices(dn):
     
     import core as c
@@ -145,7 +131,7 @@ def plot_one_day_indices(dn, days = 2):
     ds = load_indices()
        
     plot_magnetic_fields(ax[0], ds)
-    plot_auroras(ax[1], ds)
+    pl.plot_auroral(ax[1], ds)
     plot_dst(ax[2], ds)
     # plot_epbs(ax[-1], dn)
     

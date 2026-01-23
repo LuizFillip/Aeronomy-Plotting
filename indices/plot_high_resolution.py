@@ -31,41 +31,58 @@ def plot_kp_hourly(ax1, ds):
     
     return None 
       
-def plot_SymH(ax, ds, ylim = [-300, 50]):
+def plot_SymH(
+        ax, ds, 
+        ylim = [-300, 50], 
+        kp = True, 
+        color = 'red',
+        step = 50
+        ):
     
-    ax.plot(ds['sym/h'], lw = 2)
+    ax.plot(ds, lw = 2, color = color)
    
     ax.set(
         xlim = [ds.index[0], ds.index[-1]], 
         ylim = [ylim[0], ylim[-1]],
-        yticks = np.arange(-250, ylim[-1], 100),
+        yticks = np.arange(ylim[0], ylim[-1] + step, step ),
         ylabel = "SYM-H (nT)"
         )
-    
-    ax.axhline(0, lw = 0.5, color = 'k', linestyle = '-')
-    
-    ax1 = ax.twinx()
- 
-    plot_kp_hourly(ax1, ds)
+       
+    for line in [0, -30, -50, -100]:
+        ax.axhline(
+            line, 
+            lw = 0.5, 
+            color = 'k', 
+            linestyle = ':'
+            )
+        
+    if kp:
+        ax1 = ax.twinx()
+        plot_kp_hourly(ax1, ds)
     
     return None 
 
-def plot_auroral(ax, ds, vmax = 3000):
+def plot_auroral(
+        ax, 
+        ds, 
+        vmax = 3000, 
+        step = 1000
+        ):
     ax.plot(ds['ae'], lw = 1.5)
     ax.set(
         ylim = [0, vmax],
-        yticks = np.arange(0, vmax + 500, 500),
+        yticks = np.arange(0, vmax + step, step),
         ylabel = 'AE (nT)'
         )
     return None
 
 
-def plot_solar_speed(ax, ds, vmax = 800):
+def plot_solar_speed(ax, ds, vmax = 800, step = 200):
     ds = ds.loc[ds['speed'] < 600]
     ax.plot(ds['speed'], lw = 1.5)
     ax.set(
-        ylim = [200, vmax],
-        yticks = np.arange(200, vmax + 100, 100),
+        ylim = [300, vmax],
+        yticks = np.arange(300, vmax + step, step),
         ylabel = '$V_{sw}$ (km/s)'
         )
     return None
@@ -114,8 +131,7 @@ def plot_high_resolution(
     
     dates = (np.unique(ds.index.date))
         
-    
-    
+   
     for a in ax.flat:
         
         for dn in dates:
