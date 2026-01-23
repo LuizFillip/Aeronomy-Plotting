@@ -47,7 +47,10 @@ def plot_seasonal_bars(ds):
 
 def main():
     
-    ds = c.seasonal_data()
+    ds = c.seasonal_data(
+        col_dst = 'sym_min',
+        col_kp = 'kp_max'
+        )
     
     fig = plot_seasonal_bars(ds)
     

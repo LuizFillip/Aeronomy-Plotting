@@ -18,8 +18,8 @@ def plot_sym_h(ax, dn, before = 4, after = 4):
     pl.plot_SymH(
         ax1, 
         ds['sym'], 
-        ylim = [-250, 50], 
-        step = 100,
+        ylim = [-120, 20], 
+        step = 40,
         kp = False
         )
     
@@ -44,6 +44,7 @@ def plot_sym_h(ax, dn, before = 4, after = 4):
     return [start, end] 
 
 def set_axis(ax):
+    
     b.axes_hour_format(
          ax, 
          hour_locator = 6, 
@@ -137,7 +138,7 @@ def plot_multi_examples_of_suppression(dates):
         # try:
         plot_single_case(ax[i], dn)
         # except:
-        print(dn)
+        # print(dn)
         if i < nrows - 1:
             ax[i].set(xticklabels = [])
         
@@ -182,6 +183,6 @@ def main():
     
     plt.show()
 
-    #pl.savefig(fig, f'multi_examples_{dates[-1]}')
+    pl.savefig(fig, f'multi_examples_{dates[-1]}')
     
 main() 
