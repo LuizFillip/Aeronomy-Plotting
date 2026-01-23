@@ -111,8 +111,8 @@ def set_axes_time(ax, start, end):
     
     b.plot_letters(
         ax, 
-        y = 0.8, 
-        x = 0.03, 
+        y = 0.75, 
+        x = 0.02, 
         fontsize = 25,
         num2white = None
         )
@@ -149,14 +149,16 @@ def plot_roti_and_indices(
     start, end = set_time_limits(ds)
 
     pl.plot_solar_speed(ax[0], ds)
-    pl.plot_auroras(ax[1], ds)
+    pl.plot_auroral(ax[1], ds)
     pl.plot_magnetic_fields(ax[2], ds, ylim = 30)
     pl.plot_dst(ax[3], ds)
     pl.plot_kp_by_range(ax[3].twinx(), dn)
     pl.plot_roti_in_range(
-        ax[-1], start, end, 
+        ax[-1], 
+        start, end, 
         root = root, 
-        clear = clear)
+        clear = clear
+        )
      
     if storm_span:
         pl.stormtime_spanning(
@@ -177,7 +179,9 @@ def plot_roti_and_indices(
     
     set_axes_time(ax, start, end)
     
-    ax[0].set(title = dn.strftime('%B, %Y'))
+    ds = c.category_and_low_indices()
+    name = ds.loc[dn, 'category']
+    ax[0].set(title = dn.strftime('%B, %Y - ') + name)
     
     fig.align_ylabels()
     
@@ -201,13 +205,18 @@ def main():
     dn = dt.datetime(2014, 9, 24)
     dn = dt.datetime(2016, 9, 18)
     dn = dt.datetime(2023, 4, 9)
+    dn = dt.datetime(2016, 12, 21)
+    dn = dt.datetime(2014, 9, 9)
+    dn = dt.datetime(2017, 2, 13)
+    
     clear = dn + dt.timedelta(hours = 22)
-    fig = plot_roti_and_indices(dn, clear)
+    plot_roti_and_indices(dn, clear)
     
     # pl.savefig(fig, 'Indices_and_example_of_suppression')
     
     plt.show()
-    return
+  
+    
 
 
 # main()

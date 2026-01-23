@@ -47,16 +47,7 @@ def plot_seasonal_bars(ds):
 
 def main():
     
-    def set_data():
-        df = c.category_and_low_indices()
-        
-        df['month'] = df.index.month 
-        
-        ds = df.groupby(['category', 'month']).size().unstack(fill_value = 0)
-        
-        return ds.T[['intense', 'moderate', 'weak', 'quiet']]
-        
-    ds = set_data()
+    ds = c.seasonal_data()
     
     fig = plot_seasonal_bars(ds)
     
@@ -65,6 +56,6 @@ def main():
     FigureName = 'seasonal_bars_by_storm'
     
     
-    fig.savefig(path_to_save + FigureName, dpi = 300)
+    # fig.savefig(path_to_save + FigureName, dpi = 300)
     
 # main()

@@ -81,10 +81,18 @@ def main(df):
 
 df = b.load('core/src/geomag/data/stormsphase')
 
-df_source = b.load('core/src/geomag/data/4hours_low_res')
+df_source = c.category_and_low_indices()
 
 for col in df_source.columns:
+    # if 'sun' in col:
     df[col] = df.index.map(df_source[col])
     
     
-df = df.iloc[:, 3:] 
+df = df.iloc[:, 4:] 
+
+# df = df.loc[(df['kp_sun'] > 3) &
+#             (df['dst_sun']< -30)]
+# df['div_initial'].plot(kind = 'hist')
+
+df.loc[df['div_initial'] > 100]
+
