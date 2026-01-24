@@ -72,32 +72,7 @@ def category(dn):
     return df.loc[dn]['category']
 
   
-def stormtime_spanning(ax, start, end, y = 2.5):
-    
-    devtime = (end - start).total_seconds() / 3600
-    
-    time = round(devtime, 2)
-        
-    middle = end + (start - end) / 2
-      
-    ax.annotate(
-        '', 
-        xy = (start, y), 
-        xytext = (end, y ), 
-        arrowprops = dict(arrowstyle='<->')
-        )
-    time = round(time)
-    
-    ax.annotate(
-        f'{time} hrs',
-        xy = (middle, y + y/10), 
-        xycoords = 'data',
-        fontsize = 30,
-        textcoords = 'data', 
-        ha = 'center'
-        )
-    
-    return None   
+
 
 def plot_single_case(
         ax, 
@@ -111,11 +86,11 @@ def plot_single_case(
     
     ds = c.high_omni(dn.year)
     ds = b.range_dates(ds, dn, before, after)
-    st = c.find_storm_interval(ds['sym'], dn)
-    
+     
     if category(dn) != 'quiet':
+        st = c.find_storm_interval(ds['sym'], dn)
         ylim = [-250, 50] 
-        step = 50
+        step = 100
     else:
         ylim = [-120, 20]
         step = 40
@@ -131,9 +106,10 @@ def plot_single_case(
     
     set_axis(ax)     
     
+    double = check_double_sup(dn)
     if category(dn) != 'quiet':
        
-        stormtime_spanning(
+        pl.stormtime_spanning(
             ax, st['start'], st['dusk'], y = 2.5)
         
         ax.axvspan(
@@ -144,10 +120,21 @@ def plot_single_case(
             alpha = 0.2, 
             color = 'tomato'
             )
+        
+        if double:
+            delta = dt.timedelta(days = 1)
+            pl.stormtime_spanning(
+                ax, 
+                st['start'], 
+                st['dusk'] + delta, 
+                y = 1.5
+                )
     
-    double_sup =  check_double_sup(dn)
     
-    pl.evening_interval(ax, dusk, double_sup)
+    
+    pl.evening_interval(ax, dusk, double)
+    
+   
     
     for dn in np.unique(ds.index.date):
         ax.axvline(dn, lw = 1, linestyle = '--')
@@ -196,19 +183,19 @@ def main():
         dt.datetime(2016, 3, 14),
         dt.datetime(2017, 3, 1),
         dt.datetime(2014, 2, 9),
-        dt.datetime(2013, 9, 24),
+        # dt.datetime(2013, 9, 24),
         'stormtime'
         ]
     
     #quiets
-    # dates = [
-    #     dt.datetime(2013, 9, 18), 
-    #     dt.datetime(2014, 9, 9),
-    #     dt.datetime(2016, 9, 22),
-    #     dt.datetime(2017, 1, 23),
-    #     dt.datetime(2019, 3, 13),
-    #       'quiettime'
-    #     ]
+    dates = [
+        # dt.datetime(2013, 9, 18), 
+        dt.datetime(2014, 9, 9),
+        dt.datetime(2016, 9, 22),
+        dt.datetime(2017, 1, 23),
+        dt.datetime(2019, 3, 13),
+          'quiettime'
+        ]
 
     
     fig = plot_multi_examples_of_suppression(dates[:-1])

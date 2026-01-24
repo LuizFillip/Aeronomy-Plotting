@@ -9,43 +9,35 @@ import GEO as gg
 
 b.sci_format(fontsize = 20)
 
-def evening_interval(ax, dusk, double_sup = False):
+def evening_interval(ax, dusk, double = False):
     
-    ax.axvline(
-        dusk, 
-        color = 'blue', 
-        lw = 2, 
-        linestyle = '--'
-        )
-    
-    delta = dt.timedelta(hours = 2)
-    
-    ax.axvspan(
-        dusk - delta, 
-        dusk + delta, 
-        ymin = 0, 
-        ymax = 1,
-        alpha = 0.2, 
-        color = 'blue'
-        )
-    
-    if double_sup:
-        delta1 = dt.timedelta(days = 1)
-        dd = dusk + delta1
+    def plot_evening(ax, dusk):
         ax.axvline(
-            dd, 
+            dusk, 
             color = 'blue', 
             lw = 2, 
             linestyle = '--'
             )
+        
+        delta_shade = dt.timedelta(hours = 2)
+        
         ax.axvspan(
-            dd - delta, 
-            dd + delta, 
+            dusk - delta_shade, 
+            dusk + delta_shade, 
             ymin = 0, 
             ymax = 1,
             alpha = 0.2, 
             color = 'blue'
             )
+        
+        return None 
+    
+    if double:
+        delta_day = dt.timedelta(days = 1)
+        for dn in [dusk, dusk + delta_day]:
+            plot_evening(ax, dn)
+    else:
+        plot_evening(ax, dusk)
     
     return None 
  
@@ -57,7 +49,7 @@ def plot_reference_lines(
         start = None, 
         end = None, 
         storm_span = True,  
-        double_sup = True         
+        double = True         
         ):
   
     for a in ax.flat:
@@ -71,7 +63,8 @@ def plot_reference_lines(
                 )
         
         evening_interval(
-            a, dusk, double_sup = double_sup)
+            a, dusk, double = double
+            )
        
         
             
