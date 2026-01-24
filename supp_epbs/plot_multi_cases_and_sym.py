@@ -8,18 +8,15 @@ import numpy as np
 
 b.sci_format(fontsize = 25)
 
-def plot_sym_h(ax, dn, before = 4, after = 4):
+def plot_sym_h(ax, ds, ylim = [-250, 50], step = 50):
     
-    ds = c.high_omni(dn.year)
-    ds = b.range_dates(ds, dn, before, after)
- 
     ax1 = ax.twinx()
 
     pl.plot_SymH(
         ax1, 
         ds['sym'], 
-        ylim = [-120, 20], 
-        step = 40,
+        ylim = ylim, #[-120, 20], 
+        step = step, #40
         kp = False
         )
     
@@ -75,6 +72,32 @@ def category(dn):
     return df.loc[dn]['category']
 
   
+def stormtime_spanning(ax, start, end, y = 2.5):
+    
+    devtime = (end - start).total_seconds() / 3600
+    
+    time = round(devtime, 2)
+        
+    middle = end + (start - end) / 2
+      
+    ax.annotate(
+        '', 
+        xy = (start, y), 
+        xytext = (end, y ), 
+        arrowprops = dict(arrowstyle='<->')
+        )
+    time = round(time)
+    
+    ax.annotate(
+        f'{time} hrs',
+        xy = (middle, y + y/10), 
+        xycoords = 'data',
+        fontsize = 30,
+        textcoords = 'data', 
+        ha = 'center'
+        )
+    
+    return None   
 
 def plot_single_case(
         ax, 
@@ -86,10 +109,20 @@ def plot_single_case(
     
     dusk = gg.terminator(dn)
     
-    dns = plot_sym_h(ax, dn, before, after)
+    ds = c.high_omni(dn.year)
+    ds = b.range_dates(ds, dn, before, after)
+    st = c.find_storm_interval(ds['sym'], dn)
+    
+    if category(dn) != 'quiet':
+        ylim = [-250, 50] 
+        step = 50
+    else:
+        ylim = [-120, 20]
+        step = 40
+    
+    dns = plot_sym_h(ax, ds, ylim = ylim, step = step)
      
-
-    ds = pl.plot_roti_in_range(
+    pl.plot_roti_in_range(
         ax,  
         dns[0], dns[-1], 
         root = root, 
@@ -99,9 +132,10 @@ def plot_single_case(
     set_axis(ax)     
     
     if category(dn) != 'quiet':
-        st = c.find_storm_interval(ds['sym'], dn)
-        pl.stormtime_spanning(ax, st['start'], st['end'])
-         
+       
+        stormtime_spanning(
+            ax, st['start'], st['dusk'], y = 2.5)
+        
         ax.axvspan(
             st['start'], 
             st['end'], 
@@ -134,11 +168,9 @@ def plot_multi_examples_of_suppression(dates):
         )
     
     for i, dn in enumerate(dates):
-        
-        # try:
+         
         plot_single_case(ax[i], dn)
-        # except:
-        # print(dn)
+         
         if i < nrows - 1:
             ax[i].set(xticklabels = [])
         
@@ -160,23 +192,23 @@ def main():
     
     #disturbed
     dates = [ 
-        dt.datetime(2013, 9, 24),
         dt.datetime(2015, 3, 17),
         dt.datetime(2016, 3, 14),
         dt.datetime(2017, 3, 1),
-        dt.datetime(2022, 12, 26),
+        dt.datetime(2014, 2, 9),
+        dt.datetime(2013, 9, 24),
         'stormtime'
         ]
     
     #quiets
-    dates = [
-        dt.datetime(2013, 9, 18), 
-        dt.datetime(2014, 9, 9),
-        dt.datetime(2016, 9, 22),
-        dt.datetime(2017, 1, 23),
-        dt.datetime(2019, 3, 13),
-          'quiettime'
-        ]
+    # dates = [
+    #     dt.datetime(2013, 9, 18), 
+    #     dt.datetime(2014, 9, 9),
+    #     dt.datetime(2016, 9, 22),
+    #     dt.datetime(2017, 1, 23),
+    #     dt.datetime(2019, 3, 13),
+    #       'quiettime'
+    #     ]
 
     
     fig = plot_multi_examples_of_suppression(dates[:-1])
