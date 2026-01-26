@@ -1,73 +1,62 @@
 import base as b
 import core as c 
-import pandas as pd 
 import matplotlib.pyplot as plt 
 
 
 b.sci_format(fontsize = 25)
 
-def plot_cross_all_parameters(df2, cols):
-    n = len(cols)
-    fig, axes = plt.subplots(
-        nrows = n, ncols=n, 
-        figsize=(14, 14), 
-        dpi=300)
-    
-    for i, x in enumerate(cols):
-        for j, y in enumerate(cols):
-            ax = axes[i, j]
-            ax.scatter(df2[y], df2[x], alpha=0.5, s=30)
-            
-            # Apenas rotular o eixo mais à esquerda e inferior
-            if j == 0:
-                ax.set_ylabel(x)
-            else:
-                ax.set_yticklabels([])
-    
-            if i == n - 1:
-                ax.set_xlabel(y)
-            else:
-                ax.set_xticklabels([])
-    
-            # Adicionar coeficiente de correlação
-            if i != j:
-                corr = df2[[x, y]].corr().iloc[0, 1]
-                ax.set_title(f"r={corr:.2f}", fontsize = 20)
-    
-    plt.tight_layout()
-    plt.show()
-
-# df['divtime'].plot(kind = 'hist')
 
 def get_sum(df):
 
-    # Define a função de agregação: 'occ' com soma, o resto com média
-    agg_funcs = {col: 'sum' for col in df.columns if col != 'occ'}
-    agg_funcs['occ'] = 'sum'
-    
-    # Agrupa por mês e aplica agregações
-    return df.groupby(df.index.month).agg('sum')
+    ds = df.groupby(df.index.month).sum()
+
+    for col in ds.columns:
+        if col != 'occ':
+            ds[col] = ds[col] / ds['occ']
+            
+    return ds
 
 def get_avg(df):
     
-    agg_funcs = {col: 'mean' for col in df.columns if col != 'occ'}
+    agg_funcs = {col: 'mean' for col in 
+                 df.columns if col != 'occ'}
     agg_funcs['occ'] = 'sum'
     
-    return df.groupby(df.index.month).agg(agg_funcs)
-
-# df1 = get_avg(df)
+    return df.groupby(df.index.month).agg(agg_funcs) 
 
 
-df = c.events_in_storm()
-
-def plot_multi_correlation(df):
-    df['occ'] = 1
+def plot_scatter_and_fit(
+        ax, x, y, 
+        marker = 's', 
+        name = None, 
+        dy = 0):
     
-    cols = ['occ', 'bz', 'speed', 'ae',
-            'sym', 'f10.7', 'by']
-    df = df[cols]
+    ax.scatter(
+        x, y, s = 100, 
+        color = 'k', 
+        marker = marker, 
+        label = name
+        )
     
-    df2 = get_avg(df)  
+    fit = b.linear_fit(x, y)
+    
+    corr = fit.r2_score
+    
+    ax.plot(
+        x, fit.y_pred, 
+        lw = 2, color = 'r')
+    
+    ax.text(
+        0.02, 0.8 - dy/10, 
+        f"r={corr:.2f}", 
+        transform = ax.transAxes
+        )
+    return None 
+    
+
+
+def plot_multi_correlation(df2):
+    
     
     fig, ax = plt.subplots(
         ncols = 3, 
@@ -82,23 +71,80 @@ def plot_multi_correlation(df):
         hspace = 0.3
         )
     
+    cols = ['bz_mean', 'ae_mean', 
+            ['sym_mean', 'sym_min'],
+            'speed_mean', 'kp_max', 'f10.7']
+    
+    # cols = ['sym', 'ae', 'bz']
+    
+    # names = ['Bz (nT)', 'AE (nT)', 
+    #          'SYM-H (nT)', 
+    #          '$V_{sw}$ (km/s)', 
+    #          'Kp', 'F10.7 (sfu)']
+    
     for i, ax in enumerate(ax.flat):
-        y = 'occ'
-        x = cols[1:][i]
-        ax.scatter( df2[x], df2[y], color = 'k', s = 100)
-        corr = df2[[x, y]].corr().iloc[0, 1]
+        y = df2['occ'].values
+        col = cols[i]
         
-        ax.text(
-            0.05, 0.85, f"r={corr:.2f}", 
-            transform = ax.transAxes, 
-            fontsize = 25
-            )
-        
-        ax.set(xlabel = x)
+        if isinstance(col, list):
+            mks = ['s', 'o']
+            name = ['Evening', 'Day']
+            
+            for i, col2 in enumerate(col):
+                x = df2[col2].values
+                plot_scatter_and_fit(
+                    ax, x, y, marker = mks[i], 
+                    name = name[i], 
+                    dy = i
+                    )
+                
+                ax.set(xlabel = 'SYM-H (nT)')
+                
+                ax.legend()
+        else:
+            x = df2[col].values
+            plot_scatter_and_fit(ax, x, y)
+            
+            ax.set(xlabel = cols[i])
         
         if  i == 0 or i == 3:
             
-            ax.set(ylabel = 'Number of cases', ylim = [0, 15])
+            ax.set(
+                ylabel = 'Number of cases', 
+                ylim = [0, 30]
+                )
             
     return fig 
-            
+
+df =  c.category_and_low_indices(
+    col_dst = 'sym_min',
+    col_kp = 'kp_max'
+    )
+
+
+df['occ'] = 1
+
+
+#
+
+
+# ds
+    
+def join_mean_and_avents(df):
+
+    df = df.groupby(df.index.month).agg('sum')  
+    ds = b.load('core/src/geomag/data/averages')
+    
+    ds = ds.groupby(ds.index.month).agg('mean')
+    
+    ds['occ'] = ds.index.map(df['occ'])
+    
+    return ds.replace(float('nan'), 0)
+
+df = get_sum(df)  
+
+# ds = join_mean_and_avents(df)
+
+fig = plot_multi_correlation(df)
+
+

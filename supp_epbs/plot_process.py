@@ -5,6 +5,27 @@ import plotting as pl
 from tqdm import tqdm 
 
 
+def move_images(dummies):
+    import datetime as dt 
+    import os 
+    import shutil
+    
+    path_in = 'D:\\img\\vague\\'
+    path_out = 'D:\\img\\quiet\\'
+    
+    dates_out = [
+        dt.datetime.strptime(dn, '%Y-%m-%d')
+                 for dn in dummies]
+    
+    for fn in os.listdir(path_in):
+        date = dt.datetime.strptime(fn, '%Y%m%d.PNG')
+        
+        if date not in dates_out:
+            
+            shutil.move(path_in + fn, path_out + fn)
+            
+    return None 
+
      
 def save_imgs(ds, path_to_save):
     

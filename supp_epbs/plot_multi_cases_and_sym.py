@@ -200,4 +200,4 @@ def main():
 
     pl.savefig(fig, f'multi_examples_{dates[-1]}')
     
-main() 
+# main() 
