@@ -178,3 +178,6 @@ def main():
     fig= plot_multi_correlation(df)
     
     pl.savefig(fig, 'correlations')
+    
+    
+main()
