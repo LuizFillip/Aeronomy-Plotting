@@ -66,7 +66,7 @@ def start_vs_duration(df):
     
     
 
-def plot_count_events_by_symh(df):
+def plot_count_events_by_symh(ax, df):
     
     colors = {
         'intense': '#8B0000',   # vermelho escuro
@@ -77,7 +77,7 @@ def plot_count_events_by_symh(df):
 
     df = df[['intense', 'moderate', 'weak']]
     
-    fig, ax = plt.subplots(dpi = 300, figsize = (12, 6))
+
     df.plot(
         kind='bar',
         stacked = True,
@@ -107,7 +107,7 @@ def plot_count_events_by_symh(df):
         ylabel = "Number of events", 
         )
 
-    pl.legend_for_sym_h(ax, loc = 'upper left')
+    pl.legend_for_sym_h(ax, loc = 'upper right')
       
     ax.set_xticklabels(
         df.index,
@@ -181,7 +181,7 @@ def set_data():
     df_source = c.category_and_low_indices()
     
     for col in df_source.columns:
-        # if 'sun' in col:
+        
         df[col] = df.index.map(df_source[col])
         
     df = df.replace(('weak+', 'weak-'), 'weak')
@@ -190,16 +190,24 @@ def set_data():
         ['phase', 'cate']
         ).size().unstack(fill_value=0)
     
+    ds = ds.rename(index={
+        "main": "Main",
+        "recovery": "Recovery",
+        "after": "To quiet"
+        })
+    
+    order = ["Main", "Recovery", "To quiet"]
+    
+    ds = ds.reindex(order)
     return ds 
 
     
 
-
-
-
-df = set_data()
-
-# df.plot(kind = 'bar', stacked = True)
-
-
-fig = plot_count_events_by_symh(df)
+def main():
+    df = set_data()
+    
+    fig = plot_count_events_by_symh(df)
+    
+    
+    fig, ax = plt.subplots(dpi = 300, figsize = (12, 6))
+      
