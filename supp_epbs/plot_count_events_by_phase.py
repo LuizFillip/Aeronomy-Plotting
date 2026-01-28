@@ -3,8 +3,11 @@ import core as c
 import base as b
 import plotting as pl 
 import numpy as np 
-
+import pandas as pd 
 from scipy.stats import norm
+
+b.sci_format(fontsize = 25)
+
 
 def plot_stats(
         ax,
@@ -49,10 +52,10 @@ def plot_stats(
         verticalalignment="top",
         bbox=bbox
     )
+    
+    return None
 
 
-
-b.sci_format(fontsize = 25)
 
 def start_vs_duration(df):
     for ss in ['end', 'start']:
@@ -93,21 +96,25 @@ def plot_count_events_by_symh(ax, df):
             value = df.loc[idx, col]
             if value > 0:
                 ax.text(
-                    i, y_offset + value / 2, 
-                        f"{int(value)}",
-                        ha = 'center', va='center',
-                        color='k', 
-                        fontsize=fontsize, weight='bold'
-                        )
+                i, y_offset + value / 2, 
+                    f"{int(value)}",
+                    ha = 'center',
+                    va = 'center',
+                    color = 'k', 
+                    fontsize = fontsize,
+                    weight = 'bold'
+                )
             y_offset += value
     
  
     ax.set(
         xlabel = "Storm phase", 
-        ylabel = "Number of events", 
+        # ylabel = "Number of events", 
+        ylim = [0, 30],
         )
 
-    pl.legend_for_sym_h(ax, loc = 'upper right')
+    pl.legend_for_sym_h(
+        ax, loc = 'upper right', fontsize = 20)
       
     ax.set_xticklabels(
         df.index,
@@ -115,23 +122,13 @@ def plot_count_events_by_symh(ax, df):
         ha = 'center'
         )
     
-    plt.tight_layout()
-    plt.show()
-    return fig 
-
-
-def main(df):
-
-
-    df = c.geomagnetic_analysis(df)
     
-    df = c.count_events(df)
-    
-    fig = plot_count_events_by_symh(df)
-    
-    
+    return  None 
+ 
 
-def plot_histogram_time_shift():
+
+
+def plot_histogram_time_shift(ax, df):
     
     args = dict(
          facecolor = 'lightgrey', 
@@ -141,8 +138,7 @@ def plot_histogram_time_shift():
          color = 'gray', 
          linewidth = 2
         )
-    fig, ax = plt.subplots(dpi = 300, figsize = (12, 6))
-    
+   
     arr = df['div_initial'].values
     
     mu, sigma = norm.fit(arr)
@@ -159,21 +155,25 @@ def plot_histogram_time_shift():
     ax.plot(x, y, 'r-', linewidth=2)
     
     # Rótulos
-    ax.set(xlabel = "Time from storm begging (hours)", 
-           ylabe = "Frequency")
+    ax.set(
+        xlabel = "Time from initial phase (hours)",
+        ylim = [0, 30],
+        ylabel = "Number of events"
+        )
  
     plot_stats(
         ax,
         arr,
-        unit="hrs",
-        fontsize=14,
-        loc=(0.05, 0.95),
-        box=True,
+        unit="hours",
+        fontsize=25,
+        loc=(0.5, 0.95),
+        box=False,
         robust=False,
         precision=2
     )
     
-import pandas as pd 
+    return None 
+    
 
 def set_data():
     df = b.load('core/src/geomag/data/stormsphase')
@@ -203,11 +203,42 @@ def set_data():
 
     
 
-def main():
+def plot_hist_bars_of_phases():
+    
+    fig, ax = plt.subplots(
+        ncols = 2,
+        sharey = True,
+        dpi = 300, 
+        figsize = (14, 7)
+        )
+    
+    plt.subplots_adjust(wspace = 0.1)
+    
+    df = b.load('core/src/geomag/data/stormsphase')
+    plot_histogram_time_shift(ax[0], df)
     df = set_data()
+    plot_count_events_by_symh(ax[-1], df)
     
-    fig = plot_count_events_by_symh(df)
+    b.plot_letters(
+            ax , 
+            x = 0.03, 
+            y = 0.89, 
+            offset = 0, 
+            fontsize = 35,
+            num2white = None
+            )
+
+
+    plt.tight_layout()
     
+    return fig
+   
     
-    fig, ax = plt.subplots(dpi = 300, figsize = (12, 6))
-      
+def main():
+    
+    fig = plot_hist_bars_of_phases()
+    
+    # pl.savefig(fig, 'stormtime_and_count_phase')
+    
+    plt.show()
+main()

@@ -121,8 +121,7 @@ def plot_roti_and_indices(
         clear = None 
         ):
     
-    dusk = gg.terminator( -50,  dn, 
-        float_fmt = False
+    dusk = gg.terminator(dn
         )
     
     fig, ax = plt.subplots(
@@ -157,11 +156,13 @@ def plot_roti_and_indices(
         pl.stormtime_spanning(
             ax[3], st['start'], dusk)
     
+    double = c.check_double_sup(dn)
+    
     plot_reference_lines(
         ax, dusk, dns, 
         st['start'], st['end'], 
         storm_span = storm_span,  
-        double_sup = double_sup
+        double  = double 
         )
     
     for a in ax.flat:

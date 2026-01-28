@@ -27,7 +27,7 @@ def move_images(dummies):
     return None 
 
      
-def save_imgs(ds, path_to_save):
+def save_imgs(ds, path_to_save, name = ''):
     
     '''
     Save os plots com base na categoria de evento
@@ -35,39 +35,53 @@ def save_imgs(ds, path_to_save):
     
     plt.ioff()
 
-    for dn in tqdm(ds.index):
+    for dn in tqdm(ds.index, name):
             
         file = dn.strftime('%Y%m%d.PNG')
         
-        try:
-            fig = pl.plot_roti_and_indices(dn)
-            fig.savefig(path_to_save + file)
-        except:
-            print(dn)
-            continue
+        # try:
+        fig = pl.plot_roti_and_indices(dn)
+        fig.savefig(path_to_save + file)
+        # except:
+        #     print(dn)
+        #     continue
         
     plt.clf()   
     plt.close()
     
     return None 
     
-    
-def main():
+root = 'D:\\img\\'
+
+def save_based_on_category(root):
     df = c.category_and_low_indices()
-    path_to_save = 'D:\\img\\'
+    
     
     for cat in df['category'].unique():
 
         ds = df.loc[df['category'] == cat]
         
-        path_to_save = f'{path_to_save}{cat}\\'
+        path_to_save = f'{root}{cat}\\'
         
         b.make_dir(path_to_save)
         
         save_imgs(ds, path_to_save)
         
-main()
+# main()
 
+def save_based_phase(root):
+    df = b.load('core/src/geomag/data/stormsphase')
+    
+    
+    for phase in df['phase'].unique():
+     
+        ds = df.loc[df['phase'] == phase]
+        
+        path_to_save = f'{root}{phase}\\'
+        
+        b.make_dir(path_to_save)
+        
+        save_imgs(ds, path_to_save, name = phase)
+    
 
-
-
+save_based_phase(root)

@@ -11,7 +11,8 @@ def legend_for_sym_h(
         ax, 
         quiet = False, 
         loc = 'upper right',
-        ncol = 1, par = 'Dst'
+        ncol = 1, par = 'Dst', 
+        fontsize = 18
         ):
     
     legend_labels = {
@@ -28,7 +29,7 @@ def legend_for_sym_h(
     ax.legend(
         handles, [legend_labels[l] for l in labels],
         loc = loc,
-        fontsize = 20,
+        fontsize = fontsize,
         title_fontsize = 20, 
         ncol = ncol
     )

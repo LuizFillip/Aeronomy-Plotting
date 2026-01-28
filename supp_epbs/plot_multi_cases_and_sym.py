@@ -57,21 +57,9 @@ def set_axis(ax):
     return None
 
 
-def check_double_sup(dn):
-    delta = dt.timedelta(days = 1)
-    df = c.category_and_low_indices()
-    
-    next_day = dn + delta
-    if next_day in df.index:
-        return True
-    else:
-        return False
-            
-def category(dn):
-    df = c.category_and_low_indices()
-    return df.loc[dn]['category']
 
-  
+            
+
 
 
 def plot_single_case(
@@ -87,7 +75,7 @@ def plot_single_case(
     ds = c.high_omni(dn.year)
     ds = b.range_dates(ds, dn, before, after)
      
-    if category(dn) != 'quiet':
+    if c.category(dn) != 'quiet':
         st = c.find_storm_interval(ds['sym'], dn)
         ylim = [-250, 50] 
         step = 100
@@ -106,8 +94,8 @@ def plot_single_case(
     
     set_axis(ax)     
     
-    double = check_double_sup(dn)
-    if category(dn) != 'quiet':
+    double = c.check_double_sup(dn)
+    if c.category(dn) != 'quiet':
        
         pl.stormtime_spanning(
             ax, st['start'], st['dusk'], y = 2.5)
