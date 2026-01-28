@@ -1,11 +1,25 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Oct 11 14:24:11 2024
+import matplotlib.pyplot as plt 
+import digisonde as dg
+import os 
+import shutil 
+from tqdm import tqdm 
 
-@author: Luiz
-"""
+def  run(dates):
 
-
+    for dn in tqdm(dates):
+            
+        maint = 'D:\\ionogram\\'
+        
+        file = dn.strftime('%Y\\%Y%m%dSA\\')
+        
+        src = maint + file
+        dst = maint + 'quiet\\'
+        for fn in os.listdir(src):
+                
+            if 'RSF'in fn:
+              
+                shutil.copy(src + fn, dst + fn)
+                
 infile = 'database/ionogram/20130114S/'
 
 def run():
