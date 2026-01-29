@@ -65,13 +65,9 @@ def plot_reference_lines(
         evening_interval(
             a, dusk, double = double
             )
-       
-        
-            
+              
         for dn in dns:
             a.axvline(dn, lw = 1, linestyle = '--')
-
-        
     return None
 
 

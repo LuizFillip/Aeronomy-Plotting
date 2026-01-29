@@ -143,7 +143,7 @@ def plot_histogram_time_shift(ax, df):
     
     mu, sigma = norm.fit(arr)
     
-    bins = np.arange(0, 300, 25)
+    bins = np.arange(0, 300, 10)
     count, bins, _ = ax.hist(arr, bins=bins, **args)
     
     bin_width = bins[1] - bins[0]
@@ -151,11 +151,11 @@ def plot_histogram_time_shift(ax, df):
     x = np.linspace(bins[0], bins[-1], 300)
     y = norm.pdf(x, mu, sigma) * len(arr) * bin_width
     
-    # Plot da curva
     ax.plot(x, y, 'r-', linewidth=2)
     
     # Rótulos
     ax.set(
+        xticks = np.arange(0, 300, 50),
         xlabel = "Time from initial phase (hours)",
         ylim = [0, 30],
         ylabel = "Number of events"
@@ -190,15 +190,17 @@ def set_data():
         ['phase', 'cate']
         ).size().unstack(fill_value=0)
     
+    order = ["main", "recovery", "after"]
+    
+    ds = ds.reindex(order)
+    
     ds = ds.rename(index={
         "main": "Main",
         "recovery": "Recovery",
-        "after": "To quiet"
+        "after": "Post\nRecovery"
         })
     
-    order = ["Main", "Recovery", "To quiet"]
     
-    ds = ds.reindex(order)
     return ds 
 
     
@@ -238,7 +240,12 @@ def main():
     
     fig = plot_hist_bars_of_phases()
     
-    # pl.savefig(fig, 'stormtime_and_count_phase')
+    pl.savefig(fig, 'stormtime_and_count_phase')
     
     plt.show()
 main()
+
+
+# df = b.load('core/src/geomag/data/stormsphase')
+
+# df['div_main'].plot(kind = 'hist') 

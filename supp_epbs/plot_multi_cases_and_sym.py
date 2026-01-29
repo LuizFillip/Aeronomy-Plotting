@@ -56,12 +56,6 @@ def set_axis(ax):
     
     return None
 
-
-
-            
-
-
-
 def plot_single_case(
         ax, 
         dn, 

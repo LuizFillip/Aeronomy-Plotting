@@ -34,15 +34,18 @@ colors = {
 def setdata():
     df = c.category_and_low_indices()
     
+    df = df.replace(('weak+', 'weak-'), 'weak')
+    
     df['year'] = df.index.year
     
     ds = df.groupby(
         ['category','year']
         ).size().unstack(fill_value = 0)
     
-    ds = ds.T[['intense', 'moderate', 'weak', 'quiet']]
-    
-    return ds  
+   
+    cols = ['intense', 'moderate', 'weak', 'quiet']
+   
+    return ds.T[cols]
 
 def plot_suppression_events(ax):
     
@@ -82,6 +85,7 @@ def plot_suppression_events(ax):
         ax, 
         quiet = True, 
         ncol = 2, 
+        fontsize = 22,
         loc = 'upper center'
         )
     
@@ -188,10 +192,10 @@ def plot_f107(ax):
     return None 
 
 
-def plot_storms_categories(ax):
+def plot_storms_categories(ax, freq = '3M'):
     
-    df = c.load_storms()
-
+    df = c.load_storms(freq = freq)
+    delta = dt.timedelta(weeks = 30)    
     bottom = np.zeros(len(df))
     for i,  (label, color) in enumerate(colors.items()):
         
@@ -200,18 +204,19 @@ def plot_storms_categories(ax):
         col = df.columns[i]
         
         ax.bar(
-            df.index, df[col],
+            df.index, 
+            df[col],
             bottom = bottom,
             color = color, 
             label = label, 
-            width =  35
+            width = 30 #150
             )
         
         bottom += df[col].values
         
-    delta = dt.timedelta(days = 30)
+
     ax.set(
-        ylim = [0, 20],
+        ylim = [0, 20], #50
         ylabel = 'Storms cases',
         xlabel = 'Years'
         )
@@ -261,7 +266,7 @@ def main():
     fig = plot_longterm_occurrences()
     
     
-    pl.savefig(fig, 'long_term_counts')
+    # pl.savefig(fig, 'long_term_counts')
     
 # main()
 

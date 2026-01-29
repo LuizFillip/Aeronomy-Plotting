@@ -61,16 +61,23 @@ def main():
     FigureName = 'seasonal_bars_by_storm'
     
     
-    fig.savefig(path_to_save + FigureName, dpi = 300)
+    # fig.savefig(path_to_save + FigureName, dpi = 300)
     
 # main()
 
 infile = 'core/src/geomag/data/averages_sunset_high'
 
+# df = b.load(infile)
+
+# df['month'] = df.index.month 
+
+# ds = df.groupby(['month']).mean()#.unstack(fill_value = 0)
+
+# ds['bz'].plot()
+
+
+infile = 'core/src/geomag/data/storms'
+
 df = b.load(infile)
 
-df['month'] = df.index.month 
-
-ds = df.groupby(['month']).mean()#.unstack(fill_value = 0)
-
-ds['bz'].plot()
+df 
