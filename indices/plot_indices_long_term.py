@@ -24,14 +24,14 @@ def plot_dst(ax, dst, limit = -100 ):
     return None
 
 
-def plot_kp(ax, df):
+def plot_kp(ax, df, width = 0.1):
     
     args = dict(alpha = 0.3, )
     
     ax.bar(
         df.index, 
         df['kp'] / 10, 
-        width = 0.1, 
+        width = width, 
         **args
         )
      

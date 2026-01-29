@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import GEO as gg 
 import datetime as dt 
 import core as c 
+import pandas as pd
+import numpy as np
 
 b.sci_format(fontsize = 25)
 
@@ -24,12 +26,10 @@ def save_figs(df):
     plt.clf()   
     plt.close()
 
-def _devtime(end, start):
-    return (end - start).total_seconds() / 3600
 
-def stormtime_spanning(ax, start, end, y = -100):
+def stormtime_spanning(ax, start, end, y = 2.5):
     
-    devtime = _devtime(end, start)
+    devtime = (end - start).total_seconds() / 3600
     
     time = round(devtime, 2)
         
@@ -38,21 +38,19 @@ def stormtime_spanning(ax, start, end, y = -100):
     ax.annotate(
         '', 
         xy = (start, y), 
-        xytext = (end, y), 
+        xytext = (end, y ), 
         arrowprops = dict(arrowstyle='<->')
         )
-    time = round(time, 2)
+    time = round(time)
     
     ax.annotate(
         f'{time} hrs',
-        xy = (middle, y + 5), 
+        xy = (middle, y + y/10), 
         xycoords = 'data',
-        fontsize = 30.0,
+        fontsize = 30,
         textcoords = 'data', 
         ha = 'center'
         )
-    
-    
     
     return None   
 
@@ -88,9 +86,6 @@ def set_xaxis(ax, ds):
            fmt = '%d/%m'
            )
     
-    import pandas as pd
-    import numpy as np
-    
     dns = pd.to_datetime(np.unique(ds.index.date))
     for dn in dns:
         ax.axvline(dn, lw = 1, linestyle = '--')
@@ -107,11 +102,7 @@ def plot_storm_intervals(ds, st, dn, row):
     
     ax.plot(ds['sym'])
 
-    dusk = gg.terminator(
-        -50, 
-        dn, 
-        float_fmt = False
-        )
+    dusk = gg.terminator(dn)
     
     ax.axvline(
         dusk, 
@@ -151,7 +142,7 @@ def plot_storm_intervals(ds, st, dn, row):
         f'{vmin} nT',
         xy = (time, vmin) , 
         xycoords = 'data',
-        fontsize = 30.0,
+        fontsize = 30,
         textcoords = 'data', 
         xytext = (xe, vmin - 3), 
         arrowprops = dict(arrowstyle='->'),
@@ -177,7 +168,7 @@ def set_data(dn, backward = 2, forward = 6):
         f = forward
         )
     
-    st = c.find_storm_interval(df['sym'])
+    st = c.find_storm_interval(df['sym'], dn)
     
     return df, st
 
@@ -191,12 +182,22 @@ def main():
     dn = dt.datetime(2017,  9, 24)
     dn = dt.datetime(2018,  1, 4)
     
+    dates = [  
+     dt.datetime(2015, 3, 17),
+     dt.datetime(2016, 3, 14),
+     dt.datetime(2017, 3, 1),
+     dt.datetime(2014, 2, 9),
+     dt.datetime(2013, 9, 24)]
+    
     ds = c.category_and_low_indices()
     
-    df, st = set_data(dn, before = 8, after = 2)
+    dn = dates[1]
+    
+    df, st = set_data(dn, 4, 4)
     
     row =  ds.loc[dn].category
     
     fig = plot_storm_intervals(df, st, dn, row)
 
 
+# main()
