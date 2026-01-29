@@ -31,70 +31,6 @@ def plot_kp_hourly(ax1, ds):
     
     return None 
       
-def plot_SymH(
-        ax, ds, 
-        ylim = [-300, 50], 
-        kp = True, 
-        color = 'red',
-        step = 50
-        ):
-    
-    ax.plot(ds, lw = 2, color = color)
-   
-    ax.set(
-        xlim = [ds.index[0], ds.index[-1]], 
-        ylim = [ylim[0], ylim[-1]],
-        yticks = np.arange(ylim[0], ylim[-1] + step, step ),
-        ylabel = "SYM-H (nT)"
-        )
-       
-    for line in [0, -30, -50, -100]:
-        ax.axhline(
-            line, 
-            lw = 0.5, 
-            color = 'k', 
-            linestyle = ':'
-            )
-        
-    if kp:
-        ax1 = ax.twinx()
-        plot_kp_hourly(ax1, ds)
-    
-    return None 
-
-def plot_auroral(
-        ax, 
-        ds, 
-        vmax = 3000, 
-        step = 1000
-        ):
-    ax.plot(ds['ae'], lw = 1.5)
-    ax.set(
-        ylim = [0, vmax],
-        yticks = np.arange(0, vmax + step, step),
-        ylabel = 'AE (nT)'
-        )
-    return None
-
-
-def plot_solar_speed(ax, ds, vmax = 800, step = 200):
-    ds = ds.loc[ds['speed'] < 600]
-    ax.plot(ds['speed'], lw = 1.5)
-    ax.set(
-        ylim = [300, vmax],
-        yticks = np.arange(300, vmax + step, step),
-        ylabel = '$V_{sw}$ (km/s)'
-        )
-    return None
-
-
-def plot_electric_field(ax, ds):
-    ds = ds.loc[ds['electric'] < 100]
-    ax.plot(ds['electric'])
-    ax.set(ylabel = 'Ey (mV/m)')
-    return None 
- 
-    
 
     
 def plot_high_resolution(
@@ -118,13 +54,13 @@ def plot_high_resolution(
     
     plt.subplots_adjust(hspace = 0.05)
     
-    plot_solar_speed(ax[0], ds)
+    pl.plot_solar_speed(ax[0], ds)
     
-    plot_SymH(ax[1], ds)
+    pl.plot_SymH(ax[1], ds)
     
     pl.plot_magnetic_fields(ax[2], ds)
     
-    plot_auroral(ax[3], ds)
+    pl.plot_auroral(ax[3], ds)
     
     pl.plot_electrojet(ax[-1])
 

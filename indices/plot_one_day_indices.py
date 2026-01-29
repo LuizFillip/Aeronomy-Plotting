@@ -2,182 +2,120 @@ import matplotlib.pyplot as plt
 import base as b
 import datetime as dt
 import numpy as np
-import epbs as pb 
+import GEO as gg 
 import plotting as pl
+import core as c 
+# PATH = 'database/indices/omni_hourly.txt'
 
-b.sci_format(fontsize = 25)
-PATH = 'database/indices/omni_hourly.txt'
+# df = c.category_and_low_indices(
+#         col_kp = 'kp_max', 
+#         col_dst = 'sym_min'
+#         )
 
 
-def plot_dst(ax, ds, ylim = [-150, 50], color = 'k'):
 
-    ax.plot(ds['sym'], lw = 2, color = color)
+
+
+
+
+
+
+
+b.sci_format(fontsize = 20)
+
+
+
+
+def set_time_limits(ds):
+    dates = np.unique(ds.index.date)
+    delta = dt.timedelta(days = 2)
+    start = dates[0] + delta   
+    end = dates[-1] 
+    return start, end
     
-    ax.set(
-        xlim = [ds.index[0], ds.index[-1]], 
-        ylim = [ylim[0] - 30, ylim[-1]],
-        yticks = np.arange(ylim[0], ylim[-1] - 30, 50),
-        ylabel = "SYM-H (nT)"
+ 
+def set_axes_time(ax, start, end):
+
+    b.axes_hour_format(
+         ax[-1], 
+         hour_locator = 6, 
+         tz = "UTC"
+         )
+    
+    ax[-1].set(
+        xlabel = 'Universal time', 
+        xlim = [start, end]
         )
-    
-    ax.axhline(0, lw = 1, color = 'k', linestyle = '-')
-    
-    for limit in [-50, -150]:
-        ax.axhline(
-            limit, 
-            lw = 1, 
-            color = 'k', 
-            linestyle = '--'
-            )
-    return None 
-        
 
-def plot_magnetic_fields(
-        ax, 
-        ds, 
-        ylim = 30, 
-        by = False, 
-        ax_co = 'purple'
-        ):
-    
-    ax.plot(
-        ds['bz'], 
-        label = '$B_z$', 
-        lw = 2
-        )
-    
-    ax.set(
-        ylim = [-ylim, ylim], 
-        yticks = np.arange(-30, 40, 15),
-        ylabel = '$B_y$ (nT)' #'$Ey$ (mV/m)'
-        )
-    
-    ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
-    
-    if by:
-        ax1 = ax.twinx()
-        
-        ax1.plot(
-            ds['by'], 
-            color = ax_co, 
-            label = '$B_y$', 
-            lw = 2
-            )
-        
-        b.change_axes_color(
-                ax1, 
-                color = ax_co,
-                axis = "y", 
-                position = "right"
-                )
-         
-        
-    ax.set(
-        ylabel = '$B_z$ (nT)',
-        yticks = np.arange(-30, 40, 15),
-        ylim = [-ylim - 5, ylim + 5]
-        )
-    
-   
-    
-    return None 
-
-
-def load_indices(dn):
-    
-    import core as c
-    
-    df = pb.longterm_raw_roti(dn, days = 3)
-
-    ds = b.sel_times(df, dn, hours = 12) 
-    
-    ds =  ds.replace(9999.99, np.nan)
-    
-    return ds
-
-
-def plot_epbs(ax, dn, sector = -50):
-    
-    df = pb.concat_files(
-        dn, 
-        days = 2, 
-        root = 'E:\\', 
-        hours = 12, 
-        remove_noise = True
-        )
-    df = pb.filter_region(df, dn.year, sector)
-    
-    ax.plot(df['roti'])
-    
-    ax.set(ylim = [0, 2], ylabel = 'ROTI')
-    
-    return None 
-
-def plot_one_day_indices(dn, days = 2):
-    '''
-    plot para os indices (a escolher)
-    e ROTI - paper da estatistica de tempestade
-    '''
-    fig, ax = plt.subplots(
-        dpi = 300,
-        figsize = (14, 14), 
-        nrows = 4, 
-        sharex = True
-        )
-    
-    plt.subplots_adjust(hspace = 0.05)
-    
-  
-    ds = load_indices()
-       
-    plot_magnetic_fields(ax[0], ds)
-    pl.plot_auroral(ax[1], ds)
-    plot_dst(ax[2], ds)
-    # plot_epbs(ax[-1], dn)
-    
-    b.format_time_axes(
-        ax[-1], 
-        hour_locator = 1, 
-        translate = True
-        
-        )
-    
-    delta = dt.timedelta(hours = 2)
-    
-    for a in ax.flat:
-         
-        dusk, midnight  = pl.plot_references_lines(
-                a,
-                -50, 
-                dn, 
-                label_top = None,
-                translate = True
-                )
-        
-        a.axvspan(
-            dusk - delta,
-            dusk + delta, 
-            ymin = 0, 
-            ymax = 1,
-            alpha = 0.2, 
-            color = 'gray'
-            )
-        
-    res = ds.loc[
-        (ds.index > dusk - delta) &
-        (ds.index < dusk + delta)
-        ]
-    
-    # print(res.mean())
+    b.adding_dates_on_the_top(
+           ax[0], 
+           fmt = '%d/%m'
+           )
     
     b.plot_letters(
         ax, 
-        y = 0.8, 
-        x = 0.03, 
+        y = 0.75, 
+        x = 0.02, 
+        fontsize = 25,
         num2white = None
         )
+    
+    return None 
+
+
+def plot_range_day_indices(
+        dn, 
+        days = 3,
+        storm_span = False, 
+        double_sup = False,
+        root = 'D:\\', 
+        clear = None 
+        ):
+    
+    dusk = gg.terminator(dn
+        )
+    
+    fig, ax = plt.subplots(
+        dpi = 300,
+        figsize = (14, 12), 
+        nrows = 5, 
+        sharex = True
+        )
+
+    plt.subplots_adjust(hspace = 0.1)
+
+    ds, st = c.set_stormtime(
+        dn, before = days, after = days)
+  
+    start, end = set_time_limits(ds)
+
+    pl.plot_solar_speed(ax[0], ds)
+    pl.plot_auroral(ax[1], ds)
+    pl.plot_magnetic_fields(ax[2], ds, ylim = 30)
+    pl.plot_dst(ax[3], ds)
+    pl.plot_kp_by_range(ax[3].twinx(), dn)
+    pl.plot_electric_field(ax[-1], ds)
+     
+    if storm_span:
+        pl.stormtime_spanning(
+            ax[3], st['start'], dusk)
+    
+    
+    for a in ax.flat:
+        a.axvline(
+            st['main'],
+            lw = 2, 
+            color = 'purple')
+    
+    set_axes_time(ax, start, end)
+    
+    ax[0].set(title = dn.strftime('%B, %Y'))
+    
     fig.align_ylabels()
-    return fig 
+    
+    return fig
+
+
 
 
 
@@ -195,21 +133,7 @@ dn = dt.datetime(2015, 12, 20, 18)
 # dn = dt.datetime(2019, 5, 2, 21)
 # dn = dt.datetime(2019, 12, 6, 21)
 
-def main():
-    days = 1
 
-    fig = plot_one_day_indices(dn, days = days)
+fig = plot_range_day_indices(dn, days = 3)
     
-    FigureName = dn.strftime('Indices_%Y%m%d')
-    
-    
-    # fig.savefig(
-    #       b.LATEX(FigureName, folder = 'timeseries'),
-    #       dpi = 300
-    #       )
-    
-# main()
-
-
-
 
