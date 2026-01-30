@@ -183,13 +183,7 @@ def main():
     # dn = dt.datetime(2022, 10, 3) # moderate
     # dn = dt.datetime(2018, 3, 13) # no storm 
     dn = dt.datetime(2022, 12, 26)
-    dn = dt.datetime(2023, 12, 11)
-    '''
-    Plot de exemplificação dos parametros do meio interplanetário
-    e magnéticos para colocar na seção de metolodogia
-    
-    '''
-    
+
     dn = dt.datetime(2013, 1, 26) #Paper example
     dn = dt.datetime(2015, 3, 17)
     dn = dt.datetime(2014, 9, 24)
@@ -199,15 +193,6 @@ def main():
     dn = dt.datetime(2014, 9, 9)
     dn = dt.datetime(2017, 2, 13)
     
-    clear = dn + dt.timedelta(hours = 22)
-    plot_roti_and_indices(dn, clear)
+dn = dt.datetime(2013, 1, 26)
+fig = plot_roti_and_indices(dn)
     
-    # pl.savefig(fig, 'Indices_and_example_of_suppression')
-    
-    plt.show()
-  
-    
-
-
-# main()
-

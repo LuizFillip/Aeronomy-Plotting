@@ -166,14 +166,15 @@ def main():
         ]
     
     #quiets
-    # dates = [
-    #     # dt.datetime(2013, 9, 18), 
-    #     dt.datetime(2014, 9, 9),
-    #     dt.datetime(2016, 9, 22),
-    #     dt.datetime(2017, 1, 23),
-    #     dt.datetime(2019, 3, 13),
-    #       'quiettime'
-    #     ]
+    dates = [
+        # dt.datetime(2013, 9, 18), 
+        # dt.datetime(2016, 9, 22),
+        dt.datetime(2014, 9, 9),
+        dt.datetime(2017, 1, 23),
+        dt.datetime(2019, 3, 13),
+        dt.datetime(2021, 2, 10),
+          'quiettime'
+        ]
 
     
     fig = plot_multi_examples_of_suppression(dates[:-1])

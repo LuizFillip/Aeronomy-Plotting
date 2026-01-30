@@ -76,7 +76,7 @@ infile = 'core/src/geomag/data/averages_sunset_high'
 # ds['bz'].plot()
 
 
-infile = 'core/src/geomag/data/storms'
+# infile = 'core/src/geomag/data/storms'
 
 df = b.load(infile)
 

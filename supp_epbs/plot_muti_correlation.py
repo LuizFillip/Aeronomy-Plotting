@@ -55,21 +55,23 @@ def plot_scatter_and_fit(
         color = color, 
         marker = marker, 
         label = label, 
-        alpha = 0.7, 
-        # edgecolors= 'k',
+        markeredgecolor = 'black',
+        markeredgewidth = 1
         )
     
     fit = b.linear_fit(x, y)
     
-    corr = fit.r2_score
+    corr = np.corrcoef(x, y)[1, 0]
     
     ax.plot(
         x, fit.y_pred, 
-        lw = 2, color = color)
+        lw = 2, 
+        color = color
+        )
     
     ax.text(
         0.6, 0.9 - dy/10, 
-        f"$R^2$={corr:.2f}", 
+        f"r = {corr:.2f}", 
         transform = ax.transAxes, 
         color = color
         )
@@ -107,14 +109,14 @@ def plot_multi_correlation(df):
     df1 = get_sum(df, dist = 'year')  
 
     df2 = get_sum(df, dist = 'month')  
-  
+    
     cols = ['bz_mean', 'ae_mean', 'sym_mean']
     
     mks = ['^', 's']
     colors = ['k', "magenta"]
     xlabel = ['$B_z$ (nT)', 'AE (nT)', 'SYM-H (nT)']
     xlims = [[-30, 30], [-200, 9000], [-1e3, 100]]
-    labels = ['Seasonal', 'Solar cycle']
+    labels = ['Solar cycle', 'Seasonal']
     steps = [10, 3000, 250]
     
     for i, ds in enumerate([df1, df2]):
@@ -123,7 +125,10 @@ def plot_multi_correlation(df):
             c = cols[j]
             y = ds['occ'].values
             x = ds[c].values
+            
+           
             xerr = ds[c + '_std']
+            
             plot_scatter_and_fit(
                 ax, x, y, xerr,
                 marker = mks[i], 
@@ -149,6 +154,9 @@ def plot_multi_correlation(df):
             if j != 0:
                 ax.set_ylabel('')
                 
+                
+            ax.axvline(0, lw = 1, linestyle = ':')        
+            
     axs[1].set(xlim = [-120, 12000])
     axs[1].legend(
         loc = 'upper center',
@@ -175,9 +183,28 @@ def main():
     
     df['occ'] = 1
     
-    fig= plot_multi_correlation(df)
+    fig = plot_multi_correlation(df)
     
     pl.savefig(fig, 'correlations')
     
     
+    
 main()
+
+
+# def test_data():
+# df =  c.category_and_low_indices(
+#     col_dst = 'sym_min',
+#     col_kp = 'kp_max'
+#     )
+
+
+# df['occ'] = 1
+# df2 = get_sum(df, dist = 'month')  
+
+ 
+# df2[['sym_mean', 'occ']].corr().values[1, 0]
+     
+#     # np.sqrt(0.62)
+# # np.corrcoef(x, y)
+
