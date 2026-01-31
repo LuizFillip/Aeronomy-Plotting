@@ -266,7 +266,7 @@ def main():
     fig = plot_longterm_occurrences()
     
     
-    # pl.savefig(fig, 'long_term_counts')
+    pl.savefig(fig, 'long_term_counts')
     
 # main()
 
