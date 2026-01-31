@@ -99,7 +99,7 @@ def main():
     
     path_to_save = 'G:\\My Drive\\Papers\\Paper 2\\Geomagnetic control on EPBs\\June-2024-latex-templates\\'
     
-    FigureName = 'multionogram_sequen'
+    FigureName = 'multionogram_sequence'
     
     # fig.savefig(
     #       path_to_save + FigureName,

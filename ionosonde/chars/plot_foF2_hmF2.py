@@ -124,6 +124,7 @@ def plot_foF2_hmF2(sites):
         )
     
     return fig 
-    
-sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CGK21']
-fig = plot_foF2_hmF2(sites)
+
+def main():
+    sites = [ 'SAA0K', 'BVJ03', 'FZA0M', 'CGK21']
+    fig = plot_foF2_hmF2(sites)

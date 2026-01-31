@@ -4,6 +4,8 @@ import digisonde as dg
 import base as b 
 import numpy as np 
 
+b.sci_format(fontsize = 27)
+
 
 def plot_quiettime(ax, site, parameter, start):
 
@@ -46,7 +48,7 @@ def plot_QF(ax, df):
         ylim = [0, 60], 
         yticks = np.arange(10, 80, 20)
         )
-
+    return None 
 def plot_extra_props(ax, df):
     dates = (np.unique(df.index.date))
     
@@ -83,11 +85,14 @@ def plot_extra_props(ax, df):
  
     
     return dates
+
+
 def plot_compare_quiet_disturbed_for_chars(
         sites, 
         parameter = 'hF', 
         window = 3,
-        cols = [5, 6]
+        cols = [5, 6, 7], 
+        fontsize = 30
         ):
 
     nrows = len(sites)
@@ -148,19 +153,20 @@ def plot_compare_quiet_disturbed_for_chars(
             yticks = np.arange(200, 700, 200)
             )
         
-        dates = plot_extra_props(ax[i], df)
+        plot_extra_props(ax[i], df)
         
 
-    fontsize = 30
+    
     
     ax[0].legend(
-        loc = 'upper center', ncol = 2, 
+        loc = 'upper center', 
+        ncol = 2, 
         bbox_to_anchor = (0.5, 1.7)
-              )
+        )
     
     fig.text(
-        0.03, 0.4, 
-        'Virtual height (km)', 
+        0.03, 0.43, 
+        'Altitude (km)', 
         fontsize = fontsize + 5, 
         rotation = 'vertical'
         )
@@ -182,17 +188,16 @@ def plot_compare_quiet_disturbed_for_chars(
         
     b.adding_dates_on_the_top(
         ax[0], 
-        start = '2015-12-19', 
-        end = '2015-12-23'
         )
     
     return fig 
 
 def main():
     
-    sites = [ 'SAA0K', 'FZA0M', 'BVJ03'  ]#, 'CAJ2M', 'CGK21']
+    sites = [ 'SAA0K', 'FZA0M', 'BVJ03' , 'CAJ2M', 'CGK21']
     
-    fig = plot_compare_quiet_disturbed_for_chars(sites,  parameter = 'hmF2')
+    fig = plot_compare_quiet_disturbed_for_chars(
+        sites,  parameter = 'hmF2')
     
     path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     

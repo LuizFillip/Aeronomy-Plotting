@@ -101,7 +101,7 @@ def plot_single_ionogram(
         ax.axis('off')
     
     if title:
-        time = dg.ionosonde_fname(fname)
+        time = dg.ionosonde_fname(img_path)
 
         ax.set(title = time.strftime('%Y-%m-%d %Hh%M'))
     
@@ -113,22 +113,21 @@ def plot_single_ionogram(
 
 def main():
 
-    dn = dt.datetime(2015, 12, 20, 21)
-
-    site = 'CAJ2M'
+    dn = dt.datetime(2020, 2, 27, 22, 30)
+  
+    dn = dt.datetime(2020, 1, 12, 22, 30)
+    
     site = 'SAA0K'
-
+    dn = dt.datetime(2020, 3, 2, 22, 30)
+    fname = dg.IonoDir(site, dn, root = 'D').dn2PNG
     
-    fname = dg.path_from_site_dn(
-        dn, 
-        site, 
-        root = 'E:\\'
-        )
-    
+    fname = f'D:\\ionogram\\quiet\\{fname}'
+    # print(fname)
     
     plot_single_ionogram(fname, label = True)
     
 
 
 # main()
+
 
