@@ -54,13 +54,3 @@ def valleys_and_peaks(dn, desired_dx = 5 ):
     
     return x[valleys], y[valleys]
 
-# def test_plot():
-    
-    
-# x, y = data_over_eq(dn)
-# plt.plot(x, y, 'k')
-
-# xv, yv = valleys_and_peaks(dn)
-# plt.plot(xv, yv, 'bo', label='Vales')
-
-# # plt.legend()

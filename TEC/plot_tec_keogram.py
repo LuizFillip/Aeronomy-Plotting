@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Nov 28 18:47:31 2025
+import pandas as pd 
+import base as b 
+import matplotlib.pyplot as plt 
 
-@author: Luiz
-"""
+
 def make_keo(day, lon):
     
     times = pd.date_range(
@@ -13,6 +12,7 @@ def make_keo(day, lon):
          )
 
     out = []
+    
     for dn in times:
     
     

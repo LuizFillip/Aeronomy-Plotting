@@ -123,7 +123,8 @@ def main():
     
     translate = True
     
-    start =  dt.datetime(2015, 12, 19, 22)
+    start = dt.datetime(2015, 12, 19, 22)
+    
     fig = plot_multiple_tec_maps(
         start, 
         vmax = 60, 
