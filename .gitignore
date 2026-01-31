@@ -23,8 +23,12 @@ instrumentations/__pycache__/
 /indices/__pycache__/*
 /demo/__pycache__/*
 /TEC/__pycache__/*
-/suppression_analysis/__pycache__/*
+/supp_epbs/__pycache__/*
 /TEC/data/*
+
 /ionosonde/ionogram/__pycache__/*
+/ionosonde/heights/__pycache__/*
+/ionosonde/chars/__pycache__/*
+
 /Taka/data/*
 /bars/__pycache__/*

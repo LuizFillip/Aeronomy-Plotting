@@ -3,7 +3,7 @@ import core as c
 import matplotlib.pyplot as plt 
 import numpy as np 
 
-b.config_labels()
+b.sci_format()
 
 site = 'jic'
 df = c.concat_results(site)
@@ -33,6 +33,8 @@ def plot_hist(ax, arr, binwidth = 20):
            xlim = 
            [lmin - binwidth, lmax + binwidth]
            )
+    
+    return None 
     
 def plot_stats(ax, arr, unit = "min", fontsize = 15):
     mean = round(np.nanmean(arr), 2)

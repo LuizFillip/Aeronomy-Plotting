@@ -45,8 +45,9 @@ def plot_month(
     slope = round(fit.slope[0], 2)
     r2 = str(fit.r2_score)
     
-    ax.plot(x, fit.y_pred, 
-            lw = 2, color = 'r')
+    ax.plot(
+        x, fit.y_pred, 
+        lw = 2, color = 'r')
     
     info = '$R^2 = $' + f'{r2}'
     ax.text(

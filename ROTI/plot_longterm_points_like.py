@@ -5,7 +5,8 @@ import datetime as dt
 def plot_roti_in_range(
         ax, start, end, 
         root = 'F:\\', 
-        clear = None
+        clear = None, 
+        lim = 0.3
         ):
 
     ds = pb.longterm_raw_roti(start, end, root = root)
@@ -15,7 +16,7 @@ def plot_roti_in_range(
         ds = ds.loc[
             ~((ds.index > clear) & 
             (ds.index < clear + delta)  & 
-            (ds['roti'] >  0.5))]
+            (ds['roti'] > lim))]
         
         
     ax.scatter(

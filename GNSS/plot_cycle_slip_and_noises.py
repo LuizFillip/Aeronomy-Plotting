@@ -102,14 +102,14 @@ def plot_cycle_slip_and_noises(df):
     
     return fig 
 
-
+def main():
+        
+    fig =  plot_cycle_slip_and_noises(df)
     
-fig =  plot_cycle_slip_and_noises(df)
-
-FigureName = 'cicle_slip_demo'
-
-
-fig.savefig(
-      b.LATEX(FigureName, folder = 'timeseries'),
-      dpi = 400
-      )
+    FigureName = 'cicle_slip_demo'
+    
+    
+    fig.savefig(
+          b.LATEX(FigureName, folder = 'timeseries'),
+          dpi = 400
+          )

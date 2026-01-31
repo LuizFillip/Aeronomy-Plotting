@@ -133,8 +133,9 @@ def main():
     dn = dt.datetime(2022, 6, 13, 21)
     dn = dt.datetime(2015, 4, 13, 21)
     dn = dt.datetime(2023, 12, 11, 21)
+    dn = dt.datetime(2020, 3, 2, 21)
     
-    df = pb.get_nighttime_roti(dn)
+    df = pb.get_nighttime_roti(dn, root = 'D:\\')
     
     plot_points_and_maximus_roti(df, dn)
     

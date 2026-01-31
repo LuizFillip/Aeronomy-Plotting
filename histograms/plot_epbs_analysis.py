@@ -30,19 +30,12 @@ def figure_labels(fig, fontsize = 30):
         fontsize = fontsize
         )
 
-b.config_labels()
-
-
 args = dict(
     facecolor='lightgrey', 
     alpha=1, 
     edgecolor = 'black',  
     color = 'gray'
     )
-
-
-
-
 
 
 

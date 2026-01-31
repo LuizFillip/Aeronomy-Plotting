@@ -68,8 +68,8 @@ def plot_references_lines(
         midn_name = 'Meia-noite local'
     
     dusk = gg.terminator(
-        ref_long, 
         start, 
+        ref_long, 
         float_fmt = False
         )
     

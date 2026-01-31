@@ -88,6 +88,7 @@ def plot_winds_effects_on_gamma(site = 'FZA0M', translate = True):
         b_label = '(b) Sem ventos meridionais'
         a_label = '(a) Com ventos meridionais'
         labels = ['Periodo perturbado', 'Período calmo']
+        
     fig, ax = plt.subplots(
         figsize = (16, 10), 
         dpi = 300, 
@@ -190,7 +191,7 @@ def main():
     
     site = 'FZA0M'
     # site = 'SAA0K'
-    fig = plot_winds_effects_on_gamma(site, translate=False)
+    fig = plot_winds_effects_on_gamma(site, translate = True)
     
     
     FigureName = 'fortaleza_gamma_pt'
@@ -199,7 +200,7 @@ def main():
     path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
     
-    fig.savefig(path_to_save + FigureName, dpi = 400)
+    # fig.savefig(path_to_save + FigureName, dpi = 400)
 
 
 

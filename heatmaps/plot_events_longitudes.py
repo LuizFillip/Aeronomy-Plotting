@@ -21,9 +21,7 @@ def heat_map_for_events(
         dpi = 300
         )
     
-    b.config_labels()
-    xticks_spacing = (int(pd.Timedelta(freq) /
-                          pd.Timedelta('30s')))
+    xticks_spacing = (int(pd.Timedelta(freq) / pd.Timedelta('30s')))
     
     sns.heatmap(
         df, 
@@ -48,8 +46,7 @@ def heat_map_for_events(
     
     colorbar = ax.collections[0].colorbar 
     r = colorbar.vmax - colorbar.vmin 
-    colorbar.set_ticks([colorbar.vmin + 
-                        r * i for i in range(n)])
+    colorbar.set_ticks([colorbar.vmin +  r * i for i in range(n)])
     colorbar.set_ticklabels(list(value_to_int.keys()))   
 
     return 

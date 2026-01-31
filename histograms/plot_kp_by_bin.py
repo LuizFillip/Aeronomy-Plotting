@@ -2,15 +2,8 @@ import base as b
 import matplotlib.pyplot as plt 
 import core as c 
 import numpy as np
-b.config_labels()
-
 from scipy.stats import norm
 
-
-start = 1
-ds = c.resample_for_the_same_size(
-    c.length_by_interval(df, start)
-    )
 
 def plot_Kp_by_bin(ds):
         

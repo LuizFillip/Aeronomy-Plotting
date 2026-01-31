@@ -31,16 +31,16 @@ def plot_histogram(ax, arr, binwidth = 10):
     
     
 def plot_stats(ax, arr, unit = "m/s", fontsize = 15):
-    mean = round(arr.mean(), 2)
-    std = round(arr.std(), 2)
-    vmax = round(arr.max(), 2)
-    vmin = round(arr.min(), 2)
+    mean = arr.mean()
+    std = arr.std()
+    vmax = arr.max()
+    vmin = arr.min()
     
     
-    info_mean = f"$\mu = {mean}$ {unit}\n"
-    info_std = f"$\sigma = {std}$ {unit}\n"
-    info_max = f"max = {vmax} {unit}\n"
-    info_min = f"min = {vmin} {unit}"
+    info_mean = f"$\mu$ = {mean:.2f} {unit}" 
+    info_std = f"$\mu$ = {std:.2f} {unit}" 
+    info_max = f"$\mu$ = {vmax:.2f} {unit}" 
+    info_min = f"$\mu$ = {vmin:.2f} {unit}" 
     
     
     ax.text(0.05, 0.6, (info_mean + 
