@@ -193,6 +193,6 @@ def main():
     dn = dt.datetime(2014, 9, 9)
     dn = dt.datetime(2017, 2, 13)
     
-dn = dt.datetime(2013, 1, 26)
-fig = plot_roti_and_indices(dn)
-    
+    dn = dt.datetime(2013, 1, 26)
+    fig = plot_roti_and_indices(dn)
+        
