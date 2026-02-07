@@ -127,7 +127,7 @@ def plot_seasonal_winds(
 
         df_stats = stats.resample(resample_rule).mean()
         
-        label = season.name.capitalize()
+        label = season.name.capitalize() + ' Eq.'
 
         ax.errorbar(
             df_stats.index,
@@ -162,7 +162,7 @@ def plot_seasonal_winds(
     ax.legend()
     
     ax.axhline(0, linestyle=":", linewidth=1)
-    b.axes_hour_format(ax, hour_locator=2)
+    b.axes_hour_format(ax, hour_locator=1)
     
     return None 
 
@@ -199,5 +199,5 @@ def plot_FPI_seasonal_winds(
     return fig
 
 
-fig = plot_FPI_seasonal_winds(direction="meridional")
+fig = plot_FPI_seasonal_winds(direction = "zonal")
     # fig.savefig("seasonal_analysis.png", bbox_inches="tight")
