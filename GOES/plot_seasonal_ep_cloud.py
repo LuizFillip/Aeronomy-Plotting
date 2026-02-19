@@ -2,8 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import base as b 
 from scipy.ndimage import gaussian_filter
-# import core as c
-
+ 
 def limits(df, 
            x0 = -80, x1 = -40, 
            y0 = -10, y1 = 0):

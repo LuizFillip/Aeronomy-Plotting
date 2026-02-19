@@ -4,10 +4,7 @@ import cartopy.crs as ccrs
 import base as b 
 import datetime as dt 
 
-b.config_labels(fontsize = 30)
-
-
-# files = os.listdir(infile)
+ 
 
 def dn2fn(dn):
     
