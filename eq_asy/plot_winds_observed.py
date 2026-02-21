@@ -26,7 +26,7 @@ SEASONS: tuple[SeasonSpec, ...] = (
     SeasonSpec("march", (3, 4)),
     # SeasonSpec("june", (6, 7)),  # uncomment if needed
     SeasonSpec("september", (9, 10)),
-    # SeasonSpec("december", (12, 1)),  # DJF proxy: Dec–Jan (matches your original intent better)
+    # SeasonSpec("december", (12, 1)),  # DJF proxy: Dec–Jan 
 )
 
 LOS_MAP: dict[str, tuple[str, str]] = {
