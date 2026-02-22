@@ -3,11 +3,9 @@ from __future__ import annotations
 import datetime as dt
 from dataclasses import dataclass
 from typing import  Literal, Optional
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
 import base as b
 import core as c
 
@@ -103,7 +101,7 @@ def _set_axis_limits(ax: plt.Axes, direction: str):
     if direction == "meridional":
         ax.set(ylim=(-50, 100), yticks=[-50, 0, 50, 100])
     else:
-        ax.set(ylim=(-10, 150), yticks=[0, 50, 100, 150])
+        ax.set(ylim=(-10, 200), yticks=[0, 50, 100, 200])
 
 
 def plot_seasonal_winds(
@@ -111,19 +109,20 @@ def plot_seasonal_winds(
     df: pd.DataFrame,
     direction: Literal["zonal", "meridional"] = "zonal",
     plot_los: bool = False,
-    resample_rule: str = "1H",
+    resample_rule: str = "30min",
 ):
     """
     Plot seasonal composites on a column of a (n_seasons x n_cols) axes array.
     """
     marker = ['s', 'd']
-   
+    cr = ['k', 'purple']
     for i, season in enumerate(SEASONS):
         
         df_season = sel_season(df, season)
-        ds_season = c.SeasonsSplit(df, season.name) 
+        # ds_season = c.SeasonsSplit(df, season.name) 
 
-        stats = mean_compose(df_season, direction=direction, group_key="doy")
+        stats = mean_compose(
+            df_season, direction=direction, group_key="doy")
 
         df_stats = stats.resample(resample_rule).mean()
         
@@ -134,11 +133,12 @@ def plot_seasonal_winds(
             df_stats["mean"].values,
             yerr=df_stats["std"].values,
             capsize=4,
-            lw=1.5,
+            lw=3,
             marker=marker[i],
-            markersize = 14,
+            markersize = 20,
             fillstyle='none',
             label= label,
+            color = cr[i]
         )
 
         if plot_los:
@@ -163,14 +163,26 @@ def plot_seasonal_winds(
     
     ax.axhline(0, linestyle=":", linewidth=1)
     b.axes_hour_format(ax, hour_locator=1)
+     
+    ref_day = df_stats.index[0]
     
+    ax.axvspan(
+         ref_day, 
+         ref_day + dt.timedelta(hours = 3), 
+         ymin = 0, 
+         ymax = 1,
+         alpha = 0.2, 
+         color = 'purple'
+         )
+ 
+
     return None 
 
 
 b.sci_format()
 def plot_FPI_seasonal_winds(
     direction: Literal["zonal", "meridional"] = "zonal"
-) -> plt.Figure:
+    ) -> plt.Figure:
 
 
     fig, ax = plt.subplots(
@@ -191,13 +203,20 @@ def plot_FPI_seasonal_winds(
     
     ylabel = direction.capitalize()
     ax.set(
+        yticks = np.arange(0, 150, 50),
         title= "São João do Cariri", 
         xlabel = 'Universal time', 
         ylabel = f'{ylabel} velocity (m/s)'
         )
+    
     
     return fig
 
 
 fig = plot_FPI_seasonal_winds(direction = "zonal")
     # fig.savefig("seasonal_analysis.png", bbox_inches="tight")
+
+path_to_save = 'G:\\Meu Drive\\Papers\\EquinoxAsymetry\\'
+ 
+figname = 'zonal_winds'
+fig.savefig(path_to_save + figname, dpi = 400)

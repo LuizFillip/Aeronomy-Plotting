@@ -20,11 +20,6 @@ def join_data_pipe():
     
     return df
     
-
-
-
-
-
  
 def plot_f107(ax):
     PATH_INDEX =  'database/indices/omni_pro2.txt'
@@ -149,12 +144,12 @@ def plot_equinox_asymetry(ax, ds):
            )
     
     
-    return fig, ax
+    return  
 
     
 def data(start, end, percent = True):
     # df = join_data_pipe()
-    df = b.load('database/epbs/epbs_2013_2023')
+    df = b.load('database/epbs/epbs_2010_2023')
    
     df = c.add_geo(df, start, end)
     
@@ -163,39 +158,45 @@ def data(start, end, percent = True):
     ds = c.pivot_epb_by_type(df, total = False, sel_lon = -50)
     
     return c.count_epbs_by_season(ds, start, end, percent = percent)
+
+def plot_roti_and_bars():
+    start, end = 2015, 2023
+     
+    ds = data(start, end)
     
-start, end = 2015, 2023
- 
-ds = data(start, end)
-
-fig = plt.figure(
-    figsize = (12, 8),
-    dpi = 300
-    )
-gs = gridspec.GridSpec(2, 1, height_ratios=[1, 1])
-plt.subplots_adjust(hspace = 0.03)
-
-ax1 = fig.add_subplot(gs[0])
-ax2 = fig.add_subplot(gs[1])
- 
-ax1.tick_params(labelbottom=False)
-
-plot_equinox_asymetry(ax1, ds)
-plot_contour_roti(ax2, start, end)
-
-# ax2.set(xticks = np.arange(start, end + 1, 1))
-
-fig.align_ylabels()
-
-axs = [ax1, ax2]
-
-b.plot_letters(
-        axs, 
-        x = 0.02, 
-        y = 0.8, 
-        offset = 0, 
-        fontsize = 30,
-        num2white = 1
+    fig = plt.figure(
+        figsize = (12, 8),
+        dpi = 300
         )
+    gs = gridspec.GridSpec(2, 1, height_ratios=[1, 1])
+    plt.subplots_adjust(hspace = 0.03)
+    
+    ax1 = fig.add_subplot(gs[0])
+    ax2 = fig.add_subplot(gs[1])
+     
+    ax1.tick_params(labelbottom=False)
+    
+    plot_equinox_asymetry(ax1, ds)
+    plot_contour_roti(ax2, start, end)
+     
+    fig.align_ylabels()
+    
+    axs = [ax1, ax2]
+    
+    b.plot_letters(
+            axs, 
+            x = 0.02, 
+            y = 0.8, 
+            offset = 0, 
+            fontsize = 30,
+            num2white = 1
+            )
+    
+    plt.show()
+    
+    path_to_save = 'G:\\Meu Drive\\Papers\\EquinoxAsymetry\\'
+     
+    figname = 'roti_and_bars'
+    # fig.savefig(path_to_save + figname, dpi = 400)
 
-plt.show()
+plot_roti_and_bars()

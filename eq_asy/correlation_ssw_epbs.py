@@ -33,28 +33,9 @@ def plot_correlation(df):
     ax.legend()
 
 
-
-def join_data(data_1, data_2, col):
-    names = [col, 'epb']
-    
-    df_new =  pd.DataFrame()
-    for i, da in enumerate([data_1, data_2]):
-    
-        df_new[names[i]] = (
-            da['september'] - da['march']) /  da['march']
-        
-        
-    
-    plot_correlation(df_new) 
-    
-    return df_new
-
-
-start, end = 2015, 2023
-
 def data_1(start, end):
     # ds = b.load('database/epbs/north/north_epbs')
-    df = b.load('database/epbs/epbs_2013_2023')
+    df = b.load('database/epbs/epbs_2010_2023')
     
  
     df = c.add_geo(df, start, end)
@@ -64,8 +45,7 @@ def data_1(start, end):
     
     ds = c.count_epbs_by_season(ds, start, end, percent = False)
             
-    ds['dev_pb'] = (ds['september'] - 
-                    ds['march']) /  ds['march']
+    ds['dev_pb'] = (ds['september'] -  ds['march']) /  ds['march']
       
     return ds 
 
@@ -80,13 +60,17 @@ def data_2(start, end, col = 'T_60_90_S'):
     
     return ds
 
+
+start, end = 2010, 2023
+
+num = 0
 df = pd.concat(
-    [data_1(start, end).iloc[:, -1], 
-      data_2(start, end).iloc[:, -1]], axis = 1) #.dropna()
+    [data_1(start, end).iloc[:, num], 
+    data_2(start, end).iloc[:, num]], axis = 1) #.dropna()
 
 plot_correlation(df)
 
-# df 
+# data_2(start, end)
 
 
-# data_1()
+df 
