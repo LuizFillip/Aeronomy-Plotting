@@ -36,8 +36,8 @@ def plot_correlation(df):
 def data_1(start, end):
     # ds = b.load('database/epbs/north/north_epbs')
     df = b.load('database/epbs/epbs_2010_2023')
+    df = b.load('database/epbs/cg_2009_2023')
     
- 
     df = c.add_geo(df, start, end)
 
     df = df.loc[df['kp'] <= 3]
@@ -45,32 +45,42 @@ def data_1(start, end):
     
     ds = c.count_epbs_by_season(ds, start, end, percent = False)
             
-    ds['dev_pb'] = (ds['september'] -  ds['march']) /  ds['march']
+    ds['dev_pb'] = (ds['september'] -  ds['march']) #/  ds['march']
       
     return ds 
 
 
 def data_2(start, end, col = 'T_60_90_S'):
     df = load_merra()
+    # print(df.head(), df.columns)
     
     ds = c.average_equinox(df[col], start, end) 
     
-    ds['dev_' + col[0]] = (
-        ds['september'] -  ds['march']) /  ds['march']
+    ds['dev_' + col[0]] = (ds['september'] -  ds['march']).abs()# /  ds['march']
     
     return ds
 
+def data_3(start, end, col = 'T_60_90_S'):
+    df = load_merra()
+    # print(df.head(), df.columns)
+    
+    ds = c.average_equinox(df[col], start, end) 
+    
+    ds['dev_' + col[0]] = (ds['september'] -  ds['march']).abs()# /  ds['march']
+    
+    return ds
 
-start, end = 2010, 2023
-
-num = 0
+start, end = 2009, 2023
+col = 'T_60_90_N'
+num = 2
 df = pd.concat(
-    [data_1(start, end).iloc[:, num], 
-    data_2(start, end).iloc[:, num]], axis = 1) #.dropna()
+    [
+     data_1(start, end).iloc[:, num], 
+     data_2(start, end, col).iloc[:, num]
+     ], axis = 1) #.dropna()
 
 plot_correlation(df)
 
 # data_2(start, end)
 
 
-df 
