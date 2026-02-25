@@ -1,7 +1,6 @@
 from merra import load_merra 
 import pandas as pd 
 import numpy as np
-import datetime as dt 
 import base as b 
 import core as c 
 import matplotlib.pyplot as plt 
@@ -9,78 +8,120 @@ import matplotlib.pyplot as plt
 
 
 
-def plot_correlation(df):
-    fig, ax = plt.subplots(
-         dpi = 300
-         )
+def plot_scatter_fit(
+        ax, df, 
+        color = 'red', 
+        marker = 's', 
+        label  = ''
+        ):
  
     x = df.iloc[:, 0].values
     y = df.iloc[:, 1].values
     
-    ax.scatter(x, y, s = 30)
-    
     fit = b.linear_fit(x, y)
     
     corr = np.corrcoef(x, y)[1, 0]
-    
+    label = label.capitalize()
+    ax.plot(
+        x, y, 
+        markersize = 10, 
+        linestyle = 'none',
+        color = color, 
+        marker = marker, 
+        label = f'{label}', 
+        markeredgecolor = 'black',
+        markeredgewidth = 2
+        )
+     
     ax.plot(
         x, fit.y_pred, 
         lw = 2, 
-        color = 'red', 
-        label = round(corr, 2)
+        color = color
         )
     
-    ax.legend()
-
+    ax.set(ylim = [-1, 25])
+    ax.text(
+        0.65, 0.85, 
+        f"r = {corr:.2f}", 
+        transform = ax.transAxes, 
+        color ='k', 
+        fontsize = 25 
+        )
+    return ax
+ 
 
 def data_1(start, end):
-    # ds = b.load('database/epbs/north/north_epbs')
-    df = b.load('database/epbs/epbs_2010_2023')
-    df = b.load('database/epbs/cg_2009_2023')
-    
-    df = c.add_geo(df, start, end)
+ 
+    ds = c.data_epbs(start, end, percent = False)
 
-    df = df.loc[df['kp'] <= 3]
-    ds = c.pivot_epb_by_type(df, total = False, sel_lon = -50)
-    
-    ds = c.count_epbs_by_season(ds, start, end, percent = False)
-            
-    ds['dev_pb'] = (ds['september'] -  ds['march']) #/  ds['march']
+    ds['dev'] = (ds['september'] -  ds['march'])  
       
     return ds 
 
 
 def data_2(start, end, col = 'T_60_90_S'):
     df = load_merra()
-    # print(df.head(), df.columns)
-    
+
     ds = c.average_equinox(df[col], start, end) 
     
-    ds['dev_' + col[0]] = (ds['september'] -  ds['march']).abs()# /  ds['march']
-    
+    ds['dev'] = (ds['september'] -  ds['march'])  
     return ds
 
-def data_3(start, end, col = 'T_60_90_S'):
-    df = load_merra()
-    # print(df.head(), df.columns)
+def join(tcol, season):
+    start, end = 2009, 2024
+    y = data_2(start, end, tcol)
+    x = data_1(start, end)
     
-    ds = c.average_equinox(df[col], start, end) 
+    return pd.concat([y[season], x[season]], axis = 1)  
+
+
+
+
+ 
+def plot_correlation_both_hemispheres():
+    fig, ax = plt.subplots(
+            dpi = 300, 
+            ncols = 2, 
+            sharey = True,
+            figsize = (10, 5)
+            )
     
-    ds['dev_' + col[0]] = (ds['september'] -  ds['march']).abs()# /  ds['march']
+    plt.subplots_adjust(wspace = 0.05)
     
-    return ds
+    colors = ['purple', 'purple']
+    hemis = ['T_60_90_N', 'T_60_90_S']
+     
+    for i, hem in enumerate(hemis):
+   
+        df = join(hem, 'dev')
+        plot_scatter_fit(
+            ax[i], df,  
+            color = colors[i], 
+            label = ''
+            )
+            
+    ax[0].set(
+        title = 'Northern Hemisphere', 
+        xlabel = '$\delta T$ (60°-90°)', 
+        ylabel = '$\delta_{EPBs} $'
+        )
+    ax[1].set(
+        title = 'Southern Hemisphere', 
+        xlabel = '$\delta T$ (60°-90°)'
+        )
+    
+    b.plot_letters(
+            ax, 
+            x = 0.04, 
+            y = 0.85, 
+            offset = 0, 
+            fontsize = 30,
+            num2white = None
+            )
+    
+    return fig 
+    
 
-start, end = 2009, 2023
-col = 'T_60_90_N'
-num = 2
-df = pd.concat(
-    [
-     data_1(start, end).iloc[:, num], 
-     data_2(start, end, col).iloc[:, num]
-     ], axis = 1) #.dropna()
+fig = plot_correlation_both_hemispheres()
 
-plot_correlation(df)
-
-# data_2(start, end)
-
-
+ 
