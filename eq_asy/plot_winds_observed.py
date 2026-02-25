@@ -101,7 +101,7 @@ def _set_axis_limits(ax: plt.Axes, direction: str):
     if direction == "meridional":
         ax.set(ylim=(-50, 100), yticks=[-50, 0, 50, 100])
     else:
-        ax.set(ylim=(-10, 200), yticks=[0, 50, 100, 200])
+        ax.set(ylim=(-10, 200), yticks= np.arange(0, 150, 25))
 
 
 def plot_seasonal_winds(
@@ -109,7 +109,7 @@ def plot_seasonal_winds(
     df: pd.DataFrame,
     direction: Literal["zonal", "meridional"] = "zonal",
     plot_los: bool = False,
-    resample_rule: str = "30min",
+    resample_rule: str = "1H",
 ):
     """
     Plot seasonal composites on a column of a (n_seasons x n_cols) axes array.
@@ -119,8 +119,7 @@ def plot_seasonal_winds(
     for i, season in enumerate(SEASONS):
         
         df_season = sel_season(df, season)
-        # ds_season = c.SeasonsSplit(df, season.name) 
-
+     
         stats = mean_compose(
             df_season, direction=direction, group_key="doy")
 
@@ -140,6 +139,8 @@ def plot_seasonal_winds(
             label= label,
             color = cr[i]
         )
+        
+        ax.set( yticks= np.arange(0, 150, 25))
 
         if plot_los:
             for v in LOS_MAP[direction]:
@@ -203,7 +204,7 @@ def plot_FPI_seasonal_winds(
     
     ylabel = direction.capitalize()
     ax.set(
-        yticks = np.arange(0, 150, 50),
+        yticks = np.arange(0, 150, 25),
         title= "São João do Cariri", 
         xlabel = 'Universal time', 
         ylabel = f'{ylabel} velocity (m/s)'
@@ -212,11 +213,10 @@ def plot_FPI_seasonal_winds(
     
     return fig
 
-
-fig = plot_FPI_seasonal_winds(direction = "zonal")
-    # fig.savefig("seasonal_analysis.png", bbox_inches="tight")
-
-path_to_save = 'G:\\Meu Drive\\Papers\\EquinoxAsymetry\\'
+def main():
+    fig = plot_FPI_seasonal_winds(direction = "zonal")
  
-figname = 'zonal_winds'
-fig.savefig(path_to_save + figname, dpi = 400)
+    path_to_save = 'G:\\Meu Drive\\Papers\\EquinoxAsymetry\\'
+     
+    figname = 'zonal_winds'
+    fig.savefig(path_to_save + figname, dpi = 400)
