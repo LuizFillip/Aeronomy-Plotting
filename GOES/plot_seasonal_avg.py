@@ -11,19 +11,24 @@ b.sci_format()
 def occurrence_percent_grid(nl_season, lon_bins, lat_bins, n_total):
     
     df = nl_season.copy()
-
-    # centro do núcleo
+ 
     df["lon"] = (df["lon_min"] + df["lon_max"]) / 2
     df["lat"] = (df["lat_min"] + df["lat_max"]) / 2
 
     df["lon_bin"] = pd.cut(
         df["lon"], lon_bins,
-        labels=lon_bins[:-1], include_lowest=True)
+        labels=lon_bins[:-1], 
+        include_lowest=True
+        )
+    
     df["lat_bin"] = pd.cut(
         df["lat"], lat_bins,
-        labels=lat_bins[:-1], include_lowest=True)
+        labels=lat_bins[:-1], 
+        include_lowest=True
+        )
 
-    df = df.groupby(["lon_bin", "lat_bin"]).size().to_frame('count').reset_index()
+    df = df.groupby(["lon_bin", "lat_bin"]).size(
+        ).to_frame('count').reset_index()
           
 
     df['count']  = (df['count']  / df['count'].max()) * 100
@@ -34,39 +39,6 @@ def occurrence_percent_grid(nl_season, lon_bins, lat_bins, n_total):
          index = 'lat_bin', 
          values = 'count'
          ).interpolate()
-
-def occurrence_percent_grid_bbox(nl_season, lon_bins, lat_bins):
-    grid = np.zeros((len(lat_bins)-1, len(lon_bins)-1), dtype=float)
-  
-    
-    n_total = nl_season.index.unique().size
-
-    # acumula por frame (para não contar 2x mesma célula no mesmo timestamp)
-    for t, g in nl_season.groupby(level=0):
-        marked = set()
-
-        for _, r in g.iterrows():
-            x0, x1 = sorted([r.lon_min, r.lon_max])
-            y0, y1 = sorted([r.lat_min, r.lat_max])
-
-            # bins cobertos (interseção)
-            j0 = np.searchsorted(lon_bins, x0, side="right") - 1
-            j1 = np.searchsorted(lon_bins, x1, side="left")
-            i0 = np.searchsorted(lat_bins, y0, side="right") - 1
-            i1 = np.searchsorted(lat_bins, y1, side="left")
-
-            j0 = max(j0, 0); i0 = max(i0, 0)
-            j1 = min(j1, len(lon_bins)-1); i1 = min(i1, len(lat_bins)-1)
-
-            for i in range(i0, i1):
-                for j in range(j0, j1):
-                    marked.add((i, j))
-
-        for (i, j) in marked:
-            grid[i, j] += 1  # conta 1 por frame
-
-    grid = 100.0 * grid / n_total
-    return pd.DataFrame(grid, index=lat_bins[:-1], columns=lon_bins[:-1])
 
 
 
@@ -87,14 +59,23 @@ def plot_map_occ(ax, grid):
     
   
     
-    img = ax.pcolormesh(
+    # img = ax.pcolormesh(
+    #     grid.columns,
+    #     grid.index,
+    #     grid.values,
+    #     vmin = 0, 
+    #     vmax = 100,
+    #     cmap="jet", 
+    # )
+    
+    img = ax.contourf(
         grid.columns,
         grid.index,
         grid.values,
-        vmin = 0, 
-        vmax = 100,
+        levels = 50,
         cmap="jet", 
     )
+    
     return img
 
 
@@ -106,7 +87,7 @@ seasons = {
     "September": [9, 10, 11],
 }
 
-def plot_seasonal_occurrence_from_nl(nl, step=2.0,  ):
+def plot_seasonal_occurrence_from_nl(nl, step=2.0):
     
     fig, ax = plt.subplots(
         dpi=300, 
