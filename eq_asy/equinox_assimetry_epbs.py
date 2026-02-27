@@ -181,7 +181,7 @@ def plot_roti_and_bars(
     path_to_save = 'G:\\Meu Drive\\Papers\\EquinoxAsymetry\\'
      
     figname = 'roti_and_bars'
-    fig.savefig(path_to_save + figname, dpi = 400)
+    # fig.savefig(path_to_save + figname, dpi = 400)
 
 fig = plot_roti_and_bars(start = 2009, end = 2024)
 

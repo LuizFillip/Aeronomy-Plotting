@@ -4,7 +4,7 @@ import numpy as np
 import base as b 
 import core as c 
 import matplotlib.pyplot as plt 
-
+import matplotlib as mpl
 
 def plot_temperature(ax, col = 'T_60_90_S'): 
     df = load_merra()
@@ -17,9 +17,7 @@ def plot_temperature(ax, col = 'T_60_90_S'):
         out.append(ds.to_frame(year))
         
     df = pd.concat(out, axis = 1)  
-    
-    
-    import matplotlib as mpl
+
      
     cols = df.columns.astype(float)
     years = np.array([int(c) for c in cols])
@@ -45,7 +43,6 @@ def plot_temperature(ax, col = 'T_60_90_S'):
     
     return mpl.cm.ScalarMappable(norm=norm, cmap=cmap)
      
- #
 
 
 def plot_scatter_fit(
@@ -79,41 +76,66 @@ def plot_scatter_fit(
         color = color
         )
     
-    ax.set(ylim = [-1, 25], 
+    ax.set(#ylim = [-1, 25], 
            xlabel = '$\delta T$ (K)')
     ax.text(
-        0.75, 0.85, 
+        0.73, 0.85, 
         f"r = {corr:.2f}", 
         transform = ax.transAxes, 
         color ='k', 
         fontsize = 30
         )
+    
+    for year, x, y in zip(df.index, x, y):
+        ax.text(x, y + 1, str(year), fontsize=20)
+
+     
     return ax
  
 
 def data_1(start, end, percent = False):
  
-    ds = c.data_epbs(start, end, percent = percent)
+    ds = c.data_epbs(
+        start, end, 
+        percent = percent, 
+        off_time = 0.6, 
+        off_shift = 4
+        )
+    
+    ds = c.count_epbs_by_season(
+        ds, start, end, percent = percent)
 
     ds['dev'] = (ds['september'] -  ds['march'])  
+    
+    # ds = ds.loc[(ds.index < 2023) | (ds.index < 2010)]
+    
+    # print(ds)
       
     return ds 
 
 
 def data_2(start, end, col = 'T_60_90_S'):
     df = load_merra()
-
-    ds = c.average_equinox(df[col], start, end) 
     
-    ds['dev'] = (ds['september'] -  ds['march'])  
-    return ds
+    clim = df.groupby(df.index.dayofyear)[col].mean()
+     
+    df["clim"] = df.index.dayofyear.map(clim)
+ 
+    df['dev'] = (df[col] - df['clim']) 
 
-def join(tcol, season, percent = False):
+    df = df.loc[df.index.month.isin([3, 4, 9, 10])]
+  
+    df = df.groupby(df.index.year).max()
+    
+    df = df.loc[df.index <= 2021]
+    return df
+
+def join(temp_col, season, percent = False):
     start, end = 2009, 2024
-    y = data_2(start, end, tcol)
+    y = data_2(start, end, temp_col)
     x = data_1(start, end, percent)
     
-    return pd.concat([y[season], x[season]], axis = 1)  
+    return pd.concat([y[season], x[season]], axis = 1).dropna()
 
 
 
@@ -134,7 +156,7 @@ def plot_correlation_both_hemispheres():
     hemis = ['T_60_90_N', 'T_60_90_S']
     titles = ['Northern Hemisphere (60°-90°, 10hPa)', 
               'Southern Hemisphere (60°-90°, 10hPa)']
-    limits = [[-15, 8], [0, 22]]
+    # limits = [[-15, 8], [0, 22]]
     for i, hem in enumerate(hemis):
    
         df = join(hem, 'dev')
@@ -146,7 +168,7 @@ def plot_correlation_both_hemispheres():
         
         sm = plot_temperature(ax[0, i], col = hem)
         ax[0, i].set(title = titles[i])
-        ax[1, i].set(xlim = limits[i])
+        ax[1, i].set(xlim = [0, 30], ylim = [0, 30])
         
         
     ax[0, 0].set(ylabel = 'Temperature (K)')
@@ -189,9 +211,26 @@ def main():
     path_to_save = 'G:\\Meu Drive\\Papers\\EquinoxAsymetry\\'
      
     figname = 'correlations_epbs_temperature'
-    fig.savefig(path_to_save + figname, dpi = 400)
+    # fig.savefig(path_to_save + figname, dpi = 400)
     
     
-# df = join('T_60_90_N', 'dev', True)
-# df.columns = ['temp', 'epb']
-# df.sort_values(by = 'epb')
+ 
+
+main()
+
+# col = 'T_60_90_S'
+
+# ds = load_merra()
+
+# clim = ds.groupby(ds.index.dayofyear)[col].mean()
+ 
+# ds["clim"] = ds.index.dayofyear.map(clim)
+
+ 
+# df = ds[[col, 'clim']].copy()
+
+# df['dev'] = (df[col] - df['clim']) 
+
+# # ds = c.average_equinox(df['dev'], 2009,2024)
+
+ 

@@ -169,7 +169,7 @@ def plot_seasonal_winds(
     
     ax.axvspan(
          ref_day, 
-         ref_day + dt.timedelta(hours = 3), 
+         ref_day + dt.timedelta(hours = 2), 
          ymin = 0, 
          ymax = 1,
          alpha = 0.2, 
@@ -220,3 +220,5 @@ def main():
      
     figname = 'zonal_winds'
     fig.savefig(path_to_save + figname, dpi = 400)
+    
+# main()
