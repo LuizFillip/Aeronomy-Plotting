@@ -1,11 +1,10 @@
 import base as b
-
 import core as c 
 import matplotlib.pyplot as plt 
 import numpy as np 
 import matplotlib.gridspec as gridspec
 
-
+b.sci_format(fontsize = 25)
 
 
 def plot_f107(ax, color = 'magenta'):
@@ -41,7 +40,7 @@ def plot_f107(ax, color = 'magenta'):
 
 def plot_contour_roti(ax, start, end, vmax = 3):
  
-    df = c.load_averages(start, end)
+    df = c.load_averages()
  
     img = ax.pcolormesh(
         df.columns, 
@@ -49,7 +48,7 @@ def plot_contour_roti(ax, start, end, vmax = 3):
         df.values ,
         vmin = 0, 
         vmax = vmax, 
-        cmap = 'inferno'
+        cmap = 'magma'
         )
     
     ax.set(
@@ -89,10 +88,13 @@ def plot_equinox_asymetry(
         start, end, 
         percent = True, 
         bar_width = 0.2,
-        ylim = [0, 60]
+        ylim = [0, 100]
         ):
     
-    ds = c.data_epbs(start, end, percent = percent)
+    df = c.data_epbs(percent = percent)
+    
+    ds = c.count_epbs_by_season(
+        df, start, end, percent = percent)
     
     lbs = {'march': "black", 'september':  "purple"}
     
@@ -125,7 +127,7 @@ def plot_equinox_asymetry(
         xlim = [start, end + 1],
         xticks = xticks,
         ylim = ylim,
-        yticks = np.arange(0, ylim[-1] + 10, 10),
+        yticks = np.arange(0, ylim[-1] + 10, 20),
         ylabel = 'Occurrence rate (\%)', 
         xlabel = 'Years'
            )
@@ -145,11 +147,11 @@ def plot_equinox_asymetry(
 def plot_roti_and_bars(
         start = 2010, 
         end = 2023, 
-        percent = False
+        percent = True
         ):
     
     fig = plt.figure(
-        figsize = (12, 8),
+        figsize = (14, 10),
         dpi = 300
         )
     gs = gridspec.GridSpec(2, 1, height_ratios=[1, 1])
@@ -183,5 +185,5 @@ def plot_roti_and_bars(
     figname = 'roti_and_bars'
     # fig.savefig(path_to_save + figname, dpi = 400)
 
-fig = plot_roti_and_bars(start = 2009, end = 2024)
+fig = plot_roti_and_bars(start = 2011, end = 2021)
 

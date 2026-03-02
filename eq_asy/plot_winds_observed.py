@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import base as b
 import core as c
 
+b.sci_format()
 
 Direction = Literal["zonal", "meridional", "east", "west", "north", "south"]
 Season = Literal["march", "june", "september", "december"]
@@ -39,19 +40,22 @@ def set_data(file: str) -> pd.DataFrame:
     Assumes the index is datetime-like.
     """
     df = b.load(f"database/FabryPerot/{file}").copy()
-
+ 
     # Ensure datetime index
     if not isinstance(df.index, pd.DatetimeIndex):
         df.index = pd.to_datetime(df.index)
 
-    # Derived components
-    df["zonal"] = df[["west", "east"]].mean(axis=1)
-    df["meridional"] = df[["north", "south"]].mean(axis=1)
+    try:
+        df["zonal"] = df[["west", "east"]].mean(axis=1)
+        df["meridional"] = df[["north", "south"]].mean(axis=1)
+    except:
+        df = df.rename(
+            columns = {'vnu_merid': 'meridional', 'vnu_zonal': 'zonal'})
+
 
     # Features used by the compositor
     df["time"] = df.index.to_series().apply(b.dn2float)  # your existing time conversion
-    df["doy"] = df.index.dayofyear  # robust grouping key for compositing
-
+    df["doy"] = df.index.dayofyear   
     return df
 
 
@@ -112,7 +116,8 @@ def plot_seasonal_winds(
     resample_rule: str = "1H",
 ):
     """
-    Plot seasonal composites on a column of a (n_seasons x n_cols) axes array.
+    Plot seasonal composites on a column of a 
+    (n_seasons x n_cols) axes array.
     """
     marker = ['s', 'd']
     cr = ['k', 'purple']
@@ -121,7 +126,10 @@ def plot_seasonal_winds(
         df_season = sel_season(df, season)
      
         stats = mean_compose(
-            df_season, direction=direction, group_key="doy")
+            df_season, 
+            direction = direction, 
+            group_key = "doy"
+            )
 
         df_stats = stats.resample(resample_rule).mean()
         
@@ -180,8 +188,9 @@ def plot_seasonal_winds(
     return None 
 
 
-b.sci_format()
+
 def plot_FPI_seasonal_winds(
+    file,
     direction: Literal["zonal", "meridional"] = "zonal"
     ) -> plt.Figure:
 
@@ -193,7 +202,7 @@ def plot_FPI_seasonal_winds(
 
     plt.subplots_adjust(hspace=0.05, wspace=0.05)
 
-    df = set_data("mean")
+    df = set_data(file)
 
     plot_seasonal_winds(
         ax,
@@ -214,11 +223,13 @@ def plot_FPI_seasonal_winds(
     return fig
 
 def main():
-    fig = plot_FPI_seasonal_winds(direction = "zonal")
+    fig = plot_FPI_seasonal_winds('mean_caj', direction = "zonal")
  
     path_to_save = 'G:\\Meu Drive\\Papers\\EquinoxAsymetry\\'
      
     figname = 'zonal_winds'
-    fig.savefig(path_to_save + figname, dpi = 400)
+    # fig.savefig(path_to_save + figname, dpi = 400)
     
 # main()
+
+ 

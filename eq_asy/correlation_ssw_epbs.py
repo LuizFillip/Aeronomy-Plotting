@@ -6,11 +6,13 @@ import core as c
 import matplotlib.pyplot as plt 
 import matplotlib as mpl
 
-def plot_temperature(ax, col = 'T_60_90_S'): 
+b.sci_format(fontsize = 30)
+
+def plot_temperature(ax, start, end, col = 'T_60_90_S'): 
     df = load_merra()
     
     out = []
-    for year in range(2009, 2025):
+    for year in range(start, end + 1):
         ds = df.loc[df.index.year == year, col]
         ds.index = ds.index.day_of_year
         
@@ -25,31 +27,37 @@ def plot_temperature(ax, col = 'T_60_90_S'):
     cmap = plt.get_cmap("jet", len(years))
     
     norm = mpl.colors.BoundaryNorm(
-        boundaries=np.arange(years.min()-0.5, years.max()+1.5),
+        boundaries=np.arange(
+            years.min()-0.5, years.max()+1.5),
         ncolors=len(years)
     )
      
     for col, y in zip(df.columns, years):
-        ax.plot(df.index.values, 
-                df[col].values, 
-                color=cmap(norm(y)), 
-                lw=2)
+        ax.plot(
+            df.index.values, 
+            df[col].values, 
+            color = cmap(norm(y)), 
+            lw = 3 
+            )
     
     ax.plot(df.mean(axis = 1), color = 'k', lw = 4)
  
-    ax.set(ylim = [180, 280], xlabel = 'Day of year', 
-           xticks = np.arange(0, 400, 40)
-           )
-    
-    return mpl.cm.ScalarMappable(norm=norm, cmap=cmap)
+    ax.set(
+        ylim = [190, 260], 
+        xlabel = 'Day of year', 
+        xticks = np.arange(0, 400, 40)
+        )
+ 
+    return mpl.cm.ScalarMappable(norm = norm, cmap = cmap)
      
 
 
 def plot_scatter_fit(
         ax, df, 
         color = 'red', 
-        marker = 's', 
-        label  = ''
+        marker = 'o', 
+        label  = '', 
+        labeled = False
         ):
  
     x = df.iloc[:, 0].values
@@ -63,11 +71,11 @@ def plot_scatter_fit(
         x, y, 
         markersize = 15, 
         linestyle = 'none',
-        color = color, 
+        color = 'purple', 
         marker = marker, 
         label = f'{label}', 
         markeredgecolor = 'black',
-        markeredgewidth = 2
+        markeredgewidth = 3
         )
      
     ax.plot(
@@ -76,18 +84,18 @@ def plot_scatter_fit(
         color = color
         )
     
-    ax.set(#ylim = [-1, 25], 
-           xlabel = '$\delta T$ (K)')
+    ax.set(  xlabel = '$\delta T$ (K)')
     ax.text(
-        0.73, 0.85, 
-        f"r = {corr:.2f}", 
+        0.3, 0.85, 
+        f"Pearson coeficient = {corr:.2f}", 
         transform = ax.transAxes, 
         color ='k', 
         fontsize = 30
         )
     
-    for year, x, y in zip(df.index, x, y):
-        ax.text(x, y + 1, str(year), fontsize=20)
+    if labeled:
+        for year, x, y in zip(df.index, x, y):
+            ax.text(x, y + 1, str(year), fontsize=20)
 
      
     return ax
@@ -96,7 +104,7 @@ def plot_scatter_fit(
 def data_1(start, end, percent = False):
  
     ds = c.data_epbs(
-        start, end, 
+      
         percent = percent, 
         off_time = 0.6, 
         off_shift = 4
@@ -123,15 +131,15 @@ def data_2(start, end, col = 'T_60_90_S'):
  
     df['dev'] = (df[col] - df['clim']) 
 
-    df = df.loc[df.index.month.isin([3, 4, 9, 10])]
+    df = df.loc[df.index.month.isin([9, 10])]
   
     df = df.groupby(df.index.year).max()
     
-    df = df.loc[df.index <= 2021]
+    df = df.loc[(df.index >= start) & (df.index <= end)]
     return df
 
-def join(temp_col, season, percent = False):
-    start, end = 2009, 2024
+def join(start, end, temp_col, season, percent = False):
+   
     y = data_2(start, end, temp_col)
     x = data_1(start, end, percent)
     
@@ -141,7 +149,7 @@ def join(temp_col, season, percent = False):
 
 
  
-def plot_correlation_both_hemispheres():
+def plot_correlation_both_hemispheres( start, end):
     fig, ax = plt.subplots(
             dpi = 300, 
             ncols = 2,
@@ -160,6 +168,7 @@ def plot_correlation_both_hemispheres():
     for i, hem in enumerate(hemis):
    
         df = join(hem, 'dev')
+        
         plot_scatter_fit(
             ax[1, i], df,  
             color = colors[i], 
@@ -174,7 +183,7 @@ def plot_correlation_both_hemispheres():
     ax[0, 0].set(ylabel = 'Temperature (K)')
     
     cax = ax[0, 1].inset_axes([1.1, 0, 0.05, 1])
-    ticks = np.arange(2009, 2025, 2)
+    ticks = np.arange(start, end, 2)
     cb = plt.colorbar(
         sm,  
         cax = cax,
@@ -204,33 +213,73 @@ def plot_correlation_both_hemispheres():
             )
     
     return fig 
+
+def plot_correlation_one_hemisphere(
+        start, end, hem ='T_60_90_S'):
     
+    fig, ax = plt.subplots(
+            dpi = 300, 
+            nrows = 2,
+            figsize = (12, 10)
+            )
+    
+    plt.subplots_adjust(hspace = 0.3)
+     
+    title = 'Southern Hemisphere (60°-90°, 10hPa)'
+    color = 'black'
+    df = join(start, end, hem, 'dev')
+    plot_scatter_fit(
+        ax[1], df,  
+        color = color, 
+        label = ''
+        )
+    
+    sm = plot_temperature(ax[0], start, end, col = hem)
+    ax[0].set(title = title, ylabel = 'Temperature (K)')
+    ax[1].set(
+        xlim = [-10, 30], ylim = [-10, 30], 
+        yticks = np.arange(-10, 40, 10),
+        xlabel = '$\Delta T$ (K)', 
+        ylabel = '$\Delta$ EPBs'
+        )
+        
+ 
+    cax = ax[0].inset_axes([1.01, 0, 0.03, 1])
+    ticks = np.arange(start, end + 2, 2)
+    cb = plt.colorbar(
+        sm,  
+        cax = cax,
+        ticks = ticks 
+        )
+ 
+    cb.set_label("Year")
+ 
+   
+    
+    fig.align_ylabels()
+    
+    b.plot_letters(
+            ax, 
+            x = 0.04, 
+            y = 0.85, 
+            offset = 0, 
+            fontsize = 30,
+            num2white = None
+            )
+    
+    return fig 
+
 def main():
     fig = plot_correlation_both_hemispheres()
     
     path_to_save = 'G:\\Meu Drive\\Papers\\EquinoxAsymetry\\'
      
     figname = 'correlations_epbs_temperature'
-    # fig.savefig(path_to_save + figname, dpi = 400)
+    fig.savefig(path_to_save + figname, dpi = 400)
     
     
+start, end = 2011, 2021
+
+fig = plot_correlation_one_hemisphere(start, end)
  
-
-main()
-
-# col = 'T_60_90_S'
-
-# ds = load_merra()
-
-# clim = ds.groupby(ds.index.dayofyear)[col].mean()
- 
-# ds["clim"] = ds.index.dayofyear.map(clim)
-
- 
-# df = ds[[col, 'clim']].copy()
-
-# df['dev'] = (df[col] - df['clim']) 
-
-# # ds = c.average_equinox(df['dev'], 2009,2024)
-
  
