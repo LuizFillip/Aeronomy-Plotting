@@ -9,8 +9,7 @@ b.sci_format()
  
 
 def occurrence_percent_grid(nl_season, step):
-    df = nl_season.copy()
-    
+ 
     lat_min = np.round(nl['lat_min'].min())
     lon_min = np.round(nl['lon_min'].min())
     lon_max = np.round(nl['lon_max'].max())

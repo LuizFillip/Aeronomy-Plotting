@@ -3,6 +3,68 @@ import matplotlib.pyplot as plt
 import base as b 
 from scipy.ndimage import gaussian_filter
  
+
+
+seasons = {
+    "December": [12, 1, 2],
+    "March": [3, 4, 5],
+    "June": [6, 7, 8],
+    "September": [9, 10, 11],
+}
+
+def plot_seasonal_occurrence_from_nl(nl, step=2.0):
+    
+    fig, ax = plt.subplots(
+        dpi=300, 
+        ncols=4, 
+        nrows=1, 
+        figsize=(16, 10),
+        subplot_kw={"projection": ccrs.PlateCarree()},
+    )
+    plt.subplots_adjust(wspace=0.02, hspace=0.12)
+
+    axes = ax.flat 
+    lat_min = np.round(nl['lat_min'].min())
+    lon_min = np.round(nl['lon_min'].min())
+    lon_max = np.round(nl['lon_max'].max())
+    lat_max = np.round(nl['lat_max'].max())
+    
+    
+    lon_bins = np.arange(lon_min, lon_max + step, step)
+    lat_bins = np.arange(lat_min, lat_max + step, step)
+    
+    for i, (name, months) in enumerate(seasons.items()):
+        nl_season = nl.loc[nl.index.month.isin(months)]
+        
+        grid = occurrence_area_weighted(
+            nl_season, lon_bins, lat_bins)
+        
+        img = plot_map_occ(axes[i], grid)
+
+        l = b.chars()[i]
+        axes[i].set_title(f"({l}) {name}", fontsize=28)
+
+        if i != 0:
+            axes[i].set(
+                xticklabels=[], 
+                xlabel="", 
+                ylabel="", 
+                yticklabels=[]
+                )
+            
+    anchor = [0.3, 0.78, 0.4, 0.025]
+    cax = plt.axes(anchor)
+    cbar = fig.colorbar(
+        img, ax=ax.ravel().tolist(), 
+        orientation = "horizontal",
+        cax = cax,
+        )
+
+    cbar.set_label("Convection activity (\%)", fontsize=22)
+    
+    # fig.suptitle(str(year), y=0.98, fontsize=28)
+    return fig
+
 def limits(df, 
            x0 = -80, x1 = -40, 
            y0 = -10, y1 = 0):
@@ -85,47 +147,4 @@ def plot_seasonal(df, ds, title):
     return fig
 
 
-def potential_energy(year = 2019):
-    
-    infile = f'GOES/data/Ep/Select_ep_data_lat_lon_{year}.txt'
-    
-    df = pd.read_csv(infile, delim_whitespace=True)
-    
-    df.index = pd.to_datetime(
-        df['Date'] + ' ' + 
-        df[['Hour', 'Minute', 'Second']
-           ].astype(str).agg(':'.join, axis=1))
-    
-    df = df.drop(
-        columns = [
-        'Year', 'DOY', 'Date', 
-        'Hour', 'Minute', 'Second']
-        )
-    
-    
-    return limits(df, x0, x1 , y0, y1)
-
-
-def get_couples(title):
-    
-    out_1 = []
-    out_2 = []
-    
-    for year in range(2013, 2023, 1):
-        out_1.append(load_nucleos(year , sample = '1M'))
-        
-        df = potential_energy(year)
-        
-        out_2.append(df[title].resample('1M').mean())
-        
-    df = pd.concat(out_1)
-    ds = pd.concat(out_2)
-    
-    return df, ds
-
-def main():
-    cols = ['mean_20_60', 'mean_60_90', 'mean_90_110']
-    
-    for title in cols:
-        df, ds = get_couples(title)
-        plot_seasonal(df, ds, title = title)
+ 

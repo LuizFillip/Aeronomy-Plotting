@@ -1,10 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Feb 21 08:30:48 2026
-
-@author: Luiz
-"""
-
+import numpy as np 
+import pandas as pd 
 def occurrence_percent_grid_bbox(nl_season, lon_bins, lat_bins):
     grid = np.zeros((len(lat_bins)-1, len(lon_bins)-1), dtype=float)
   
