@@ -23,7 +23,8 @@ def plot_f107(ax, color = 'magenta'):
         color = 'w'
         )
     
-    ax1.set(    
+    ax1.set(
+       
             yticks = np.arange(0, 400, 100),
             ylim = [60, 900], 
             )
@@ -40,8 +41,20 @@ def plot_f107(ax, color = 'magenta'):
 
 def plot_contour_roti(ax, start, end, vmax = 3):
  
-    df = c.load_averages()
- 
+    # df = c.load_averages()
+    
+    df = c.join_averages(start, end)
+    
+    df['date'] = df.index.year + (df.index.day_of_year/366)
+      
+    df = df.pivot(
+        index = 'time', 
+        columns = 'date', 
+        values = 'roti'
+        ).interpolate()
+    
+    df = c.adding_empty(df, time_start = 19)
+    
     img = ax.pcolormesh(
         df.columns, 
         df.index, 
@@ -183,7 +196,18 @@ def plot_roti_and_bars(
     path_to_save = 'G:\\Meu Drive\\Papers\\EquinoxAsymetry\\'
      
     figname = 'roti_and_bars'
-    # fig.savefig(path_to_save + figname, dpi = 400)
+    fig.savefig(path_to_save + figname, dpi = 400)
 
-fig = plot_roti_and_bars(start = 2011, end = 2021)
+# fig = plot_roti_and_bars(start = 2011, end = 2021)
 
+start = 2011
+end = 2021
+
+percent = False
+df = c.data_epbs(percent = percent)
+ 
+ds = c.count_epbs_by_season(
+     df, start, end, percent = percent)
+
+
+ds 

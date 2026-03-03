@@ -40,8 +40,9 @@ def plot_temperature(ax, start, end, col = 'T_60_90_S'):
             lw = 3 
             )
     
-    ax.plot(df.mean(axis = 1), color = 'k', lw = 4)
- 
+    ax.plot(df.mean(axis = 1), color = 'k', 
+            lw = 4, label = '$T_{avg}$')
+    ax.legend()
     ax.set(
         ylim = [190, 260], 
         xlabel = 'Day of year', 
@@ -270,16 +271,18 @@ def plot_correlation_one_hemisphere(
     return fig 
 
 def main():
-    fig = plot_correlation_both_hemispheres()
+    # fig = plot_correlation_both_hemispheres()
     
+  
+    start, end = 2011, 2021
+    
+    fig = plot_correlation_one_hemisphere(start, end)
+     
     path_to_save = 'G:\\Meu Drive\\Papers\\EquinoxAsymetry\\'
      
     figname = 'correlations_epbs_temperature'
+    
     fig.savefig(path_to_save + figname, dpi = 400)
     
     
-start, end = 2011, 2021
-
-fig = plot_correlation_one_hemisphere(start, end)
- 
- 
+# main()
