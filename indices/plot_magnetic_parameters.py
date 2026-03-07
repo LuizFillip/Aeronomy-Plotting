@@ -45,7 +45,7 @@ def plot_SymH(
 
     return None 
 
-
+ 
 
 def plot_solar_speed(ax, ds, vmax = 800, step = 200):
     ds = ds.loc[ds['speed'] < 600]
@@ -70,31 +70,23 @@ def plot_electric_field(ax, ds):
  
     
  
-def plot_dst(
-        ax, ds, 
-        ylim = [-150, 50], 
-        color = 'k'):
 
-    ax.plot(ds['sym'], lw = 1.5, color = color)
+        
+def plot_dst(ax, dst, limit = -100 ):
+    
+    ax.plot(dst)
     
     ax.set(
-        xlim = [ds.index[0], ds.index[-1]], 
-        ylim = [ylim[0] - 30, ylim[-1]],
-        yticks = np.arange(ylim[0], ylim[-1] - 30, 50),
-        ylabel = "SYM-H (nT)"
+        ylim = [-200, 50],
+        yticks = [-30, -100, -150],
+        ylabel = "Dst (nT)"
         )
     
-    ax.axhline(0, lw = 1, color = 'k', linestyle = '-')
-    
-    for limit in [-50, -150]:
-        ax.axhline(
-            limit, 
-            lw = 1, 
-            color = 'k', 
-            linestyle = '--'
-            )
-    return None 
-        
+    ax.axhline(0, lw = 1.5, linestyle = ':')
+    ax.axhline(-30, lw = 2, color = 'r')
+    ax.axhline(limit, lw = 2, color = 'r')
+
+    return None
 
 def plot_magnetic_fields(
         ax, 
@@ -145,8 +137,33 @@ def plot_magnetic_fields(
     return None 
 
 
+
+
+def plot_kp(ax, df, width = 0.1):
+    
+    args = dict(alpha = 0.3, )
+    
+    ax.bar(
+        df.index, 
+        df['kp'], 
+        width = width, 
+        **args
+        )
+     
+    ax.set(
+        ylabel = 'Kp', 
+        ylim = [0, 10], 
+        yticks = np.arange(0, 9, 2)
+        )
+    
+    ax.axhline(3, lw = 2, color = 'r')
+ 
+    return None
+
 def plot_kp_by_range(
-        ax, dn, before = 4, forward = 4
+        ax, dn, 
+        before = 4, 
+        forward = 4
         ):
     
     ds = b.range_dates(
@@ -158,7 +175,7 @@ def plot_kp_by_range(
     
     ax.bar(
         ds.index, 
-        ds['kp'] / 10, 
+        ds['kp'], 
         width = 0.1,
         color = 'gray', 
         alpha = 0.5
