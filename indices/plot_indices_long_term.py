@@ -1,49 +1,13 @@
 import matplotlib.pyplot as plt
 import base as b 
-import numpy as np 
+import plotting as pl 
 import core as c 
 
 PATH_INDEX =  'database/indices/omni_pro2.txt'
 
 b.sci_format()
 
-def plot_dst(ax, dst, limit = -100 ):
-    
-    ax.plot(dst)
-    
-    ax.set(
-        ylim = [-200, 50],
-        yticks = [-30, -100, -150],
-        ylabel = "Dst (nT)"
-        )
-    
-    ax.axhline(0, lw = 1.5, linestyle = ':')
-    ax.axhline(-30, lw = 2, color = 'r')
-    ax.axhline(limit, lw = 2, color = 'r')
 
-    return None
-
-
-def plot_kp(ax, df, width = 0.1):
-    
-    args = dict(alpha = 0.3, )
-    
-    ax.bar(
-        df.index, 
-        df['kp'] / 10, 
-        width = width, 
-        **args
-        )
-     
-    ax.set(
-        ylabel = 'Kp', 
-        ylim = [0, 10], 
-        yticks = np.arange(0, 9, 2)
-        )
-    
-    ax.axhline(3, lw = 2, color = 'r')
- 
-    return None
 
 
 def plot_long_term(start, end):
@@ -62,8 +26,8 @@ def plot_long_term(start, end):
     df = b.sel_dates(df, start, end)
     
         
-    plot_kp(ax[1], df)
-    plot_dst(ax[0], df['dst']) 
+    pl.plot_kp(ax[1], df)
+    pl.plot_dst(ax[0], df['dst']) 
     ax[-1].set(xlim= [df.index[0], df.index[-1]])
     
     b.format_days_axes(ax[-1])

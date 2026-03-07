@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jan 29 17:47:49 2026
 
-@author: Luiz
-"""
 def load_indices(dn):
     
     import core as c
