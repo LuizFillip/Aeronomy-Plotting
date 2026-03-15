@@ -42,6 +42,7 @@ def plot_temperature(ax, start, end, col = 'T_60_90_S'):
     
     ax.plot(df.mean(axis = 1), color = 'k', 
             lw = 4, label = '$T_{avg}$')
+    
     ax.legend()
     ax.set(
         ylim = [190, 260], 
@@ -107,14 +108,14 @@ def data_1(start, end, percent = False):
     ds = c.data_epbs(
       
         percent = percent, 
-        off_time = 0.6, 
+        off_time = 0.5, 
         off_shift = 4
         )
     
     ds = c.count_epbs_by_season(
         ds, start, end, percent = percent)
 
-    ds['dev'] = (ds['september'] -  ds['march'])  
+    ds['dev'] = (ds['september'] -  ds['march'])  #/  ds['march']
     
     # ds = ds.loc[(ds.index < 2023) | (ds.index < 2010)]
     
@@ -285,4 +286,5 @@ def main():
     fig.savefig(path_to_save + figname, dpi = 400)
     
     
-# main()
+main()
+

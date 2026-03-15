@@ -104,8 +104,12 @@ def plot_equinox_asymetry(
         ylim = [0, 100]
         ):
     
-    df = c.data_epbs(percent = percent)
-    
+    # df = c.data_epbs(percent = percent)
+    df = c.data_epbs(
+        percent = percent, 
+        off_time = 0.5, 
+        off_shift = 4
+        )
     ds = c.count_epbs_by_season(
         df, start, end, percent = percent)
     
@@ -198,16 +202,16 @@ def plot_roti_and_bars(
     figname = 'roti_and_bars'
     fig.savefig(path_to_save + figname, dpi = 400)
 
-# fig = plot_roti_and_bars(start = 2011, end = 2021)
+fig = plot_roti_and_bars(start = 2011, end = 2021)
 
-start = 2011
-end = 2021
+# start = 2011
+# end = 2021
 
-percent = False
-df = c.data_epbs(percent = percent)
+# percent = False
+# df = c.data_epbs(percent = percent)
  
-ds = c.count_epbs_by_season(
-     df, start, end, percent = percent)
+# ds = c.count_epbs_by_season(
+#      df, start, end, percent = percent)
 
 
-ds 
+# ds 
