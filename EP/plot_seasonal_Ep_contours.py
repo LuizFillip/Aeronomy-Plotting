@@ -134,7 +134,6 @@ def plot_season_ep_maps(seasonal_grids, vmin, vmax):
         
         smooth = gaussian_filter(grid, sigma=sigma)
         
-        
         return smooth  / np.nanmax(smooth) * np.nanmax(grid)
         
     
