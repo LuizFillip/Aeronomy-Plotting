@@ -128,10 +128,10 @@ def main():
         FigureName = dn.strftime(f'{site}_%Y%m%d')
         
         folder = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\ionograms\\'
-        fig.savefig(
-              folder + FigureName,
-              dpi = 300
-              )
+        # fig.savefig(
+        #       folder + FigureName,
+        #       dpi = 300
+        #       )
 
     # 
 main()
