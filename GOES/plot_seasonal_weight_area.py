@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import base as b
 import GEO as gg
+from scipy.ndimage import gaussian_filter
 
-
-def plot_map_occ(ax, grid):
+def plot_map_occ(ax, grid, smooth = True):
     
-    lat_lims = dict(min=-60, max=10, stp=10)
-    lon_lims = dict(min=-100, max=-30, stp=15)
+    lat_lims = dict(min = -60, max = 10, stp = 10)
+    lon_lims = dict(min = -100, max = -30, stp = 15)
     
     gg.map_attrs(
         ax, None, 
@@ -18,21 +18,22 @@ def plot_map_occ(ax, grid):
         grid = False, 
         degress = None
         )
-      
-    # img = ax.pcolormesh(
-    #     grid.columns,
-    #     grid.index,
-    #     grid.values,
-    #     # vmin = 0, 
-    #     # vmax = 100,
-    #     cmap="jet", 
-    # )
+     
+    smooth = gaussian_filter(grid.values, sigma=1)
+    
+    grid_np = np.asarray(grid, dtype=float)
+
+    smooth = gaussian_filter(grid_np, sigma=1.2)
+    
+    if smooth.max() > 0:
+        smooth = smooth / smooth.max() * grid_np.max()
     
     img = ax.contourf(
         grid.columns,
         grid.index,
-        grid.values,
+        smooth,
         levels = 50,
+        # norm = norm,
         cmap="jet", 
     )
     
@@ -47,12 +48,11 @@ seasons = {
     "September": [9, 10, 11],
 }
 
-def plot_seasonal_occurrence(nl, step=2.0, sigma = 1, ):
+def plot_seasonal_area_weighted(nl, step = 2.0, sigma = 1):
     
     fig, ax = plt.subplots(
         dpi = 300, 
         ncols = 4, 
-        
         figsize = (16, 10),
         subplot_kw = {"projection": ccrs.PlateCarree()},
     )
@@ -70,19 +70,9 @@ def plot_seasonal_occurrence(nl, step=2.0, sigma = 1, ):
     for i, (name, months) in enumerate(seasons.items()):
         nl_season = nl.loc[nl.index.month.isin(months)]
         
-        grid =  gs.occurrence_kernel_smooth(
-            nl_season, lon_bins, lat_bins, 
-            sigma = sigma
+        grid =  gs.occurrence_area_weighted(
+            nl_season, lon_bins, lat_bins
             )
-        
-        # n_total = len(nl_season.index.unique())
-        
-        # grid = gs.occurrence_rate_grid(
-        #     nl_season,
-        #     lon_bins,
-        #     lat_bins,
-        #     n_total  
-        # )
         
         img = plot_map_occ(axes[i], grid)
 
@@ -114,7 +104,7 @@ def plot_seasonal_occurrence(nl, step=2.0, sigma = 1, ):
  
 # nl = b.load("GOES/data/nucleos_40/2013")   
 
-# fig = plot_seasonal_occurrence(nl, step = 2.0 )
+# fig = plot_seasonal_area_weighted(nl, step = 2.0 )
 
  
 

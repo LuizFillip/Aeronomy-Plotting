@@ -7,38 +7,7 @@ import GEO as gg
 
 b.sci_format()
  
-
-def occurrence_percent_grid(nl_season, step):
  
-    lat_min = np.round(nl['lat_min'].min())
-    lon_min = np.round(nl['lon_min'].min())
-    lon_max = np.round(nl['lon_max'].max())
-    lat_max = np.round(nl['lat_max'].max())
-    
-    
-    lon_bins = np.arange(lon_min, lon_max + step, step)
-    lat_bins = np.arange(lat_min, lat_max + step, step)
-    
-    df['year'] = df.index.year 
-    # centro do núcleo
-    df["lon"] = (df["lon_min"] + df["lon_max"]) / 2
-    df["lat"] = (df["lat_min"] + df["lat_max"]) / 2
-
-    df["lon_bin"] = pd.cut(
-        df["lon"], lon_bins,
-        labels=lon_bins[:-1], include_lowest=True)
-    df["lat_bin"] = pd.cut(
-        df["lat"], lat_bins,
-        labels=lat_bins[:-1], include_lowest=True)
-
-    df = df.groupby(['year', "lon_bin", "lat_bin"]).size().to_frame('count').reset_index()
-          
-
- 
-
-    return  df
-
-
 
 def plot_map_occ(ax, grid):
     
@@ -133,8 +102,5 @@ def plot_seasonal_occurrence_from_nl(nl, step=2.0):
     # fig.suptitle(str(year), y=0.98, fontsize=28)
     return fig
 
- 
-# nl = b.load("nucleos_2012_2018")   
-
-# fig = plot_seasonal_occurrence_from_nl(nl, step = 4.0 )
+  
 
