@@ -84,30 +84,30 @@ def plot_range_day_indices(
 
 
 
+def main():
 
-
-dn = dt.datetime(2014, 2, 9, 21)
-dn = dt.datetime(2019, 3, 19, 21)
-dn = dt.datetime(2019, 5, 2, 21)
-dn = dt.datetime(2016, 10, 3, 21)
-dn = dt.datetime(2014, 1, 2, 21)
-dn = dt.datetime(2013, 3, 17, 21)
-dn = dt.datetime(2022, 7, 24, 21)
-dn = dt.datetime(2015, 12, 20, 18)
-
-# dn = dt.datetime(2015, 12, 25, 21)
-# dn = dt.datetime(2019, 5, 2, 21)
-# dn = dt.datetime(2019, 12, 6, 21)
-
-dn = dt.datetime(2017, 8, 30, 21)
-
-fig = plot_range_day_indices(dn, days = 3)
-
-# df = c.category_and_low_indices(
-#         col_kp = 'kp_max', 
-#         col_dst = 'sym_min'
-#         )
-
-# df = df.loc[df['category'] != 'quiet']
-
-# df.loc[df['bz_mean'] < 0] 
+    dn = dt.datetime(2014, 2, 9, 21)
+    dn = dt.datetime(2019, 3, 19, 21)
+    dn = dt.datetime(2019, 5, 2, 21)
+    dn = dt.datetime(2016, 10, 3, 21)
+    dn = dt.datetime(2014, 1, 2, 21)
+    dn = dt.datetime(2013, 3, 17, 21)
+    dn = dt.datetime(2022, 7, 24, 21)
+    dn = dt.datetime(2015, 12, 20, 18)
+    
+    # dn = dt.datetime(2015, 12, 25, 21)
+    # dn = dt.datetime(2019, 5, 2, 21)
+    # dn = dt.datetime(2019, 12, 6, 21)
+    
+    dn = dt.datetime(2017, 8, 30, 21)
+    
+    fig = plot_range_day_indices(dn, days = 3)
+    
+    # df = c.category_and_low_indices(
+    #         col_kp = 'kp_max', 
+    #         col_dst = 'sym_min'
+    #         )
+    
+    # df = df.loc[df['category'] != 'quiet']
+    
+    # df.loc[df['bz_mean'] < 0] 

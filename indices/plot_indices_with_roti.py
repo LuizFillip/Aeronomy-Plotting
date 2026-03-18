@@ -1,7 +1,13 @@
+import datetime as dt 
+import plotting as pl 
+import matplotlib.pyplot as plt 
+import numpy as np 
+import epbs as pb 
+import base as b 
 
 def load_indices(dn):
     
-    import core as c
+    
     
     df = pb.longterm_raw_roti(dn, days = 3)
 
@@ -45,9 +51,9 @@ def plot_one_day_indices(dn, days = 2):
   
     ds = load_indices()
        
-    plot_magnetic_fields(ax[0], ds)
+    pl.plot_magnetic_fields(ax[0], ds)
     pl.plot_auroral(ax[1], ds)
-    plot_dst(ax[2], ds)
+    pl.plot_dst(ax[2], ds)
    
     b.format_time_axes(
         ax[-1], 
