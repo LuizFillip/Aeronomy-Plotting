@@ -11,8 +11,7 @@ args = dict(
     color = 'k', 
     transform = ccrs.PlateCarree()
     )
-
-b.config_labels(fontsize = 25)
+ 
 
 def plot_meridian_and_apex(year = 2013):
     
