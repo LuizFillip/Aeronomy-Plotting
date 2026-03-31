@@ -2,20 +2,12 @@ import cartopy.crs as ccrs
 import GEO as gg
 import matplotlib.pyplot as plt
 import base as b 
-import numpy as np 
-
-
+ 
 b.sci_format(fontsize = 25)
 
 
 def legend_instruments(translate = False):
-    
-    if translate:
-        label = 'Receptores GNSS'
-    else:
-        label = 'GNSS receivers'
-    
-    
+     
     kwargs = dict(
         edgecolors = 'none',
         s = 300
@@ -62,7 +54,9 @@ def curve_connect(
     crs = ccrs.PlateCarree()
 
     line_kw = dict(color = 'k', lw = 2)
-    text_kw = {"fontsize": 24, "ha": "left", "va": "center"
+    text_kw = {"fontsize": 24, 
+               "ha": "left",
+               "va": "center"
                } 
 
     lat_end = lat + lat_delta
@@ -115,7 +109,7 @@ stations = {
      "lon": -44.2, "lat": -2.6, 'lat_delta': 2, 'lon_delta': 11}
  }
 
-def plot_connect_lines():
+def plot_connect_lines(year = 2015):
     fig, ax = plt.subplots(
         dpi = 300,
         sharex = True, 
@@ -127,14 +121,14 @@ def plot_connect_lines():
     lon_lims = dict(min = -65, max = -25, stp = 5)
     
     gg.map_attrs(
-        ax, 2015,
+        ax, year,
         degress = None, 
         grid = False, 
         lat_lims = lat_lims,
         lon_lims = lon_lims
         )
     
-    plot_GNSS(ax, 2015, translate = False)
+    plot_GNSS(ax, year, translate = False)
         
     for name, s in stations.items():
      
@@ -167,8 +161,9 @@ def plot_connect_lines():
             
         ax.scatter(
             lon, lat, s = s, 
-                   marker = marker, 
-                   color = color)
+            marker = marker, 
+            color = color
+            )
     
     for site in ['São Luís', 'Eusébio']:
         s = stations[site]

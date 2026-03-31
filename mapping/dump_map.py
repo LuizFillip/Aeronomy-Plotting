@@ -2,6 +2,8 @@ import cartopy.feature as cf
 import numpy as np 
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt 
+import epbs as pb 
+import datetime as dt 
 
 def plot_regions(
         ax,
@@ -57,20 +59,19 @@ def plot_map(df):
     ax.add_feature(
         cf.BORDERS, linestyle = '-', **args)
     
+    ext = [-50, -30, -20, 10]
     ax.set_extent(
-        [-100, -30, 
-        -70, 10], 
+        ext, 
         crs = ccrs.PlateCarree()
         )
     
     ax.set_xticks(
-        np.arange(-100, -30, 15), 
+        np.arange(ext[0], ext[1], 5), 
             crs = ccrs.PlateCarree()
         ) 
     
     ax.set_yticks(
-        np.arange(-70, 10, 15
-            ), 
+        np.arange(ext[2], ext[3], 5), 
             crs = ccrs.PlateCarree()
         )
     
@@ -80,17 +81,28 @@ def plot_map(df):
         xlabel = 'Longitude (°)'
         ) 
     
-    for index, row in df.iterrows():
-        
-        plot_regions(
-            ax,
-            row['x0'], 
-            row['y0'],
-            row['x1'], 
-            row['y1']
-            )
-        
-        mx = (row['x1'] + row['x0']) / 2
-        my = (row['y1'] + row['y0']) / 2
-        ax.scatter(mx, my, s = 100, color = 'red')
-        
+    ax.scatter(df['lon'], df['lat'], c = df['roti'])
+    
+   
+ 
+def load_and_filter(dn, root = 'D:\\'):
+ 
+    df = pb.get_nighttime_roti(dn, root = root, hours = 10)
+     
+    stations = ['rnmo', 'pbcg', 
+                'pepe', 'recf', 
+                'rnna', 'pbjp']
+    
+    return df.loc[df['sts'].isin(stations)]
+
+dn = dt.datetime(2011, 3, 2, 20)
+df = load_and_filter(dn, root = 'D:\\')
+
+df = df.loc[
+    (df.lon > -40) & 
+    (df.lon < -35) & 
+    (df.lat > -10) & 
+    (df.lat < -5)
+    ]
+ 
+plot_map(df)

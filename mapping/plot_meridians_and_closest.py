@@ -2,10 +2,7 @@ import GEO as gg
 import matplotlib.pyplot as plt 
 import cartopy.crs as ccrs
 import datetime as dt
-import base as b 
-
-b.config_labels(fontsize = 35)
-      
+ 
 def plot_meridians_and_closest(dn):
       
       fig, ax = plt.subplots(
@@ -30,11 +27,11 @@ def plot_meridians_and_closest(dn):
           grid = False,
           degress = None)
 
-      mer = gg.meridians(dn, delta = 5)
+      mer = gg.meridians 
       
       glat, glon = gg.sites['saa']['coords']
       
-      meridian = mer.range_meridians()
+      meridian = mer.range_meridians
       
       # for num in range(meridian.shape[0]):
           
@@ -83,6 +80,6 @@ def plot_meridians_and_closest(dn):
       return fig 
 
 
-# dn = dt.datetime(2013, 12, 24)
+dn = dt.datetime(2013, 12, 24)
 
-# fig = plot_meridians_and_closest(dn)
+fig = plot_meridians_and_closest(dn)
