@@ -1,91 +1,70 @@
+import numpy as np
 import matplotlib.pyplot as plt
 
-def remove_lines(ax, nrows, ncols):
-    
-    '''
-    Remove inferior and superior lines (spines) from the subplots
-    with the exception the firt (must have the top spine)
-    and the last one, must have the bottom, only. 
-    
-    Parameters 
-    '''
 
-    if (ncols > 1) and (nrows > 1): 
-        for x in range(nrows):
-            for y in range(ncols):
-                if y == 0:
-                    ax[x, y].spines['right'].set_visible(False)
-                    if x == 0: 
-                        ax[x, y].spines['bottom'].set_visible(False)
-                    elif x == (nrows - 1):
-                        ax[x, y].spines['top'].set_visible(False)   
-                    else:
-                        ax[x, y].spines['top'].set_visible(False)   
-                        ax[x, y].spines['bottom'].set_visible(False)  
-                        
-                else:
-                    ax[x, y].spines['left'].set_visible(False)
-                    if x == 0: 
-                        ax[x, y].spines['bottom'].set_visible(False)
-                        ax[x, y].axes.yaxis.set_visible(False)
-                    elif x == (nrows - 1):
-                        ax[x, y].spines['top'].set_visible(False)   
-                        ax[x, y].axes.yaxis.set_visible(False)
-                    else:
-                        ax[x, y].spines['top'].set_visible(False)   
-                        ax[x, y].spines['bottom'].set_visible(False)  
-                        ax[x, y].axes.yaxis.set_visible(False)
-                        
-    elif (ncols == 1) and (nrows > 1):
-        
-        for num in range(nrows):
-            if num == 0:    
-                ax[num].spines['bottom'].set_visible(False)       
-            elif num == (nrows - 1):    
-                ax[num].spines['top'].set_visible(False)
-                
-            else:
-                ax[num].spines['top'].set_visible(False)
-                ax[num].spines['bottom'].set_visible(False)
-                
-    else:
-        
-        for num in range(ncols):
-            if num == 0:    
-                ax[num].spines['right'].set_visible(False)  
-                
-            elif num == (ncols - 1):    
-                ax[num].spines['left'].set_visible(False)
-                ax[num].axes.yaxis.set_visible(False)
-                ax[num].set(yticks = [])
-                
-            else:
-                ax[num].spines['left'].set_visible(False)
-                ax[num].spines['right'].set_visible(False)
-                ax[num].axes.yaxis.set_visible(False)
-                ax[num].set(yticks = [])
-    
-    return None 
-                
-                
-                
+def remove_inner_spines(ax, nrows, ncols, hide_inner_y=True):
+    """
+    Remove spines internas de uma grade de subplots, preservando apenas
+    a borda externa do conjunto.
+
+    Regras:
+    - primeira linha: mantém spine superior
+    - última linha: mantém spine inferior
+    - linhas internas: remove top e bottom
+    - primeira coluna: mantém spine esquerda
+    - última coluna: mantém spine direita
+    - colunas internas: remove left e right
+
+    Parameters
+    ----------
+    ax : matplotlib Axes, array-like de Axes
+        Retornado por plt.subplots().
+    nrows : int
+        Número de linhas.
+    ncols : int
+        Número de colunas.
+    hide_inner_y : bool, default=True
+        Se True, remove eixo y das colunas que não são a primeira.
+    """
+    ax = np.array(ax, dtype=object).reshape(nrows, ncols)
+
+    for i in range(nrows):
+        for j in range(ncols):
+            a = ax[i, j]
+
+            # Spines horizontais
+            a.spines['top'].set_visible(i == 0)
+            a.spines['bottom'].set_visible(i == nrows - 1)
+
+            # Spines verticais
+            a.spines['left'].set_visible(j == 0)
+            a.spines['right'].set_visible(j == ncols - 1)
+
+            # Controle do eixo Y
+            if hide_inner_y and j != 0:
+                a.yaxis.set_visible(False)
+                a.set_yticks([])
+
+    return ax
+
+
 def main():
-    
     scopes = [(3, 1), (1, 3), (3, 3)]
-    
-    for num in scopes:
-        
+
+    for nrows, ncols in scopes:
         fig, ax = plt.subplots(
-            figsize = (6, 6), 
-            sharex = True, 
-            sharey = True,
-            nrows = num[0], 
-            ncols = num[1]
-            )
+            nrows=nrows,
+            ncols=ncols,
+            figsize=(6, 6),
+            sharex=True,
+            sharey=True
+        )
+
+        fig.subplots_adjust(hspace=0, wspace=0)
+
+        ax = remove_inner_spines(ax, nrows=nrows, ncols=ncols)
+
+        plt.show()
+
  
-        plt.subplots_adjust(hspace = 0, wspace = 0)
-        
-        remove_lines(ax, nrows = num[0], ncols = num[1])
-        
-        
 main()
