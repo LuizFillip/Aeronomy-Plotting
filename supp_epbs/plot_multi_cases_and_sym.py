@@ -69,13 +69,14 @@ def plot_single_case(
     ds = c.high_omni(dn.year)
     ds = b.range_dates(ds, dn, before, after)
      
-    if c.category(dn) != 'quiet':
-        st = c.find_storm_interval(ds['sym'], dn)
-        ylim = [-250, 50] 
-        step = 100
-    else:
-        ylim = [-120, 20]
-        step = 40
+    # if c.category(dn) != 'quiet':
+    #     
+    #     ylim = [-100, 50] 
+    #     step = 100
+    # else:
+    st = c.find_storm_interval(ds['sym'], dn)
+    ylim = [-120, 20]
+    step = 40
     
     dns = plot_sym_h(ax, ds, ylim = ylim, step = step)
      
@@ -92,7 +93,7 @@ def plot_single_case(
     if c.category(dn) != 'quiet':
        
         pl.stormtime_spanning(
-            ax, st['start'], st['dusk'], y = 2.5)
+            ax, st['start'], st['dusk'], y = 3.5)
         
         ax.axvspan(
             st['start'], 
@@ -109,7 +110,7 @@ def plot_single_case(
                 ax, 
                 st['start'], 
                 st['dusk'] + delta, 
-                y = 1.5
+                y = 2.5
                 )
     
     pl.evening_interval(ax, dusk, double)
@@ -146,8 +147,8 @@ def plot_multi_examples_of_suppression(dates):
     
     b.plot_letters(
         ax, 
-        y = 1.04, 
-        x = 0., 
+        y = 0.84, 
+        x = 0.01, 
         fontsize = 25
         )
 
@@ -157,7 +158,7 @@ def main():
     
     #disturbed
     dates = [ 
-        dt.datetime(2015, 3, 17),
+        #dt.datetime(2015, 3, 17),
         dt.datetime(2017, 3, 1),
         dt.datetime(2013, 1, 26),
         dt.datetime(2014, 2, 9),
@@ -172,7 +173,7 @@ def main():
         dt.datetime(2014, 9, 9),
         dt.datetime(2017, 1, 23),
         dt.datetime(2019, 3, 13),
-        dt.datetime(2021, 2, 10),
+        # dt.datetime(2021, 2, 10),
           'quiettime'
         ]
 
@@ -184,3 +185,17 @@ def main():
     pl.savefig(fig, f'multi_examples_{dates[-1]}')
     
 # main() 
+
+
+dates = [
+    dt.datetime(2017, 3, 1),
+    dt.datetime(2013, 1, 26),
+    dt.datetime(2014, 2, 9)
+    ]
+dn = dates[0]
+ds = c.high_omni(dn.year)
+ds = b.range_dates(ds, dn, 4, 4)
+
+st = c.find_storm_interval(ds['sym'], dn)
+
+st 
