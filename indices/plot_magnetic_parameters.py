@@ -92,6 +92,7 @@ def plot_magnetic_fields(
         ax, 
         ds, 
         ylim = 30, 
+        step = 5,
         by = False, 
         ax_co = 'purple'
         ):
@@ -102,11 +103,7 @@ def plot_magnetic_fields(
         lw = 2
         )
     
-    ax.set(
-        ylim = [-ylim, ylim], 
-        yticks = np.arange(-30, 40, 15),
-        ylabel = '$B_y$ (nT)' #'$Ey$ (mV/m)'
-        )
+   
     
     ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
     
@@ -127,10 +124,15 @@ def plot_magnetic_fields(
                 position = "right"
                 )
          
+        ax.set(
+            ylim = [-ylim, ylim], 
+            yticks = np.arange(-ylim, ylim + step, step),
+            ylabel = '$B_y$ (nT)'  
+            )
         
     ax.set(
         ylabel = '$B_z$ (nT)',
-        yticks = np.arange(-30, 40, 15),
+        yticks = np.arange(-ylim, ylim + step, step),
         ylim = [-ylim - 5, ylim + 5]
         )
      
@@ -139,7 +141,7 @@ def plot_magnetic_fields(
 
 
 
-def plot_kp(ax, df, width = 0.1):
+def plot_kp(ax, df, width = 0.1, color = 'b'):
     
     args = dict(alpha = 0.3, )
     
@@ -156,7 +158,8 @@ def plot_kp(ax, df, width = 0.1):
         yticks = np.arange(0, 9, 2)
         )
     
-    ax.axhline(3, lw = 2, color = 'r')
+    ax.axhline(3, lw = 1, color = color, 
+               linestyle = '--')
  
     return None
 
