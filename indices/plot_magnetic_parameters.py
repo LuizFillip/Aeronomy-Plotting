@@ -21,11 +21,11 @@ def plot_SymH(
         ax, ds, 
         ylim = [-300, 50], 
         kp = True, 
-        color = 'red',
+        color = 'k',
         step = 50
         ):
     
-    ax.plot(ds, lw = 2, color = color)
+    ax.plot(ds['sym'], lw = 2, color = color)
    
     ax.set(
         xlim = [ds.index[0], ds.index[-1]], 
@@ -48,7 +48,7 @@ def plot_SymH(
  
 
 def plot_solar_speed(ax, ds, vmax = 800, step = 200):
-    ds = ds.loc[ds['speed'] < 600]
+    # ds = ds.loc[ds['speed'] < 600]
     ax.plot(ds['speed'], lw = 1.5)
     ax.set(
         ylim = [300, vmax],
@@ -59,7 +59,7 @@ def plot_solar_speed(ax, ds, vmax = 800, step = 200):
 
 
 def plot_electric_field(ax, ds):
-    ds = ds.loc[ds['electric'] < 100]
+    # ds = ds.loc[ds['electric'] < 100]
     ax.plot(ds['electric'], lw = 1.5)
     ax.axhline(0, lw = 1, linestyle = ':')
     ax.set(
@@ -102,9 +102,7 @@ def plot_magnetic_fields(
         label = '$B_z$', 
         lw = 2
         )
-    
-   
-    
+     
     ax.axhline(0, lw = 1, linestyle = '--', color = 'k')
     
     if by:

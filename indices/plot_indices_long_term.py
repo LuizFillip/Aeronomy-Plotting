@@ -27,8 +27,7 @@ def plot_long_term(df):
     
     ax[-1].set(xlim = [df.index[0], df.index[-1]])
      
-    b.plot_letters(ax, y = 0.83, x = 0.02, fontsize = 25)
-        
+    
     fig.align_ylabels()
     
     major_locator = mdates.MonthLocator()
@@ -57,11 +56,13 @@ def main():
     #     dpi = 400
     #     )
 
-start = dt.datetime(2024, 11, 1)
-end = dt.datetime(2025, 5, 1)
-
-df = c.low_omni()
-
-df = b.sel_dates(df, start, end)
-
-fig = plot_long_term(df)
+    start = dt.datetime(2017, 1, 5)
+    end = dt.datetime(2017, 1, 10)
+    
+    df = c.low_omni()
+    
+    df = b.sel_dates(df, start, end)
+    
+    # fig = plot_long_term(df)
+    
+    # df['ae'].plot()
