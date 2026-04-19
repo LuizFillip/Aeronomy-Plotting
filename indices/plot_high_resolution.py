@@ -41,7 +41,7 @@ def plot_high_resolution(
     fig, ax = plt.subplots(
         dpi = 300,
         figsize = (14, 14), 
-        nrows = 5, 
+        nrows = 4, 
         sharex = True
         )
     
@@ -61,96 +61,39 @@ def plot_high_resolution(
     pl.plot_magnetic_fields(ax[2], ds)
     
     pl.plot_auroral(ax[3], ds)
+     
     
-    pl.plot_electrojet(ax[-1])
-
-    
-    dates = (np.unique(ds.index.date))
-        
    
-    for a in ax.flat:
-        
-        for dn in dates:
-            a.axvline(dn, lw = 1, linestyle = '--')
-        
-        start = dt.datetime(2015, 12, 20, 21, 0)
-        
-        a.axvspan(
-             start, 
-             start + dt.timedelta(hours = 12), 
-             ymin = 0, 
-             ymax = 1,
-             alpha = 0.2, 
-             color = 'gray'
-             )
-        
-        ssc = dt.datetime(2015, 12, 19, 16, 20)
-        
-        a.axvline(
-            ssc, 
-            color = 'red', 
-            lw = 3, 
-            linestyle = '--'
-            )
-    delta = dt.timedelta(hours = 1)
-    ax[0].text(
-        ssc + delta,250, 
-        name, 
-        color = 'red',
-        transform = ax[0].transData
-        )
-    
-    b.plot_letters(
-        ax, 
-        y = 0.8, 
-        x = 0.02, 
-        num2white = None
-        )
-    
+ 
     fig.align_ylabels()
     
     b.axes_hour_format(
          ax[-1], 
-         hour_locator = 6, 
+         locator = 6, 
          tz = "UTC"
          )
     
     ax[-1].set(xlabel = xlabel)
     
     b.adding_dates_on_the_top(
-            ax[0], 
-            # start = '2015-12-19', 
-            # end = '2015-12-23'
+            ax[0],  
             )
     return fig 
 
 
 def main():
     
-    path_to_save = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
+    import core as c 
     
-    infile = 'database/indices/omni_high/20151'
-    df = b.load(infile)
+    dn = dt.datetime(2019, 10, 17)
     
-    df = df.loc[df['by'] < 1000]
+    df = c.high_omni(dn.year)
 
-    dn = dt.datetime(2015, 12, 21)
-
-    ds = b.range_dates(df, dn, days = 2)
-    
-    translate = True
+    ds = b.range_dates(df, dn)
+     
     
     fig = plot_high_resolution(ds, dn, translate)
     
-    if translate:
-        t= 'en'
-    else:
-        t = 'pt'
-    FigureName = dn.strftime(f'%Y%m%d_GeoIndices_{t}')
+   
     
-    # fig.savefig(
-    #       path_to_save + FigureName,
-    #       dpi = 400
-    #       )
-    
-    # 
+main()
