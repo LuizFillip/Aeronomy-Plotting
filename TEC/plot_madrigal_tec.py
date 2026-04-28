@@ -65,3 +65,9 @@ def junksave():
         df = pipe_tec(path + fn, hour = 22)
         
         df.to_csv(fn)
+        
+fn = "C:\\Users\\Luiz\\Downloads\\gps200112g.002.txt\\gps200112g.002.hdf5.txt"
+
+df = pipe_tec(fn, hour = 22)
+
+df 

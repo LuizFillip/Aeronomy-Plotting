@@ -79,6 +79,7 @@ def plot_histogram(
 def plot_distribution(
         ax, 
         df, 
+        bins,
         parameter = 'gamma',
         label = '', 
         count = False,
@@ -86,15 +87,18 @@ def plot_distribution(
         translate = False,
         outliner = None,
         percent = True,
-        limit = True,
+    
         ylim = [0.2, 1.4]
         ):
-
+    
+    
+    
     ds = c.probability_distribution(
         df, 
-        parameter, 
-        outliner = outliner,
-        limit = limit
+        bins = bins,
+        parameter = parameter, 
+        outliner = outliner 
+       
         )    
  
     epbs = ds['epbs'].sum()
@@ -122,13 +126,7 @@ def plot_distribution(
         **args
         )
     
-    if limit:
-        vmin, vmax, step = c.input_limits(parameter)
-    else:
-        vmin, vmax, step = c.compute_limits(df, parameter)
-    
-    # vmin, vmax, step = 0, 1, 0.2
-
+    vmin, vmax, step = 0, 60, 5
     
     if parameter == 'vp':
         xlabel = b.y_label('vp')

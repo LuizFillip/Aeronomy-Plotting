@@ -6,11 +6,6 @@ import datetime as dt
 
 
 
-b.config_labels(fontsize = 30)
-
-
-
-
 def mean_compose(ds, direction = 'zonal'):
     
  
@@ -166,35 +161,22 @@ def set_data(file):
     return df
 
 def plot_labels_and_infos(
-        fig, 
-        direction, 
-        translate = True,     
-        fontsize = 35
-        ):
-   
-    
+    fig: plt.Figure,
+    direction: str,
+    translate: bool = True,
+    fontsize: int = 35,
+):
     if translate:
-        ylabel = f'Velocidade {direction} (m/s)'
-        xlabel = 'Hora universal'
+        ylabel = f"Velocidade {direction} (m/s)"
+        xlabel = "Hora universal"
     else:
-        ylabel = 'Zonal velocity (m/s)'
-        xlabel = 'Universal time'
-    
-    
-    fig.text(
-          0.04, 0.32, 
-          ylabel, 
-          fontsize = fontsize, 
-          rotation = 'vertical'
-          )
-    
-    fig.text(
-          0.44, 0.04, 
-          xlabel, 
-          fontsize = fontsize, 
-          )
-    
-    return None
+        ylabel = f"{direction.capitalize()} velocity (m/s)"
+        xlabel = "Universal time"
+
+    fig.text(0.04, 0.32, ylabel, fontsize=fontsize, rotation="vertical")
+    fig.text(0.44, 0.04, xlabel, fontsize=fontsize)
+
+
     
     
 def plot_FPI_seasonal_winds(
@@ -240,7 +222,7 @@ def plot_FPI_seasonal_winds(
     return fig 
 
 fig = plot_FPI_seasonal_winds(
-    direction= 'meridional',
+    direction= 'zonal',
     translate = True
     )
 
@@ -248,12 +230,3 @@ fig = plot_FPI_seasonal_winds(
 
 FigureName = 'seasonsal_analysis_'
 
-# fig.savefig(
-#     b.LATEX(FigureName, folder = 'FPI'),
-#     dpi = 400
-#     )
-
-# df = set_data('mean')
-
-
-# df

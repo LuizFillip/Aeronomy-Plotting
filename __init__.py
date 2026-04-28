@@ -10,5 +10,4 @@ from .bars import *
 from .instrumentations import *
 from .heatmaps import *
 from .climatologies import *
-from .TEC import *
-from .supp_epbs import *
+from .TEC import * 

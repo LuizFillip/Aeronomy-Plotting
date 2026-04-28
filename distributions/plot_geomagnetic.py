@@ -2,10 +2,8 @@ import matplotlib.pyplot as plt
 import base as b
 import core as c 
 import plotting as pl 
+import numpy as np 
  
-
-b.config_labels(fontsize = 25, blue = True)
-
 legend_args = dict(
     ncol = 2, 
     loc = 'upper center', 
@@ -13,18 +11,7 @@ legend_args = dict(
     
     )
 
-def difference(out_shift):
-    
-    import pandas as pd 
-    df = pd.concat(out_shift, axis = 1)
-    
-    
-    df.columns = ['rate1', 'rate2']
-
-# Subtrai as colunas
-    df['difference'] = df['rate1'] - df['rate2']
-    return df['difference'].mean() 
-# print(difference(out_shift))
+ 
 def plot_distributions_geomagnetic(
         df, 
         parameter = 'gamma',
@@ -49,26 +36,25 @@ def plot_distributions_geomagnetic(
     kp_labels = df_index.geomagnetic_labels(level)
     total_epb = []
     total_day = []
-   
-    out_shift = []
     
+    bins = np.arange(0, 70, 5)
     for i, ds in enumerate(df_index.Dst(level)):
         
         index = i + 1
         label = f'({index}) {kp_labels[i]} nT'
-    
+        
+        bins = np.arange(0, 60, 5)
         data, epbs = pl.plot_distribution(
                 ax[0], 
                 ds,
+                bins = bins,
                 parameter = parameter,
                 label = label,
                 axis_label = True,
                 outliner = outliner, 
                 translate = translate,
-                limit = limit
+                # limit = limit
             )
-        
-        out_shift.append(data.loc[df.index 'rate'])
          
         days = pl.plot_histogram(
                 ax[1], 
@@ -85,15 +71,15 @@ def plot_distributions_geomagnetic(
         total_epb.append(epbs)
         total_day.append(days)
         
-        if i < 2:
-            l = b.chars()[i]
+        # if i < 2:
+            # l = b.chars()[i]
             
-            ax[i].text(
-                0.03, 0.87,
-                f'({l})',
-                transform = ax[i].transAxes, 
-                fontsize = 30
-                )
+            # ax[i].text(
+            #     0.03, 0.87,
+            #     f'({l})',
+            #     transform = ax[i].transAxes, 
+            #     fontsize = 30
+            #     )
             
     x = 0.68
     y = 0.25
@@ -129,14 +115,14 @@ def main():
     
     translate = False
     df = c.load_results()
-    parameter = 'gamma'
+    parameter = 'vp'
     
     fig = plot_distributions_geomagnetic(
             df, 
             parameter,
             level = -30, 
             translate = translate, 
-            outliner = 10,
+            outliner = 2,
             limit = True
             )
     
@@ -147,10 +133,10 @@ def main():
         
     FigureName = f'geomagnetic_{parameter}'
     
-    fig.savefig(
-        b.LATEX(FigureName, folder),
-        dpi = 400
-        )
+    # fig.savefig(
+    #     b.LATEX(FigureName, folder),
+    #     dpi = 400
+    #     )
 
     plt.show()
     

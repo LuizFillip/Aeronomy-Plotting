@@ -1,8 +1,7 @@
 import plotting as pl 
 import matplotlib.pyplot as plt 
 import base as b 
-
-b.config_labels()
+ 
 
 path = 'E:\\ionogram\\2013\\20131224S\\'
 
@@ -58,4 +57,4 @@ def main():
             )
     
     
-main()
+# main()
