@@ -1,12 +1,13 @@
 import epbs as pb 
 import datetime as dt 
-
+import base as b 
 
 def plot_roti_in_range(
         ax, start, end, 
-        root = 'F:\\', 
+        root = 'D:\\', 
         clear = None, 
-        lim = 0.3
+        lim = 0.3, 
+        ylabel = 'ROTI\n(TECU/min)'
         ):
 
     ds = pb.longterm_raw_roti(start, end, root = root)
@@ -28,7 +29,7 @@ def plot_roti_in_range(
         )
     
     ax.set(
-        ylabel = 'ROTI\n(TECU/min)',
+        ylabel = ylabel,
         ylim = [0, 5], 
         yticks = list(range(6)),
         
@@ -36,3 +37,4 @@ def plot_roti_in_range(
     
   
     return ds
+ 

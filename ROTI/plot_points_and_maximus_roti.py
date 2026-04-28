@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 import epbs as pb 
 import plotting as pl
 import base as b  
-
+import pandas as pd
+from pathlib import Path 
+ 
 def get_infos(ds, lon):
     df1 = pb.bubble_features(ds)
     
-    infos = df1.loc[
-        df1.index == lon, 
-        ['type', 'drift']
-        ].values.ravel()
+    infos = df1.loc[ df1.index == lon,  
+                    ['type', 'drift'] ].values.ravel()
     
     Type = infos[0]
     Drift = infos[1]
@@ -24,13 +24,15 @@ def get_infos(ds, lon):
 b.sci_format(fontsize = 25)
 
 def plot_points_and_maximus_roti(
-        df, dn, 
+        df, 
+        dn, 
         fontsize = 25, 
+        threshold = 0.30,
         translate = True, 
-        
+        vmax = 4
         ):
 
-    threshold = 0.30
+    
     
     if translate:
         occurrence = 'Occurrence'
@@ -51,7 +53,7 @@ def plot_points_and_maximus_roti(
     
     coords = gg.set_coords(dn.year)
     
-    vmax = 4
+    
     for row, sector in enumerate(coords.keys()):
         
         if sector != -80:
@@ -68,7 +70,7 @@ def plot_points_and_maximus_roti(
                 points_max = True, 
                 )
                 
-        l = b.chars()[row]                
+        l = b.letters()[row]                
         info = f'({l}) {sector_name} {row + 1}'
         
         ax[row].text(
@@ -127,19 +129,46 @@ def plot_points_and_maximus_roti(
 
 
 
-def main():
-
-    dn = dt.datetime(2022, 12, 4, 21)
-    dn = dt.datetime(2022, 6, 13, 21)
-    dn = dt.datetime(2015, 4, 13, 21)
-    dn = dt.datetime(2023, 12, 11, 21)
-    dn = dt.datetime(2020, 3, 2, 21)
-    
-    df = pb.get_nighttime_roti(dn, root = 'D:\\')
-    
-    plot_points_and_maximus_roti(df, dn)
-    
-    plt.show()
+  
+def save_figures(dates):
+   
+    plt.ioff()
+    for dn in dates:
         
+        delta = dt.timedelta(hours = 21)
+        dn = pd.Timestamp(dn)  + delta
+        
+        fn = dn.strftime('%Y%m%d')
+       
+        path_to_save =  Path('D:\\img\\dummies\\') / fn 
+        
+        if not path_to_save.exists():
+       
+            df = pb.get_nighttime_roti(dn, root = 'D:\\')
+            
+            fig = plot_points_and_maximus_roti(df, dn)
+        
+            print('saving', fn)
+            fig.savefig(path_to_save)
+        
+    plt.clf()   
+    plt.close()
+    
+# main()
 
-main()
+# from SuppressionEPBs import load_suppressions
+
+# df = load_suppressions(days = 2)
+# dates = df.index
+
+# save_figures(dates)
+delta = dt.timedelta(hours = 21)
+dn = pd.Timestamp('2023-12-31')  + delta
+df = pb.get_nighttime_roti(dn, root = 'D:\\')
+
+fig = plot_points_and_maximus_roti(df, dn)
+
+ 
+# plt.show()
+
+df

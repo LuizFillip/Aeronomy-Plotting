@@ -22,7 +22,8 @@ args = dict(
     
 
 def plot_roti_points(
-        ax, ds, 
+        ax, 
+        ds, 
         threshold = 0.25,
         label = False, 
         points_max = True,
@@ -87,29 +88,32 @@ def plot_roti_points(
 
 def plot_roti_timeseries(
         ax_rot, 
-        dn, 
-        ref_lines = False, 
-        ref_long = -50
+        df, 
+  
+        ref_long = -50, 
+        threshold = 0.21,
+        translate = True,
+        vmax = 4
         ):
      
-     df = roti_limit(dn)
+     
      
      plot_roti_points(
-             ax_rot, df , 
-             threshold = 0.21,
+             ax_rot, 
+             df , 
+             threshold,
              label = True
              )
      
-     vmax = np.ceil(df['roti'].max()) 
-     vmax = 4
+ 
      ax_rot.set(
          ylim = [0, vmax + 1], 
          xlim = [df.index[0], df.index[-1]],
          yticks = np.arange(0, vmax + 2, 1)
          )
      
-     if ref_lines:
-     
+     if ref_long is not None:
+         dn = df.index[0]
          pl.plot_references_lines(
                  ax_rot,
                  ref_long, 
@@ -120,8 +124,9 @@ def plot_roti_timeseries(
          
      b.format_time_axes(
          ax_rot, 
-         translate = False, 
+         translate = translate, 
          pad = 80
          )
      
      return vmax
+
