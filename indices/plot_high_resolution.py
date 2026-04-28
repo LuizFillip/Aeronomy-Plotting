@@ -12,14 +12,14 @@ def plot_high_resolution(
     
     fig, ax = plt.subplots(
         dpi = 300,
-        figsize = (14, 10), 
-        nrows = 4, 
+        figsize = (14, 12), 
+        nrows = 5, 
         sharex = True
         )
      
     plt.subplots_adjust(hspace = 0.05)
     
-    pl.plot_solar_speed(ax[0], ds, vmax = 500, step = 50)
+    pl.plot_solar_speed(ax[0], ds, vmax = 500, step = 100)
     
     pl.plot_SymH(
         ax[1], 
@@ -36,10 +36,10 @@ def plot_high_resolution(
         )
     
     pl.plot_auroral(
-        ax[3], ds, vmax = 600, step = 100)
+        ax[3], ds, vmax = 600, step = 200)
      
     
-   
+    ax[-1].plot(ds['field'])
  
     fig.align_ylabels()
     
@@ -69,4 +69,4 @@ def main():
     
    
     
-main()
+# main()
