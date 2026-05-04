@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import base as b
 import GEO as gg
-
+import pandas as pd  
 
 
 def count_grid(data, lon_bins, lat_bins):
@@ -20,9 +20,7 @@ def count_grid(data, lon_bins, lat_bins):
 
     return H
 
-import pandas as pd 
-import cartopy.crs as ccrs
-import cartopy.feature as cfeature
+
 
 def plot_map(ax, grid, lon_bins, lat_bins, title):
 
@@ -72,16 +70,15 @@ lat_bins = np.arange(-60, 15, 1)
 
 fig, ax = plt.subplots(
     dpi = 300, 
-    # ncols = 3, 
-    
-    # figsize = (16, 10),
+ 
     subplot_kw = {"projection": ccrs.PlateCarree()},
 )
 grid_daily = np.zeros((len(lat_bins)-1, len(lon_bins)-1))
 
 for t, g in daily:
     grid_daily += count_grid(g, lon_bins, lat_bins)
-    print(g)
+    # print(g)
 
-plot_map(ax, grid_daily, lon_bins, lat_bins, "Daily event accumulation")
+plot_map(ax, grid_daily, lon_bins, lat_bins, 
+         "Daily event accumulation")
 
