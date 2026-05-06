@@ -2,10 +2,11 @@
 
 In this repository, you can find:
 
-- Regression analysis:
-  - Fabry-Perot and models
-  - Digisonde and model
+- intrumentation products:
+  - Fabry-Perot 
+  - Digisonde 
   - Fabry-Perot and Digisonde
+  - TEC maps
 
 - GNSS subproducts
   - Slant Total Electron Content (STEC) variation
