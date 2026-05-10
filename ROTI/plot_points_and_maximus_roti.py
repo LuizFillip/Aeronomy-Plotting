@@ -163,7 +163,7 @@ def save_figures(dates):
 
 # save_figures(dates)
 delta = dt.timedelta(hours = 21)
-dn = pd.Timestamp('2023-12-31')  + delta
+dn = pd.Timestamp('2022-04-12')  +  delta
 df = pb.get_nighttime_roti(dn, root = 'D:\\')
 
 fig = plot_points_and_maximus_roti(df, dn)

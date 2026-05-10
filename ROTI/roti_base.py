@@ -75,18 +75,18 @@ def plot_references_lines(
     
     ax.axvline(dusk, lw = 2)
     
-    midnight = gg.local_midnight(
-        start, 
-        ref_long + 5, 
-        delta_day = 1
-        )
+    # midnight = gg.local_midnight(
+    #     start, 
+    #     ref_long + 5, 
+    #     delta_day = 1
+    #     )
     
-    ax.axvline(
-        midnight, 
-        lw = 2,
-        color = 'k',
-        linestyle = '--'
-        )
+    # ax.axvline(
+    #     midnight, 
+    #     lw = 2,
+    #     color = 'k',
+        # linestyle = '--'
+        # )
     
     if label_top is not None:
         ax.text(
@@ -95,13 +95,13 @@ def plot_references_lines(
             transform = ax.transData
             )
 
-        ax.text(
-            midnight, label_top,
-            midn_name,
-            transform = ax.transData
-            )
+    #     ax.text(
+    #         midnight, label_top,
+    #         midn_name,
+    #         transform = ax.transData
+    #         )
     
-    return dusk, midnight 
+    return dusk #, midnight 
 
 def plot_lines( 
         axes, 
