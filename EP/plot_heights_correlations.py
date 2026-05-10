@@ -166,7 +166,7 @@ def plot_altitude_corr(ax, df, label = 'All years'):
      
     ax.legend()
 
-def plot_seasonal_timeseries(ax, df):
+def plot_seasonal_timeseries(ax, df, alt = 100):
     
     ax.plot(df['nucleos'], lw = 3, color = 'blue')
     
@@ -175,10 +175,10 @@ def plot_seasonal_timeseries(ax, df):
     ax.set(ylabel = 'Number of nucleos',
            xlabel = 'Years')
     
-    ax1.plot(df[100], lw = 3, color = 'red')
+    ax1.plot(df[alt], lw = 3, color = 'red')
     
     ax1.set(
-        ylabel = 'Ep (J/kg)', 
+        ylabel = f'Ep (J/kg) at {alt} km', 
         ylim = [50, 100], 
         xlabel = 'Years'
         )
@@ -209,24 +209,26 @@ df = join_all_years(
  
 def plot_timeseries_and_corr_heights():
     
-    return 
-fig, ax = plt.subplots(
-    figsize = (12, 5), 
-    ncols = 2,
-    dpi = 300, 
-    width_ratios= [2, 1]
-    )
-
-plt.subplots_adjust(wspace = 0.5)
-
-
-plot_seasonal_timeseries(ax[0], df)
-
-ds = compute_corr_by_altitude(df)
-
-plot_altitude_corr(ax[1], ds)
-
-title = (f'Latitudes {lat_min}° to {lat_max}° and' + 
-         f'Longitudes {lon_min}° to {lon_max}°')
-
-fig.suptitle(title, )
+    
+    fig, ax = plt.subplots(
+        figsize = (12, 5), 
+        ncols = 2,
+        dpi = 300, 
+        width_ratios= [2, 1]
+        )
+    
+    plt.subplots_adjust(wspace = 0.5)
+    
+    
+    plot_seasonal_timeseries(ax[0], df)
+    
+    ds = compute_corr_by_altitude(df)
+    
+    plot_altitude_corr(ax[1], ds)
+    
+    title = (f'Latitudes {lat_min}° to {lat_max}°, ' + 
+             f'Longitudes {lon_min}° to {lon_max}°, ')
+    
+    fig.suptitle(title, )
+    
+    return fig 
