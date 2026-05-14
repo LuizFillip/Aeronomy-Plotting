@@ -27,32 +27,126 @@ def save_figs(df):
     plt.close()
 
 
-def stormtime_spanning(ax, start, end, y = 2.5):
+# def stormtime_spanning(ax, start, end, y = 2.5):
     
-    devtime = (end - start).total_seconds() / 3600
+#     devtime = (end - start).total_seconds() / 3600
     
-    time = round(devtime, 2)
+#     time = round(devtime, 2)
+    
+#     if devtime > 100:
         
-    middle = end + (start - end) / 2
-      
-    ax.annotate(
-        '', 
-        xy = (start, y), 
-        xytext = (end, y ), 
-        arrowprops = dict(arrowstyle='<->')
-        )
-    time = round(time)
+#         ax.annotate(
+#             '', 
+#             xy = (start, y), 
+#             xytext = (end, y ), 
+#             arrowprops = dict(arrowstyle='->')
+#             )
+#         time = round(time)
+        
+#         ax.annotate(
+#             f'{time} hrs',
+#             xy = (end, y + y/10), 
+#             xycoords = 'data',
+#             fontsize = 30,
+#             textcoords = 'data', 
+#             ha = 'center'
+#             )
+        
+#     else:
+        
+#         middle = end + (start - end) / 2
+          
+#         ax.annotate(
+#             '', 
+#             xy = (start, y), 
+#             xytext = (end, y ), 
+#             arrowprops = dict(arrowstyle='<->')
+#             )
+#         time = round(time)
+        
+#         ax.annotate(
+#             f'{time} hrs',
+#             xy = (middle, y + y/10), 
+#             xycoords = 'data',
+#             fontsize = 30,
+#             textcoords = 'data', 
+#             ha = 'center'
+#             )
     
-    ax.annotate(
-        f'{time} hrs',
-        xy = (middle, y + y/10), 
-        xycoords = 'data',
-        fontsize = 30,
-        textcoords = 'data', 
-        ha = 'center'
+#     return None   
+
+def stormtime_spanning(
+        ax,
+        start,
+        end,
+        y=2.5,
+        threshold_hours=72,
+        fontsize=30
+    ):
+    """
+    Desenha o intervalo temporal entre start e end.
+
+    Se duração > threshold_hours:
+        seta simples apontando para o end
+        (linha azul tracejada / dusk)
+
+    Caso contrário:
+        dupla seta com tempo no centro.
+    """
+
+    devtime = (end - start).total_seconds() / 3600
+    time = round(devtime)
+
+    # -------------------------
+    # casos longos
+    # -------------------------
+    if devtime > threshold_hours:
+        
+        # seta única apontando para o final
+        ax.annotate(
+            '',
+            xy=(end, y),
+            xytext=(start, y),
+            arrowprops=dict(
+                arrowstyle='->',
+                lw=2
+            )
         )
-    
-    return None   
+
+        # texto próximo ao meio
+        middle = start + (end - start) / 2
+
+        ax.annotate(
+            f'{time} hrs',
+            xy=(middle, y + y/10),
+            xycoords='data',
+            fontsize=fontsize,
+            textcoords='data',
+            ha='center'
+        )
+ 
+    else:
+ 
+        middle = end + (start - end) / 2
+                  
+        ax.annotate(
+            '', 
+            xy = (start, y), 
+            xytext = (end, y ), 
+            arrowprops = dict(arrowstyle='<->')
+            )
+        time = round(time)
+        
+        ax.annotate(
+            f'{time} hrs',
+            xy = (middle, y + y/10), 
+            xycoords = 'data',
+            fontsize = 30,
+            textcoords = 'data', 
+            ha = 'center'
+            )
+
+    return None
 
 def reference_sym_hlines(ax):
     
