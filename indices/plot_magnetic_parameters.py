@@ -122,7 +122,7 @@ def plot_magnetic_fields(
                 position = "right"
                 )
          
-        ax.set(
+        ax1.set(
             ylim = [-ylim, ylim], 
             yticks = np.arange(-ylim, ylim + step, step),
             ylabel = '$B_y$ (nT)'  
