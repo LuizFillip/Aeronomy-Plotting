@@ -6,25 +6,27 @@ import plotting as pl
 
     
 def plot_high_resolution(
-        ds, dn, 
+        ds,   
         translate = False
        ):
     
     fig, ax = plt.subplots(
         dpi = 300,
         figsize = (14, 12), 
-        nrows = 5, 
+        nrows = 4, 
         sharex = True
         )
      
     plt.subplots_adjust(hspace = 0.05)
     
-    pl.plot_solar_speed(ax[0], ds, vmax = 500, step = 100)
+    pl.plot_solar_speed(
+        ax[0], ds, vmax = 600, 
+        step = 100)
     
     pl.plot_SymH(
         ax[1], 
         ds,
-        ylim = [-50, 10],
+        ylim = [-150, 50],
         step = 20)
     
     pl.plot_magnetic_fields(
@@ -36,37 +38,44 @@ def plot_high_resolution(
         )
     
     pl.plot_auroral(
-        ax[3], ds, vmax = 600, step = 200)
+        ax[3], ds, 
+        vmax = 1500, step = 300)
      
     
-    ax[-1].plot(ds['field'])
+    # ax[-1].plot(ds['field'])
  
     fig.align_ylabels()
     
-    b.axes_hour_format(
-         ax[-1], 
-         locator = 6, 
-         tz = "UTC"
-         )
+    # b.axes_hour_format(
+    #      ax[-1], 
+    #      locator = 24, 
+    #      tz = "UTC"
+    #      )
     
-    ax[-1].set(xlabel =  'Universal time')
+    # ax[-1].set(xlabel =  'Universal time')
     
-    b.adding_dates_on_the_top( ax[0])
+    # b.adding_dates_on_the_top( ax[0])
+    
+    b.format_days_axes(ax[-1])
+    
     return fig 
 
 
 def main():
     
     import core as c 
+    start = dt.datetime(2014, 8, 26)
     
-    dn = dt.datetime(2019, 10, 10)
-    
-    df = c.high_omni(dn.year)
+    df = c.high_omni(start.year)
 
-    ds = b.range_dates(df, dn)
+  
+    start = dt.datetime(2014, 8, 26)
+    end = dt.datetime(2014, 9, 12)
      
-    fig = plot_high_resolution(ds, dn)
+    df = b.sel_dates(df, start, end)
+     
+    fig = plot_high_resolution(df)
     
    
     
-# main()
+main()
