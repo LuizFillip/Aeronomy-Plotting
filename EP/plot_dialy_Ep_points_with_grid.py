@@ -3,61 +3,8 @@ import matplotlib.pyplot as plt
 import datetime as dt 
 import pandas as pd
 import numpy as np 
-from scipy.ndimage import gaussian_filter
-import base as b 
 
-def average_grid(df, values = 'mean_90_110', step = 2):
-    lon_min = df['lon'].min()
-    lon_max = df['lon'].max()
-    lat_min = df['lat'].min()
-    lat_max = df['lat'].max()
-    
-    
-    lon_bins = np.arange(lon_min, lon_max + step, step)
-    lat_bins = np.arange(lat_min, lat_max + step, step)
-    
-    df["lon_bin"] = pd.cut(
-        df["lon"], lon_bins, 
-        labels = lon_bins[:-1]
-        )
-    
-    df["lat_bin"] = pd.cut(
-        df["lat"], lat_bins, 
-        labels=lat_bins[:-1]
-        )
-    
-    counts = (
-        df.groupby(["lon_bin", "lat_bin"])
-          .mean() 
-          .reset_index()
-    )
-     
-    return pd.pivot_table(
-        counts,
-        index = "lat_bin",
-        columns = "lon_bin",
-        values = values 
-    )
 
-def gaussian_filter_nan(arr, sigma):
-    arr = np.asarray(arr)
-
-    mask = np.isfinite(arr)
-
-    arr_filled = np.where(mask, arr, 0)
-
-    smooth_data = gaussian_filter(arr_filled, sigma=sigma)
-    smooth_mask = gaussian_filter(mask.astype(float), sigma=sigma)
-
-    result = smooth_data / smooth_mask
-    result[~mask] = np.nan
-
-    return result
-
-def smooth_grid(grid, sigma = 1.5):
-    grid = grid.replace(np.nan, 0)
-    
-    return gaussian_filter(grid.values, sigma = sigma)
 
 def colorbar(ax, img):
     cax = ax.inset_axes([1.1, 0, 0.05, 1])
@@ -152,13 +99,6 @@ def plot_dialy_Ep_points(
     dn = df.index[0]
     fig.suptitle(dn.strftime('%Y-%m-%d'), y = 0.7)
     
-year = 2013 
-path = f'D:\\database\\SABER\\ep\\{year}'
-df = b.load(path)
- 
-df = df.loc[df.index.date == dt.date(2013, 1, 1)]
 
-values = 'Ep_mean'
-df = df.loc[df['alt'] == 110, ['lat', 'lon', values]]
-plot_dialy_Ep_points(df, step = 4, values = values)
+# plot_dialy_Ep_points(df, step = 4, values = values)
 
