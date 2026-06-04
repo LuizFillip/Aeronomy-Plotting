@@ -20,21 +20,24 @@ def plot_high_resolution(
     plt.subplots_adjust(hspace = 0.05)
     
     pl.plot_solar_speed(
-        ax[0], ds, vmax = 600, 
-        step = 100)
+        ax[0], ds,
+        vmax = 900, 
+        step = 300
+        )
     
     pl.plot_SymH(
         ax[1], 
         ds,
-        ylim = [-150, 50],
-        step = 20)
+        ylim = [-40, 50],
+        step = 30
+        )
     
     pl.plot_magnetic_fields(
         ax[2], 
         ds, 
-        ylim = 10, 
+        ylim = 20, 
         step = 10, 
-        by = True
+        by = False
         )
     
     pl.plot_auroral(
@@ -63,19 +66,21 @@ def plot_high_resolution(
 
 def main():
     
-    import core as c 
-    start = dt.datetime(2014, 8, 26)
+    import core as c  
     
-    df = c.high_omni(start.year)
+    
 
   
-    start = dt.datetime(2014, 8, 26)
-    end = dt.datetime(2014, 9, 12)
+    start = dt.datetime(2016, 12, 25)
+    end = dt.datetime(2017, 1, 9)
+    
+    df = c.high_omni(start.year)
      
     df = b.sel_dates(df, start, end)
      
     fig = plot_high_resolution(df)
     
+
    
     
 main()

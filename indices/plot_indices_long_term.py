@@ -56,8 +56,8 @@ def main():
     #     dpi = 400
     #     )
 
-    start = dt.datetime(2017, 1, 5)
-    end = dt.datetime(2017, 1, 10)
+    start = dt.datetime(2014, 8, 26)
+    end = dt.datetime(2014, 9, 12)
     
     df = c.low_omni()
     

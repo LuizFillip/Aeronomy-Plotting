@@ -47,12 +47,12 @@ def plot_SymH(
 
  
 
-def plot_solar_speed(ax, ds, vmax = 800, step = 200):
+def plot_solar_speed(ax, ds, vmax = 800, vmin = 200, step = 200):
     # ds = ds.loc[ds['speed'] < 600]
     ax.plot(ds['speed'], lw = 1.5)
     ax.set(
-        ylim = [300, vmax],
-        yticks = np.arange(300, vmax + step, step),
+        ylim = [vmin, vmax],
+        yticks = np.arange(vmin, vmax + step, step),
         ylabel = '$V_{sw}$ (km/s)'
         )
     return None
