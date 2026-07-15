@@ -71,8 +71,8 @@ import json
 year = 2019
 
 
-lilat = dict(min = -10, max = -4, stp = 1)
-lilon = dict(min = -40, max = -34, stp =1)
+lilat = dict(min = -10, max = 2, stp = 2)
+lilon = dict(min = -50, max = -40, stp =2)
 
 
 
@@ -96,12 +96,12 @@ site = gg.sites['ca']
 name = site['name']
 clat, clon = site['coords']
 
-ax.scatter(
-    clon, clat, 
-    s = 200,
-    marker = '*', 
-    label = name
-    )
+# ax.scatter(
+#     clon, clat, 
+#     s = 200,
+#     marker = '*', 
+#     label = name
+#     )
 
 gg.plot_square_area(
         ax, 

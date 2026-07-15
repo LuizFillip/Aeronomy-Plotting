@@ -154,21 +154,12 @@ def save_figures(dates):
     plt.clf()   
     plt.close()
     
-# main()
-
-# from SuppressionEPBs import load_suppressions
-
-# df = load_suppressions(days = 2)
-# dates = df.index
-
-# save_figures(dates)
-delta = dt.timedelta(hours = 21)
-dn = pd.Timestamp('2013-02-01')  +  delta
-df = pb.get_nighttime_roti(dn, root = 'D:\\')
-
-fig = plot_points_and_maximus_roti(df, dn)
+def main():
+    delta = dt.timedelta(hours = 21)
+    dn = pd.Timestamp('2013-02-01')  +  delta
+    df = pb.get_nighttime_roti(dn, root = 'D:\\')
+    
+    fig = plot_points_and_maximus_roti(df, dn)
 
  
-# plt.show()
-
-df
+ 

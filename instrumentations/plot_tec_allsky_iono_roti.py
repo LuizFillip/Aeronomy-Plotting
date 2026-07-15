@@ -112,8 +112,7 @@ def TEC_6300_IONOGRAM_ROTI(
     
     ax_rot = plt.subplot(gs2[-1, :])
     
-    vmax = pl.plot_roti_timeseries(
-        ax_rot, dn)
+    vmax = pl.plot_roti_timeseries( ax_rot, dn)
     vmax = 5
     for col, fn in enumerate(files):
         index = col + 1

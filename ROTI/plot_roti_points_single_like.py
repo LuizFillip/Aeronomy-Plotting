@@ -114,4 +114,21 @@ def plot_contour_roti(ax, vmax = 5, col_roti = '-50'):
     cb.set_label('ROTI (TECU/min)')
  
 
-    return None 
+    return None
+
+
+df = b.load('database/epbs/roti/maximums_roti2')
+
+ 
+#%%%%
+ds = df.loc[(df['time'] > 20) & (df['time'] < 23)]
+
+
+ds = ds['-50'].resample('D').mean().to_frame()
+ds['year'] = ds.index.year 
+ds['doy'] = ds.index.day_of_year 
+
+
+ds = ds.pivot(values = '-50', columns = 'year', index = 'doy')
+
+ds.mean(axis = 1).plot()

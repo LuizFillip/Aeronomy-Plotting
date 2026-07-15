@@ -186,6 +186,6 @@ def main():
     
     save_in = 'G:\\Meu Drive\\Papers\\Case study - 21 december 2015\\June-2024-latex-templates\\'
     
-    fig.savefig(save_in + FigureName, dpi = 300 )
+    # fig.savefig(save_in + FigureName, dpi = 300 )
     
 # main()

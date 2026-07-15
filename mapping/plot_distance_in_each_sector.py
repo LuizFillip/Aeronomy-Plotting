@@ -98,4 +98,4 @@ def plot_distance_in_each_sector():
     plt.legend([arrow,], ['My label',])
 
 
-plot_distance_in_each_sector()
+# plot_distance_in_each_sector()

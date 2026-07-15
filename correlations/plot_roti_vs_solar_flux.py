@@ -29,34 +29,7 @@ def join_data(year = 2019, lon = -70):
     return  df
 
 
-def plot_month(
-        ax, 
-        x, y
-        ,
-        norm = True
-        ):
-    
 
-    ax.scatter(x, y, s = 30)
-    
-    fit = b.linear_fit(x, y)
-    
-    intercept = round(fit.intercept, 2)
-    slope = round(fit.slope[0], 2)
-    r2 = str(fit.r2_score)
-    
-    ax.plot(
-        x, fit.y_pred, 
-        lw = 2, color = 'r')
-    
-    info = '$R^2 = $' + f'{r2}'
-    ax.text(
-        0.2, 0.8, 
-        info, 
-        transform = ax.transAxes
-        )
-    
-    return ax
 
 
 def plot_correlation_epb_Ep(
