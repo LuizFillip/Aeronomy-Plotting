@@ -58,16 +58,4 @@ def pipe_tec(path, hour = None):
                 out.append(row)
     return framedata(lines, out)
 
-def junksave():
-    for d in [16, 18, 29]:
-        fn = f'gps1512{d}g.002.hdf5.txt'
-        path = "E:\\database\\"
-        df = pipe_tec(path + fn, hour = 22)
-        
-        df.to_csv(fn)
-        
-fn = "C:\\Users\\Luiz\\Downloads\\gps200112g.002.txt\\gps200112g.002.hdf5.txt"
-
-df = pipe_tec(fn, hour = 22)
-
-df 
+ 
