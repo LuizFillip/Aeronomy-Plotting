@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Mar  7 18:52:46 2026
 
-@author: Luiz
-"""
 
 def empty_elipses():
     import matplotlib.pyplot as plt
