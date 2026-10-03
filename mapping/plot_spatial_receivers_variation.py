@@ -72,7 +72,7 @@ year = 2019
 
 
 lilat = dict(min = -10, max = 2, stp = 2)
-lilon = dict(min = -50, max = -40, stp =2)
+lilon = dict(min = -50, max = -30, stp = 5)
 
 
 
@@ -105,11 +105,22 @@ clat, clon = site['coords']
 
 gg.plot_square_area(
         ax, 
-        lat_min = -9, 
-        lon_min = -38.5,
+        lat_min = -5, 
+        lon_min = -47,
         lat_max = None, 
         lon_max = None, 
-        radius = 4, 
+        radius = 5, 
+        color = 'black',
+        center_dot = False
+        )
+
+gg.plot_square_area(
+        ax, 
+        lat_min = -10, 
+        lon_min = -39,
+        lat_max = None, 
+        lon_max = None, 
+        radius = 5, 
         color = 'black',
         center_dot = False
         )
@@ -133,21 +144,18 @@ for rec in gs_rec:
 
     glon, glat, alt = tuple(dic[rec])
     
-    if (
-        (lilat['min'] < glat) and 
-        (lilat['max'] > glat) and 
-        (lilon['min'] < glon) and 
-        (lilon['max'] > glon)
-        ):
+    # if (
+    #     (lilat['min'] < glat) and 
+    #     (lilat['max'] > glat) and 
+    #     (lilon['min'] < glon) and 
+    #     (lilon['max'] > glon)
+    #     ):
         
-            ax.scatter(
-                glon, glat, s = 100, 
-                c = 'k',
-                       label = 'GNSS receivers')
-            
-            ax.text(
-                glon, glat, 
-                rec.upper(), 
-                transform = ax.transData
-                )
-        
+    ax.scatter(
+        glon, glat, 
+        s = 100, 
+        c = 'blue',
+        marker = '^',
+        label = 'GNSS receivers'
+        )
+ 
