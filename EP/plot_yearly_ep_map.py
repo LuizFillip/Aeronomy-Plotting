@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 13 22:26:16 2026
-
-@author: Luiz
-"""
 
 def single_grid_mean(ax, df, step = 2):
     

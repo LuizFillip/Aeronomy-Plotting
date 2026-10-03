@@ -102,10 +102,6 @@ def plot_seasonal_area_weighted(nl, step = 2.0, sigma = 1):
     return fig
 
  
-# nl = b.load("GOES/data/nucleos_40/2013")   
-
-# fig = plot_seasonal_area_weighted(nl, step = 2.0 )
-
  
 
 

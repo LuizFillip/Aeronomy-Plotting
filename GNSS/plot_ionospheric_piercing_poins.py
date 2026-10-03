@@ -7,7 +7,7 @@ import base as b
 import GEO as gg 
 import PlasmaBubbles as pb 
 import GNSS as gs 
-b.config_labels(fontsize = 50)
+b.sci_format(fontsize = 25)
 
     
 def plot_ipp_over_map(dn):
